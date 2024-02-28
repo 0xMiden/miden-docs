@@ -1,0 +1,12 @@
+.vscode
+.code
+.idea
+site/
+venv/
+temp_dir/
+env/
+*.out
+node_modules/
+.DS_Store
+**/.DS_Store
+*.iml
