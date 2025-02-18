@@ -1,0 +1,17 @@
+[book]
+authors = []
+language = "en"
+multilingual = false
+src = "src"
+title = "Polygon Miden VM"
+
+[output.html]
+git-repository-url = "https://github.com/0xPolygonMiden/miden-vm/"
+
+[preprocessor.katex]
+after = ["links"]
+
+[preprocessor.alerts]
+
+[output.linkcheck]
+warning-policy = "ignore"

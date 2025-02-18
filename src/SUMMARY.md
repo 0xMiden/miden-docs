@@ -1,53 +1,26 @@
 # Summary
 
-- [Overview](miden-base/index.md)
+- [Overview](overview.md)
+- [Glossary](glossary.md)
+- [Get started](get_started.md)
+- [FAQ](faq.md)
 
-<!-- Get started -->
+<!-- Concepts -->
 
-- [Get started](miden-client/get-started/prerequisites.md)
-    * [Create an account](miden-client/get-started/create-account-use-faucet.md)
-    * [P2P private transfer](miden-client/get-started/p2p-private.md)
-    * [P2P public transfer](miden-client/get-started/p2p-public.md)
-
-<!-- How to -->
-
-- [How to]()
-    * [Write a smart contract]()
-    * [Deploy a smart contract]()
-
-<!-- Smart contracts -->
-
-- [Smart contracts]()
-    * [Miden SDK]()
-    * [Examples]()
-
-<!-- Node -->
-
-- [Node](miden-node/index.md)
- 
-<!-- Client -->
- 
-- [Client](miden-client/index.md)
-    * [Installation](miden-client/install-and-run.md)
-    * [Features](miden-client/features.md)
-    * [Design](miden-client/design.md)
-    * [Library](miden-client/library.md)
-    * [CLI]()
-        + [Reference](miden-client/cli-reference.md)
-        + [Config](miden-client/cli-config.md)
-    * [Examples](miden-client/examples.md)
-    * [API](miden-client/api-docs.md)
-
- <!-- Protocol -->
-
-- [Protocol](miden-base/architecture/overview.md)
-    * [Smart contract](miden-base/architecture/account.md)
+- [Concepts](miden-base/architecture/overview.md)
+    * [Account](miden-base/architecture/account.md)
     * [Note](miden-base/architecture/note.md)
     * [Asset](miden-base/architecture/asset.md)
     * [Transaction](miden-base/architecture/transaction.md)
     * [State](miden-base/architecture/state.md)
     * [Execution](miden-base/architecture/execution.md)
 
+<!-- How to -->
+
+- [How to]()
+    * [Write a smart contract]()
+    * [Deploy a smart contract]()
+ 
 <!-- Tutorials -->
 
 - [Tutorials](./miden-tutorials/index.md)
@@ -62,3 +35,67 @@
   - [Web-Client]()
     - [Creating Accounts and Faucets](./miden-tutorials/web-client/create_deploy_tutorial.md)
     - [Mint, Consume, and Create Notes](./miden-tutorials/web-client/mint_consume_create_tutorial.md)
+
+ <!-- Protocol -->
+
+- [Protocol]()
+    * [Node](miden-node/index.md)
+    * [Client](miden-client/index.md)
+        + [Installation](miden-client/install-and-run.md)
+        + [Features](miden-client/features.md)
+        + [Design](miden-client/design.md)
+        + [Library](miden-client/library.md)
+        + [CLI]()
+            - [Reference](miden-client/cli-reference.md)
+            - [Config](miden-client/cli-config.md)
+        + [Examples](miden-client/examples.md)
+        + [API](miden-client/api-docs.md)
+    * [VM](miden-vm/src/intro/main.md)
+        + [Overview](miden-vm/src/intro/overview.md)
+        + [Usage](miden-vm/src/intro/usage.md)
+        + [Performance](miden-vm/src/intro/performance.md)
+        + [Development tooling](miden-vm/src/tools/main.md)
+            - [Debugger](miden-vm/src/tools/debugger.md)
+            - [REPL](miden-vm/src/tools/repl.md)
+        + [User Documentation](miden-vm/src/user_docs/main.md)
+            - [Miden Assembly](miden-vm/src/user_docs/assembly/main.md)
+                * [Code Organization](miden-vm/src/user_docs/assembly/code_organization.md)
+                * [Execution contexts](miden-vm/src/user_docs/assembly/execution_contexts.md)
+                * [Flow Control](miden-vm/src/user_docs/assembly/flow_control.md)
+                * [Field Operations](miden-vm/src/user_docs/assembly/field_operations.md)
+                * [u32 Operations](miden-vm/src/user_docs/assembly/u32_operations.md)
+                * [Stack manipulation](miden-vm/src/user_docs/assembly/stack_manipulation.md)
+                * [Input / Output Operations](miden-vm/src/user_docs/assembly/io_operations.md)
+                * [Cryptographic Operations](miden-vm/src/user_docs/assembly/cryptographic_operations.md)
+                * [Events](miden-vm/src/user_docs/assembly/events.md)
+                * [Debugging](miden-vm/src/user_docs/assembly/debugging.md)
+            - [Miden Standard Library](miden-vm/src/user_docs/stdlib/main.md)
+                * [std::collections](miden-vm/src/user_docs/stdlib/collections.md)
+                * [std::crypto::dsa](miden-vm/src/user_docs/stdlib/crypto/dsa.md)
+                * [std::crypto::fri](miden-vm/src/user_docs/stdlib/crypto/fri.md)
+                * [std::crypto::hashes](miden-vm/src/user_docs/stdlib/crypto/hashes.md)
+                * [std::math::u64](miden-vm/src/user_docs/stdlib/math/u64.md)
+                * [std::mem](miden-vm/src/user_docs/stdlib/mem.md)
+                * [std::sys](miden-vm/src/user_docs/stdlib/sys.md)
+        + [Design](miden-vm/src/design/main.md)
+            - [Programs](miden-vm/src/design/programs.md)
+            - [Program decoder](miden-vm/src/design/decoder/main.md)
+                * [Decoder constraints](miden-vm/src/design/decoder/constraints.md)
+            - [Operand stack](miden-vm/src/design/stack/main.md)
+                * [Operation constraints](miden-vm/src/design/stack/op_constraints.md)
+                * [System operations](miden-vm/src/design/stack/system_ops.md)
+                * [Field operations](miden-vm/src/design/stack/field_ops.md)
+                * [u32 operations](miden-vm/src/design/stack/u32_ops.md)
+                * [Stack manipulation](miden-vm/src/design/stack/stack_ops.md)
+                * [Input / output operations](miden-vm/src/design/stack/io_ops.md)
+                * [Cryptographic operations](miden-vm/src/design/stack/crypto_ops.md)
+            - [Range Checker](miden-vm/src/design/range.md)
+            - [Chiplets](miden-vm/src/design/chiplets/main.md)
+                * [Hash Chiplet](miden-vm/src/design/chiplets/hasher.md)
+                * [Bitwise Chiplet](miden-vm/src/design/chiplets/bitwise.md)
+                * [Memory Chiplet](miden-vm/src/design/chiplets/memory.md)
+                * [Kernel ROM Chiplet](miden-vm/src/design/chiplets/kernel_rom.md)
+            - [Lookup arguments](miden-vm/src/design/lookups/main.md)
+                * [Multiset checks](miden-vm/src/design/lookups/multiset.md)
+                * [LogUp](miden-vm/src/design/lookups/logup.md)
+        + [Background Material](miden-vm/src/background.md)
