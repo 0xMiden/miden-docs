@@ -17,28 +17,32 @@
 
 <!-- How to -->
 
-- [How to]()
-    * [Write a smart contract]()
-    * [Deploy a smart contract]()
+- [How to](how_to.md)
+    * [Create a wallet]()
  
 <!-- Tutorials -->
 
-- [Tutorials](./miden-tutorials/index.md)
-  - [Miden Node Setup](./miden-tutorials/miden_node_setup.md)
-  - [Rust-Client]()
-    - [Creating Accounts and Faucets](./miden-tutorials/rust-client/create_deploy_tutorial.md)
-    - [Mint, Consume, and Create Notes](./miden-tutorials/rust-client/mint_consume_create_tutorial.md)
-    - [Deploying a Counter Contract](./miden-tutorials/rust-client/counter_contract_tutorial.md)
-    - [Interacting with Public Smart Contracts](./miden-tutorials/rust-client/public_account_interaction_tutorial.md)
-    - [Foreign Procedure Invocation](./miden-tutorials/rust-client/foreign_procedure_invocation_tutorial.md)
+- [Tutorials](miden-tutorials/index.md)
+  - [Miden Node Setup](miden-tutorials/miden_node_setup.md)
+  - [Rust-Client](miden-tutorials/rust-client/about.md)
+    - [Creating Accounts and Faucets](miden-tutorials/rust-client/create_deploy_tutorial.md)
+    - [Mint, Consume, and Create Notes](miden-tutorials/rust-client/mint_consume_create_tutorial.md)
+    - [Deploying a Counter Contract](miden-tutorials/rust-client/counter_contract_tutorial.md)
+    - [Interacting with Public Smart Contracts](miden-tutorials/rust-client/public_account_interaction_tutorial.md)
+    - [Foreign Procedure Invocation](miden-tutorials/rust-client/foreign_procedure_invocation_tutorial.md)
 
-  - [Web-Client]()
-    - [Creating Accounts and Faucets](./miden-tutorials/web-client/create_deploy_tutorial.md)
-    - [Mint, Consume, and Create Notes](./miden-tutorials/web-client/mint_consume_create_tutorial.md)
+  - [Web-Client](miden-tutorials/web-client/about.md)
+    - [Creating Accounts and Faucets](miden-tutorials/web-client/create_deploy_tutorial.md)
+    - [Mint, Consume, and Create Notes](miden-tutorials/web-client/mint_consume_create_tutorial.md)
+
+ <!-- Examples -->
+
+- [Examples](examples.md)
+    * [Voting contract]()
 
  <!-- Protocol -->
 
-- [Protocol]()
+- [Protocol](protocol.md)
     * [Node](miden-node/index.md)
     * [Client](miden-client/index.md)
         + [Installation](miden-client/install-and-run.md)
