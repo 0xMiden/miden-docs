@@ -1,5 +1,7 @@
 # Rust Client
 
+Rust library, which can be used to programmatically interact with the Miden rollup.
+
 The Miden Rust client can be used for a variety of things, including:
 
 * Deploying, testing, and creating transactions to interact with accounts and notes on Miden.
