@@ -46,7 +46,7 @@
     * [Asset](miden-base/architecture/asset.md)
     * [Transaction](miden-base/architecture/transaction.md)
     * [State](miden-base/architecture/state.md)
-    * [Execution](miden-base/architecture/execution.md)
+    * [Blockchain](miden-base/architecture/blockchain.md)
 
 <!-- Tutorials -->
 
