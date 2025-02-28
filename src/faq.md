@@ -1,124 +1,124 @@
-## How is encryption implemented in Miden?
+# Glossary
 
-Miden leverages Zero Knowledge proofs and commitment schemes to provide security and privacy. It does so by using rescue prime hash function and commitment schemes with sparse merkle trees. 
+## Account
 
-## Does Miden support encrypted notes?
+A Miden account is a fundamental data structure in the Polygon Miden blockchain that represents an entity (user, contract, etc.) on the Miden rollup. 
+An account involves four core components: identity, state, (account)builder pattern, and storage management.
 
-At the moment, Miden does not have support for encrypted notes but it is planned feature.
+## Account builder
 
-## What are Transient Notes used for?
+Account builder provides a structured way to create and initialize new accounts on the Miden network with specific properties, permissions, and initial state.
 
-Transient Notes can be used in the context of a single transaction batch and as a mechanism for atomic transfers. Some of their use cases can be:
+## AccountCode
 
-1. Executing complex operations in Defi that require multiple atomic steps (e.g., swap, provide liquidity, and stake in one atomic transaction)
-2. Facilitating privacy-preserving transfers between accounts without revealing the connection on-chain
-3. Enabling conditional logic for multiple transactions.
-4. Allowing different parts of a transaction batch to communicate without requiring persistent state changes
+AccountCode is a core component that represents the executable code associated with an account on the Miden blockchain. It represents two functionalities:
+- As a smart contract logic that governs how an account behaves when invoked through transactions.
+- As an executable that is compiled on the Miden Virtual Machine.
 
-## Why does Miden have delegated proving?
+## AccountComponent
 
-Miden leverages delegated proving for few technical and practical reasons:
+AccountComponent can be described as a modular unit of code to represent the functionality of a Miden Account. It follows the component-based architecture of Miden that allows accounts to be composed of multiple specialized components rather than having a monolithic structure.
 
-1. **Computational:** Generating STARK proofs is computationally intensive work. The proving process requires significant processing power and memory, making it impractical for most end-user devices (like smartphones or regular laptops) to generate proofs directly.
-2. **Technical architecture**:
-Miden's architecture separates concerns between:
-    - **Transaction Creation**: End users create and sign transactions
-    - **Proof Generation**: Specialized provers generate validity proofs
-    - **Verification**: The network verifies these proofs
-3. **Proving efficiency**:
-Delegated provers can implement advanced techniques that wouldn't be typically possible in user-facing devices. The generation of optimal STARK proofs requires certain amount of specialisation and  optimisations.
-4. **Hardware Optimisation**:
-By delegating the proving Dedicated proving services can use optimised hardware (GPUs, FPGAs, or ASICs) specifically designed for the mathematical operations needed in STARK proof generation.
+## Account Component Template
 
-## What is the lifecycle of a transaction?
+Account Component Template is a standardized pattern for creating account components with specific structures and behaviors.
 
-### 1. Transaction Creation
+## AccountId
 
-- User creates a transaction specifying the operations to perform (transfers, contract interactions, etc.)
-- Client performs preliminary validation of the transaction and it’s structure
-- The user authorises the specified state transitions by signing the transaction.
+AccountId is a value that uniquely identifies each account in Miden that can be used as an address for directing transactions to their intended accounts and also as a reference to retrieve account state from the global state tree.
 
-### 2. Transaction Submission
+## AccountIdAnchor
 
-- The signed transaction is submitted to Miden network nodes
-- The transaction enters the mempool (transaction pool) where it waits to be selected to be included in the state
-- Nodes perform basic validation checks on the transaction structure and signature
+AccountIdAnchor serves as a secure reference point for an account's identity. Through cryptographic commitments, it functions as a privacy-preserving identifier that enables account verification without revealing specific account details.
 
-### 3. Transaction Selection
+## AccountIdV0
 
-- A sequencer (or multiple sequencers in a decentralized setting) selects transactions from the mempool
-- The sequencer groups transactions into bundles based on state access patterns and other criteria
-- The transaction execution order is determined according to protocol mechanism
+AccountIdV0 is similar to AccountID but represents the initial version (v0) of the account identifier.
 
-### 4. Transaction Execution
+## AccountIdVersion
 
-- The current state relevant to the transaction is loaded
-- The Miden VM executes the transaction operations
-- **State Transition Computation**: The resulting state transitions are computed
-- An execution trace of the transaction is generated which capturing all the computation
+AccountIdVersion represents the different versions of account identifier formats supported by Miden. It can be used to determine how account identifiers should be interpreted, processed, and validated.
 
-### 5. Proof Generation
+## AccountStorage
 
-- A STARK based cryptographic proof is generated attesting to the correctness of the execution
-- A proof for the aggregated transaction is created
+AccountStorage is a structure implemented in Sparse Merkle Tree to store and prove key-value pairs that represent an account's state. It is made up of storage slots that can only be accessed or modified by accounts that use authentication mechanisms as defined by Miden.
 
-### 6. Block Production
+## AccountStorageMode
 
-- The aggregated bundle of transaction along with their proofs are assembled into a block
-- A recursive proof attesting to all bundle proofs is generated
-- The block data structure is finalized with the aggregated proof
+AccountStorageMode is an enum value that defines different ways an account can interact with its storage. There are three such modes of Account Storage: ReadOnly, ReadWrite, and Append.
 
-### 7. L1 Submission
+## AccountType
 
-- Transaction data is posted to the data availability layer
-- The block proof and state delta commitment are submitted to the Miden contract(that is bridged to Ethereum/AggLayer)
-- The L1 contract verifies validity of the proof
-- Upon successful verification, the L1 contract updates the state root
+The behaviour and capability of an account in Miden can vary based on their types. For now, there are four such types of accounts: Fungible, Regular, FungibleFaucet, and Sealed.
 
-### 8. Finalization
+## Asset
 
-- Transaction receipts and events are generated
-- The global state commitment is updated to reflect the new state
-- The transaction is now considered finalized on the L1
-- Users and indexers gets notified/updated about the transaction completion
+Asset represents a digital resource with value that can be owned, transferred, and managed within the system. It represents something of value, unique identification, ownership model, and programmable property.
 
-## Do notes in Miden support time conditions?
+## Assembler
 
-Yes, Miden enables future spending of notes with commitments that allows for conditional execution based on time-locked conditions. 
+The assembler module translates Miden Assembly language into executable bytecode for the Miden Virtual Machine (VM).
 
-These notes contain state transitions that only become valid after certain conditions are met in the future, such as:
+## AssetVault
 
-- A specific block height being reached
-- A timestamp threshold being passed
-- An oracle providing specific data
-- Another transaction being confirmed
+AssetVault is used for managing assets within accounts. It provides a way for storing, interfacing, and securing asset(s) associated with each account.
 
-## What does a Miden operator do?
+## Batches
 
-A Miden operator is an entity that maintains the infrastructure necessary for the functioning of the Miden rollup. Their roles may involve
+Batches allow multiple transactions to be grouped together, share verification overhead, and improve throughput on the network.
 
-1. Running Sequencer Nodes
-2. Operating the Prover Infrastructure
-3. Submitting Proofs to L1
-4. Maintaining Data Availability
-5. Participating in the Consensus Mechanism
+## Block
 
-## How bridging works in Miden?
+Block is a fundamental data structure that groups multiple transactions together and forms the blockchain's sequential record. A block consists of block header, transaction data, and state information.
 
-Miden doesn't have a fully operational, mainnet-deployed bridge yet. 
+## Delta
 
-## What does the gas fee model of Miden looks like?
+Delta is a structured data serialization format used for representing objects and data structures in Miden.
 
-Miden doesn't have a fully implemented and activated gas fee model in production yet.
+## Felt
 
-## What are the different databases in Miden and what do they do?
+A Felt or Field Element is a fundamental data type used for cryptographic operations. It represents an element in a finite field, which is a mathematical structure used by Miden.
 
-1. Account database: Maintains account states, smart contract data, and all other persistent information
-2. Note database: Tracks available notes that users can use or spend in transactions
-3. Nullifier database: When a note is spent, its nullifier is recorded to ensure it cannot be spent again
-4. Transaction database: Records historical queries, receipt generation, and transaction verification
+## Kernel
 
-## Does Miden support recursive verification?
+A fundamental module of the Miden architecture that acts as a base layer by providing core functionality and security guarantees for the protocol.
 
-Yes. Miden implements recursive verification by allowing STARK proofs to verify other STARK proofs.
-The Miden VM functions as a single and specialised circuit that can efficiently verify STARK proofs, takes a serialized STARK proof as input. It recomputes commitment verification, FRI protocol steps, and field arithmetic. As a result, the VM outputs a binary indicating if the proof is valid.
+## Miden Assembly
+
+An assembly language specifically designed for the Miden VM. It's a low-level programming language with specialized instructions optimized for zero-knowledge proof generation.
+
+## Note
+
+Note is a fundamental data structure that represents an off-chain asset or a piece of information that can be transferred between accounts. Miden's UTXO-like (Unspent Transaction Output) model is designed around the concept of notes. There are output notes which are new notes created by the transaction and input notes which are consumed (spent) by the transaction.
+
+## Note script
+
+Note script is a program that defines the rules and conditions under which a note can be spent.
+
+## Note tag
+
+Note tag is an identifier or metadata associated with notes that provide additional classification and functionality.
+
+## Note ID
+
+Note ID is a unique identifier assigned to each note to distinguish it from all other notes in the system.
+
+## Nullifier
+
+A nullifier is a cryptographic commitment that marks a note as spent, preventing it from being used again.
+
+## Partial notes
+
+Partial notes allow for dividing a note into smaller portions, enabling more flexible value transfers without creating entirely new notes.
+
+## Procedure
+
+Procedures in Miden enable developers to organize code into logical, reusable units that can be called from multiple places. A procedure is defined using the `proc` keyword followed by a name and terminated with `end` in Miden Assembly code.
+
+## Prover
+
+Prover is responsible for generating zero-knowledge proofs that verify the correctness of program execution without revealing the underlying data.
+
+## Word
+
+Word is a fundamental data structure that represents the basic unit of computation and storage.
