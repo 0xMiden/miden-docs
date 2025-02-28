@@ -1,2 +1,37 @@
+[book]
+title = "Miden book"
+authors = ["Miden team"]
+description = "The one-stop-shop for everything Miden"
+src = "src"
+language = "en"
+
+[build]
+build-dir = "book"
+create-missing = true
+
+[output.html]
+git-repository-url = "https://github.com/0xPolygonMiden/miden-docs"
+mathjax-support = true
+copy-fonts = true
+no-section-label = true
+
 [output.html.fold]
 enable = true
+level = 0  # All chapters closed by default
+
+[output.html.search]
+enable = true
+limit-results = 15
+teaser-word-count = 30
+use-boolean-and = true
+boost-title = 2
+boost-hierarchy = 1
+boost-paragraph = 1
+expand = true
+heading-split-level = 3
+
+[output.html.print]
+enable = true
+
+[preprocessor.links]
+renderer = true
