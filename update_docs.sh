@@ -4,7 +4,6 @@
 MIDDEN_CLIENT_REPO="https://github.com/0xPolygonMiden/miden-client.git"
 MIDDEN_NODE_REPO="https://github.com/0xPolygonMiden/miden-node.git"
 MIDDEN_BASE_REPO="https://github.com/0xPolygonMiden/miden-base.git"
-MIDEN_TUTORIAL_REPO="https://github.com/0xPolygonMiden/miden-tutorials"
 MIDEN_VM_REPO="https://github.com/0xPolygonMiden/miden-vm"
 MIDEN_COMPILER_REPO="https://github.com/0xPolygonMiden/compiler"
 
@@ -12,7 +11,6 @@ MIDEN_COMPILER_REPO="https://github.com/0xPolygonMiden/compiler"
 CLIENT_DIR="src/miden-client/"
 NODE_DIR="src/miden-node/"
 BASE_DIR="src/miden-base/"
-TUTORIAL_DIR="src/miden-tutorials"
 VM_DIR="src/miden-vm"
 COMPILER_DIR="src/miden-compiler"
 
@@ -57,10 +55,7 @@ update_docs "$MIDDEN_CLIENT_REPO" "$CLIENT_DIR"
 update_docs "$MIDDEN_NODE_REPO" "$NODE_DIR"
 
 # Update miden-base docs (using 'phklive-update-docs' branch)
-update_docs "$MIDDEN_BASE_REPO" "$BASE_DIR"
-
-# Update miden-tutorial docs (using default branch)
-update_docs "$MIDEN_TUTORIAL_REPO" "$TUTORIAL_DIR"
+update_docs "$MIDDEN_BASE_REPO" "$BASE_DIR" "phklive-add-mdbook"
 
 # Update miden-vm docs (using default branch)
 update_docs "$MIDEN_VM_REPO" "$VM_DIR"

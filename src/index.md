@@ -1,8 +1,8 @@
 # Miden book
 
-> One-stop-shop documentation for Miden users and developers
+> Welcome to the Miden book! The one-stop shop where you can find everything Miden related.
 
-A rollup for high-throughput, private applications.
+Miden is a rollup for high-throughput, private applications.
 
 Using Polygon Miden, builders can create novel, high-throughput, private applications for payments, DeFi, digital assets, and gaming. Applications and users are secured by Ethereum and AggLayer.
 

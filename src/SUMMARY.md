@@ -2,11 +2,10 @@
 
 <!-- Overview -->
 
-- [Overview](overview.md)
-    * [Get started](get_started.md)
+- [Overview](index.md)
     * [Roadmap](roadmap.md)
     * [FAQ](faq.md)
-    * [Protocol](miden-base/architecture/overview.md)
+    * [Protocol](miden-base/index.md)
         + [Account](miden-base/architecture/account.md)
         + [Note](miden-base/architecture/note.md)
         + [Asset](miden-base/architecture/asset.md)
@@ -14,24 +13,15 @@
         + [State](miden-base/architecture/state.md)
         + [Blockchain](miden-base/architecture/blockchain.md)
     * [How to](how_to.md)
-        + [Create a wallet]()
-    * [Tutorials](miden-tutorials/index.md)
-        + [Miden Node Setup](miden-tutorials/miden_node_setup.md)
-        + [Rust-Client](miden-tutorials/rust-client/about.md)
-            - [Creating Accounts and Faucets](miden-tutorials/rust-client/create_deploy_tutorial.md)
-            - [Mint, Consume, and Create Notes](miden-tutorials/rust-client/mint_consume_create_tutorial.md)
-            - [Deploying a Counter Contract](miden-tutorials/rust-client/counter_contract_tutorial.md)
-            - [Interacting with Public Smart Contracts](miden-tutorials/rust-client/public_account_interaction_tutorial.md)
-            - [Foreign Procedure Invocation](miden-tutorials/rust-client/foreign_procedure_invocation_tutorial.md)
-        + [Web-Client](miden-tutorials/web-client/about.md)
-            - [Creating Accounts and Faucets](miden-tutorials/web-client/create_deploy_tutorial.md)
-            - [Mint, Consume, and Create Notes](miden-tutorials/web-client/mint_consume_create_tutorial.md)
+    * [Tutorials](tutorials.md)
+    * [Examples](examples.md)
 
 <!-- Smart contracts -->
 
-- [Smart contracts](miden-smart-contracts/index.md)
-    * [Examples](miden-smart-contracts/examples/index.md)
-        + [Voting contract](miden-smart-contracts/examples/voting.md)
+<!-- - [Smart contracts](miden-smart-contracts/index.md) -->
+<!--     * [Examples](miden-smart-contracts/examples/index.md) -->
+<!--         + [Voting contract](miden-smart-contracts/examples/voting.md) -->
+        
 <!-- Node -->
 
 - [Node](miden-node/index.md)
