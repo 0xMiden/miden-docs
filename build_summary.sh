@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# build_summary.sh - Script to build a SUMMARY.md by combining existing SUMMARY.md files
+
+# Define the source directory and output file
+SRC_DIR="src"
+OUTPUT_FILE="src/SUMMARY.md"
+
+echo "Building aggregated SUMMARY.md..."
+
+# Initialize the SUMMARY.md file with a header
+echo "# Summary" > "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+# Initialize the SUMMARY.md with the first chapters
+echo "- [Introduction](./index.md)" >> "$OUTPUT_FILE"
+echo "- [Roadmap](./roadmap.md)" >> "$OUTPUT_FILE"
+echo "- [FAQ](./faq.md)" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+# Process each repository directory
+for repo_dir in "$SRC_DIR"/*; do
+    # Skip if not a directory
+    if [ ! -d "$repo_dir" ]; then
+        continue
+    fi
+
+    # Get repository name without the path
+    repo_name=$(basename "$repo_dir")
+    echo "Processing $repo_name..."
+
+    # Define the expected location for SUMMARY.md
+    summary_file="$repo_dir/src/SUMMARY.md"
+
+    # If SUMMARY.md exists in this repo
+    if [ -f "$summary_file" ]; then
+        echo "Found summary at $summary_file"
+        
+        # Create a temporary file to process the content
+        temp_file=$(mktemp)
+        
+        # Skip the first 2 lines
+        tail -n +3 "$summary_file" > "$temp_file"
+        
+        # Use Perl for more reliable text processing (available on most Unix systems)
+        perl -pe "s|\(\.\/|\($repo_name\/src\/|g; s|\(([a-zA-Z0-9_-]+\.md)|\($repo_name\/src\/\$1|g;" "$temp_file" >> "$OUTPUT_FILE"
+        
+        # Add a blank line after each repository's content
+        echo "" >> "$OUTPUT_FILE"
+        
+        # Clean up temporary file
+        rm -f "$temp_file"
+    else
+        echo "Warning: No SUMMARY.md found at $summary_file, skipping..." >&2
+    fi
+done
+
+echo "- [Glossary](./glossary.md)" >> "$OUTPUT_FILE"
+
+echo "Aggregated SUMMARY.md has been created successfully at $OUTPUT_FILE"
