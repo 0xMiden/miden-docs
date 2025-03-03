@@ -1,4 +1,4 @@
-# Miden book
+# Introduction
 
 ![Miden book image](img/book.png)
 
