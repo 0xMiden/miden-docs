@@ -2,7 +2,6 @@
 
 - [Introduction](./index.md)
 - [Roadmap](./roadmap.md)
-- [FAQ](./faq.md)
 
 - [Protocol](imported/miden-base/src/index.md)
     * [Account](imported/miden-base/src/account.md)
@@ -104,4 +103,6 @@
         + [Creating Accounts and Faucets](imported/miden-tutorials/src/web-client/create_deploy_tutorial.md)
         + [Mint, Consume, and Create Notes](imported/miden-tutorials/src/web-client/mint_consume_create_tutorial.md)
 
+- [FAQ](./faq.md)
 - [Glossary](./glossary.md)
+- [Useful links](./awesome.md)

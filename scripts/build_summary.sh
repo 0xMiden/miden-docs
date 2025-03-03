@@ -15,7 +15,6 @@ echo "" >> "$OUTPUT_FILE"
 # Initialize the SUMMARY.md with the first chapters
 echo "- [Introduction](./index.md)" >> "$OUTPUT_FILE"
 echo "- [Roadmap](./roadmap.md)" >> "$OUTPUT_FILE"
-echo "- [FAQ](./faq.md)" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
 # Function to process a specific repository
@@ -65,6 +64,8 @@ process_repo "miden-vm"         # VM fourth
 process_repo "miden-compiler"   # Compiler fifth
 process_repo "miden-tutorials"  # Tutorials last
 
+echo "- [FAQ](./faq.md)" >> "$OUTPUT_FILE"
 echo "- [Glossary](./glossary.md)" >> "$OUTPUT_FILE"
+echo "- [Useful links](./awesome.md)" >> "$OUTPUT_FILE"
 
 echo "Aggregated SUMMARY.md has been created successfully at $OUTPUT_FILE"
