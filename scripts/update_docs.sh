@@ -8,17 +8,23 @@ MIDEN_NODE_REPO="https://github.com/0xPolygonMiden/miden-node.git"
 MIDEN_BASE_REPO="https://github.com/0xPolygonMiden/miden-base.git"
 MIDEN_VM_REPO="https://github.com/0xPolygonMiden/miden-vm"
 MIDEN_COMPILER_REPO="https://github.com/phklive/compiler"
+MIDEN_TUTORIALS_REPO="https://github.com/0xPolygonMiden/miden-tutorials"
+
+# Define the base imported directory
+IMPORTED_DIR="src/imported"
 
 # Define the local directories where the docs will be placed
-CLIENT_DIR="src/miden-client/"
-NODE_DIR="src/miden-node/"
-BASE_DIR="src/miden-base/"
-VM_DIR="src/miden-vm"
-COMPILER_DIR="src/miden-compiler"
+CLIENT_DIR="$IMPORTED_DIR/miden-client/"
+NODE_DIR="$IMPORTED_DIR/miden-node/"
+BASE_DIR="$IMPORTED_DIR/miden-base/"
+VM_DIR="$IMPORTED_DIR/miden-vm"
+COMPILER_DIR="$IMPORTED_DIR/miden-compiler"
+TUTORIALS_DIR="$IMPORTED_DIR/miden-tutorials"
 
-# Remove existing Miden directories
-echo "Removing existing Miden directories..."
-rm -rf "$CLIENT_DIR" "$NODE_DIR" "$BASE_DIR" "$VM_DIR" "$COMPILER_DIR"
+# Remove existing imported directory
+echo "Removing existing imported directories..."
+rm -rf "$IMPORTED_DIR"
+mkdir -p "$IMPORTED_DIR"
 
 # Function to clone and copy docs from a repository
 update_docs() {
@@ -68,7 +74,27 @@ update_docs "$MIDEN_VM_REPO" "$VM_DIR" "phklive-add-mdbook"
 # Update miden-compiler docs
 update_docs "$MIDEN_COMPILER_REPO" "$COMPILER_DIR" "phklive-add-mdbook"
 
+# Update miden-tutorials docs
+update_docs "$MIDEN_TUTORIALS_REPO" "$TUTORIALS_DIR" "phklive-add-mdbook"
+
+# Create a README.md in the imported directory
+cat > "$IMPORTED_DIR/README.md" << EOF
+# Imported Documentation
+
+This directory contains automatically imported documentation from various Miden repositories.
+**Please do not modify these files directly** as they will be overwritten during the next documentation update.
+
+If you want to make changes to any documentation, please contribute to the original repositories:
+
+- [miden-client](https://github.com/0xPolygonMiden/miden-client)
+- [miden-node](https://github.com/0xPolygonMiden/miden-node)
+- [miden-base](https://github.com/0xPolygonMiden/miden-base)
+- [miden-vm](https://github.com/0xPolygonMiden/miden-vm)
+- [miden-compiler](https://github.com/phklive/compiler)
+- [miden-tutorials](https://github.com/0xPolygonMiden/miden-tutorials)
+EOF
+
 echo "All documentation has been updated."
 
 # Build SUMMARY.md from imported repositories
-./build_summary.sh
+./scripts/build_summary.sh

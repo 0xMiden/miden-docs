@@ -1,5 +1,7 @@
 # Miden book
 
+![Miden book image](img/book.png)
+
 > Welcome to the Miden book! The one-stop shop where you can find everything Miden related.
 
 Miden is a rollup for high-throughput, private applications.

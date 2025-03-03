@@ -3,7 +3,7 @@
 # build_summary.sh - Script to build a SUMMARY.md by combining existing SUMMARY.md files
 
 # Define the source directory and output file
-SRC_DIR="src"
+SRC_DIR="src/imported"
 OUTPUT_FILE="src/SUMMARY.md"
 
 echo "Building aggregated SUMMARY.md..."
@@ -18,15 +18,17 @@ echo "- [Roadmap](./roadmap.md)" >> "$OUTPUT_FILE"
 echo "- [FAQ](./faq.md)" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
-# Process each repository directory
-for repo_dir in "$SRC_DIR"/*; do
+# Function to process a specific repository
+process_repo() {
+    repo_name=$1
+    repo_dir="$SRC_DIR/$repo_name"
+    
     # Skip if not a directory
     if [ ! -d "$repo_dir" ]; then
-        continue
+        echo "Warning: Directory $repo_dir not found, skipping..." >&2
+        return
     fi
 
-    # Get repository name without the path
-    repo_name=$(basename "$repo_dir")
     echo "Processing $repo_name..."
 
     # Define the expected location for SUMMARY.md
@@ -43,7 +45,7 @@ for repo_dir in "$SRC_DIR"/*; do
         tail -n +3 "$summary_file" > "$temp_file"
         
         # Use Perl for more reliable text processing (available on most Unix systems)
-        perl -pe "s|\(\.\/|\($repo_name\/src\/|g; s|\(([a-zA-Z0-9_-]+\.md)|\($repo_name\/src\/\$1|g;" "$temp_file" >> "$OUTPUT_FILE"
+        perl -pe "s|\(\.\/|\(imported\/$repo_name\/src\/|g; s|\(([a-zA-Z0-9_-]+\.md)|\(imported\/$repo_name\/src\/\$1|g;" "$temp_file" >> "$OUTPUT_FILE"
         
         # Add a blank line after each repository's content
         echo "" >> "$OUTPUT_FILE"
@@ -53,7 +55,15 @@ for repo_dir in "$SRC_DIR"/*; do
     else
         echo "Warning: No SUMMARY.md found at $summary_file, skipping..." >&2
     fi
-done
+}
+
+# Process repositories in a specific order
+process_repo "miden-base"       # Protocol first
+process_repo "miden-client"     # Client second
+process_repo "miden-node"       # Node third
+process_repo "miden-vm"         # VM fourth
+process_repo "miden-compiler"   # Compiler fifth
+process_repo "miden-tutorials"  # Tutorials last
 
 echo "- [Glossary](./glossary.md)" >> "$OUTPUT_FILE"
 

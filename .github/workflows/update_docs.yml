@@ -22,7 +22,7 @@ jobs:
       - name: Run Update Script
         run: |
           chmod +x ./update_docs.sh
-          ./update_docs.sh
+          ./scripts/update_docs.sh
 
       - name: Commit and Push Changes
         env:
