@@ -59,22 +59,12 @@ update_docs() {
     echo "Updated documentation from $REPO_URL (branch: $BRANCH) to $DEST_DIR"
 }
 
-# Update miden-client docs
+# Update docs
 update_docs "$MIDEN_CLIENT_REPO" "$CLIENT_DIR" "phklive-add-mdbook"
-
-# Update miden-node docs
-update_docs "$MIDEN_NODE_REPO" "$NODE_DIR" "phklive-add-mdbook"
-
-# Update miden-base docs
+update_docs "$MIDEN_NODE_REPO" "$NODE_DIR" "mirko/docs"
 update_docs "$MIDEN_BASE_REPO" "$BASE_DIR" "phklive-add-mdbook"
-
-# Update miden-vm docs
 update_docs "$MIDEN_VM_REPO" "$VM_DIR" "phklive-add-mdbook"
-
-# Update miden-compiler docs
 update_docs "$MIDEN_COMPILER_REPO" "$COMPILER_DIR" "phklive-add-mdbook"
-
-# Update miden-tutorials docs
 update_docs "$MIDEN_TUTORIALS_REPO" "$TUTORIALS_DIR" "phklive-add-mdbook"
 
 # Create a README.md in the imported directory

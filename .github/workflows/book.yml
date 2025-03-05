@@ -1,15 +1,18 @@
-name: Deploy
+name: book
 on:
   push:
-    branches:
-      - main
+    branches: [main, next]
   workflow_run:
     workflows: ["Update Documentation"]
     types: [completed]
 
 jobs:
   deploy:
+    name: deploy mdbook
     runs-on: ubuntu-latest
+    needs: check-files
+    # Only run deployment on push to main/next branches, not on PRs
+    if: github.event_name == 'push' || github.event_name == 'workflow_run'
     permissions:
       contents: write
       pages: write
@@ -19,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install latest mdbook
+      - name: Install latest mdBook
         run: |
           tag=$(curl 'https://api.github.com/repos/rust-lang/mdbook/releases/latest' | jq -r '.tag_name')
           url="https://github.com/rust-lang/mdbook/releases/download/${tag}/mdbook-${tag}-x86_64-unknown-linux-gnu.tar.gz"
@@ -27,8 +30,15 @@ jobs:
           curl -sSL $url | tar -xz --directory=./mdbook
           echo `pwd`/mdbook >> $GITHUB_PATH
 
-      - name: Build Book
-        run: mdbook build
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install mdBook plugins
+        run: |
+          cargo install mdbook-katex mdbook-linkcheck mdbook-alerts
+
+      - name: Build book
+        run: mdbook build docs/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -36,7 +46,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "book"
+          path: "docs/book/html"
 
       - name: Deploy to GitHub Pages
         id: deployment

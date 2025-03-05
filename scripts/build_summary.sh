@@ -6,7 +6,7 @@
 SRC_DIR="src/imported"
 OUTPUT_FILE="src/SUMMARY.md"
 
-echo "Building aggregated SUMMARY.md..."
+echo "Building aggregated SUMMARY.md."
 
 # Initialize the SUMMARY.md file with a header
 echo "# Summary" > "$OUTPUT_FILE"
@@ -31,7 +31,7 @@ process_repo() {
     echo "Processing $repo_name..."
 
     # Define the expected location for SUMMARY.md
-    summary_file="$repo_dir/src/SUMMARY.md"
+    summary_file="$repo_dir/src/IMPORTED.md"
 
     # If SUMMARY.md exists in this repo
     if [ -f "$summary_file" ]; then
@@ -52,17 +52,17 @@ process_repo() {
         # Clean up temporary file
         rm -f "$temp_file"
     else
-        echo "Warning: No SUMMARY.md found at $summary_file, skipping..." >&2
+        echo "Warning: No IMPORTED.md found at $summary_file, skipping..." >&2
     fi
 }
 
 # Process repositories in a specific order
-process_repo "miden-base"       # Protocol first
-process_repo "miden-client"     # Client second
-process_repo "miden-node"       # Node third
-process_repo "miden-vm"         # VM fourth
-process_repo "miden-compiler"   # Compiler fifth
-process_repo "miden-tutorials"  # Tutorials last
+process_repo "miden-base"       
+process_repo "miden-tutorials" 
+process_repo "miden-client"   
+process_repo "miden-node"     
+process_repo "miden-vm"      
+process_repo "miden-compiler"
 
 echo "- [FAQ](./faq.md)" >> "$OUTPUT_FILE"
 echo "- [Glossary](./glossary.md)" >> "$OUTPUT_FILE"
