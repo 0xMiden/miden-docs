@@ -1,9 +1,10 @@
 name: book
+
 on:
   push:
     branches: [main, next]
   workflow_run:
-    workflows: ["Update Documentation"]
+    workflows: ["update documentation"]
     types: [completed]
 
 jobs:
@@ -11,8 +12,6 @@ jobs:
     name: deploy mdbook
     runs-on: ubuntu-latest
     needs: check-files
-    # Only run deployment on push to main/next branches, not on PRs
-    if: github.event_name == 'push' || github.event_name == 'workflow_run'
     permissions:
       contents: write
       pages: write
