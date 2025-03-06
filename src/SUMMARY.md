@@ -121,4 +121,4 @@
 
 - [FAQ](./faq.md)
 - [Glossary](./glossary.md)
-- [Useful links](./awesome.md)
+- [Useful links](imported/awesome-miden/README.md)

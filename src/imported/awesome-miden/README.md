@@ -1,6 +1,4 @@
-# Miden awesome
-
-![Awesome Miden image](img/awesome-miden.png)
+![Awesome Miden image](awesome-miden.png)
 
 A collection of awesome Miden links, resources and shiny things.
 

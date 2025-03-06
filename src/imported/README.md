@@ -11,3 +11,4 @@ If you want to make changes to any documentation, please contribute to the origi
 - [miden-vm](https://github.com/0xPolygonMiden/miden-vm)
 - [miden-compiler](https://github.com/phklive/compiler)
 - [miden-tutorials](https://github.com/0xPolygonMiden/miden-tutorials)
+- [awesome-miden](https://github.com/phklive/awesome-miden)

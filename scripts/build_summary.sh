@@ -66,6 +66,6 @@ process_repo "miden-compiler"
 
 echo "- [FAQ](./faq.md)" >> "$OUTPUT_FILE"
 echo "- [Glossary](./glossary.md)" >> "$OUTPUT_FILE"
-echo "- [Useful links](./awesome.md)" >> "$OUTPUT_FILE"
+echo "- [Useful links](imported/awesome-miden/README.md)" >> "$OUTPUT_FILE"
 
 echo "Aggregated SUMMARY.md has been created successfully at $OUTPUT_FILE"

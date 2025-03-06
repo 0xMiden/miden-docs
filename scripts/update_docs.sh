@@ -9,6 +9,7 @@ MIDEN_BASE_REPO="https://github.com/0xPolygonMiden/miden-base.git"
 MIDEN_VM_REPO="https://github.com/0xPolygonMiden/miden-vm"
 MIDEN_COMPILER_REPO="https://github.com/phklive/compiler"
 MIDEN_TUTORIALS_REPO="https://github.com/0xPolygonMiden/miden-tutorials"
+AWESOME_MIDEN_REPO="https://github.com/phklive/awesome-miden"
 
 # Define the base imported directory
 IMPORTED_DIR="src/imported"
@@ -20,20 +21,22 @@ BASE_DIR="$IMPORTED_DIR/miden-base/"
 VM_DIR="$IMPORTED_DIR/miden-vm"
 COMPILER_DIR="$IMPORTED_DIR/miden-compiler"
 TUTORIALS_DIR="$IMPORTED_DIR/miden-tutorials"
+AWESOME_MIDEN_DIR="$IMPORTED_DIR/awesome-miden"
 
 # Remove existing imported directory
 echo "Removing existing imported directories..."
 rm -rf "$IMPORTED_DIR"
 mkdir -p "$IMPORTED_DIR"
 
-# Function to clone and copy docs from a repository
+# Function to clone and copy specified directories from a repository
 update_docs() {
     REPO_URL=$1
     DEST_DIR=$2
-    BRANCH=${3:-main}  # Default to 'main' if no branch is specified
+    BRANCH=${3:-main}      # Default to 'main' if no branch is specified
+    SOURCE_DIR=${4:-docs}  # Default to 'docs' if no source directory is specified
     TEMP_DIR=$(mktemp -d)
 
-    echo "Fetching $REPO_URL (branch: $BRANCH)..."
+    echo "Fetching $REPO_URL (branch: $BRANCH), source dir: $SOURCE_DIR..."
 
     # Clone the specified branch of the repository sparsely
     git clone --depth 1 --filter=blob:none --sparse -b "$BRANCH" "$REPO_URL" "$TEMP_DIR"
@@ -41,8 +44,8 @@ update_docs() {
     # Navigate to the temporary directory
     cd "$TEMP_DIR" || exit
 
-    # Set sparse checkout to include only the docs directory
-    git sparse-checkout set docs
+    # Set sparse checkout to include only the specified directory
+    git sparse-checkout set "$SOURCE_DIR"
 
     # Move back to the original directory
     cd - > /dev/null
@@ -50,13 +53,18 @@ update_docs() {
     # Create the destination directory if it doesn't exist
     mkdir -p "$DEST_DIR"
 
-    # Copy the docs directory from the temporary clone to your repository
-    cp -r "$TEMP_DIR/docs/"* "$DEST_DIR/"
+    # Check if the source directory exists in the cloned repo
+    if [ -d "$TEMP_DIR/$SOURCE_DIR" ]; then
+        # Copy the contents from the temporary clone to your repository
+        # Use /* to copy contents rather than the directory itself
+        cp -r "$TEMP_DIR/$SOURCE_DIR/"* "$DEST_DIR/"
+        echo "Updated documentation from $REPO_URL (branch: $BRANCH), source: $SOURCE_DIR to $DEST_DIR"
+    else
+        echo "Warning: Source directory $SOURCE_DIR not found in repository $REPO_URL (branch: $BRANCH)"
+    fi
 
     # Clean up the temporary directory
     rm -rf "$TEMP_DIR"
-
-    echo "Updated documentation from $REPO_URL (branch: $BRANCH) to $DEST_DIR"
 }
 
 # Update docs
@@ -66,6 +74,7 @@ update_docs "$MIDEN_BASE_REPO" "$BASE_DIR" "phklive-add-mdbook"
 update_docs "$MIDEN_VM_REPO" "$VM_DIR" "phklive-add-mdbook"
 update_docs "$MIDEN_COMPILER_REPO" "$COMPILER_DIR" "phklive-add-mdbook"
 update_docs "$MIDEN_TUTORIALS_REPO" "$TUTORIALS_DIR" "phklive-add-mdbook"
+update_docs "$AWESOME_MIDEN_REPO" "$AWESOME_MIDEN_DIR" "main" "." # Use "." to specify the root directory
 
 # Create a README.md in the imported directory
 cat > "$IMPORTED_DIR/README.md" << EOF
@@ -82,6 +91,7 @@ If you want to make changes to any documentation, please contribute to the origi
 - [miden-vm](https://github.com/0xPolygonMiden/miden-vm)
 - [miden-compiler](https://github.com/phklive/compiler)
 - [miden-tutorials](https://github.com/0xPolygonMiden/miden-tutorials)
+- [awesome-miden](https://github.com/phklive/awesome-miden)
 EOF
 
 echo "All documentation has been updated."
