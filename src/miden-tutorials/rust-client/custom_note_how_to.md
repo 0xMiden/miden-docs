@@ -1,4 +1,4 @@
-# How to Create a Note
+# How to Create a Custom Note
 
 *Creating notes with custom logic*
 

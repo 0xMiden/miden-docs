@@ -57,8 +57,11 @@
     - [Mint, Consume, and Create Notes](./miden-tutorials/rust-client/mint_consume_create_tutorial.md)
     - [Deploying a Counter Contract](./miden-tutorials/rust-client/counter_contract_tutorial.md)
     - [Interacting with Public Smart Contracts](./miden-tutorials/rust-client/public_account_interaction_tutorial.md)
+    - [How To Create Notes with Custom Logic](./miden-tutorials/rust-client/custom_note_how_to.md)
     - [Foreign Procedure Invocation](./miden-tutorials/rust-client/foreign_procedure_invocation_tutorial.md)
-
+    - [How to Use Ephemeral Notes](./miden-tutorials/rust-client/ephemeral_note_how_to.md)
+    - [How to Use Mappings in Miden Assembly](./miden-tutorials/rust-client/mappings_in_masm_how_to.md)
+    
   - [Web-Client](./miden-tutorials/web-client/about.md)
     - [Creating Accounts and Faucets](./miden-tutorials/web-client/create_deploy_tutorial.md)
     - [Mint, Consume, and Create Notes](./miden-tutorials/web-client/mint_consume_create_tutorial.md)

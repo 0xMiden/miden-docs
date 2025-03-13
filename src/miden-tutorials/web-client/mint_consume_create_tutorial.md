@@ -125,13 +125,12 @@ import {
   NoteType,
 } from "@demox-labs/miden-sdk";
 
-const nodeEndpoint = "http://localhost:57291";
+const nodeEndpoint = "https://rpc.testnet.miden.io:443";
 
 export async function webClient(): Promise<void> {
   try {
     // 1. Create client
-    const client = new WebClient();
-    await client.create_client(nodeEndpoint);
+    const client = await WebClient.create_client(nodeEndpoint);
 
     // 2. Sync and log block
     const state = await client.sync_state();

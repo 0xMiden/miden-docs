@@ -1,5 +1,7 @@
 # How to Use Mappings in Miden Assembly
 
+*Using mappings in Miden assembly for storing key value pairs*
+
 ## Overview
 
 In this example, we will explore how to use mappings in Miden Assembly. Mappings are essential data structures that store key-value pairs. We will demonstrate how to create an account that contains a mapping and then call a procedure in that account to update the mapping.

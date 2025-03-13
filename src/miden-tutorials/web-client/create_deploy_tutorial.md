@@ -17,9 +17,7 @@ Our web application will create a Miden account for *Alice* and then deploy a fu
 
 ## Prerequisites
 
-To begin, make sure you have a miden-node running locally in a separate terminal window. To get the Miden node running locally, you can follow the instructions on the [Miden Node Setup](./miden_node_setup_tutorial.md) page.
-
-Note: In this tutorial we use [pnpm](https://pnpm.io/installation) which is a drop in replacement for npm.
+In this tutorial we use [pnpm](https://pnpm.io/installation) which is a drop in replacement for npm.
 
 ## Public vs. private accounts & notes
 
@@ -92,14 +90,11 @@ To instantiate the WebClient, pass in the endpoint of the Miden node. You can al
 
 Since we will be handling proof generation in the computationally constrained environment of the browser, it will be slower than proof generation handled by the Rust client. Currently, the Miden WebClient is thread-blocking when not used within a web worker.
 
-Example of instantiating the WebClient with a delegated prover:
+Example of instantiating the WebClient:
 
 ```ts
-const nodeEndpoint = "http://localhost:57291";
-const delegatedProver = 'http://18.118.151.210:8082'
-
-let client = new WebClient();
-await client.create_client(nodeEndpoint, delegatedProver);
+const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+const client = await WebClient.create_client(nodeEndpoint);
 ```
 
 In the `src/` directory create a file named `webClient.ts` and paste the following into it:
@@ -108,13 +103,12 @@ In the `src/` directory create a file named `webClient.ts` and paste the followi
 // src/webClient.ts
 import { WebClient } from "@demox-labs/miden-sdk";
 
-const nodeEndpoint = "http://localhost:57291";
+const nodeEndpoint = "https://rpc.testnet.miden.io:443";
 
 export async function webClient(): Promise<void> {
   try {
     // 1. Create client
-    const client = new WebClient();
-    await client.create_client(nodeEndpoint);
+    const client = await WebClient.create_client(nodeEndpoint);
 
     // 2. Sync and log block
     const state = await client.sync_state();
@@ -197,13 +191,12 @@ import {
   NoteType,
 } from "@demox-labs/miden-sdk";
 
-const nodeEndpoint = "http://localhost:57291";
+const nodeEndpoint = "https://rpc.testnet.miden.io:443";
 
 export async function webClient(): Promise<void> {
   try {
     // 1. Create client
-    const client = new WebClient();
-    await client.create_client(nodeEndpoint);
+    const client = await WebClient.create_client(nodeEndpoint);
 
     // 2. Sync and log block
     const state = await client.sync_state();
@@ -265,13 +258,12 @@ import {
   NoteType,
 } from "@demox-labs/miden-sdk";
 
-const nodeEndpoint = "http://localhost:57291";
+const nodeEndpoint = "https://rpc.testnet.miden.io:443";
 
 export async function webClient(): Promise<void> {
   try {
     // 1. Create client
-    const client = new WebClient();
-    await client.create_client(nodeEndpoint);
+    const client = await WebClient.create_client(nodeEndpoint);
 
     // 2. Sync and log block
     const state = await client.sync_state();

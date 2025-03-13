@@ -1,5 +1,7 @@
 # How to Use Ephemeral Notes 
 
+*Using ephemeral notes for optimistic note consumption*
+
 ## Overview
 
 In this guide, we will explore how to leverage ephemeral notes on Miden to settle transactions faster than the blocktime. Ephemeral notes are essentially UTXOs that have not yet been fully committed into a block. This feature allows the notes to be created and consumed within the same block.
