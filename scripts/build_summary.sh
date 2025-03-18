@@ -31,7 +31,7 @@ process_repo() {
     echo "Processing $repo_name..."
 
     # Define the expected location for SUMMARY.md
-    summary_file="$repo_dir/src/IMPORTED.md"
+    summary_file="$repo_dir/src/EXPORTED.md"
 
     # If SUMMARY.md exists in this repo
     if [ -f "$summary_file" ]; then
@@ -52,7 +52,7 @@ process_repo() {
         # Clean up temporary file
         rm -f "$temp_file"
     else
-        echo "Warning: No IMPORTED.md found at $summary_file, skipping..." >&2
+        echo "Warning: No EXPORTED.md found at $summary_file, skipping..." >&2
     fi
 }
 

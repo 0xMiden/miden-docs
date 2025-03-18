@@ -22,19 +22,19 @@ Polygon Miden’s architecture takes the actor model further and combines it wit
 
 Miden uses _accounts_ and _notes_, both of which hold assets. Accounts consume and produce notes during transactions. Transactions describe the account state changes of single accounts.
 
-### Account
+### Accounts
 
 An [Account](account.md) can hold assets and define rules how assets can be transferred. Accounts can represent users or autonomous smart contracts. The [account chapter](account.md) describes the design of an account, its storage types, and creating an account.
 
-### Note
+### Notes
 
 A [Note](note.md) is a message that accounts send to each other. A note stores assets and a script that defines how the note can be consumed. The [note chapter](note.md) describes the design, the storage types, and the creation of a note.
 
-### Asset
+### Assets
 
 An [Asset](asset.md) can be fungible and non-fungible. They are stored in the owner’s account itself or in a note. The [asset chapter](asset.md) describes asset issuance, customization, and storage.
 
-### Transaction
+### Transactions
 
 A [Transactions](transaction.md) describe the production and consumption of notes by a single account. 
 
@@ -42,11 +42,7 @@ Executing a transaction always results in a STARK proof.
 
 The [transaction chapter](transaction.md) describes the transaction design and implementation, including an in-depth discussion of how transaction execution happens in the transaction kernel program.
 
-### Limits
-
-[Limits](limits.md) topic describes limits currently enforced in `miden-base` and `miden-node`. 
-
-##### Accounts produce and consume notes to communicate
+#### Accounts produce and consume notes to communicate
 
 ![Architecture core concepts](img/miden-architecture-core-concepts.gif)
 
@@ -67,7 +63,3 @@ The [Blockchain](blockchain.md) defines how state progresses as aggregated-state
 ##### Operators capture and progress state
 
 ![Architecture state process](img/miden-architecture-state-progress.gif)
-
-### Network
-
-The [Network](network.md) contains the different actors of the Miden protocol. The [network chapter](network.md) describes how different components of the Miden rollup interact with eachother using the Miden protocol.

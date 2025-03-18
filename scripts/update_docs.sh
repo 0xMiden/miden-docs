@@ -70,7 +70,7 @@ update_docs() {
 # Update docs
 update_docs "$MIDEN_CLIENT_REPO" "$CLIENT_DIR" "phklive-add-mdbook"
 update_docs "$MIDEN_NODE_REPO" "$NODE_DIR" "mirko/docs"
-update_docs "$MIDEN_BASE_REPO" "$BASE_DIR" "phklive-add-mdbook"
+update_docs "$MIDEN_BASE_REPO" "$BASE_DIR"
 update_docs "$MIDEN_VM_REPO" "$VM_DIR" "phklive-add-mdbook"
 update_docs "$MIDEN_COMPILER_REPO" "$COMPILER_DIR" "phklive-add-mdbook"
 update_docs "$MIDEN_TUTORIALS_REPO" "$TUTORIALS_DIR" "phklive-add-mdbook"

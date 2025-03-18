@@ -1,4 +1,4 @@
-# Account / Smart Contract
+# Accounts / Smart Contracts
 
 An `Account` represents the primary entity of the protocol. Capable of holding assets, storing data, and executing custom code. Each `Account` is a specialized smart contract providing a programmable interface for interacting with its state and assets.
 
@@ -6,22 +6,22 @@ An `Account` represents the primary entity of the protocol. Capable of holding a
 
 In Miden's hybrid UTXO- and account-based model `Account`s enable the creation of expressive smart contracts via a Turing-complete language.
 
-## Account core components
+## Account core elements
 
-An `Account` is composed of several core components, illustrated below:
+An `Account` is composed of several core elements, illustrated below:
 
 <p style="text-align: center;">
     <img src="img/account/account-definition.png" style="width:30%;" alt="Account diagram"/>
 </p>
 
-These components are:
+These elements are:
 
 1. [ID](#id)
 2. [Code](#code)
 3. [Storage](#storage)
 4. [Vault](#vault)
 5. [Nonce](#nonce)
-
+ 
 ### ID
 
 > An immutable and unique identifier for the `Account`.
@@ -41,11 +41,31 @@ An `Account` ID is considered invalid if:
 - The anchor epoch exceeds $2^{16}-1$.
 - The least significant 8 bits of the ID are nonzero.
 
+An `Account` ID can be encoded in different formats:
+
+1. [**Bech32**](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki) (default):
+   - Example: `mm1qq2qlgz2reslcyqqqqfxa7836chrjcvk`
+   - **Benefits**:
+     - Built-in error detection via checksum algorithm
+     - Human-readable prefix indicates network type
+     - Less prone to transcription errors
+   - **Structure**:
+     - Human-readable prefix: `mm` (e.g., indicates **M**iden **M**ainnet)
+     - Separator: `1`
+     - Data part with integrated checksum
+
+> **Info**
+> - We strongly recommend encoding account ID's using Bech32 for all user-facing applications
+ 
+2. **Hexadecimal** (debugging):
+   - Example: `0x140fa04a1e61fc100000126ef8f1d6`
+   - Frequenty used encoding for blockchain addresses
+     
 ### Code
 
 > A collection of functions defining the `Account`’s programmable interface.
 
-Every Miden `Account` is essentially a smart contract. The `Code` component defines the account’s functions, which can be invoked through both [Note scripts](notes.md#script) and [transaction scripts](transaction.md#inputs). Key characteristics include:
+Every Miden `Account` is essentially a smart contract. The `Code` component defines the account’s functions, which can be invoked through both [Note scripts](note.md#script) and [transaction scripts](transaction.md#inputs). Key characteristics include:
 
 - **Mutable access:** Only the `Account`’s own functions can modify its storage and vault. All state changes—such as updating storage slots, incrementing the nonce, or transferring assets—must occur through these functions.
 - **Function commitment:** Each function can be called by its [MAST](https://0xpolygonmiden.github.io/miden-vm/user_docs/assembly/main.html) root. The root represents the underlying code tree as a 32-byte commitment. This ensures integrity, i.e., the caller calls what he expects.
@@ -55,10 +75,10 @@ Every Miden `Account` is essentially a smart contract. The `Code` component defi
 
 > A flexible, arbitrary data store within the `Account`.
 
-The [storage](../../objects/src/accounts/storage/mod.rs) is divided into a maximum of 255 indexed [storage slots](../../objects/src/accounts/storage/slot/mod.rs). Each slot can either store a 32-byte value or serve as a pointer to a key-value store with large amounts capacity.
+The [storage](https://docs.rs/miden-objects/latest/miden_objects/account/struct.AccountStorage.html) is divided into a maximum of 255 indexed [storage slots](https://docs.rs/miden-objects/latest/miden_objects/account/enum.StorageSlot.html). Each slot can either store a 32-byte value or serve as a pointer to a key-value store with large amounts capacity.
 
 - **`StorageSlot::Value`:** Contains 32 bytes of arbitrary data.
-- **`StorageSlot::Map`:** Contains a [StorageMap](../../objects/src/accounts/storage/map.rs), a key-value store where both keys and values are 32 bytes. The slot's value is a commitment to the entire map.
+- **`StorageSlot::Map`:** Contains a [StorageMap](https://docs.rs/miden-objects/latest/miden_objects/account/struct.StorageMap.html), a key-value store where both keys and values are 32 bytes. The slot's value is a commitment to the entire map.
 
 ### Vault
 
