@@ -9,6 +9,9 @@ language = "en"
 git-repository-url = "https://github.com/0xPolygonMiden/miden-docs"
 no-section-label = true
 
+[output.html.fold]
+enable = true
+
 [preprocessor.katex]
 after = ["links"]
 
