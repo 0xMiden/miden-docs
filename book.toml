@@ -1,9 +1,9 @@
 [book]
-title = "The Miden book"
-authors = ["Miden team"]
+authors = ["Miden contributors"]
 description = "One stop shop for everything Miden"
-multilingual = false
 language = "en"
+multilingual = false
+title = "The Miden book"
 
 [output.html]
 git-repository-url = "https://github.com/0xPolygonMiden/miden-docs"

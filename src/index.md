@@ -2,6 +2,7 @@
 
 ![Miden book image](img/book.png)
 
+> [!Note]
 > Welcome to the Miden book! The one-stop shop where you can find everything Miden related.
 
 Miden is a rollup for high-throughput, private applications.
@@ -14,7 +15,7 @@ If you want to join the technical discussion, please check out the following:
 * [Miden repo](https://github.com/0xPolygonMiden)
 * [Roadmap](roadmap.md)
 
-> **Info**
+> [!WARNING]
 > - These docs are still work-in-progress. 
 > - Some topics have been discussed in greater depth, while others require additional clarification.
 
@@ -22,7 +23,7 @@ If you want to join the technical discussion, please check out the following:
 
 Polygon Miden is currently on release v0.7. This is an early version of the protocol and its components. 
 
-> **Important**
+> [!WARNING]
 > We expect breaking changes on all components.
 
 At the time of writing, Polygon Miden doesn't offer all the features you may expect from a zkRollup. During 2024, we expect to gradually implement more features.
@@ -69,7 +70,7 @@ The Miden node stores all necessary information in its state DBs and provides th
 
 ### Planned features
 
-> **Warning**
+> [!WARNING]
 > The following features are at a planning stage only.
 
 #### Customized smart contracts
