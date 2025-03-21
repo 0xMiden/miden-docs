@@ -7,7 +7,7 @@ MIDEN_CLIENT_REPO="https://github.com/0xPolygonMiden/miden-client.git"
 MIDEN_NODE_REPO="https://github.com/0xPolygonMiden/miden-node.git"
 MIDEN_BASE_REPO="https://github.com/0xPolygonMiden/miden-base.git"
 MIDEN_VM_REPO="https://github.com/0xPolygonMiden/miden-vm"
-MIDEN_COMPILER_REPO="https://github.com/phklive/compiler"
+MIDEN_COMPILER_REPO="https://github.com/0xPolygonMiden/compiler"
 MIDEN_TUTORIALS_REPO="https://github.com/0xPolygonMiden/miden-tutorials"
 AWESOME_MIDEN_REPO="https://github.com/phklive/awesome-miden"
 
@@ -68,13 +68,13 @@ update_docs() {
 }
 
 # Update docs
-update_docs "$MIDEN_CLIENT_REPO" "$CLIENT_DIR" "phklive_update_mdbook"
-update_docs "$MIDEN_NODE_REPO" "$NODE_DIR" "phklive_typo_book"
+update_docs "$MIDEN_CLIENT_REPO" "$CLIENT_DIR" "next"
+update_docs "$MIDEN_NODE_REPO" "$NODE_DIR" "next"
 update_docs "$MIDEN_BASE_REPO" "$BASE_DIR"
-update_docs "$MIDEN_VM_REPO" "$VM_DIR" "phklive-mdbook-support"
-update_docs "$MIDEN_COMPILER_REPO" "$COMPILER_DIR" "phklive-add-mdbook"
+update_docs "$MIDEN_VM_REPO" "$VM_DIR" "next"
+update_docs "$MIDEN_COMPILER_REPO" "$COMPILER_DIR" "next"
 update_docs "$MIDEN_TUTORIALS_REPO" "$TUTORIALS_DIR"
-update_docs "$AWESOME_MIDEN_REPO" "$AWESOME_MIDEN_DIR" "main" "." # Use "." to specify the root directory
+update_docs "$AWESOME_MIDEN_REPO" "$AWESOME_MIDEN_DIR" "main" "."
 
 # Create a README.md in the imported directory
 cat > "$IMPORTED_DIR/README.md" << EOF
