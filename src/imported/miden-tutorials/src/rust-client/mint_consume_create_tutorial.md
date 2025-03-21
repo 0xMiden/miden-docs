@@ -281,7 +281,7 @@ pub async fn initialize_client() -> Result<Client<RpoRandomCoin>, ClientError> {
     let arc_store = Arc::new(store);
 
     // Create authenticator referencing the same store and RNG
-    let authenticator = StoreAuthenticator::new_with_rng(arc_store.clone(), rng.clone());
+    let authenticator = StoreAuthenticator::new_with_rng(arc_store.clone(), rng);
 
     // Instantiate the client. Toggle `in_debug_mode` as needed
     let client = Client::new(rpc_api, rng, arc_store, Arc::new(authenticator), true);
@@ -388,7 +388,7 @@ async fn main() -> Result<(), ClientError> {
 
     for i in 1..=5 {
         let transaction_request = TransactionRequestBuilder::mint_fungible_asset(
-            fungible_asset.clone(),
+            fungible_asset,
             alice_account.id(),
             NoteType::Public,
             client.rng(),

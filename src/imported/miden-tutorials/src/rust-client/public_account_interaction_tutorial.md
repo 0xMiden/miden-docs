@@ -175,7 +175,7 @@ pub async fn initialize_client() -> Result<Client<RpoRandomCoin>, ClientError> {
     let arc_store = Arc::new(store);
 
     // Create authenticator referencing the store and RNG
-    let authenticator = StoreAuthenticator::new_with_rng(arc_store.clone(), rng.clone());
+    let authenticator = StoreAuthenticator::new_with_rng(arc_store.clone(), rng);
 
     // Instantiate client (toggle debug mode as needed)
     let client = Client::new(rpc_api, rng, arc_store, Arc::new(authenticator), true);
@@ -214,7 +214,6 @@ async fn main() -> Result<(), ClientError> {
 }
 ```
 
-
 ## Step 4: Reading public state from a smart contract
 
 To read the public storage state of a smart contract on Miden we either instantiate the `TonicRpcClient` by itself, or use the `test_rpc_api()` method on the `Client` instance. In this example, we will be using the `test_rpc_api()` method. 
@@ -229,7 +228,7 @@ Add the following code snippet to the end of your `src/main.rs` function:
 // -------------------------------------------------------------------------
 println!("\n[STEP 1] Reading data from public state");
 
-// Define the AccountId of the account to read from
+// Define the Counter Contract account id from counter contract deploy
 let counter_contract_id = AccountId::from_hex("0x4eedb9db1bdcf90000036bcebfe53a").unwrap();
 
 let account_details = client
@@ -243,7 +242,7 @@ let AccountDetails::Public(counter_contract_details, _) = account_details else {
 };
 
 // Getting the value of the count from slot 0 and the nonce of the counter contract
-let count_value = counter_contract_details.storage().slots().get(0).unwrap();
+let count_value = counter_contract_details.storage().slots().first().unwrap();
 let counter_nonce = counter_contract_details.nonce();
 
 println!("count val: {:?}", count_value.value());
@@ -280,7 +279,7 @@ let account_code = fs::read_to_string(file_path).unwrap();
 // Prepare assembler (debug mode = true)
 let assembler: Assembler = TransactionKernel::assembler().with_debug_mode(true);
 
-// Compile the account code into `AccountComponent` with the count value returned by the node 
+// Compile the account code into `AccountComponent` with the count value returned by the node
 let account_component = AccountComponent::compile(
     account_code,
     assembler,
@@ -289,7 +288,7 @@ let account_component = AccountComponent::compile(
 .unwrap()
 .with_supports_all_types();
 
-// Initialize the AccountStorage with the count value returned by the node  
+// Initialize the AccountStorage with the count value returned by the node
 let account_storage =
     AccountStorage::new(vec![StorageSlot::Value(count_value.value())]).unwrap();
 
@@ -341,7 +340,8 @@ let file_path = Path::new("./masm/scripts/counter_script.masm");
 let original_code = fs::read_to_string(file_path).unwrap();
 
 // Replace the placeholder with the actual procedure call
-let replaced_code = original_code.replace("{increment_count}", &increment_procedure);
+
+let replaced_code = original_code.replace("{increment_count}", increment_procedure);
 println!("Final script:\n{}", replaced_code);
 
 // Compile the script
@@ -438,7 +438,7 @@ pub async fn initialize_client() -> Result<Client<RpoRandomCoin>, ClientError> {
     let arc_store = Arc::new(store);
 
     // Create authenticator referencing the store and RNG
-    let authenticator = StoreAuthenticator::new_with_rng(arc_store.clone(), rng.clone());
+    let authenticator = StoreAuthenticator::new_with_rng(arc_store.clone(), rng);
 
     // Instantiate client (toggle debug mode as needed)
     let client = Client::new(rpc_api, rng, arc_store, Arc::new(authenticator), true);
@@ -492,7 +492,7 @@ async fn main() -> Result<(), ClientError> {
     };
 
     // Getting the value of the count from slot 0 and the nonce of the counter contract
-    let count_value = counter_contract_details.storage().slots().get(0).unwrap();
+    let count_value = counter_contract_details.storage().slots().first().unwrap();
     let counter_nonce = counter_contract_details.nonce();
 
     println!("count val: {:?}", count_value.value());
@@ -564,7 +564,8 @@ async fn main() -> Result<(), ClientError> {
     let original_code = fs::read_to_string(file_path).unwrap();
 
     // Replace the placeholder with the actual procedure call
-    let replaced_code = original_code.replace("{increment_count}", &increment_procedure);
+
+    let replaced_code = original_code.replace("{increment_count}", increment_procedure);
     println!("Final script:\n{}", replaced_code);
 
     // Compile the script

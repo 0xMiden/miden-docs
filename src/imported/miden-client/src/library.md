@@ -3,7 +3,7 @@ To use the Miden client library in a Rust project, include it as a dependency.
 In your project's `Cargo.toml`, add:
 
 ```toml
-miden-client = { version = "0.7" }
+miden-client = { version = "0.8" }
 ```
 
 ### Features
@@ -11,7 +11,7 @@ miden-client = { version = "0.7" }
 The Miden client library supports the [`concurrent`](https://github.com/0xPolygonMiden/miden-client/blob/main/docs/install-and-run.md#concurrent-feature) feature which is recommended for developing applications with the client. To use it, add the following to your project's `Cargo.toml`:
 
 ```toml
-miden-client = { version = "0.7", features = ["concurrent"] }
+miden-client = { version = "0.8", features = ["concurrent"] }
 ```
 
 The library also supports several other features. Please refer to the crate's documentation to learn more.
@@ -25,8 +25,8 @@ let sqlite_store = SqliteStore::new("path/to/store".try_into()?).await?;
 let store = Arc::new(sqlite_store);
 
 // Generate a random seed for the RpoRandomCoin.
-let mut rng = rand::thread_rng();
-let coin_seed: [u64; 4] = rng.gen();
+let mut rng = rand::rng();
+let coin_seed: [u64; 4] = rng.random();
 
 // Initialize the random coin using the generated seed.
 let rng = RpoRandomCoin::new(coin_seed.map(Felt::new));
@@ -37,7 +37,7 @@ let authenticator = StoreAuthenticator::new_with_rng(store.clone(), rng);
 // Instantiate the client using a Tonic RPC client
 let endpoint = Endpoint::new("https".into(), "localhost".into(), Some(57291));
 let client: Client<RpoRandomCoin> = Client::new(
-    Box::new(TonicRpcClient::new(endpoint, 10_000)),
+    Box::new(TonicRpcClient::new(&endpoint, 10_000)),
     rng,
     store,
     Arc::new(authenticator),

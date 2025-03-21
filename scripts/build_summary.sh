@@ -40,8 +40,8 @@ process_repo() {
         # Create a temporary file to process the content
         temp_file=$(mktemp)
         
-        # Skip the first 2 lines
-        tail -n +3 "$summary_file" > "$temp_file"
+        # Skip the first 4 lines
+        tail -n +5 "$summary_file" > "$temp_file"
         
         # Use Perl for more reliable text processing (available on most Unix systems)
         perl -pe "s|\(\.\/|\(imported\/$repo_name\/src\/|g; s|\(([a-zA-Z0-9_-]+\.md)|\(imported\/$repo_name\/src\/\$1|g;" "$temp_file" >> "$OUTPUT_FILE"

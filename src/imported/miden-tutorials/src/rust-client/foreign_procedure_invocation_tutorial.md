@@ -153,7 +153,7 @@ pub async fn initialize_client() -> Result<Client<RpoRandomCoin>, ClientError> {
     let arc_store = Arc::new(store);
 
     // Create authenticator referencing the store and RNG
-    let authenticator = StoreAuthenticator::new_with_rng(arc_store.clone(), rng.clone());
+    let authenticator = StoreAuthenticator::new_with_rng(arc_store.clone(), rng);
 
     // Instantiate client (toggle debug mode as needed)
     let client = Client::new(rpc_api, rng, arc_store, Arc::new(authenticator), true);
@@ -202,7 +202,7 @@ async fn main() -> Result<(), ClientError> {
     let get_count_hash = "0x92495ca54d519eb5e4ba22350f837904d3895e48d74d8079450f19574bb84cb6";
 
     let count_reader_code = raw_account_code
-        .replace("{get_count_proc_hash}", &get_count_hash)
+        .replace("{get_count_proc_hash}", get_count_hash)
         .replace(
             "{account_id_prefix}",
             &counter_contract_id.prefix().to_string(),
@@ -262,7 +262,7 @@ async fn main() -> Result<(), ClientError> {
         .await
         .unwrap();
 
-    // Getting the hash of the `copy_count` procedure
+    // Getting the root hash of the `copy_count` procedure
     let get_proc_export = count_reader_component
         .library()
         .exports()
@@ -324,7 +324,7 @@ let AccountDetails::Public(counter_contract_details, _) = account_details else {
 };
 
 // Getting the value of the count from slot 0 and the nonce of the counter contract
-let count_value = counter_contract_details.storage().slots().get(0).unwrap();
+let count_value = counter_contract_details.storage().slots().first().unwrap();
 let counter_nonce = counter_contract_details.nonce();
 
 println!("count val: {:?}", count_value.value());
@@ -512,7 +512,7 @@ pub async fn initialize_client() -> Result<Client<RpoRandomCoin>, ClientError> {
     let arc_store = Arc::new(store);
 
     // Create authenticator referencing the store and RNG
-    let authenticator = StoreAuthenticator::new_with_rng(arc_store.clone(), rng.clone());
+    let authenticator = StoreAuthenticator::new_with_rng(arc_store.clone(), rng);
 
     // Instantiate client (toggle debug mode as needed)
     let client = Client::new(rpc_api, rng, arc_store, Arc::new(authenticator), true);
@@ -561,7 +561,7 @@ async fn main() -> Result<(), ClientError> {
     let get_count_hash = "0x92495ca54d519eb5e4ba22350f837904d3895e48d74d8079450f19574bb84cb6";
 
     let count_reader_code = raw_account_code
-        .replace("{get_count_proc_hash}", &get_count_hash)
+        .replace("{get_count_proc_hash}", get_count_hash)
         .replace(
             "{account_id_prefix}",
             &counter_contract_id.prefix().to_string(),
@@ -621,7 +621,7 @@ async fn main() -> Result<(), ClientError> {
         .await
         .unwrap();
 
-    // Getting the hash of the `copy_count` procedure
+    // Getting the root hash of the `copy_count` procedure
     let get_proc_export = count_reader_component
         .library()
         .exports()
@@ -659,7 +659,7 @@ async fn main() -> Result<(), ClientError> {
     };
 
     // Getting the value of the count from slot 0 and the nonce of the counter contract
-    let count_value = counter_contract_details.storage().slots().get(0).unwrap();
+    let count_value = counter_contract_details.storage().slots().first().unwrap();
     let counter_nonce = counter_contract_details.nonce();
 
     println!("count val: {:?}", count_value.value());
