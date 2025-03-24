@@ -5,6 +5,7 @@
 
 - [Protocol](imported/miden-base/src/index.md)
     * [Account](imported/miden-base/src/account.md)
+      - [Components](imported/miden-base/src/component_templates.md)
     * [Note](imported/miden-base/src/note.md)
     * [Asset](imported/miden-base/src/asset.md)
     * [Transaction](imported/miden-base/src/transaction.md)
