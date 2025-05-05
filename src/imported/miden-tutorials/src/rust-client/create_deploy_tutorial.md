@@ -371,7 +371,7 @@ In the next section we will cover how to mint tokens from the faucet, consume no
 
 ### Running the example
 
-To run a full working example navigate to the `rust-client` directory in the [miden-tutorials](https://github.com/0xPolygonMiden/miden-tutorials/) repository and run this command:
+To run a full working example navigate to the `rust-client` directory in the [miden-tutorials](https://github.com/0xmiden/miden-tutorials/) repository and run this command:
 
 ```bash
 cd rust-client

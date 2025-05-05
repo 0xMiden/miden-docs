@@ -14,7 +14,7 @@ There are two ways to connect to a Miden node:
 In a terminal window, clone the miden-tutorials repository and navigate to the root of the repository using this command:
 
 ```bash
-git clone git@github.com:0xPolygonMiden/miden-node.git
+git clone git@github.com:0xmiden/miden-node.git
 cd miden-node
 ```
 

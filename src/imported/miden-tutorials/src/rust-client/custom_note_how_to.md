@@ -391,7 +391,7 @@ By leveraging Miden’s privacy features, you can create customized logic for se
 
 ### Running the example
 
-To run the custom note example, navigate to the `rust-client` directory in the [miden-tutorials](https://github.com/0xPolygonMiden/miden-tutorials/) repository and run this command:
+To run the custom note example, navigate to the `rust-client` directory in the [miden-tutorials](https://github.com/0xmiden/miden-tutorials/) repository and run this command:
 
 ```bash
 cd rust-client

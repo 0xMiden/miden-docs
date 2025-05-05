@@ -332,7 +332,7 @@ async fn main() -> Result<(), ClientError> {
 
 ### Running the example
 
-To run the full example, navigate to the `rust-client` directory in the [miden-tutorials](https://github.com/0xPolygonMiden/miden-tutorials/) repository and run this command:
+To run the full example, navigate to the `rust-client` directory in the [miden-tutorials](https://github.com/0xmiden/miden-tutorials/) repository and run this command:
 
 ```bash
 cd rust-client

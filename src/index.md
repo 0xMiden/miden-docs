@@ -12,7 +12,7 @@ Using Polygon Miden, builders can create novel, high-throughput, private applica
 If you want to join the technical discussion, please check out the following:
 
 * [Telegram](https://t.me/BuildOnMiden)
-* [Miden Github](https://github.com/0xPolygonMiden)
+* [Miden Github](https://github.com/0xmiden)
 * [Roadmap](roadmap.md)
 
 > [!WARNING]
@@ -58,7 +58,7 @@ The Miden client allows for proof generation by an external service if the user 
 
 Currently, there are three different standardized smart contracts available. A basic wallet smart contract that sends and receives assets, and fungible and non-fungible faucets to mint and burn assets.
 
-All accounts are written in [MASM](https://0xpolygonmiden.github.io/miden-vm/user_docs/assembly/main.html).
+All accounts are written in [MASM](https://0xmiden.github.io/miden-vm/user_docs/assembly/main.html).
 
 #### Customized smart contracts
 

@@ -579,7 +579,7 @@ and then Alice sent 5 separate 50-token notes to 5 different users.
 
 ### Running the example
 
-To run a full working example navigate to the `rust-client` directory in the [miden-tutorials](https://github.com/0xPolygonMiden/miden-tutorials/) repository and run this command:
+To run a full working example navigate to the `rust-client` directory in the [miden-tutorials](https://github.com/0xmiden/miden-tutorials/) repository and run this command:
 
 ```bash
 cd rust-client

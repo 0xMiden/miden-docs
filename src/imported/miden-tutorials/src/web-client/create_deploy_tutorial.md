@@ -338,7 +338,7 @@ In the next section we will cover how to mint tokens from the faucet, consume no
 
 ### Running the example
 
-To run a full working example navigate to the `web-client` directory in the [miden-tutorials](https://github.com/0xPolygonMiden/miden-tutorials/) repository and run the web application example:
+To run a full working example navigate to the `web-client` directory in the [miden-tutorials](https://github.com/0xmiden/miden-tutorials/) repository and run the web application example:
 
 ```bash
 cd web-client
