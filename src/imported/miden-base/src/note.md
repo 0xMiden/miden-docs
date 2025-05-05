@@ -112,7 +112,7 @@ Only those who know the RECIPIENT’s pre-image can consume the `Note`. For priv
 
 The [transaction prologue](transaction.md) requires all necessary data to compute the `Note` hash. This setup allows scenario-specific restrictions on who may consume a `Note`.
 
-For a practical example, refer to the [SWAP note script](https://github.com/0xPolygonMiden/miden-base/blob/main/miden-lib/asm/note_scripts/SWAP.masm), where the RECIPIENT ensures that only a defined target can consume the swapped asset.
+For a practical example, refer to the [SWAP note script](https://github.com/0xmiden/miden-base/blob/main/miden-lib/asm/note_scripts/SWAP.masm), where the RECIPIENT ensures that only a defined target can consume the swapped asset.
 
 #### Note nullifier ensuring private consumption
 

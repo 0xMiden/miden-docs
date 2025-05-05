@@ -21,17 +21,17 @@ Visit our [website](https://polygon.technology/polygon-miden)!
 ## Misc
 
 - [Miden website](https://polygon.technology/polygon-miden)
-- [Miden organization repository](https://github.com/0xPolygonMiden)
+- [Miden organization repository](https://github.com/0xmiden)
 - [Miden protocol playground](https://miden-playground.pages.dev/)
-- [Miden VM playground](https://0xpolygonmiden.github.io/examples/)
-- [Miden tutorials](https://github.com/0xPolygonMiden/miden-tutorials)
-- [Miden X](https://twitter.com/0xPolygonMiden)
+- [Miden VM playground](https://0xmiden.github.io/examples/)
+- [Miden tutorials](https://github.com/0xmiden/miden-tutorials)
+- [Miden X](https://twitter.com/0xmiden)
 - [Miden Telegram](https://t.me/BuildOnMiden)
 
 ## Documentation
 
-- [Miden protocol documentation](https://0xpolygonmiden.github.io/miden-docs)
-- [Miden VM documentation](https://0xpolygonmiden.github.io/miden-vm/)
+- [Miden protocol documentation](https://0xmiden.github.io/miden-docs)
+- [Miden VM documentation](https://0xmiden.github.io/miden-vm/)
 
 ## Tooling
 
