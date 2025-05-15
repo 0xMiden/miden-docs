@@ -23,6 +23,7 @@
     - [Foreign Procedure Invocation](imported/miden-tutorials/src/rust-client/foreign_procedure_invocation_tutorial.md)
     - [How to Use Unauthenticated Notes](imported/miden-tutorials/src/rust-client/unauthenticated_note_how_to.md)
     - [How to Use Mappings in Miden Assembly](imported/miden-tutorials/src/rust-client/mappings_in_masm_how_to.md)
+    - [Consuming On-Chain Price Data from the Pragma Oracle](imported/miden-tutorials/src/rust-client/oracle_tutorial.md)
   - [Web-Client](imported/miden-tutorials/src/web-client/about.md)
     - [Creating Accounts and Faucets](imported/miden-tutorials/src/web-client/create_deploy_tutorial.md)
     - [Mint, Consume, and Create Notes](imported/miden-tutorials/src/web-client/mint_consume_create_tutorial.md)
