@@ -5,7 +5,7 @@ on:
     branches:
       - main
   workflow_run:
-    workflows: ["Update Documentation"]
+    workflows: ["update documentation"]
     types: [completed]
 
 jobs:
