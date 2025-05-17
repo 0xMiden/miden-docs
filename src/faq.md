@@ -2,7 +2,7 @@
 
 ## How is privacy implemented in Miden?
 
-Miden leverages Zero Knowledge proofs and client side execution and proving to provide security and privacy.
+Miden leverages zero-knowledge proofs and client side execution and proving to provide security and privacy.
 
 ## Does Miden support encrypted notes?
 
@@ -12,7 +12,7 @@ At the moment, Miden does not have support for encrypted notes but it is a plann
 
 Miden leverages delegated proving for a few technical and practical reasons:
 
-1. **Computational:** Generating Zero Knowledge proofs is a computationally intensive work. The proving process requires significant processing power and memory, making it impractical for some end-user devices (like smartphones) to generate.
+1. **Computational:** Generating zero-knowledge proofs is a computationally intensive work. The proving process requires significant processing power and memory, making it impractical for some end-user devices (like smartphones) to generate.
 2. **Technical architecture**:
 Miden's architecture separates concerns between:
     - **Transaction Creation**: End users create and sign transactions
