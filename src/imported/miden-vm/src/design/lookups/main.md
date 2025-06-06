@@ -1,6 +1,6 @@
 # Lookup arguments in Miden VM
 
-Zero-knowledge virtual machines frequently make use of lookup arguments to enable performance optimizations. Miden VM uses two types of arguments: multiset checks and a multivariate lookup based on logarithmic derivatives known as LogUp. A brief introduction to multiset checks can be found [here](./multiset.md). The description of LogUp can be found [here](https://eprint.iacr.org/2022/1530.pdf).
+Zero knowledge virtual machines frequently make use of lookup arguments to enable performance optimizations. Miden VM uses two types of arguments: multiset checks and a multivariate lookup based on logarithmic derivatives known as LogUp. A brief introduction to multiset checks can be found [here](./multiset.md). The description of LogUp can be found [here](https://eprint.iacr.org/2022/1530.pdf).
 
 In Miden VM, lookup arguments are used for two purposes:
 
@@ -29,7 +29,7 @@ Miden VM makes use of 6 virtual tables across 4 components, all of which are imp
 
 ## Communication buses in Miden VM
 
-One strategy for improving the efficiency of a zero-knowledge virtual machine is to use specialized components for complex operations and have the main circuit “offload” those operations to the corresponding components by specifying inputs and outputs and allowing the proof of execution to be done by the dedicated component instead of by the main circuit.
+One strategy for improving the efficiency of a zero knowledge virtual machine is to use specialized components for complex operations and have the main circuit “offload” those operations to the corresponding components by specifying inputs and outputs and allowing the proof of execution to be done by the dedicated component instead of by the main circuit.
 
 These specialized components are designed to prove the internal correctness of the execution of the operations they support. However, in isolation they cannot make any guarantees about the source of the input data or the destination of the output data.
 

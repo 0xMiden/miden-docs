@@ -20,7 +20,7 @@ Visit our [website](https://miden.xyz/)!
 
 ## Misc
 
-- [Miden website]([https://polygon.technology/polygon-miden](https://miden.xyz/))
+- [Miden website](https://miden.xyz/)
 - [Miden organization repository](https://github.com/0xMiden)
 - [Miden protocol playground](https://miden-playground.pages.dev/)
 - [Miden VM playground](https://0xmiden.github.io/examples/)
