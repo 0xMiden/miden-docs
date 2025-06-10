@@ -5,7 +5,7 @@ In this section, we show you how to create a new local Miden account and how to 
 The Miden client facilitates interaction with the Miden rollup and provides a way to execute and prove transactions.
 
 > **Tip**
-> Check the [Miden client documentation](https://0xpolygonmiden.github.io/miden-docs/miden-client/cli-reference.html) for more information.
+> Check the [Miden client documentation](https://0xMiden.github.io/miden-docs/miden-client/cli-reference.html) for more information.
 
 1. If you haven't already done so as part of another tutorial, open your terminal and create a new directory to store the Miden client.
 
@@ -17,7 +17,7 @@ The Miden client facilitates interaction with the Miden rollup and provides a wa
 2. Install the Miden client.
 
       ```shell
-      cargo install miden-cli --features concurrent
+      cargo install miden-cli
       ```
       You can now use the `miden --version` command, and you should see `Miden 0.9.0`.
 
@@ -75,7 +75,7 @@ Save the account ID for a future step.
       Successfully imported note 0x0ff340133840d35e95e0dc2e62c88ed75ab2e383dc6673ce0341bd486fed8cb6
       ```
 
-3. Now that the note has been successfully imported, you can view the note's information using the following command: 
+3. Now that the note has been successfully imported, you can view the note's information using the following command:
 
       ```shell
       miden notes
@@ -104,9 +104,10 @@ You will see something like this as output:
 ```sh
 State synced to block 179672
 New public notes: 0
-Tracked notes updated: 1
+Committed notes: 1
 Tracked notes consumed: 0
 Tracked accounts updated: 0
+Locked accounts: 0
 Commited transactions: 0
 ```
 
@@ -187,7 +188,7 @@ You have successfully configured and used the Miden client to interact with a Mi
 
 You have performed basic Miden rollup operations like submitting proofs of transactions, generating and consuming notes.
 
-For more information on the Miden client, refer to the [Miden client documentation](https://0xpolygonmiden.github.io/miden-docs/miden-client/index.html).
+For more information on the Miden client, refer to the [Miden client documentation](https://0xMiden.github.io/miden-docs/miden-client/index.html).
 
 ## Debugging tips (clear state and folder)
 

@@ -1,4 +1,4 @@
-In this section, we show you how to execute transactions and send funds to another account using the Miden client and [public notes](https://0xpolygonmiden.github.io/miden-docs/miden-base/architecture/notes.html#note-storage-mode).
+In this section, we show you how to execute transactions and send funds to another account using the Miden client and [public notes](https://0xMiden.github.io/miden-docs/miden-base/architecture/notes.html#note-storage-mode).
 
 > **Important: Prerequisite steps**
 > - You should have already followed the [prerequisite steps](prerequisites.md) and [get started](create-account-use-faucet.md) documents.
@@ -7,7 +7,7 @@ In this section, we show you how to execute transactions and send funds to anoth
 ## Create a second client
 
 > **Tip**
-> Remember to use the [Miden client documentation](https://0xpolygonmiden.github.io/miden-docs/miden-client/cli-reference.html) for clarifications.
+> Remember to use the [Miden client documentation](https://0xMiden.github.io/miden-docs/miden-client/cli-reference.html) for clarifications.
 
 This is an alternative to the [private P2P transactions](p2p-private.md) process.
 
@@ -28,7 +28,7 @@ To do this, we use two terminals with their own state (using their own `miden-cl
     miden init --network testnet # Creates a miden-client.toml file configured with the testnet node's IP
     ```
 
-3. On the new client, create a new [basic account](https://0xpolygonmiden.github.io/miden-docs/miden-base/architecture/accounts.html):
+3. On the new client, create a new [basic account](https://0xMiden.github.io/miden-docs/miden-base/architecture/accounts.html):
 
     ```shell
     miden new-wallet --mutable -s public
@@ -53,7 +53,7 @@ To do this, we use two terminals with their own state (using their own `miden-cl
     ```
 
     > **Note**
-    > The faucet account id is `0xad904b3138d71d3e` and can also be found on the [Miden faucet website](https://testnet.miden.io/) under the title **Miden faucet**.
+    > The faucet account ID can be found on the [Miden faucet website](https://testnet.miden.io/) under the title **Miden faucet**.
 
     This generates a Pay-to-ID (`P2ID`) note containing `50` tokens, transferred from one account to the other. As the note is public, the second account can receive the necessary details by syncing with the node.
 
@@ -63,7 +63,7 @@ To do this, we use two terminals with their own state (using their own `miden-cl
     miden sync
     ```
 
-3. At this point, we should have received the public note details. 
+3. At this point, we should have received the public note details.
 
     ```sh
     miden notes --list
@@ -85,11 +85,11 @@ That's it!
 Account C has now consumed the note and there should be new assets in the account:
 
 ```sh
-miden account --show <account-ID> 
+miden account --show <account-ID>
 ```
 
 ## Clear state
 
-All state is maintained in `store.sqlite3`, located in the directory defined in the `miden-client.toml` file. 
+All state is maintained in `store.sqlite3`, located in the directory defined in the `miden-client.toml` file.
 
 To clear all state, delete this file. It recreates on any command execution.
