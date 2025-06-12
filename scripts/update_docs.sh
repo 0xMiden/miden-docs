@@ -3,12 +3,12 @@
 # update_docs.sh - Script to fetch documentation from multiple repositories
 
 # Set the URLs of the repositories
-MIDEN_CLIENT_REPO="https://github.com/0xPolygonMiden/miden-client.git"
-MIDEN_NODE_REPO="https://github.com/0xPolygonMiden/miden-node.git"
-MIDEN_BASE_REPO="https://github.com/0xPolygonMiden/miden-base.git"
-MIDEN_VM_REPO="https://github.com/0xPolygonMiden/miden-vm"
-MIDEN_COMPILER_REPO="https://github.com/0xPolygonMiden/compiler"
-MIDEN_TUTORIALS_REPO="https://github.com/0xPolygonMiden/miden-tutorials"
+MIDEN_CLIENT_REPO="https://github.com/0xMiden/miden-client.git"
+MIDEN_NODE_REPO="https://github.com/0xMiden/miden-node.git"
+MIDEN_BASE_REPO="https://github.com/0xMiden/miden-base.git"
+MIDEN_VM_REPO="https://github.com/0xMiden/miden-vm"
+MIDEN_COMPILER_REPO="https://github.com/0xMiden/compiler"
+MIDEN_TUTORIALS_REPO="https://github.com/0xMiden/miden-tutorials"
 AWESOME_MIDEN_REPO="https://github.com/phklive/awesome-miden"
 
 # Define the base imported directory
@@ -85,12 +85,12 @@ This directory contains automatically imported documentation from various Miden 
 
 If you want to make changes to any documentation, please contribute to the original repositories:
 
-- [miden-client](https://github.com/0xPolygonMiden/miden-client)
-- [miden-node](https://github.com/0xPolygonMiden/miden-node)
-- [miden-base](https://github.com/0xPolygonMiden/miden-base)
-- [miden-vm](https://github.com/0xPolygonMiden/miden-vm)
+- [miden-client](https://github.com/0xMiden/miden-client)
+- [miden-node](https://github.com/0xMiden/miden-node)
+- [miden-base](https://github.com/0xMiden/miden-base)
+- [miden-vm](https://github.com/0xMiden/miden-vm)
 - [miden-compiler](https://github.com/phklive/compiler)
-- [miden-tutorials](https://github.com/0xPolygonMiden/miden-tutorials)
+- [miden-tutorials](https://github.com/0xMiden/miden-tutorials)
 - [awesome-miden](https://github.com/phklive/awesome-miden)
 EOF
 
