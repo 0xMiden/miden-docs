@@ -499,15 +499,14 @@ async fn main() -> Result<(), ClientError> {
         alice_account.id(),
         target_account_id,
     );
-    let transaction_request = TransactionRequestBuilder::pay_to_id(
-        payment_transaction,
-        None,             // recall_height
-        NoteType::Public, // note type
-        client.rng(),     // rng
-    )
-    .unwrap()
-    .build()
-    .unwrap();
+    let transaction_request = TransactionRequestBuilder::new()
+        .build_pay_to_id(
+            payment_transaction,
+            None,             // recall_height
+            NoteType::Public, // note type
+            client.rng(),     // rng
+        )
+        .unwrap();
     let tx_execution_result = client
         .new_transaction(alice_account.id(), transaction_request)
         .await?;
