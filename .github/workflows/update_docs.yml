@@ -3,6 +3,7 @@ name: update documentation
 on:
   schedule:
     - cron: "0 0 * * *"
+  workflow_dispatch: # Allow manual triggering for testing
 
 jobs:
   update-docs:
@@ -15,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }} # Important: use token for checkout
 
       - name: Set Up Git
         run: |
@@ -22,16 +24,16 @@ jobs:
           git config --global user.email "actions@github.com"
 
       - name: Run Update Script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Pass token to script if needed
         run: ./scripts/update_docs.sh
 
       - name: Commit and Push Changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git add -A
           if git diff --cached --quiet; then
             echo "No changes detected."
           else
             git commit -m "Automated update of documentation"
-            git push origin HEAD:${{ github.ref }}
+            git push origin main  # Explicitly specify the branch
           fi
