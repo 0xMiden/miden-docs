@@ -2,11 +2,13 @@ name: update documentation
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 
 jobs:
   update-docs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Grant write access to the repository
 
     steps:
       - name: Checkout Repository
