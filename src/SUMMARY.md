@@ -29,6 +29,8 @@
   - [Web-Client](imported/miden-tutorials/src/web-client/about.md)
     - [Creating Accounts and Faucets](imported/miden-tutorials/src/web-client/create_deploy_tutorial.md)
     - [Mint, Consume, and Create Notes](imported/miden-tutorials/src/web-client/mint_consume_create_tutorial.md)
+    - [Creating Multiple Notes in a Single Transaction](imported/miden-tutorials/src/web-client/creating_multiple_notes_tutorial.md)
+    - [Incrementing the Count of the Counter Contract](imported/miden-tutorials/src/web-client/counter_contract_tutorial.md)
 
 - [Client](imported/miden-client/src/index.md)
     - [Installation](imported/miden-client/src/install-and-run.md)
