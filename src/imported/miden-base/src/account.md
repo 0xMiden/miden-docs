@@ -140,7 +140,7 @@ Type and mutability are encoded in the two most significant bits of the account'
 
 ### Account storage mode
 
-Users can choose whether their accounts are stored publicly or privately. The preference is encoded in the third and forth most significant bits of the account's [ID](#id):
+Users can choose whether their accounts are stored publicly or privately. The preference is encoded in the third and fourth most significant bits of the account's [ID](#id):
 
 - **Public Accounts:**
   The account’s state is stored on-chain, similar to how accounts are stored in public blockchains like Ethereum.

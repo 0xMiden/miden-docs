@@ -34,7 +34,7 @@ An Asset represents a digital resource with value that can be owned, transferred
 
 ## AssetVault
 
-The AssetVault is used for managing assets within accounts. It provides a way for storing and transfering assets associated with each account.
+The AssetVault is used for managing assets within accounts. It provides a way for storing and transferring assets associated with each account.
 
 ## Batch
 

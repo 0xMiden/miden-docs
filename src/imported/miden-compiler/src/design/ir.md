@@ -97,7 +97,7 @@ Operations may also have associated [_attributes_](#attributes). Attributes repr
 
 ### Regions
 
-A _region_ encapsulates a control-flow graph (CFG) of one or more [_basic blocks_](#blocks). In HIR, the contents of a region are almost always in _single-static assignment_ (SSA) form, meaning that values may only be defined once, definitions must  _dominate_ uses, and operations in the CFG described by the region are executed one-by-one, from the entry block of the region, until control exits the region (e.g. via `builtin.ret` or some other terminator instruction).
+A _region_ encapsulates a control-flow graph (CFG) of one or more [_basic blocks_](#blocks). In HIR, the contents of a region are almost always in _single-static assignment_ (SSA) form, meaning that values may only be defined once, definitions must _dominate_ uses, and operations in the CFG described by the region are executed one-by-one, from the entry block of the region, until control exits the region (e.g. via `builtin.ret` or some other terminator instruction).
 
 The order of operations in the region closely corresponds to their scheduling order, though the code generator may reschedule operations when it is safe - and more efficient - to do so.
 
@@ -153,7 +153,7 @@ Similarly, the ordering of operand results also correlates to the operand stack 
 
 Immediates are a built-in [_attribute_](#attributes) type, which we use to represent constants that are able to be used as "immediate" operands of machine instructions (e.g. a literal memory address, or integer value).
 
-The `Immediate` type  provides a number of useful APIs for interacting with an immediate value, such as bitcasts, conversions, and common queries, e.g. "is this a signed integer".
+The `Immediate` type provides a number of useful APIs for interacting with an immediate value, such as bitcasts, conversions, and common queries, e.g. "is this a signed integer".
 
 It should be noted, that this type is a convenience, it is entirely possible to represent the same information using other types, e.g. `u32` rather than `Immediate::U32`, and the IR makes no assumptions about what type is used for constants in general. We do, however, assume this type is used for constants in specific dialects of the IR, e.g. `hir`.
 

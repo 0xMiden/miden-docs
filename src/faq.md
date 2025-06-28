@@ -2,11 +2,11 @@
 
 ## How is privacy implemented in Miden?
 
-Miden leverages zero-knowledge proofs and client side execution and proving to provide security and privacy.
+Miden leverages zero-knowledge proofs and client-side execution and proving to provide security and privacy.
 
 ## Does Miden support encrypted notes?
 
-At the moment, Miden does not have support for encrypted notes but it is a planned feature.
+At the moment, Miden does not support encrypted notes, but it is a planned feature.
 
 ## Why does Miden have delegated proving?
 
@@ -50,7 +50,7 @@ Delegated provers can use optimized hardware that wouldn't be available to end-u
 
 ### 5. Proof Generation
 
-- A STARK based cryptographic proof is generated attesting to the correctness of the execution
+- A STARK-based cryptographic proof is generated attesting to the correctness of the execution
 - A proof for the aggregated transaction is created
 
 ### 6. Block Production
@@ -92,7 +92,7 @@ A Miden operator is an entity that maintains the infrastructure necessary for th
 4. Maintaining Data Availability
 5. Participating in the Consensus Mechanism
 
-## How does bridging works in Miden?
+## How does bridging work in Miden?
 
 Miden does not yet have a fully operational bridge, work in progress.
 
