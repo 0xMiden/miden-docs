@@ -179,7 +179,7 @@ export async function createMintConsume(): Promise<void> {
 Append this to the end of `webClient()`:
 
 ```ts
-// 4. Deploy faucet
+// 3. Deploy faucet
 console.log("Creating faucet…");
 const faucetAccount = await client.newFaucet(
   AccountStorageMode.public(), // public faucet
