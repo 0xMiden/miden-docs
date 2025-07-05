@@ -100,7 +100,7 @@ Visit our [website](https://miden.xyz/)!
 - [Polygon Miden: Extending Ethereum’s Feature Set | Dominik Schmid (April 2023)](https://www.youtube.com/watch?v=jMTMidok9sA&list=PLslsfan1R_z20bEgUU_ZyY64AHx5C6vgg&index=19) - Dominik Schmid, Ethereum Berlin
 - [Using a Hybrid UTXO and Account-based State Model in a ZK Rollup by Bobbin Threadbare](https://www.youtube.com/watch?v=TEPY19-hie4&list=PLslsfan1R_z20bEgUU_ZyY64AHx5C6vgg&index=20) - Bobbin Threadbare, Devcon Bogota
 - [Miden: Ethereum Extended](https://www.youtube.com/watch?v=FEh7mYASia4&list=PLslsfan1R_z20bEgUU_ZyY64AHx5C6vgg&index=21) - Dominik Schmid, Ethereum Engineering Group
-- [Polygon Miden - a STARK based ZK Rollup](https://www.youtube.com/watch?v=pLu7XeEN-f4&list=PLslsfan1R_z20bEgUU_ZyY64AHx5C6vgg&index=22) - Bobbin Threadbare, ETH Global
+- [Polygon Miden - a STARK-based ZK Rollup](https://www.youtube.com/watch?v=pLu7XeEN-f4&list=PLslsfan1R_z20bEgUU_ZyY64AHx5C6vgg&index=22) - Bobbin Threadbare, ETH Global
 - [Episode 210: The Road to STARKs and Miden with Bobbin Threadbare](https://www.youtube.com/watch?v=cpGb6daIKm4&list=PLslsfan1R_z20bEgUU_ZyY64AHx5C6vgg&index=23) - Bobbin Threadbare, ZK Podcast
 - [Provable Compliance on Polygon Miden and beyond / Anne-Grace Kleczewski](https://www.youtube.com/watch?v=t6NQ8nFDMvg) - Anne-Grace Kleczewski, Duct Tape
 - [Privacy Scales Better by Dominik Schmid, Polygon | L2con Brussels](https://www.youtube.com/watch?v=gmamoa8N_N0) - Dominik Schmid, L2con Brussels

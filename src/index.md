@@ -44,7 +44,7 @@ Polygon Miden supports public smart contracts like Ethereum. The code and state 
 
 #### Public notes
 
-With public notes, the users are be able to store all note details on-chain, thus, eliminating the need to communicate note details via side-channels.
+With public notes, the users are able to store all note details on-chain, thus, eliminating the need to communicate note details via side-channels.
 
 #### Local transaction execution
 
@@ -52,7 +52,7 @@ The Miden client allows for local transaction execution and proving. The Miden o
 
 #### Delegated proving
 
-The Miden client allows for proof generation by an external service if the user choses to do so , e.g., if on a low powered device.
+The Miden client allows for proof generation by an external service if the user chooses to do so , e.g., if on a low powered device.
 
 #### Standardized smart contracts
 
