@@ -438,7 +438,7 @@ Unauthenticated notes are a powerful feature that allows notes to be:
 
 ### Performance Benefits
 
-By using [`withUnauthenticatedInputNotes`](lib/unauthenticatedNoteTransfer.ts:195), we can:
+By using unauthenticated notes, we can:
 
 - Skip waiting for block confirmation between note creation and consumption
 - Create transaction chains that execute within a single block
