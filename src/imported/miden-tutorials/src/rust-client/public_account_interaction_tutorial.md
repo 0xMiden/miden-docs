@@ -32,11 +32,11 @@ Add the following dependencies to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-miden-client = { version = "0.9.2", features = ["testing", "concurrent", "tonic", "sqlite"] }
-miden-lib = { version = "0.9.4", default-features = false }
-miden-objects = { version = "0.9.4", default-features = false }
-miden-crypto = { version = "0.14.1", features = ["executable"] }
-miden-assembly = "0.14.0"
+miden-client = { version = "0.10.0", features = ["testing", "tonic", "sqlite"] }
+miden-lib = { version = "0.10.0", default-features = false }
+miden-objects = { version = "0.10.0", default-features = false }
+miden-crypto = { version = "0.15.0", features = ["executable"] }
+miden-assembly = "0.15.0"
 rand = { version = "0.9" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1.0", features = ["raw_value"] }
@@ -102,9 +102,6 @@ export.increment_count
     exec.account::set_item
 
     # => []
-    push.1 exec.account::incr_nonce
-
-    # => []
     exec.sys::truncate_stack
 end
 ```
@@ -165,8 +162,8 @@ async fn main() -> Result<(), ClientError> {
     let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
 
     let mut client = ClientBuilder::new()
-        .with_rpc(rpc_api)
-        .with_filesystem_keystore("./keystore")
+        .rpc(rpc_api)
+        .filesystem_keystore("./keystore")
         .in_debug_mode(true)
         .build()
         .await?;
@@ -261,7 +258,7 @@ let tx_script = TransactionScript::compile(
 
 // Build a transaction request with the custom script
 let tx_increment_request = TransactionRequestBuilder::new()
-    .with_custom_script(tx_script)
+    .custom_script(tx_script)
     .build()
     .unwrap();
 
@@ -479,7 +476,7 @@ async fn main() -> Result<(), ClientError> {
 
     // Build a transaction request with the custom script
     let tx_increment_request = TransactionRequestBuilder::new()
-        .with_custom_script(tx_script)
+        .custom_script(tx_script)
         .build()
         .unwrap();
 

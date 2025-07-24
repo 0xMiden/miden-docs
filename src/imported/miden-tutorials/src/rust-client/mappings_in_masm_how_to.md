@@ -51,10 +51,6 @@ export.write_to_map
 
   dropw dropw dropw dropw
   # => []
-
-  # Incrementing the nonce by 1
-  push.1 exec.account::incr_nonce
-  # => []
 end
 
 # Inputs: [KEY]
@@ -183,8 +179,8 @@ async fn main() -> Result<(), ClientError> {
     let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
 
     let mut client = ClientBuilder::new()
-        .with_rpc(rpc_api)
-        .with_filesystem_keystore("./keystore")
+        .rpc(rpc_api)
+        .filesystem_keystore("./keystore")
         .in_debug_mode(true)
         .build()
         .await?;
@@ -203,6 +199,13 @@ async fn main() -> Result<(), ClientError> {
 
     // Prepare assembler (debug mode = true)
     let assembler: Assembler = TransactionKernel::assembler().with_debug_mode(true);
+
+    // Load and compile the NoAuth component
+    let no_auth_code = fs::read_to_string(Path::new("./masm/accounts/auth/no_auth.masm")).unwrap();
+    let no_auth_component =
+        AccountComponent::compile(no_auth_code, assembler.clone(), vec![StorageSlot::empty_value()])
+            .unwrap()
+            .with_supports_all_types();
 
     // Using an empty storage value in slot 0 since this is usually resurved
     // for the account pub_key and metadata
@@ -225,15 +228,12 @@ async fn main() -> Result<(), ClientError> {
     let mut init_seed = [0_u8; 32];
     client.rng().fill_bytes(&mut init_seed);
 
-    // Anchor block of the account
-    let anchor_block = client.get_latest_epoch_block().await.unwrap();
-
     // Build the new `Account` with the component
     let (mapping_example_contract, seed) = AccountBuilder::new(init_seed)
-        .anchor((&anchor_block).try_into().unwrap())
         .account_type(AccountType::RegularAccountImmutableCode)
         .storage_mode(AccountStorageMode::Public)
         .with_component(mapping_contract_component.clone())
+        .with_auth_component(no_auth_component)
         .build()
         .unwrap();
 
@@ -268,7 +268,7 @@ async fn main() -> Result<(), ClientError> {
 
     // Build a transaction request with the custom script
     let tx_increment_request = TransactionRequestBuilder::new()
-        .with_custom_script(tx_script)
+        .custom_script(tx_script)
         .build()
         .unwrap();
 

@@ -31,11 +31,11 @@ cd miden-defi-app
 Add the following dependencies to your `Cargo.toml` file:
 
 ```toml
-miden-client = { version = "0.9.2", features = ["testing", "concurrent", "tonic", "sqlite"] }
-miden-lib = { version = "0.9.4", default-features = false }
-miden-objects = { version = "0.9.4", default-features = false }
-miden-crypto = { version = "0.14.1", features = ["executable"] }
-miden-assembly = "0.14.0"
+miden-client = { version = "0.10.0", features = ["testing", "tonic", "sqlite"] }
+miden-lib = { version = "0.10.0", default-features = false }
+miden-objects = { version = "0.10.0", default-features = false }
+miden-crypto = { version = "0.15.0", features = ["executable"] }
+miden-assembly = "0.15.0"
 rand = { version = "0.9" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1.0", features = ["raw_value"] }
@@ -156,6 +156,13 @@ async fn main() -> Result<(), ClientError> {
 
     let assembler = TransactionKernel::assembler().with_debug_mode(true);
 
+    // Load and compile the NoAuth component
+    let no_auth_code = fs::read_to_string(Path::new("../masm/accounts/auth/no_auth.masm")).unwrap();
+    let no_auth_component =
+        AccountComponent::compile(no_auth_code, assembler.clone(), vec![StorageSlot::empty_value()])
+            .unwrap()
+            .with_supports_all_types();
+
     let contract_component = AccountComponent::compile(
         contract_code.clone(),
         assembler,
@@ -167,13 +174,11 @@ async fn main() -> Result<(), ClientError> {
     let mut seed = [0_u8; 32];
     client.rng().fill_bytes(&mut seed);
 
-    let anchor_block = client.get_latest_epoch_block().await.unwrap();
-
     let (oracle_reader_contract, seed) = AccountBuilder::new(seed)
-        .anchor((&anchor_block).try_into().unwrap())
         .account_type(AccountType::RegularAccountImmutableCode)
         .storage_mode(AccountStorageMode::Public)
         .with_component(contract_component.clone())
+        .with_auth_component(no_auth_component)
         .build()
         .unwrap();
 
@@ -200,8 +205,8 @@ async fn main() -> Result<(), ClientError> {
     .unwrap();
 
     let tx_increment_request = TransactionRequestBuilder::new()
-        .with_foreign_accounts(foreign_accounts)
-        .with_custom_script(tx_script)
+        .foreign_accounts(foreign_accounts)
+        .custom_script(tx_script)
         .build()
         .unwrap();
 

@@ -43,11 +43,11 @@ Add the following dependencies to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-miden-client = { version = "0.9.2", features = ["testing", "concurrent", "tonic", "sqlite"] }
-miden-lib = { version = "0.9.4", default-features = false }
-miden-objects = { version = "0.9.4", default-features = false }
-miden-crypto = { version = "0.14.1", features = ["executable"] }
-miden-assembly = "0.14.0"
+miden-client = { version = "0.10.0", features = ["testing", "tonic", "sqlite"] }
+miden-lib = { version = "0.10.0", default-features = false }
+miden-objects = { version = "0.10.0", default-features = false }
+miden-crypto = { version = "0.15.0", features = ["executable"] }
+miden-assembly = "0.15.0"
 rand = { version = "0.9" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1.0", features = ["raw_value"] }
@@ -96,8 +96,8 @@ async fn main() -> Result<(), ClientError> {
     let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
 
     let mut client = ClientBuilder::new()
-        .with_rpc(rpc_api)
-        .with_filesystem_keystore("./keystore")
+        .rpc(rpc_api)
+        .filesystem_keystore("./keystore")
         .in_debug_mode(true)
         .build()
         .await?;
@@ -150,15 +150,11 @@ client.rng().fill_bytes(&mut init_seed);
 
 let key_pair = SecretKey::with_rng(client.rng());
 
-// Anchor block
-let anchor_block = client.get_latest_epoch_block().await.unwrap();
-
 // Build the account
 let builder = AccountBuilder::new(init_seed)
-    .anchor((&anchor_block).try_into().unwrap())
     .account_type(AccountType::RegularAccountUpdatableCode)
     .storage_mode(AccountStorageMode::Public)
-    .with_component(RpoFalcon512::new(key_pair.public_key()))
+    .with_auth_component(RpoFalcon512::new(key_pair.public_key()))
     .with_component(BasicWallet);
 
 let (alice_account, seed) = builder.build().unwrap();
@@ -204,10 +200,10 @@ let key_pair = SecretKey::with_rng(client.rng());
 
 // Build the account
 let builder = AccountBuilder::new(init_seed)
-    .anchor((&anchor_block).try_into().unwrap())
+
     .account_type(AccountType::FungibleFaucet)
     .storage_mode(AccountStorageMode::Public)
-    .with_component(RpoFalcon512::new(key_pair.public_key()))
+    .with_auth_component(RpoFalcon512::new(key_pair.public_key()))
     .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply).unwrap());
 
 let (faucet_account, seed) = builder.build().unwrap();
@@ -244,8 +240,8 @@ async fn main() -> Result<(), ClientError> {
     let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
 
     let mut client = ClientBuilder::new()
-        .with_rpc(rpc_api)
-        .with_filesystem_keystore("./keystore")
+        .rpc(rpc_api)
+        .filesystem_keystore("./keystore")
         .in_debug_mode(true)
         .build()
         .await?;
@@ -267,15 +263,11 @@ async fn main() -> Result<(), ClientError> {
 
     let key_pair = SecretKey::with_rng(client.rng());
 
-    // Anchor block
-    let anchor_block = client.get_latest_epoch_block().await.unwrap();
-
     // Build the account
     let builder = AccountBuilder::new(init_seed)
-        .anchor((&anchor_block).try_into().unwrap())
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_component(RpoFalcon512::new(key_pair.public_key()))
+        .with_auth_component(RpoFalcon512::new(key_pair.public_key()))
         .with_component(BasicWallet);
 
     let (alice_account, seed) = builder.build().unwrap();
@@ -311,10 +303,10 @@ async fn main() -> Result<(), ClientError> {
 
     // Build the account
     let builder = AccountBuilder::new(init_seed)
-        .anchor((&anchor_block).try_into().unwrap())
+
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_component(RpoFalcon512::new(key_pair.public_key()))
+        .with_auth_component(RpoFalcon512::new(key_pair.public_key()))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply).unwrap());
 
     let (faucet_account, seed) = builder.build().unwrap();

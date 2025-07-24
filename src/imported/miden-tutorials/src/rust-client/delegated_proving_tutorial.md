@@ -40,11 +40,11 @@ Add the following dependencies to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-miden-client = { version = "0.9.2", features = ["testing", "concurrent", "tonic", "sqlite"] }
-miden-lib = { version = "0.9.4", default-features = false }
-miden-objects = { version = "0.9.4", default-features = false }
-miden-crypto = { version = "0.14.1", features = ["executable"] }
-miden-assembly = "0.14.0"
+miden-client = { version = "0.10.0", features = ["testing", "tonic", "sqlite"] }
+miden-lib = { version = "0.10.0", default-features = false }
+miden-objects = { version = "0.10.0", default-features = false }
+miden-crypto = { version = "0.15.0", features = ["executable"] }
+miden-assembly = "0.15.0"
 rand = { version = "0.9" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1.0", features = ["raw_value"] }
@@ -100,7 +100,7 @@ async fn main() -> Result<(), ClientError> {
         .unwrap();
 
     // import public faucet id
-    let (_, faucet_id) = AccountId::from_bech32("mtst1qrwx85wg0uyrqgqqqwty0s5xkujvszff").unwrap();
+    let (_, faucet_id) = AccountId::from_bech32("mtst1qq932n3zkt5rxgpw5tgd9szxp58tllml").unwrap();
     client.import_account_by_id(faucet_id).await.unwrap();
     let binding = client.get_account(faucet_id).await.unwrap().unwrap();
     let faucet = binding.account();
@@ -139,7 +139,7 @@ async fn main() -> Result<(), ClientError> {
     // Specifying output notes and creating a tx request to create them
     let output_notes: Vec<OutputNote> = p2id_notes.into_iter().map(OutputNote::Full).collect();
     let transaction_request = TransactionRequestBuilder::new()
-        .with_own_output_notes(output_notes)
+        .own_output_notes(output_notes)
         .build()
         .unwrap();
     let tx_execution_result = client
