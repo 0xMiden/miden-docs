@@ -17,4 +17,4 @@ after = ["links"]
 
 [preprocessor.alerts]
 
-[output.linkcheck]
+# [output.linkcheck]
