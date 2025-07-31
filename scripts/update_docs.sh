@@ -68,10 +68,10 @@ update_docs() {
 }
 
 # Update docs
-update_docs "$MIDEN_CLIENT_REPO" "$CLIENT_DIR" "next"
-update_docs "$MIDEN_NODE_REPO" "$NODE_DIR" "next"
+update_docs "$MIDEN_CLIENT_REPO" "$CLIENT_DIR" "main"
+update_docs "$MIDEN_NODE_REPO" "$NODE_DIR" "main"
 update_docs "$MIDEN_BASE_REPO" "$BASE_DIR"
-update_docs "$MIDEN_VM_REPO" "$VM_DIR" "next"
+update_docs "$MIDEN_VM_REPO" "$VM_DIR" "main"
 update_docs "$MIDEN_COMPILER_REPO" "$COMPILER_DIR" "next"
 update_docs "$MIDEN_TUTORIALS_REPO" "$TUTORIALS_DIR"
 update_docs "$AWESOME_MIDEN_REPO" "$AWESOME_MIDEN_DIR" "main" "."
