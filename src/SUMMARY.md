@@ -32,6 +32,7 @@
     - [Creating Multiple Notes in a Single Transaction](imported/miden-tutorials/src/web-client/creating_multiple_notes_tutorial.md)
     - [Incrementing the Count of the Counter Contract](imported/miden-tutorials/src/web-client/counter_contract_tutorial.md)
     - [How to Use Unauthenticated Notes](imported/miden-tutorials/src/web-client/unauthenticated_note_how_to.md)
+    - [Foreign Procedure Invocation](imported/miden-tutorials/src/web-client/foreign_procedure_invocation_tutorial.md)
 
 - [Client](imported/miden-client/src/overview.md)
     - [Rust](imported/miden-client/src/index.md)
