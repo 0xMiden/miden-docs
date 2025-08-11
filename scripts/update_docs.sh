@@ -74,6 +74,8 @@ update_docs "$MIDEN_BASE_REPO" "$BASE_DIR"
 update_docs "$MIDEN_VM_REPO" "$VM_DIR" "main"
 update_docs "$MIDEN_COMPILER_REPO" "$COMPILER_DIR" "next"
 update_docs "$MIDEN_TUTORIALS_REPO" "$TUTORIALS_DIR"
+# Special handling for miden-tutorials: remove the symlink file
+rm -f "$TUTORIALS_DIR/masm"
 update_docs "$AWESOME_MIDEN_REPO" "$AWESOME_MIDEN_DIR" "main" "."
 
 # Create a README.md in the imported directory
