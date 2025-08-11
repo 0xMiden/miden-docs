@@ -68,12 +68,34 @@ update_docs() {
 }
 
 # Update docs
-update_docs "$MIDEN_CLIENT_REPO" "$CLIENT_DIR" "next"
-update_docs "$MIDEN_NODE_REPO" "$NODE_DIR" "next"
+update_docs "$MIDEN_CLIENT_REPO" "$CLIENT_DIR" "main"
+update_docs "$MIDEN_NODE_REPO" "$NODE_DIR" "main"
 update_docs "$MIDEN_BASE_REPO" "$BASE_DIR"
-update_docs "$MIDEN_VM_REPO" "$VM_DIR" "next"
+update_docs "$MIDEN_VM_REPO" "$VM_DIR" "main"
 update_docs "$MIDEN_COMPILER_REPO" "$COMPILER_DIR" "next"
 update_docs "$MIDEN_TUTORIALS_REPO" "$TUTORIALS_DIR"
+
+# Special handling for miden-tutorials: copy the actual masm directory to resolve symbolic link
+echo "Handling miden-tutorials masm symbolic link..."
+TEMP_DIR=$(mktemp -d)
+git clone --depth 1 --filter=blob:none --sparse "$MIDEN_TUTORIALS_REPO" "$TEMP_DIR"
+cd "$TEMP_DIR" || exit
+git sparse-checkout set "masm"
+cd - > /dev/null
+
+# Copy the actual masm directory content to resolve the symbolic link
+if [ -d "$TEMP_DIR/masm" ]; then
+    # Remove the broken symbolic link if it exists
+    rm -f "$TUTORIALS_DIR/masm"
+    # Copy the actual masm directory
+    cp -r "$TEMP_DIR/masm" "$TUTORIALS_DIR/"
+    echo "Copied actual masm directory to resolve symbolic link"
+else
+    echo "Warning: masm directory not found in miden-tutorials repository"
+fi
+
+# Clean up
+rm -rf "$TEMP_DIR"
 update_docs "$AWESOME_MIDEN_REPO" "$AWESOME_MIDEN_DIR" "main" "."
 
 # Create a README.md in the imported directory
