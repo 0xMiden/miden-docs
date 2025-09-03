@@ -15,6 +15,7 @@
     - [Transaction](imported/miden-base/src/transaction.md)
     - [State](imported/miden-base/src/state.md)
     - [Blockchain](imported/miden-base/src/blockchain.md)
+    - [Miden Protocol Library](imported/miden-base/src/protocol_library.md)
 
 - [Tutorials](imported/miden-tutorials/src/index.md)
   - [Miden Node Setup](imported/miden-tutorials/src/miden_node_setup.md)
