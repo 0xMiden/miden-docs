@@ -7,12 +7,12 @@
 
 Miden is a rollup for high-throughput, private applications.
 
-Using Polygon Miden, builders can create novel, high-throughput, private applications for payments, DeFi, digital assets, and gaming. Applications and users are secured by Ethereum and AggLayer.
+Using Miden, builders can create novel, high-throughput, private applications for payments, DeFi, digital assets, and gaming. Applications and users are secured by Ethereum and AggLayer.
 
 If you want to join the technical discussion, please check out the following:
 
 * [Telegram](https://t.me/BuildOnMiden)
-* [Miden Github](https://github.com/0xPolygonMiden)
+* [Miden Github](https://github.com/0xMiden)
 * [Roadmap](roadmap.md)
 
 > [!WARNING]
@@ -21,12 +21,12 @@ If you want to join the technical discussion, please check out the following:
 
 ## Status and features
 
-Polygon Miden is currently on release v0.8 This is an early version of the protocol and its components. 
+Miden is currently on release v0.8 This is an early version of the protocol and its components. 
 
 > [!WARNING]
 > We expect breaking changes on all components.
 
-At the time of writing, Polygon Miden doesn't offer all the features you may expect from a zkRollup yet. During 2025, we expect to gradually implement more features.
+At the time of writing, Miden doesn't offer all the features you may expect from a zkRollup yet. During 2025, we expect to gradually implement more features.
 
 ### Feature highlights
 
@@ -40,7 +40,7 @@ Like private accounts, the Miden operator only tracks a commitment to notes in t
 
 #### Public accounts
 
-Polygon Miden supports public smart contracts like Ethereum. The code and state of those accounts are visible to the network and anyone can execute transactions against them.
+Miden supports public smart contracts like Ethereum. The code and state of those accounts are visible to the network and anyone can execute transactions against them.
 
 #### Public notes
 
@@ -58,7 +58,7 @@ The Miden client allows for proof generation by an external service if the user 
 
 Currently, there are three different standardized smart contracts available. A basic wallet smart contract that sends and receives assets, and fungible and non-fungible faucets to mint and burn assets.
 
-All accounts are written in [MASM](https://0xpolygonmiden.github.io/miden-vm/user_docs/assembly/main.html).
+All accounts are written in [MASM](https://0xmiden.github.io/miden-vm/user_docs/assembly/main.html).
 
 #### Customized smart contracts
 
@@ -97,7 +97,7 @@ In order to write account code, note or transaction scripts, in Rust, there will
 
 The Miden node will recursively verify transactions and in doing so build batches of transactions, blocks, and epochs.
 
-## Benefits of Polygon Miden
+## Benefits of Miden
 
 * Ethereum security.
 * Developers can build applications that are infeasible on other systems. For example:
