@@ -220,6 +220,22 @@ Meant to be used in conjunction with the `force_import_store` method
 
 ***
 
+### getAccountAuthByPubKey()
+
+> **getAccountAuthByPubKey**(`pub_key`): `Promise`\<[`SecretKey`](SecretKey.md)\>
+
+#### Parameters
+
+##### pub\_key
+
+[`Word`](Word.md)
+
+#### Returns
+
+`Promise`\<[`SecretKey`](SecretKey.md)\>
+
+***
+
 ### getAccounts()
 
 > **getAccounts**(): `Promise`\<[`AccountHeader`](AccountHeader.md)[]\>
