@@ -6,7 +6,7 @@ multilingual = false
 title = "The Miden book"
 
 [output.html]
-git-repository-url = "https://github.com/0xPolygonMiden/miden-docs"
+git-repository-url = "https://github.com/0xMiden/miden-docs"
 no-section-label = true
 
 [output.html.fold]
