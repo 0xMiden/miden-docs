@@ -49,7 +49,7 @@ jobs:
       CHANNEL: ${{ inputs.channel || 'stable' }}
       # Default refs per channel
       DEFAULT_REF_STABLE: main
-      DEFAULT_REF_NEXT: docs-next
+      DEFAULT_REF_NEXT: next
       # Optional baseUrl override for next (adjust to Pages setup)
       BASE_URL: ${{ (inputs.channel || 'stable') == 'next' && '/next/' || '/' }}
     steps:
@@ -60,7 +60,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: "yarn"
+          cache: "npm"
 
       # Resolve refs per repo (inputs override defaults)
       - name: Resolve refs
@@ -106,12 +106,12 @@ jobs:
           ref: ${{ steps.refs.outputs.MIDEN_CLIENT_REF }}
           path: vendor/miden-client
 
-      - name: Checkout 0xMiden/miden-node
-        uses: actions/checkout@v4
-        with:
-          repository: 0xMiden/miden-node
-          ref: ${{ steps.refs.outputs.MIDEN_NODE_REF }}
-          path: vendor/miden-node
+      # - name: Checkout 0xMiden/miden-node
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: 0xMiden/miden-node
+      #     ref: ${{ steps.refs.outputs.MIDEN_NODE_REF }}
+      #     path: vendor/miden-node
 
       - name: Checkout 0xMiden/miden-vm
         uses: actions/checkout@v4
@@ -120,15 +120,15 @@ jobs:
           ref: ${{ steps.refs.outputs.MIDEN_VM_REF }}
           path: vendor/miden-vm
 
-      - name: Checkout 0xMiden/miden-compiler
+      - name: Checkout 0xMiden/compiler
         uses: actions/checkout@v4
         with:
-          repository: 0xMiden/miden-compiler
+          repository: 0xMiden/compiler
           ref: ${{ steps.refs.outputs.MIDEN_COMPILER_REF }}
           path: vendor/miden-compiler
 
       - name: Install deps
-        run: yarn install --frozen-lockfile
+        run: npm install --frozen-lockfile
 
       - name: Build site
         env:
@@ -136,16 +136,16 @@ jobs:
           BASE_URL: ${{ steps.refs.outputs.BASE_URL }}
         run: |
           echo "Building channel: $CHANNEL (baseUrl=$BASE_URL)"
-          yarn build
+          npm run build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: build
+      # - name: Upload artifact
+      #   uses: actions/upload-pages-artifact@v3
+      #   with:
+      #     path: build
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Deploy to GitHub Pages
+  #       uses: actions/deploy-pages@v4
