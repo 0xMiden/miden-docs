@@ -8,6 +8,7 @@ title = "The Miden book"
 [output.html]
 git-repository-url = "https://github.com/0xPolygonMiden/miden-docs"
 no-section-label = true
+additional-js = ["src/ChefAI.js"]
 
 [output.html.fold]
 enable = true
