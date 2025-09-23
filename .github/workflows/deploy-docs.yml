@@ -1,0 +1,151 @@
+name: Build & Deploy Docs (Pages)
+
+on:
+  push:
+    branches: [main] # deploy stable when docs repo changes
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: "Which channel to deploy?"
+        type: choice
+        options: [stable, next]
+        default: stable
+      # optional per-repo overrides (branch/ref/SHA); leave empty to use defaults
+      miden_base_ref:
+        description: "Ref for 0xMiden/miden-base"
+        required: false
+      miden_tutorials_ref:
+        description: "Ref for 0xMiden/miden-tutorials"
+        required: false
+      miden_client_ref:
+        description: "Ref for 0xMiden/miden-client"
+        required: false
+      miden_node_ref:
+        description: "Ref for 0xMiden/miden-node"
+        required: false
+      miden_vm_ref:
+        description: "Ref for 0xMiden/miden-vm"
+        required: false
+      miden_compiler_ref:
+        description: "Ref for 0xMiden/miden-compiler"
+        required: false
+  repository_dispatch: # let source repos trigger rebuilds on push
+    types: [rebuild]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Determine channel
+      CHANNEL: ${{ inputs.channel || 'stable' }}
+      # Default refs per channel
+      DEFAULT_REF_STABLE: main
+      DEFAULT_REF_NEXT: docs-next
+      # Optional baseUrl override for next (adjust to Pages setup)
+      BASE_URL: ${{ (inputs.channel || 'stable') == 'next' && '/next/' || '/' }}
+    steps:
+      - name: Checkout docs site
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "yarn"
+
+      # Resolve refs per repo (inputs override defaults)
+      - name: Resolve refs
+        id: refs
+        run: |
+          chan="${CHANNEL}"
+          def_stable="${DEFAULT_REF_STABLE}"
+          def_next="${DEFAULT_REF_NEXT}"
+          pick_ref() { # $1=input, $2=default
+            if [ -n "$1" ]; then echo "$1"; else echo "$2"; fi
+          }
+          if [ "$chan" = "next" ]; then def="$def_next"; else def="$def_stable"; fi
+
+          echo "BASE_REF=$def" >> $GITHUB_OUTPUT
+          echo "BASE_URL=${BASE_URL}" >> $GITHUB_OUTPUT
+
+          echo "MIDEN_BASE_REF=$(pick_ref '${{ inputs.miden_base_ref }}' "$def")" >> $GITHUB_OUTPUT
+          echo "MIDEN_TUTORIALS_REF=$(pick_ref '${{ inputs.miden_tutorials_ref }}' "$def")" >> $GITHUB_OUTPUT
+          echo "MIDEN_CLIENT_REF=$(pick_ref '${{ inputs.miden_client_ref }}' "$def")" >> $GITHUB_OUTPUT
+          echo "MIDEN_NODE_REF=$(pick_ref '${{ inputs.miden_node_ref }}' "$def")" >> $GITHUB_OUTPUT
+          echo "MIDEN_VM_REF=$(pick_ref '${{ inputs.miden_vm_ref }}' "$def")" >> $GITHUB_OUTPUT
+          echo "MIDEN_COMPILER_REF=$(pick_ref '${{ inputs.miden_compiler_ref }}' "$def")" >> $GITHUB_OUTPUT
+
+      # Check out each source repo into vendor/*
+      - name: Checkout 0xMiden/miden-base
+        uses: actions/checkout@v4
+        with:
+          repository: 0xMiden/miden-base
+          ref: ${{ steps.refs.outputs.MIDEN_BASE_REF }}
+          path: vendor/miden-base
+
+      - name: Checkout 0xMiden/miden-tutorials
+        uses: actions/checkout@v4
+        with:
+          repository: 0xMiden/miden-tutorials
+          ref: ${{ steps.refs.outputs.MIDEN_TUTORIALS_REF }}
+          path: vendor/miden-tutorials
+
+      - name: Checkout 0xMiden/miden-client
+        uses: actions/checkout@v4
+        with:
+          repository: 0xMiden/miden-client
+          ref: ${{ steps.refs.outputs.MIDEN_CLIENT_REF }}
+          path: vendor/miden-client
+
+      - name: Checkout 0xMiden/miden-node
+        uses: actions/checkout@v4
+        with:
+          repository: 0xMiden/miden-node
+          ref: ${{ steps.refs.outputs.MIDEN_NODE_REF }}
+          path: vendor/miden-node
+
+      - name: Checkout 0xMiden/miden-vm
+        uses: actions/checkout@v4
+        with:
+          repository: 0xMiden/miden-vm
+          ref: ${{ steps.refs.outputs.MIDEN_VM_REF }}
+          path: vendor/miden-vm
+
+      - name: Checkout 0xMiden/miden-compiler
+        uses: actions/checkout@v4
+        with:
+          repository: 0xMiden/miden-compiler
+          ref: ${{ steps.refs.outputs.MIDEN_COMPILER_REF }}
+          path: vendor/miden-compiler
+
+      - name: Install deps
+        run: yarn install --frozen-lockfile
+
+      - name: Build site
+        env:
+          CHANNEL: ${{ env.CHANNEL }}
+          BASE_URL: ${{ steps.refs.outputs.BASE_URL }}
+        run: |
+          echo "Building channel: $CHANNEL (baseUrl=$BASE_URL)"
+          yarn build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
