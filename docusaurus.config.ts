@@ -3,8 +3,7 @@ import type { Config } from "@docusaurus/types";
 const isNext = process.env.CHANNEL === "next";
 
 // allow baseUrl override per channel (stable=/, next=/next/)
-const baseUrl = "";
-const versionedBaseUrl = isNext ? `/${baseUrl}/next/` : `/${baseUrl}/`;
+const versionedBaseUrl = isNext ? `/next/` : `/`;
 
 const config: Config = {
   title: "The Miden Book",
