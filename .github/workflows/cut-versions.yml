@@ -3,24 +3,9 @@ name: Cut Docs Versions
 on:
   workflow_dispatch:
     inputs:
-      miden_base:
-        description: "Version label for miden-base (blank to skip)"
-        required: false
-      miden_tutorials:
-        description: "Version label for miden-tutorials (blank to skip)"
-        required: false
-      miden_client:
-        description: "Version label for miden-client (blank to skip)"
-        required: false
-      miden_node:
-        description: "Version label for miden-node (blank to skip)"
-        required: false
-      miden_vm:
-        description: "Version label for miden-vm (blank to skip)"
-        required: false
-      miden_compiler:
-        description: "Version label for miden-compiler (blank to skip)"
-        required: false
+      version_label:
+        description: "Version label for entire site (e.g., '0.9.0')"
+        required: true
 
 permissions:
   contents: write
@@ -34,26 +19,19 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 18, cache: "npm" }
       - run: npm install --frozen-lockfile
-      - name: Freeze versions
+      - name: Freeze version for entire site
         run: |
           set -e
-          freeze() { id="$1"; label="$2"; if [ -n "$label" ]; then
-            echo "Freezing $id => $label"
-            npm run docusaurus docs:version --id "$id" "$label"
-          fi; }
-          freeze miden-base "${{ inputs.miden_base }}"
-          freeze miden-tutorials "${{ inputs.miden_tutorials }}"
-          freeze miden-client "${{ inputs.miden_client }}"
-          freeze miden-node "${{ inputs.miden_node }}"
-          freeze miden-vm "${{ inputs.miden_vm }}"
-          freeze miden-compiler "${{ inputs.miden_compiler }}"
+          VERSION="${{ inputs.version_label }}"
+          echo "Creating version snapshot for entire site: $VERSION"
+          npm run docusaurus docs:version "$VERSION"
       - name: Commit snapshots
         run: |
           if ! git diff --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add -A
-            git commit -m "docs: cut versions"
+            git commit -m "docs: cut version ${{ inputs.version_label }}"
             git push
           else
             echo "No changes"
