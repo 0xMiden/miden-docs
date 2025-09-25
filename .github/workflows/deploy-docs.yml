@@ -26,7 +26,7 @@ on:
       miden_vm_ref:
         description: "Ref for 0xMiden/miden-vm"
         required: false
-      miden_compiler_ref:
+      compiler_ref:
         description: "Ref for 0xMiden/compiler"
         required: false
   repository_dispatch: # let source repos trigger rebuilds on push
@@ -78,11 +78,11 @@ jobs:
           echo "BASE_URL=${BASE_URL}" >> $GITHUB_OUTPUT
 
           echo "MIDEN_BASE_REF=$(pick_ref '${{ inputs.miden_base_ref }}' "$def")" >> $GITHUB_OUTPUT
-          echo "MIDEN_TUTORIALS_REF=$(pick_ref '${{ inputs.miden_tutorials_ref }}' "$def")" >> $GITHUB_OUTPUT
+          echo "MIDEN_TUTORIALS_REF=$(pick_ref '${{ inputs.miden_tutorials_ref }}' "$def_stable")" >> $GITHUB_OUTPUT # always use stable ref for miden-tutorials
           echo "MIDEN_CLIENT_REF=$(pick_ref '${{ inputs.miden_client_ref }}' "$def")" >> $GITHUB_OUTPUT
           echo "MIDEN_NODE_REF=$(pick_ref '${{ inputs.miden_node_ref }}' "$def")" >> $GITHUB_OUTPUT
           echo "MIDEN_VM_REF=$(pick_ref '${{ inputs.miden_vm_ref }}' "$def")" >> $GITHUB_OUTPUT
-          echo "MIDEN_COMPILER_REF=$(pick_ref '${{ inputs.miden_compiler_ref }}' "$def")" >> $GITHUB_OUTPUT
+          echo "COMPILER_REF=$(pick_ref '${{ inputs.compiler_ref }}' "$def")" >> $GITHUB_OUTPUT
 
       # Check out each source repo into vendor/*
       - name: Checkout 0xMiden/miden-base
@@ -124,8 +124,48 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: 0xMiden/compiler
-          ref: ${{ steps.refs.outputs.MIDEN_COMPILER_REF }}
+          ref: ${{ steps.refs.outputs.COMPILER_REF }}
           path: vendor/compiler
+
+      - name: Aggregate docs into single docs tree
+        run: |
+          echo "Aggregating vendor docs into docs/ structure..."
+          # Clean any existing vendor directories (keep static docs)
+          find docs -mindepth 1 -maxdepth 1 -type d ! -name 'static*' -exec rm -rf {} +
+
+          # Rsync each vendor repo's docs into docs/
+          if [ -d "vendor/miden-node/docs" ]; then
+            cp -r vendor/miden-node/docs/ docs/miden-node/
+            echo "Synced miden-node docs"
+          fi
+
+          # if [ -d "vendor/miden-vm/docs" ]; then
+          #   cp -r vendor/miden-vm/docs/ docs/miden-vm/
+          #   echo "Synced miden-vm docs"
+          # fi
+
+          if [ -d "vendor/miden-base/docs" ]; then
+            cp -r vendor/miden-base/docs/ docs/miden-base/
+            echo "Synced miden-base docs"
+          fi
+
+          if [ -d "vendor/miden-client/docs" ]; then
+            cp -r vendor/miden-client/docs/ docs/miden-client/
+            echo "Synced miden-client docs"
+          fi
+
+          if [ -d "vendor/compiler/docs" ]; then
+            cp -r vendor/compiler/docs/ docs/compiler/
+            echo "Synced compiler docs"
+          fi
+
+          if [ -d "vendor/miden-tutorials/docs" ]; then
+            cp -r vendor/miden-tutorials/docs/src/ docs/miden-tutorials/
+            echo "Synced miden-tutorials docs"
+          fi
+
+          echo "Content aggregation complete. Final docs structure:"
+          ls -la docs/
 
       - name: Install deps
         run: npm install --frozen-lockfile
