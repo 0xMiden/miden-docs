@@ -27,7 +27,7 @@ on:
         description: "Ref for 0xMiden/miden-vm"
         required: false
       miden_compiler_ref:
-        description: "Ref for 0xMiden/miden-compiler"
+        description: "Ref for 0xMiden/compiler"
         required: false
   repository_dispatch: # let source repos trigger rebuilds on push
     types: [rebuild]
@@ -106,12 +106,12 @@ jobs:
           ref: ${{ steps.refs.outputs.MIDEN_CLIENT_REF }}
           path: vendor/miden-client
 
-      # - name: Checkout 0xMiden/miden-node
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: 0xMiden/miden-node
-      #     ref: ${{ steps.refs.outputs.MIDEN_NODE_REF }}
-      #     path: vendor/miden-node
+      - name: Checkout 0xMiden/miden-node
+        uses: actions/checkout@v4
+        with:
+          repository: 0xMiden/miden-node
+          ref: ${{ steps.refs.outputs.MIDEN_NODE_REF }}
+          path: vendor/miden-node
 
       - name: Checkout 0xMiden/miden-vm
         uses: actions/checkout@v4
@@ -125,7 +125,7 @@ jobs:
         with:
           repository: 0xMiden/compiler
           ref: ${{ steps.refs.outputs.MIDEN_COMPILER_REF }}
-          path: vendor/miden-compiler
+          path: vendor/compiler
 
       - name: Install deps
         run: npm install --frozen-lockfile
@@ -138,14 +138,7 @@ jobs:
           echo "Building channel: $CHANNEL (baseUrl=$BASE_URL)"
           npm run build
 
-      # - name: Upload artifact
-      #   uses: actions/upload-pages-artifact@v3
-      #   with:
-      #     path: build
-
-  # deploy:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Deploy to GitHub Pages
-  #       uses: actions/deploy-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
