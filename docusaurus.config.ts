@@ -3,7 +3,8 @@ import type { Config } from "@docusaurus/types";
 const isNext = process.env.CHANNEL === "next";
 
 // allow baseUrl override per channel (stable=/, next=/next/)
-const baseUrl = isNext ? "/next/" : "/";
+const baseUrl = "miden-docs";
+const versionedBaseUrl = isNext ? `/${baseUrl}/next/` : `/${baseUrl}/`;
 
 const config: Config = {
   title: "The Miden Book",
@@ -11,7 +12,7 @@ const config: Config = {
   favicon: "img/favicon.ico",
 
   url: "https://0xmiden.github.io/",
-  baseUrl,
+  baseUrl: versionedBaseUrl,
 
   organizationName: "0xMiden",
   projectName: "miden-docs",
@@ -65,7 +66,7 @@ const config: Config = {
         title: "Miden",
         items: [
           {
-            href: "https://github.com/0xPolygonMiden/",
+            href: "https://github.com/0xMiden/",
             label: "GitHub",
             position: "right",
           },
