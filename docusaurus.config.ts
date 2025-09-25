@@ -3,7 +3,7 @@ import type { Config } from "@docusaurus/types";
 const isNext = process.env.CHANNEL === "next";
 
 // allow baseUrl override per channel (stable=/, next=/next/)
-const baseUrl = "migration-miden-docs";
+const baseUrl = "";
 const versionedBaseUrl = isNext ? `/${baseUrl}/next/` : `/${baseUrl}/`;
 
 const config: Config = {
