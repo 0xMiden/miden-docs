@@ -2,14 +2,9 @@ name: Build & Deploy Docs (Pages)
 
 on:
   push:
-    branches: [main] # deploy stable when docs repo changes
+    branches: [main] # deploy when aggregator changes
   workflow_dispatch:
     inputs:
-      channel:
-        description: "Which channel to deploy?"
-        type: choice
-        options: [stable, next]
-        default: stable
       # optional per-repo overrides (branch/ref/SHA); leave empty to use defaults
       miden_base_ref:
         description: "Ref for 0xMiden/miden-base"
@@ -29,7 +24,7 @@ on:
       compiler_ref:
         description: "Ref for 0xMiden/compiler"
         required: false
-  repository_dispatch: # let source repos trigger rebuilds on push
+  repository_dispatch:
     types: [rebuild]
 
 permissions:
@@ -45,13 +40,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Determine channel
-      CHANNEL: ${{ inputs.channel || 'stable' }}
-      # Default refs per channel
-      DEFAULT_REF_STABLE: main
-      DEFAULT_REF_NEXT: next
-      # Optional baseUrl override for next (adjust to Pages setup)
-      BASE_URL: ${{ (inputs.channel || 'stable') == 'next' && '/next/' || '/' }}
+      DEFAULT_REF: next
     steps:
       - name: Checkout docs site
         uses: actions/checkout@v4
@@ -62,27 +51,45 @@ jobs:
           node-version: 18
           cache: "npm"
 
-      # Resolve refs per repo (inputs override defaults)
+      # Resolve refs per repo (inputs override DEFAULT_REF)
       - name: Resolve refs
         id: refs
         run: |
-          chan="${CHANNEL}"
-          def_stable="${DEFAULT_REF_STABLE}"
-          def_next="${DEFAULT_REF_NEXT}"
-          pick_ref() { # $1=input, $2=default
-            if [ -n "$1" ]; then echo "$1"; else echo "$2"; fi
-          }
-          if [ "$chan" = "next" ]; then def="$def_next"; else def="$def_stable"; fi
+          set -e
+          def="${DEFAULT_REF}"
 
-          echo "BASE_REF=$def" >> $GITHUB_OUTPUT
-          echo "BASE_URL=${BASE_URL}" >> $GITHUB_OUTPUT
+          # For each input: use it if set, else fallback to default ref
+          base_ref='${{ inputs.miden_base_ref }}'
+          [ -z "$base_ref" ] && base_ref="$def"
+          echo "MIDEN_BASE_REF=$base_ref" >> $GITHUB_OUTPUT
 
-          echo "MIDEN_BASE_REF=$(pick_ref '${{ inputs.miden_base_ref }}' "$def")" >> $GITHUB_OUTPUT
-          echo "MIDEN_TUTORIALS_REF=$(pick_ref '${{ inputs.miden_tutorials_ref }}' "$def_stable")" >> $GITHUB_OUTPUT # always use stable ref for miden-tutorials
-          echo "MIDEN_CLIENT_REF=$(pick_ref '${{ inputs.miden_client_ref }}' "$def")" >> $GITHUB_OUTPUT
-          echo "MIDEN_NODE_REF=$(pick_ref '${{ inputs.miden_node_ref }}' "$def")" >> $GITHUB_OUTPUT
-          echo "MIDEN_VM_REF=$(pick_ref '${{ inputs.miden_vm_ref }}' "$def")" >> $GITHUB_OUTPUT
-          echo "COMPILER_REF=$(pick_ref '${{ inputs.compiler_ref }}' "$def")" >> $GITHUB_OUTPUT
+          tutorials_ref='${{ inputs.miden_tutorials_ref }}'
+          [ -z "$tutorials_ref" ] && tutorials_ref="$def"
+          echo "MIDEN_TUTORIALS_REF=$tutorials_ref" >> $GITHUB_OUTPUT
+
+          client_ref='${{ inputs.miden_client_ref }}'
+          [ -z "$client_ref" ] && client_ref="$def"
+          echo "MIDEN_CLIENT_REF=$client_ref" >> $GITHUB_OUTPUT
+
+          node_ref='${{ inputs.miden_node_ref }}'
+          [ -z "$node_ref" ] && node_ref="$def"
+          echo "MIDEN_NODE_REF=$node_ref" >> $GITHUB_OUTPUT
+
+          vm_ref='${{ inputs.miden_vm_ref }}'
+          [ -z "$vm_ref" ] && vm_ref="$def"
+          echo "MIDEN_VM_REF=$vm_ref" >> $GITHUB_OUTPUT
+
+          compiler_ref='${{ inputs.compiler_ref }}'
+          [ -z "$compiler_ref" ] && compiler_ref="$def"
+          echo "COMPILER_REF=$compiler_ref" >> $GITHUB_OUTPUT
+
+          echo "Resolved refs:"
+          echo "  miden-base:       $base_ref"
+          echo "  miden-tutorials:  $tutorials_ref"
+          echo "  miden-client:     $client_ref"
+          echo "  miden-node:       $node_ref"
+          echo "  miden-vm:         $vm_ref"
+          echo "  compiler:         $compiler_ref"
 
       # Check out each source repo into vendor/*
       - name: Checkout 0xMiden/miden-base
@@ -133,16 +140,16 @@ jobs:
           # Clean any existing vendor directories (keep static docs)
           find docs -mindepth 1 -maxdepth 1 -type d ! -name 'static*' -exec rm -rf {} +
 
-          # Rsync each vendor repo's docs into docs/
+          # Copy each vendor repo's docs into docs/
           if [ -d "vendor/miden-node/docs" ]; then
             cp -r vendor/miden-node/docs/ docs/miden-node/
             echo "Synced miden-node docs"
           fi
 
-          # if [ -d "vendor/miden-vm/docs" ]; then
-          #   cp -r vendor/miden-vm/docs/ docs/miden-vm/
-          #   echo "Synced miden-vm docs"
-          # fi
+          if [ -d "vendor/miden-vm/docs" ]; then
+            cp -r vendor/miden-vm/docs/ docs/miden-vm/
+            echo "Synced miden-vm docs"
+          fi
 
           if [ -d "vendor/miden-base/docs" ]; then
             cp -r vendor/miden-base/docs/ docs/miden-base/
@@ -155,7 +162,7 @@ jobs:
           fi
 
           if [ -d "vendor/compiler/docs" ]; then
-            cp -r vendor/compiler/docs/ docs/compiler/
+            cp -r vendor/compiler/docs/src/ docs/compiler/
             echo "Synced compiler docs"
           fi
 
@@ -171,11 +178,8 @@ jobs:
         run: npm install --frozen-lockfile
 
       - name: Build site
-        env:
-          CHANNEL: ${{ env.CHANNEL }}
-          BASE_URL: ${{ steps.refs.outputs.BASE_URL }}
         run: |
-          echo "Building channel: $CHANNEL (baseUrl=$BASE_URL)"
+          echo "Building Docusaurus site"
           npm run build
 
       - name: Upload artifact
