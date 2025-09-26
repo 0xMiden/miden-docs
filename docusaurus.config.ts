@@ -11,7 +11,7 @@ const config: Config = {
   baseUrl: "/",
 
   organizationName: "0xMiden",
-  projectName: "migration-miden-docs",
+  projectName: "miden-docs",
 
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
