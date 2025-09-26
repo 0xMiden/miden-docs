@@ -1,11 +1,24 @@
-name: Cut Docs Versions
+name: Cut Docs Version (global)
 
 on:
+  # Manual trigger (preferred to start)
   workflow_dispatch:
     inputs:
       version_label:
-        description: "Version label for entire site (e.g., '0.9.0')"
-        required: true
+        description: "Global version label (e.g. 0.12). If empty, use .release/release-manifest.yml"
+        required: false
+      # Optional per-repo overrides. If empty, use refs from manifest.
+      miden_node_ref: { required: false }
+      miden_vm_ref: { required: false }
+      miden_base_ref: { required: false }
+      miden_client_ref: { required: false }
+      compiler_ref: { required: false }
+      miden_tutorials_ref: { required: false }
+
+  # Optional: auto-run when manifest changes (enable after you trust the flow)
+  push:
+    paths:
+      - ".release/release-manifest.yml"
 
 permissions:
   contents: write
@@ -13,26 +26,165 @@ permissions:
 jobs:
   cut:
     runs-on: ubuntu-latest
+    env:
+      REPO_NODE: 0xMiden/miden-node
+      REPO_VM: 0xMiden/miden-vm
+      REPO_BASE: 0xMiden/miden-base
+      REPO_CLIENT: 0xMiden/miden-client
+      REPO_COMPILER: 0xMiden/compiler
+      REPO_TUTORIALS: 0xMiden/miden-tutorials
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout aggregator
+        uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with: { node-version: 18, cache: "npm" }
-      - run: npm install --frozen-lockfile
-      - name: Freeze version for entire site
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Parse release manifest (and merge with manual inputs)
+        id: manifest
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = '.release/release-manifest.yml';
+          const YAML = require('yaml');
+
+          const read = (p) => fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : '';
+          const m = YAML.parse(read(path) || '{}') || {};
+
+          // Prefer manual inputs if provided; else manifest; else fallback to "main"
+          const getRef = (input, manifestVal) => input && input.trim() ? input.trim() : (manifestVal || 'main');
+
+          const inputs = {
+            version_label: process.env.INPUT_VERSION_LABEL || ''
+          };
+
+          const refs = m.refs || {};
+
+          // Build outputs
+          const out = {
+            version_label: inputs.version_label || (m.version || '').trim(),
+            miden_node_ref:      getRef(process.env.INPUT_MIDEN_NODE_REF,      refs['miden-node']),
+            miden_vm_ref:        getRef(process.env.INPUT_MIDEN_VM_REF,        refs['miden-vm']),
+            miden_base_ref:      getRef(process.env.INPUT_MIDEN_BASE_REF,      refs['miden-base']),
+            miden_client_ref:    getRef(process.env.INPUT_MIDEN_CLIENT_REF,    refs['miden-client']),
+            compiler_ref:  getRef(process.env.INPUT_COMPILER_REF,  refs['compiler']),
+            miden_tutorials_ref: getRef(process.env.INPUT_MIDEN_TUTORIALS_REF, refs['miden-tutorials']),
+          };
+
+          if (!out.version_label) {
+            console.error('No version label provided (inputs.version_label empty and no "version" in release-manifest).');
+            process.exit(1);
+          }
+
+          // Emit outputs
+          for (const [k,v] of Object.entries(out)) {
+            console.log(`::set-output name=${k}::${v}`);
+          }
+          NODE
+
+      - name: Validate refs exist
         run: |
           set -e
-          VERSION="${{ inputs.version_label }}"
-          echo "Creating version snapshot for entire site: $VERSION"
-          npm run docusaurus docs:version "$VERSION"
+          validate() {
+            repo="$1"; ref="$2"
+            echo "Validating $repo @ $ref"
+            git ls-remote "https://github.com/$repo" "$ref" | grep -q . || {
+              echo "ERROR: Ref '$ref' not found in $repo"
+              exit 1
+            }
+          }
+          validate "${REPO_NODE}"      "${{ steps.manifest.outputs.miden_node_ref }}"
+          validate "${REPO_VM}"        "${{ steps.manifest.outputs.miden_vm_ref }}"
+          validate "${REPO_BASE}"      "${{ steps.manifest.outputs.miden_base_ref }}"
+          validate "${REPO_CLIENT}"    "${{ steps.manifest.outputs.miden_client_ref }}"
+          validate "${REPO_COMPILER}"  "${{ steps.manifest.outputs.compiler_ref }}"
+          validate "${REPO_TUTORIALS}" "${{ steps.manifest.outputs.miden_tutorials_ref }}"
+
+      - name: Checkout sources at validated refs
+        run: |
+          set -e
+          checkout_ref() {
+            repo="$1"; ref="$2"; path="$3"
+            echo "Checking out $repo @ $ref → $path"
+            git clone "https://github.com/$repo" "$path"
+            (cd "$path" && git fetch --depth 1 origin "$ref" && git checkout "$ref")
+          }
+          checkout_ref "${REPO_NODE}"      "${{ steps.manifest.outputs.miden_node_ref }}"      vendor/miden-node
+          checkout_ref "${REPO_VM}"        "${{ steps.manifest.outputs.miden_vm_ref }}"        vendor/miden-vm
+          checkout_ref "${REPO_BASE}"      "${{ steps.manifest.outputs.miden_base_ref }}"      vendor/miden-base
+          checkout_ref "${REPO_CLIENT}"    "${{ steps.manifest.outputs.miden_client_ref }}"    vendor/miden-client
+          checkout_ref "${REPO_COMPILER}"  "${{ steps.manifest.outputs.compiler_ref }}"  vendor/compiler
+          checkout_ref "${REPO_TUTORIALS}" "${{ steps.manifest.outputs.miden_tutorials_ref }}" vendor/miden-tutorials
+
+      - name: Aggregate docs into single docs tree
+        run: |
+          echo "Aggregating vendor docs into docs/ structure..."
+          # Clean any existing vendor directories (keep static docs)
+          find docs -mindepth 1 -maxdepth 1 -type d ! -name 'static*' -exec rm -rf {} +
+
+          # Copy each vendor repo's docs into docs/
+          if [ -d "vendor/miden-node/docs" ]; then
+            cp -r vendor/miden-node/docs/ docs/miden-node/
+            echo "Synced miden-node docs"
+          fi
+
+          # if [ -d "vendor/miden-vm/docs" ]; then
+          #   cp -r vendor/miden-vm/docs/ docs/miden-vm/
+          #   echo "Synced miden-vm docs"
+          # fi
+
+          if [ -d "vendor/miden-base/docs" ]; then
+            cp -r vendor/miden-base/docs/ docs/miden-base/
+            echo "Synced miden-base docs"
+          fi
+
+          if [ -d "vendor/miden-client/docs" ]; then
+            cp -r vendor/miden-client/docs/ docs/miden-client/
+            echo "Synced miden-client docs"
+          fi
+
+          if [ -d "vendor/compiler/docs" ]; then
+            cp -r vendor/compiler/docs/src/ docs/compiler/
+            echo "Synced compiler docs"
+          fi
+
+          if [ -d "vendor/miden-tutorials/docs" ]; then
+            cp -r vendor/miden-tutorials/docs/src/ docs/miden-tutorials/
+            echo "Synced miden-tutorials docs"
+          fi
+
+          echo "Content aggregation complete. Final docs structure:"
+          ls -la docs/
+
+      - name: Cut version snapshot
+        run: |
+          VERSION="${{ steps.manifest.outputs.version_label }}"
+          echo "Creating Docusaurus version: $VERSION"
+          npm run docusaurus -- docs:version "$VERSION"
+
+      - name: Clean up (delete vendor and docs files)
+        run: |
+          rm -rf vendor
+          rm -rf docs/miden-base
+          rm -rf docs/miden-node
+          rm -rf docs/miden-client
+          rm -rf docs/miden-tutorials
+          rm -rf docs/miden-vm
+          rm -rf docs/compiler
+
       - name: Commit snapshots
         run: |
           if ! git diff --quiet; then
-            git config user.name "github-actions[bot]"
+            git config user.name  "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add -A
-            git commit -m "docs: cut version ${{ inputs.version_label }}"
-            git push
+            git commit -m "docs: cut version ${{ steps.manifest.outputs.version_label }}"
+            # git push
           else
-            echo "No changes"
+            echo "No changes to commit."
           fi

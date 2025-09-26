@@ -1,0 +1,8 @@
+version: "0.11.4" # the label to snapshot (used if no manual override)
+refs: # exact, immutable refs per source repo (tags or release branches)
+  miden-base: "refs/tags/v0.11.4"
+  miden-node: "refs/tags/v0.11.2"
+  miden-client: "refs/tags/v0.11.6"
+  miden-tutorials: "refs/heads/main"
+  miden-vm: "refs/tags/v0.18.0"
+  compiler: "refs/tags/v0.4.1"
