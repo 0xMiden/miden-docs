@@ -128,33 +128,33 @@ jobs:
           find docs -mindepth 1 -maxdepth 1 -type d ! -name 'static*' -exec rm -rf {} +
 
           # Copy each vendor repo's docs into docs/
-          if [ -d "vendor/miden-node/docs" ]; then
-            cp -r vendor/miden-node/docs/ docs/miden-node/
+          if [ -d "vendor/miden-node/docs/external/src" ]; then
+            cp -r vendor/miden-node/docs/external/src/ docs/miden-node/
             echo "Synced miden-node docs"
           fi
 
-          # if [ -d "vendor/miden-vm/docs" ]; then
-          #   cp -r vendor/miden-vm/docs/ docs/miden-vm/
-          #   echo "Synced miden-vm docs"
-          # fi
+          if [ -d "vendor/miden-vm/docs/src" ]; then
+            cp -r vendor/miden-vm/docs/src/ docs/miden-vm/
+            echo "Synced miden-vm docs"
+          fi
 
-          if [ -d "vendor/miden-base/docs" ]; then
-            cp -r vendor/miden-base/docs/ docs/miden-base/
+          if [ -d "vendor/miden-base/docs/src" ]; then
+            cp -r vendor/miden-base/docs/src/ docs/miden-base/
             echo "Synced miden-base docs"
           fi
 
-          if [ -d "vendor/miden-client/docs" ]; then
-            cp -r vendor/miden-client/docs/ docs/miden-client/
+          if [ -d "vendor/miden-client/docs/src" ]; then
+            cp -r vendor/miden-client/docs/src/ docs/miden-client/
             echo "Synced miden-client docs"
           fi
 
-          if [ -d "vendor/compiler/docs" ]; then
-            cp -r vendor/compiler/docs/src/ docs/compiler/
+          if [ -d "vendor/compiler/docs/external/src" ]; then
+            cp -r vendor/compiler/docs/external/src/ docs/compiler/
             echo "Synced compiler docs"
           fi
 
-          if [ -d "vendor/miden-tutorials/docs" ]; then
-            cp -r vendor/miden-tutorials/docs/src/ docs/miden-tutorials/
+          if [ -d "vendor/miden-tutorials/docs/src/src" ]; then
+            cp -r vendor/miden-tutorials/docs/src/src/ docs/miden-tutorials/
             echo "Synced miden-tutorials docs"
           fi
 
