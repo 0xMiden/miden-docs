@@ -1,4 +1,6 @@
 import type { Config } from "@docusaurus/types";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 const isNext = process.env.CHANNEL === "next";
 
@@ -36,6 +38,8 @@ const config: Config = {
               label: "Next",
             },
           },
+          remarkPlugins: [remarkMath],
+          rehypePlugins: [rehypeKatex],
         }, // Disable preset docs plugin => using own plugin
         blog: false, // Disable blog
         theme: {
@@ -43,6 +47,16 @@ const config: Config = {
         },
       },
     ],
+  ],
+
+  stylesheets: [
+    {
+      href: "https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css",
+      type: "text/css",
+      integrity:
+        "sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM",
+      crossorigin: "anonymous",
+    },
   ],
 
   themes: ["@docusaurus/theme-mermaid"],
