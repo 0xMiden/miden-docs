@@ -156,8 +156,8 @@ jobs:
             echo "Synced miden-base docs"
           fi
 
-          if [ -d "vendor/miden-client/docs/src" ]; then
-            cp -r vendor/miden-client/docs/src/ docs/miden-client/
+          if [ -d "vendor/miden-client/docs/external/src" ]; then
+            cp -r vendor/miden-client/docs/external/src/ docs/miden-client/
             echo "Synced miden-client docs"
           fi
 
