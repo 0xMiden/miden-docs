@@ -142,8 +142,18 @@ This installs the latest stable versions of all Miden components that work toget
 After installing the Miden toolchain, run the following command to configure the Miden client:
 
 ```bash
-miden-client
+miden-client init --network <NETWORK>
 ```
+
+In order to initialize the client, you have to specify which network you want to initialize it with.
+
+The client accepts the following options:
+
+- `testnet`: When using the Miden Testnet
+- `devnet`: When using the Miden Devnet
+- `localhost`: When using your own local Miden node. This is best for testing and debugging
+
+For this guide, we will be using the `testnet` option.
 
 ### Verify Installation
 
