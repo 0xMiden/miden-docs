@@ -10,9 +10,29 @@
 
 ### variantType
 
-> `readonly` **variantType**: `string`
+> `readonly` **variantType**: [`SigningInputsType`](../enumerations/SigningInputsType.md)
 
 ## Methods
+
+### arbitraryPayload()
+
+> **arbitraryPayload**(): [`Felt`](Felt.md)[]
+
+#### Returns
+
+[`Felt`](Felt.md)[]
+
+***
+
+### blindPayload()
+
+> **blindPayload**(): [`Word`](Word.md)
+
+#### Returns
+
+[`Word`](Word.md)
+
+***
 
 ### free()
 
@@ -21,6 +41,16 @@
 #### Returns
 
 `void`
+
+***
+
+### serialize()
+
+> **serialize**(): `Uint8Array`
+
+#### Returns
+
+`Uint8Array`
 
 ***
 
@@ -41,6 +71,32 @@
 #### Returns
 
 [`Felt`](Felt.md)[]
+
+***
+
+### transactionSummaryPayload()
+
+> **transactionSummaryPayload**(): [`TransactionSummary`](TransactionSummary.md)
+
+#### Returns
+
+[`TransactionSummary`](TransactionSummary.md)
+
+***
+
+### deserialize()
+
+> `static` **deserialize**(`bytes`): `SigningInputs`
+
+#### Parameters
+
+##### bytes
+
+`Uint8Array`
+
+#### Returns
+
+`SigningInputs`
 
 ***
 
