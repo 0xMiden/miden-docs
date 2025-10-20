@@ -48,7 +48,7 @@ Miden accounts support **up to 255 indexed storage slots**, each serving differe
 - **Structure**: `[felt0, felt1, felt2, felt3]`
 - **Use**: Larger data structures, addresses, complex values
 
-```rust
+```rust title="data-types.rs"
 // Example data types
 type Felt = u64;  // Simplified representation
 type Word = [Felt; 4];  // Array of 4 field elements

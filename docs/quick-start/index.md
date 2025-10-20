@@ -22,7 +22,7 @@ Developers build Miden programs using the Rust programming language.
 
 1. Install Rust using rustup by entering the following command in your terminal:
 
-```bash
+```bash title=">_ Terminal"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ```
 
@@ -32,13 +32,13 @@ After a successful installation you will see the following message:
 
 2. Reload your PATH environment variable to include Cargo's bin directory:
 
-```bash
+```bash title=">_ Terminal"
 . "$HOME/.cargo/env"
 ```
 
 3. Verify that the installation was successful:
 
-```bash
+```bash title=">_ Terminal"
 rustc --version
 ```
 
@@ -61,7 +61,7 @@ The Miden CLI provides all the tools required to build and deploy Miden programs
 
 1. Install the Miden toolchain installer (midenup) using cargo:
 
-```bash
+```bash title=">_ Terminal"
 cargo install midenup
 ```
 
@@ -71,7 +71,7 @@ Until this crate has been published to crates.io, it is only possible to install
 
 2. Initialize the midenup environment:
 
-```bash
+```bash title=">_ Terminal"
 midenup init
 ```
 
@@ -85,20 +85,20 @@ The `midenup init` command initializes the `$MIDENUP_HOME` directory and creates
 
 Add the following to your `~/.zshrc` file:
 
-```bash
+```bash title=">_ Terminal"
 export MIDENUP_HOME="/Users/$(whoami)$/Library/Application Support/midenup"
 export PATH=${MIDENUP_HOME}/bin:$PATH
 ```
 
 Or if you want to use the default location:
 
-```bash
+```bash title=">_ Terminal"
 export PATH="/Users/$(whoami)/Library/Application Support/midenup/bin:$PATH"
 ```
 
 Then reload your shell configuration:
 
-```bash
+```bash title=">_ Terminal"
 source ~/.zshrc
 ```
 
@@ -106,14 +106,14 @@ source ~/.zshrc
 
 Add the following to your `~/.bashrc` file:
 
-```bash
+```bash title=">_ Terminal"
 export MIDENUP_HOME=$XDG_DATA_DIR/midenup
 export PATH=${MIDENUP_HOME}/bin:$PATH
 ```
 
 Then reload your shell configuration:
 
-```bash
+```bash title=">_ Terminal"
 source ~/.bashrc
 ```
 
@@ -131,7 +131,7 @@ Add instructions here
 
 After initializing `midenup`, install the Miden toolchain:
 
-```bash
+```bash title=">_ Terminal"
 midenup install stable
 ```
 
@@ -141,7 +141,7 @@ This installs the latest stable versions of all Miden components that work toget
 
 After installing the Miden toolchain, run the following command to configure the Miden client:
 
-```bash
+```bash title=">_ Terminal"
 miden-client init --network <NETWORK>
 ```
 
@@ -159,7 +159,7 @@ For this guide, we will be using the `testnet` option.
 
 1. Check that midenup is working:
 
-```bash
+```bash title=">_ Terminal"
 midenup show active-toolchain
 ```
 
@@ -174,7 +174,7 @@ stable
 
 2. Verify that the `miden` command is available:
 
-```bash
+```bash title=">_ Terminal"
 which miden
 ```
 
@@ -189,7 +189,7 @@ which miden
 
 3. Test creating a new Miden project:
 
-```bash
+```bash title=">_ Terminal"
 miden new my-first-project
 ```
 
@@ -221,7 +221,7 @@ This error occurs when the PATH environment variable doesn't include the midenup
 
 1. Check your current PATH:
 
-```bash
+```bash title=">_ Terminal"
 echo $PATH
 ```
 
@@ -236,7 +236,7 @@ echo $PATH
 
 2. Look for `/Users/.../midenup/bin` in the output. If it's missing, add it:
 
-```bash
+```bash title=">_ Terminal"
 export PATH="/Users/$(whoami)/Library/Application Support/midenup/bin:$PATH"
 ```
 
@@ -253,6 +253,6 @@ which miden
 
 3. Make changes permanent by adding to your `~/.bashrc` or `~/.zshrc` file (depending on your shell):
 
-```bash
+```bash title=">_ Terminal"
 export PATH="/Users/$(whoami)/Library/Application Support/midenup/bin:$PATH"
 ```

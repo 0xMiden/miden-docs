@@ -101,7 +101,7 @@ Before we can transfer tokens, we need a source of test tokens. Let's deploy our
 
 Use the `miden client new-account` command to create and deploy a fungible token faucet:
 
-```bash
+```bash title=">_ Terminal"
 miden client new-account --account-type fungible-faucet \
                   --component-templates ./basic-fungible-faucet.mct \
                   --deploy
@@ -120,7 +120,7 @@ Remove the `--deploy` flag for now, as this will result in a client error. Said 
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 Enter value for 'token_metadata.decimals' - Number of decimal places (type: u8): 6
 Enter value for 'token_metadata.max_supply' - Maximum supply of the token in base units (type: felt): 1000000000000000
 Enter value for 'token_metadata.ticker' - Token symbol of the faucet's asset, limited to 4 characters. (type: token_symbol): TST
@@ -142,7 +142,7 @@ In Miden, tokens are distributed through **faucet accounts**, which are speciali
 
 Use the `miden client mint` command to request tokens from your deployed faucet:
 
-```bash
+```bash title=">_ Terminal"
 miden client mint --target <YOUR_ACCOUNT_ID> \
                   --asset 1000::<FAUCET_ACCOUNT_ID> \
                   --note-type private
@@ -161,7 +161,7 @@ The CLI will prompt you if you want to publish this transaction on-chain. Make s
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 Executing transaction...
 The transaction will have the following effects:
 
@@ -203,14 +203,14 @@ Asset transfers in Miden involve creating a **note** containing assets and consu
 
 #### Check for notes to be consumed (new output note)
 
-```bash
+```bash title=">_ Terminal"
 miden client notes
 ```
 
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 Input Notes
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
  ...
@@ -224,7 +224,7 @@ Input Notes
 
 #### Consume the new output note
 
-```bash
+```bash title=">_ Terminal"
 miden client consume-notes <INPUT_NOTE_COMMITMENT>
 ```
 
@@ -243,7 +243,7 @@ Note: This command lets you specify multiple input notes.
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 Executing transaction...
 The transaction will have the following effects:
 
@@ -283,14 +283,14 @@ The transaction did not generate any output notes.
 
 Check that the tokens are now in your account:
 
-```bash
+```bash title=">_ Terminal"
 miden client account --show <YOUR_ACCOUNT_ID>
 ```
 
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
  Account Information
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -334,7 +334,7 @@ Now that you have tokens, let's send some to another account.
 
 Send assets to another account by creating a note:
 
-```bash
+```bash title=">_ Terminal"
 # Send 100 TST tokens to another account
 miden client send --target <RECIPIENT_ACCOUNT_ID> \
                   --asset 100::<FAUCET_ACCOUNT_ID> \
@@ -351,7 +351,7 @@ miden client send --target <RECIPIENT_ACCOUNT_ID> \
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 Executing transaction...
 The transaction will have the following effects:
 
@@ -391,14 +391,14 @@ Output notes:
 
 Check that assets left your account:
 
-```bash
+```bash title=">_ Terminal"
 miden client account --show <YOUR_ACCOUNT_ID>
 ```
 
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
  Account Information
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -440,14 +440,14 @@ If someone sent you tokens, here's how to receive them:
 
 Check for notes sent to your account:
 
-```bash
+```bash title=">_ Terminal"
 miden client notes
 ```
 
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 Input Notes
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
  ...
@@ -463,7 +463,7 @@ Input Notes
 
 Create a transaction to claim the assets:
 
-```bash
+```bash title=">_ Terminal"
 miden client consume-notes <NOTE_COMMITMENT>
 ```
 
@@ -478,7 +478,7 @@ miden client consume-notes <NOTE_COMMITMENT>
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 Executing transaction...
 The transaction will have the following effects:
 
@@ -524,7 +524,7 @@ Refactor this so that it uses timelock-height and also recall-height. Amend the 
 
 Create transfers with a timelock:
 
-```bash
+```bash title=">_ Terminal"
 miden client send --target <RECIPIENT> \
                   --asset 100::TST \
                   --timelock-height <TIMELOCK_BLOCK_HEIGHT> \
@@ -540,7 +540,7 @@ miden client send --target <RECIPIENT> \
 
 Create recallable transfers:
 
-```bash
+```bash title=">_ Terminal"
 miden client send --target <RECIPIENT> \
                   --asset 100::<FAUCET_ACCOUNT_ID> \
                   --recall-height <RECALL_BLOCK_HEIGHT> \
@@ -556,7 +556,7 @@ miden client send --target <RECIPIENT> \
 
 Exchange assets directly between accounts:
 
-```bash
+```bash title=">_ Terminal"
 miden client swap --offered-asset <AMOUNT>::<ASSET_ID> \
                   --requested-asset <AMOUNT>::<ASSET_ID> \
                   --note-type private \

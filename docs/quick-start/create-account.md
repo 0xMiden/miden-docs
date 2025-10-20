@@ -89,7 +89,7 @@ Example: A `BasicMutable` account type can be composed of wallet + authenticatio
 
 ### Miden Account Interface
 
-```rust
+```rust title="miden-account.rs"
 pub struct MidenAccount {
     /// Immutable, 120-bit ID encoding type, storage mode and version.
     pub id: [u8; 15],
@@ -125,7 +125,7 @@ pub struct MidenAccount {
 <details>
 <summary>Stricter type definition for the Account:</summary>
 
-```rust
+```rust title="miden-account.rs"
 //! Optional, stricter types for Miden accounts.
 //! Use these in place of the simplified `[u8; _]` and `String` fields if you prefer.
 //!
@@ -263,7 +263,7 @@ Before creating an account:
 
 Use the `miden account` command to create a new Miden account:
 
-```bash
+```bash title=">_ Terminal"
 miden client new-wallet
 ```
 
@@ -296,7 +296,7 @@ Check that your account was created successfully:
 Reach out to midenup guys to create native handler for `miden account show` (should corresopnd to miden-client account)
 :::
 
-```bash
+```bash title=">_ Terminal"
 miden client account
 ```
 
@@ -307,7 +307,7 @@ Consider adding alias for listing accounts directly (`miden accounts`)
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 | Account ID | Type | Storage Mode | Nonce | Status |
 |------------|------|--------------|-------|--------|
 | 0x970e3e4dbcd09b8035532edaa87bc9 | Regular | private | 0 | New |
@@ -359,14 +359,14 @@ Storage:
 
 To see all your accounts:
 
-```bash
+```bash title=">_ Terminal"
 miden client account --list
 ```
 
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 | Account ID | Type | Storage Mode | Nonce | Status |
 |------------|------|--------------|-------|--------|
 | 0x08597c42ef04608022345b43dc870f | Regular | private | 0 | New |
@@ -378,14 +378,14 @@ miden client account --list
 
 If you have multiple accounts, you can set the default account using the following account:
 
-```bash
+```bash title=">_ Terminal"
 miden client account --default <account-id>
 ```
 
 <details>
 <summary>Expected output</summary>
 
-```bash
+```text
 Config updated successfully
 Setting default account to 0x970e3e4dbcd09b8035532edaa87bc9...
 ```
