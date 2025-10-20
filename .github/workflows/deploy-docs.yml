@@ -137,8 +137,8 @@ jobs:
       - name: Aggregate docs into single docs tree
         run: |
           echo "Aggregating vendor docs into docs/ structure..."
-          # Clean any existing vendor directories (keep static docs)
-          find docs -mindepth 1 -maxdepth 1 -type d ! -name 'static*' -exec rm -rf {} +
+          # Clean only vendor directories that will be re-synced
+          rm -rf docs/miden-base docs/miden-node docs/miden-client docs/miden-tutorials docs/miden-vm docs/compiler
 
           # Copy each vendor repo's docs into docs/
           if [ -d "vendor/miden-node/docs/external/src" ]; then
@@ -184,10 +184,10 @@ jobs:
           echo "Building Docusaurus site"
           npm run build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: build
+      # - name: Upload artifact
+      #   uses: actions/upload-pages-artifact@v3
+      #   with:
+      #     path: build
 
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+      # - name: Deploy to GitHub Pages
+      #   uses: actions/deploy-pages@v4
