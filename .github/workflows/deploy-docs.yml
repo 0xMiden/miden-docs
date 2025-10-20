@@ -48,7 +48,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: "npm"
 
       # Resolve refs per repo (inputs override DEFAULT_REF)
@@ -178,6 +178,8 @@ jobs:
         run: npm install --frozen-lockfile
 
       - name: Build site
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144" # 6GB
         run: |
           echo "Building Docusaurus site"
           npm run build
