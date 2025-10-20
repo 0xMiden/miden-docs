@@ -1,11 +1,10 @@
 import type { Config } from "@docusaurus/types";
+import { themes as prismThemes } from "prism-react-renderer";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
-const isNext = process.env.CHANNEL === "next";
-
 const config: Config = {
-  title: "The Miden Book",
+  title: "Miden Docs",
   tagline: "One stop shop for everything Miden",
   favicon: "img/favicon.ico",
 
@@ -43,11 +42,16 @@ const config: Config = {
         }, // Disable preset docs plugin => using own plugin
         blog: false, // Disable blog
         theme: {
-          // customCss: "./src/css/custom.css",
+          customCss: "./src/custom/styles.css",
         },
       },
     ],
   ],
+
+  // enable mermaid diagrams and math support
+  markdown: {
+    mermaid: true,
+  },
 
   stylesheets: [
     {
@@ -61,17 +65,49 @@ const config: Config = {
 
   themes: ["@docusaurus/theme-mermaid"],
 
-  // enable mermaid diagrams and math support
-  markdown: {
-    mermaid: true,
-  },
-
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     {
+      colorMode: {
+        defaultMode: "light",
+        disableSwitch: true,
+      },
+      // TODO: implement exact code theme styling
+      prism: {
+        theme: prismThemes.oneLight,
+        darkTheme: prismThemes.oneDark,
+        additionalLanguages: ["rust", "solidity", "toml", "yaml"],
+      },
+      algolia: {
+        appId: "3G8FFE98IO",
+        // safe to commit
+        apiKey: "657bdab7adbb5747f645a0022b85ffd3",
+        indexName: "intro",
+        contextualSearch: true,
+        // externalUrlRegex: "external\\.com|domain\\.com",
+        // replaceSearchResultPathname: {
+        //   from: "/docs/", // or as RegExp: /\/docs\//
+        //   to: "/",
+        // },
+        searchParameters: {},
+        searchPagePath: "search",
+        insights: false,
+
+        // askAi: "ALGOLIA_ASK_AI_ASSISTANT_ID",
+      },
       navbar: {
-        title: "Miden",
+        logo: {
+          src: "img/logo.png",
+          alt: "Miden Logo",
+          height: 240,
+        },
+        title: "MIDEN",
         items: [
+          {
+            type: "docsVersionDropdown",
+            position: "left",
+            dropdownActiveClassDisabled: true,
+          },
           {
             href: "https://github.com/0xMiden/",
             label: "GitHub",
