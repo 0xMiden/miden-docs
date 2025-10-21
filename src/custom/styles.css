@@ -1,13 +1,6 @@
-/* ==========================================================================
-   Docusaurus + Infima theme bridge
-   Put this file in: src/css/custom.css
-   Map your Figma tokens → CSS variables here (light & dark).
-   Uses stable ThemeClassNames for robust scoping.
-   ========================================================================== */
-
 /* Import Google Fonts */
 @import url("https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
 
 /* Import local Departure Mono font */
 @font-face {
@@ -45,14 +38,14 @@
   --color-link: var(--color-brand);
 
   /* ---- Typography ---- */
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
     "Liberation Mono", monospace;
   --font-mono-display: "Departure Mono"; /* Display monospace font for larger UI elements like step numbers */
   --font-size-base: 14px;
   --line-height-base: 1.45rem;
-  --letter-spacing-base: 0;
+  --letter-spacing-base: -2%;
 
   /* ---- Radii & Spacing ---- */
   --radius-xs: 5px;
@@ -106,10 +99,11 @@
   --ifm-background-surface-color: var(--color-surface);
 
   /* Typography */
-  --ifm-font-family-base: var(--font-mono);
+  --ifm-font-family-base: var(--font-sans);
   --ifm-font-family-monospace: var(--font-mono);
   --ifm-font-size-base: var(--font-size-base);
   --ifm-line-height-base: var(--line-height-base);
+  --ifm-font-weight-base: 400;
   --ifm-heading-font-weight: 700;
 
   /* Layout & spacing */
@@ -164,6 +158,7 @@ html,
 body {
   font-family: var(--ifm-font-family-base);
   font-size: var(--ifm-font-size-base);
+  font-weight: var(--ifm-font-weight-base);
   line-height: var(--ifm-line-height-base);
   color: var(--ifm-color-content);
   background: var(--ifm-background-color);
@@ -230,6 +225,7 @@ h4,
 h5,
 h6 {
   font-family: var(--font-sans);
+  letter-spacing: 0em;
 }
 
 h1 {
@@ -238,21 +234,26 @@ h1 {
 }
 h2 {
   font-size: 1.75rem;
+  line-height: 32px;
   /* line-height: 1.15; */
 }
 h3 {
   font-size: 1.4rem;
+  line-height: 28px;
   /* line-height: 1.3; */
 }
 h4 {
   font-size: 1.25rem;
+  line-height: 24px;
 }
 h5 {
   font-size: 1.125rem;
+  line-height: 20px;
 }
 h6 {
   font-size: 1rem;
   text-transform: none;
+  line-height: 16px;
 }
 
 /* Bold text styling */
@@ -264,12 +265,15 @@ b {
 
 /* Paragraph & lists */
 p {
-  letter-spacing: -0.045rem;
+  letter-spacing: -2%;
+  line-height: 24px;
+  font-weight: var(--ifm-font-weight-base);
 }
 
 /* Custom list marker colors for unordered lists only */
 ul {
   list-style-type: disc;
+  line-height: 150%;
 }
 
 ul li::marker {
@@ -288,6 +292,7 @@ ul ul ul {
 /* Ordered lists keep default styling */
 ol {
   list-style-type: decimal;
+  line-height: 150%;
 }
 
 /* Nested ordered lists keep default styling */
@@ -435,6 +440,7 @@ img {
   --ifm-alert-border-color: var(--ifm-color-primary);
   --ifm-alert-background-color-highlight: #fff;
 
+  font-family: var(--font-mono);
   border: 1px solid var(--color-elevated);
   border-top: 10px solid var(--ifm-alert-border-color); /* top border accent */
   border-left: none; /* disable default */
@@ -481,6 +487,7 @@ img {
   --ifm-alert-background-color: var(--color-elevated);
   --ifm-alert-border-color: var(--color-warning);
 
+  font-family: var(--font-mono);
   border: 1px solid var(--color-elevated);
   border-top: 10px solid var(--ifm-alert-border-color); /* top border accent */
   border-left: none; /* disable default */
