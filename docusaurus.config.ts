@@ -2,6 +2,14 @@ import type { Config } from "@docusaurus/types";
 import { themes as prismThemes } from "prism-react-renderer";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import { readFileSync } from "fs";
+import { parse as parseYaml } from "yaml";
+import { join } from "path";
+
+// Read the next version from release manifest
+const releaseManifestPath = join(__dirname, ".release", "release-manifest.yml");
+const releaseManifest = parseYaml(readFileSync(releaseManifestPath, "utf8"));
+const nextVersion = releaseManifest.next_version;
 
 const config: Config = {
   title: "Miden Docs",
@@ -34,7 +42,7 @@ const config: Config = {
           includeCurrentVersion: true,
           versions: {
             current: {
-              label: "Next",
+              label: `${nextVersion} (unstable)`,
             },
           },
           remarkPlugins: [remarkMath],
