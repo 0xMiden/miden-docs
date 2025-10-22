@@ -281,11 +281,16 @@ println!(
         counter_contract.commitment()
     );
 println!(
+        "counter_contract commitment: {:?}",
+        counter_contract.commitment()
+    );
+println!(
     "counter_contract id: {:?}",
     Address::from(AccountIdAddress::new(
         counter_contract.id(),
         AddressInterface::Unspecified
     ))
+    .to_bech32(NetworkId::Testnet)
     .to_bech32(NetworkId::Testnet)
 );
 println!("counter_contract storage: {:?}", counter_contract.storage());
@@ -484,6 +489,7 @@ async fn main() -> Result<(), ClientError> {
             AddressInterface::Unspecified
         ))
         .to_bech32(NetworkId::Testnet)
+        .to_bech32(NetworkId::Testnet)
     );
     println!("counter_contract storage: {:?}", counter_contract.storage());
 
@@ -553,14 +559,20 @@ The output of our program will look something like this:
 
 ```text
 Latest block: 374255
+Latest block: 374255
 
 [STEP 1] Creating counter contract.
 one or more warnings were emitted
 counter_contract commitment: Word([3964727668949550262, 4265714847747507878, 5784293172192015964, 16803438753763367241])
 counter_contract id: "mtst1qre73e6qcrfevqqngx8wewvveacqqjh8p2a"
 counter_contract storage: AccountStorage { slots: [Value(Word([0, 0, 0, 0]))] }
+one or more warnings were emitted
+counter_contract commitment: Word([3964727668949550262, 4265714847747507878, 5784293172192015964, 16803438753763367241])
+counter_contract id: "mtst1qre73e6qcrfevqqngx8wewvveacqqjh8p2a"
+counter_contract storage: AccountStorage { slots: [Value(Word([0, 0, 0, 0]))] }
 
 [STEP 2] Call Counter Contract With Script
+Stack state before step 2610:
 Stack state before step 2610:
 ├──  0: 1
 ├──  1: 0
@@ -583,6 +595,10 @@ Stack state before step 2610:
 ├── 18: 0
 └── 19: 0
 
+└── (0 more items)
+
+View transaction on MidenScan: https://testnet.midenscan.com/tx/0x9767940bbed7bd3a74c24dc43f1ea8fe90a876dc7925621c217f648c63c4ab7a
+counter contract storage: Ok(Word([0, 0, 0, 1]))
 └── (0 more items)
 
 View transaction on MidenScan: https://testnet.midenscan.com/tx/0x9767940bbed7bd3a74c24dc43f1ea8fe90a876dc7925621c217f648c63c4ab7a

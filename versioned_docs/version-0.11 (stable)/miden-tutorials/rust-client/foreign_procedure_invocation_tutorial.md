@@ -257,6 +257,7 @@ println!("\n[STEP 2] Building counter contract from public state");
 // Define the Counter Contract account id from counter contract deploy
 let (_, counter_contract_address) =
     Address::from_bech32("mtst1qre73e6qcrfevqqngx8wewvveacqqjh8p2a").unwrap();
+    Address::from_bech32("mtst1qre73e6qcrfevqqngx8wewvveacqqjh8p2a").unwrap();
 let counter_contract_id = match counter_contract_address {
     Address::AccountId(account_id_address) => account_id_address.id(),
     _ => panic!("Expected AccountId address"),
@@ -377,6 +378,7 @@ Add this snippet to the end of your file in the `main()` function:
 
     // Submit transaction to the network
     let _ = client.submit_transaction(tx_result).await?;
+    let _ = client.submit_transaction(tx_result).await?;
     client.sync_state().await.unwrap();
 
     sleep(Duration::from_secs(5)).await;
@@ -408,6 +410,7 @@ In this tutorial created a smart contract that calls the `get_count` procedure i
 
 The final `src/main.rs` file should look like this:
 
+````rust
 ```rust
 use rand::RngCore;
 use std::{fs, path::Path, sync::Arc, time::Duration};
@@ -530,6 +533,7 @@ async fn main() -> Result<(), ClientError> {
     // Define the Counter Contract account id from counter contract deploy
     let (_, counter_contract_address) =
         Address::from_bech32("mtst1qre73e6qcrfevqqngx8wewvveacqqjh8p2a").unwrap();
+        Address::from_bech32("mtst1qre73e6qcrfevqqngx8wewvveacqqjh8p2a").unwrap();
     let counter_contract_id = match counter_contract_address {
         Address::AccountId(account_id_address) => account_id_address.id(),
         _ => panic!("Expected AccountId address"),
@@ -642,6 +646,7 @@ async fn main() -> Result<(), ClientError> {
 
     // Submit transaction to the network
     let _ = client.submit_transaction(tx_result).await?;
+    let _ = client.submit_transaction(tx_result).await?;
     client.sync_state().await.unwrap();
 
     sleep(Duration::from_secs(5)).await;
@@ -666,7 +671,7 @@ async fn main() -> Result<(), ClientError> {
 
     Ok(())
 }
-```
+````
 
 The output of our program will look something like this:
 
@@ -749,4 +754,5 @@ cargo run --release --bin counter_contract_fpi
 
 ### Continue learning
 
+Next tutorial: [How to Use Unauthenticated Notes](unauthenticated_note_how_to.md)
 Next tutorial: [How to Use Unauthenticated Notes](unauthenticated_note_how_to.md)
