@@ -2,15 +2,6 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
 
-/* Import local Departure Mono font */
-@font-face {
-  font-family: "Departure Mono";
-  src: url("/fonts/DepartureMono.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* ============================
    0) SEMANTIC TOKENS (your brand)
    ============================ */
@@ -42,7 +33,6 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
     "Liberation Mono", monospace;
-  --font-mono-display: "Departure Mono"; /* Display monospace font for larger UI elements like step numbers */
   --font-size-base: 14px;
   --line-height-base: 150%;
   --letter-spacing-base: 0;
@@ -497,7 +487,7 @@ img {
 /* TIP */
 .theme-admonition.alert--success {
   --ifm-alert-background-color: var(--color-elevated);
-  border-top: 10px solid var(--ifm-color-success) !important;
+  border-top-color: var(--ifm-color-success) !important;
 }
 /* INFO / IMPORTANT */
 .theme-admonition.alert--info {
@@ -780,10 +770,10 @@ code {
 /* Main pagination link text - uppercase */
 .pagination-nav__label {
   text-transform: uppercase;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.02em;
   font-size: 1.2rem;
-  font-family: var(--font-mono-display);
+  font-family: var(--font-mono);
   color: color-mix(in oklab, #292929bf 75%, #000);
 }
 
