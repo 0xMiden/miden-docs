@@ -17,7 +17,7 @@ const config: Config = {
   favicon: "img/favicon.ico",
 
   url: "https://0xmiden.github.io/",
-  baseUrl: "miden-docs",
+  baseUrl: "/miden-docs/",
 
   organizationName: "0xMiden",
   projectName: "miden-docs",
