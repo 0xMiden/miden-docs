@@ -77,16 +77,9 @@ const config: Config = {
     [
       "@cmfcmf/docusaurus-search-local",
       {
-        // whether to index docs pages
         indexDocs: true,
-
-        // whether to index blog pages
         indexBlog: false,
-
-        // whether to index static pages
         indexPages: false,
-
-        // language of your documentation, see next section
         language: "en",
 
         // setting this to "none" will prevent the default CSS to be included. The default CSS
@@ -123,7 +116,7 @@ const config: Config = {
           contentBoost: 1,
           tagsBoost: 3,
           parentCategoriesBoost: 2, // Only used when indexing is enabled for categories
-        }
+        },
       },
     ],
   ],
