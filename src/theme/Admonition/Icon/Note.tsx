@@ -4,16 +4,15 @@ import type { Props } from "@theme/Admonition/Icon/Note";
 export default function AdmonitionIconNote(props: Props): ReactNode {
   return (
     <svg
-      width="15"
-      height="17"
-      viewBox="0 0 15 17"
+      width="9"
+      height="10"
+      viewBox="0 0 9 10"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      {...props}
     >
       <path
-        d="M0.375 0.583313H14.625V11.6666H13.0417V13.25H11.4583V11.6666H9.875V13.25H11.4583V14.8333H9.875V16.4166H0.375V0.583313ZM1.95833 2.16665V14.8333H8.29167V10.0833H13.0417V2.16665H1.95833Z"
-        fill="#df9f26"
+        d="M0 0H9V7H8V8H7V7H6V8H7V9H6V10H0V0ZM1 1V9H5V6H8V1H1Z"
+        fill="#FF5500"
       />
     </svg>
   );
