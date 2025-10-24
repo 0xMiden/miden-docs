@@ -136,7 +136,7 @@ const config: Config = {
       },
       navbar: {
         logo: {
-          src: "img/logo.png",
+          src: "img/logo.svg",
           alt: "Miden Logo",
           height: 120,
         },
