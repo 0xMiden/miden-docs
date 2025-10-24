@@ -16,8 +16,8 @@ const config: Config = {
   tagline: "One stop shop for everything Miden",
   favicon: "img/favicon.ico",
 
-  url: "https://0xmiden.github.io/",
-  baseUrl: "/miden-docs/",
+  url: "https://docs.miden.xyz/",
+  baseUrl: "",
 
   organizationName: "0xMiden",
   projectName: "miden-docs",
@@ -136,9 +136,9 @@ const config: Config = {
       },
       navbar: {
         logo: {
-          src: "img/logo.png",
+          src: "img/logo.svg",
           alt: "Miden Logo",
-          height: 240,
+          height: 120,
         },
         title: "MIDEN",
         items: [
