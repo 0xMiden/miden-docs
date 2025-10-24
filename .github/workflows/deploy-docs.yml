@@ -184,6 +184,9 @@ jobs:
           echo "Building Docusaurus site"
           npm run build
 
+      - name: Add CNAME
+        run: echo docs.miden.xyz > build/CNAME
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
