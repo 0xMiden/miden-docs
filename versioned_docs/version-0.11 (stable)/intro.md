@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Introduction
 
-![Miden book image](/img/book.png)
+![Miden Docs Background](/img/docs-background.png)
 
 :::note
 Welcome to the Miden book! The one-stop shop where you can find everything Miden related.
