@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEFAULT_REF: next
+      DEFAULT_TUTORIALS_REF: main
     steps:
       - name: Checkout docs site
         uses: actions/checkout@v4
@@ -57,6 +58,7 @@ jobs:
         run: |
           set -e
           def="${DEFAULT_REF}"
+          tutorials_def="${DEFAULT_TUTORIALS_REF}"
 
           # For each input: use it if set, else fallback to default ref
           base_ref='${{ inputs.miden_base_ref }}'
@@ -64,7 +66,7 @@ jobs:
           echo "MIDEN_BASE_REF=$base_ref" >> $GITHUB_OUTPUT
 
           tutorials_ref='${{ inputs.miden_tutorials_ref }}'
-          [ -z "$tutorials_ref" ] && tutorials_ref="$def"
+          [ -z "$tutorials_ref" ] && tutorials_ref="$tutorials_def"
           echo "MIDEN_TUTORIALS_REF=$tutorials_ref" >> $GITHUB_OUTPUT
 
           client_ref='${{ inputs.miden_client_ref }}'
