@@ -134,6 +134,11 @@ const config: Config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     {
+      image: "img/socialgraph_twitter.png",
+      metadata: [
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:site", content: "@0xMiden" },
+      ],
       colorMode: {
         defaultMode: "light",
         disableSwitch: true,
