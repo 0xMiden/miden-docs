@@ -49,7 +49,7 @@ Miden supports public smart contracts like Ethereum. The code and state of those
 
 #### Public notes
 
-With public notes, the users are able to store all note details on-chain, thus eliminating the need to communicate note details via side-channels.
+With public notes, the users are able to store all note details onchain, thus eliminating the need to communicate note details via side-channels.
 
 #### Local transaction execution
 
@@ -107,7 +107,7 @@ The Miden node will recursively verify transactions and in doing so build batche
 
 - Ethereum security.
 - Developers can build applications that are infeasible on other systems. For example:
-  - **on-chain order book exchange** due to parallel transaction execution and updatable transactions.
+  - **onchain order book exchange** due to parallel transaction execution and updatable transactions.
   - **complex, incomplete information games** due to client-side proving and cheap complex computations.
   - **safe wallets** due to hidden account state.
 - Stronger privacy than on Ethereum – starting with Web2-level confidentiality, and evolving toward full self-sovereignty.
