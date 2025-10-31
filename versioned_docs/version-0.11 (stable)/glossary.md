@@ -62,7 +62,7 @@ An assembly language specifically designed for the Miden VM. It's a low-level pr
 
 ## Note
 
-A Note is a fundamental data structure that represents an off-chain asset or a piece of information that can be transferred between accounts. Miden's UTXO-like (Unspent Transaction Output) model is designed around the concept of notes. There are output notes which are new notes created by the transaction and input notes which are consumed (spent) by the transaction.
+A Note is a fundamental data structure that represents an offchain asset or a piece of information that can be transferred between accounts. Miden's UTXO-like (Unspent Transaction Output) model is designed around the concept of notes. There are output notes which are new notes created by the transaction and input notes which are consumed (spent) by the transaction.
 
 ## Note script
 

@@ -1,22 +1,22 @@
 ---
-title: "Consuming On-Chain Price Data from the Pragma Oracle"
+title: "Consuming onchain Price Data from the Pragma Oracle"
 sidebar_position: 13
 ---
 
-# Consuming On-Chain Price Data from the Pragma Oracle
+# Consuming onchain Price Data from the Pragma Oracle
 
 _Using the Pragma oracle to get on chain price data_
 
 ## Overview
 
-In this tutorial, we will build a simple “price reader” smart contract that will read Bitcoin price data from the on-chain Pragma oracle.
+In this tutorial, we will build a simple “price reader” smart contract that will read Bitcoin price data from the onchain Pragma oracle.
 
-We will use a script to call the `read_price` function in our "price reader" smart contract, which, in turn, calls the Pragma oracle via foreign procedure invocation (FPI). This tutorial lays the foundation for how you can integrate on-chain price data into your DeFi applications on Miden.
+We will use a script to call the `read_price` function in our "price reader" smart contract, which, in turn, calls the Pragma oracle via foreign procedure invocation (FPI). This tutorial lays the foundation for how you can integrate onchain price data into your DeFi applications on Miden.
 
 ## What we'll cover
 
 - Deploying a smart contract that can read oracle price data
-- Using foreign procedure invocation to get real time on-chain price data
+- Using foreign procedure invocation to get real time onchain price data
 
 ## Prerequisites
 

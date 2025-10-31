@@ -9,7 +9,8 @@ The Miden client has the following architectural components:
 - [RPC client](#rpc-client)
 - [Transaction executor](#transaction-executor)
 - [Keystore](#keystore)
-- [Note screener](#note-screener)
+- [Note Screener](#note-screener)
+- [State Sync component](#state-sync-component)
 
 :::tip
 
@@ -30,7 +31,7 @@ It manages the persistence of the following entities:
 - Note tags.
 - Block headers and chain information that the client needs to execute transactions and consume notes.
 
-Because Miden allows off-chain executing and proving, the client needs to know about the state of the blockchain at the moment of execution. To avoid state bloat, however, the client does not need to see the whole blockchain history, just the chain history intervals that are relevant to the user.
+Because Miden allows offchain executing and proving, the client needs to know about the state of the blockchain at the moment of execution. To avoid state bloat, however, the client does not need to see the whole blockchain history, just the chain history intervals that are relevant to the user.
 
 The store can track any number of accounts, and any number of notes that those accounts might have created or may want to consume.
 

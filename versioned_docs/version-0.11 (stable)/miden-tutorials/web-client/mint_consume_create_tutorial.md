@@ -48,7 +48,7 @@ console.log("Minting 1000 tokens to Alice...");
 const mintTxRequest = client.newMintTransactionRequest(
   alice.id(),           // Target account (who receives the tokens)
   faucet.id(),          // Faucet account (who mints the tokens)
-  NoteType.Public,      // Note visibility (public = on-chain)
+  NoteType.Public,      // Note visibility (public = onchain)
   BigInt(1000),         // Amount to mint (in base units)
 );
 

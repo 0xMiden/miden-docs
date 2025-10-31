@@ -189,4 +189,4 @@ cargo run --release --bin delegated_prover
 
 ### Continue learning
 
-Next tutorial: [Consuming On-Chain Price Data from the Pragma Oracle](oracle_tutorial.md)
+Next tutorial: [Consuming onchain Price Data from the Pragma Oracle](oracle_tutorial.md)

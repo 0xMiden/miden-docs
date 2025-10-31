@@ -28,10 +28,10 @@ In this tutorial, we'll build a simple Next.js application that demonstrates the
 
 Before we dive into code, a quick refresher:
 
-- **Public accounts**: The account's data and code are stored on-chain and are openly visible, including its assets.
-- **Private accounts**: The account's state and logic are off-chain, only known to its owner.
+- **Public accounts**: The account's data and code are stored onchain and are openly visible, including its assets.
+- **Private accounts**: The account's state and logic are offchain, only known to its owner.
 - **Public notes**: The note's state is visible to anyone - perfect for scenarios where transparency is desired.
-- **Private notes**: The note's state is stored off-chain, you will need to share the note data with the relevant parties (via email or Telegram) for them to be able to consume the note.
+- **Private notes**: The note's state is stored offchain, you will need to share the note data with the relevant parties (via email or Telegram) for them to be able to consume the note.
 
 > **Important**: In Miden, "accounts" and "smart contracts" can be used interchangeably due to native account abstraction. Every account is programmable and can contain custom logic.
 
@@ -182,7 +182,7 @@ export async function createMintConsume(): Promise<void> {
   // 2. Create Alice's account
   console.log("Creating account for Alice…");
   const alice = await client.newWallet(
-    AccountStorageMode.public(),  // Public: account state is visible on-chain
+    AccountStorageMode.public(),  // Public: account state is visible onchain
     true                          // Mutable: account code can be upgraded later
   );
   console.log("Alice ID:", alice.id().toString());

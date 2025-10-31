@@ -8,7 +8,7 @@ The `State` describes the current condition of all accounts, notes, nullifiers a
 
 ## What is the purpose of the Miden state model?
 
-By employing a concurrent `State` model with local execution and proving, Miden achieves three primary properties: preserving privacy, supporting parallel transactions, and reducing state-bloat by minimizing on-chain data storage.
+By employing a concurrent `State` model with local execution and proving, Miden achieves three primary properties: preserving privacy, supporting parallel transactions, and reducing state-bloat by minimizing onchain data storage.
 
 Miden’s `State` model focuses on:
 
@@ -16,7 +16,7 @@ Miden’s `State` model focuses on:
   Multiple transactions can be processed concurrently by distinct actors using local transaction execution which improves throughput and efficiency.
 
 - **Flexible data storage:**
-  Users can store data privately on their own devices or within the network. This approach reduces reliance on the network for data availability, helps maintain user sovereignty, and minimizes unnecessary on-chain storage.
+  Users can store data privately on their own devices or within the network. This approach reduces reliance on the network for data availability, helps maintain user sovereignty, and minimizes unnecessary onchain storage.
  
 - **Privacy:**
   By using notes and nullifiers, Miden ensures that value transfers remain confidential. Zero-knowledge proofs allow users to prove correctness without revealing sensitive information.
@@ -48,8 +48,8 @@ This is done using an authenticated data structure, a sparse Merkle tree.
 
 As described in the [account ID section](account/id#account-storage-mode), accounts can have different storage modes:
 
-- **Public & Network accounts:** where all account data is stored on-chain.
-- **Private accounts:** where only the commitments to the account is stored on-chain.
+- **Public & Network accounts:** where all account data is stored onchain.
+- **Private accounts:** where only the commitments to the account is stored onchain.
 
 Private accounts significantly reduce storage overhead. A private account contributes only 40 bytes to the global `State` (15 bytes for the account ID + 32 bytes for the account commitment + 4 bytes for the block number). For example, 1 billion private accounts take up only 47.47 GB of `State`.
 
@@ -63,8 +63,8 @@ In Miden, when the user is the custodian of their account `State` (in the case o
 
 As described in the [notes section](note), there are two types of notes:
 
-- **Public notes:** where the entire note content is stored on-chain.
-- **Private notes:** where only the note’s commitment is stored on-chain.
+- **Public notes:** where the entire note content is stored onchain.
+- **Private notes:** where only the note’s commitment is stored onchain.
 
 Private notes greatly reduce storage requirements and thus result in lower fees. At high throughput (e.g., 1K TPS), the note database could grow by about 1TB/year. However, only unconsumed public notes and enough information to construct membership proofs must be stored explicitly. Private notes, as well as consumed public notes, can be discarded. This solves the issue of infinitely growing note databases.
 

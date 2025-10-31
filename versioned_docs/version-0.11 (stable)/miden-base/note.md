@@ -79,14 +79,14 @@ The `Note` lifecycle proceeds through four primary phases: **creation**, **valid
 Accounts can create notes in a transaction. The `Note` exists if it is included in the global notes DB.
 
 - **Users:** Executing local or network transactions.
-- **Miden operators:** Facilitating on-chain actions, e.g. such as executing user notes against a DEX or other contracts.
+- **Miden operators:** Facilitating onchain actions, e.g. such as executing user notes against a DEX or other contracts.
 
 #### Note storage mode
 
 As with [accounts](account/index.md), notes can be stored either publicly or privately:
 
-- **Public mode:** The `Note` data is stored in the [note database](state#note-database), making it fully visible on-chain.
-- **Private mode:** Only the `Note`’s hash is stored publicly. The `Note`’s actual data remains off-chain, enhancing privacy.
+- **Public mode:** The `Note` data is stored in the [note database](state#note-database), making it fully visible onchain.
+- **Private mode:** Only the `Note`’s hash is stored publicly. The `Note`’s actual data remains offchain, enhancing privacy.
 
 ### Note validation
 

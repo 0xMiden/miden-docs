@@ -59,7 +59,7 @@ Miden's state model captures the individual states of all accounts and notes, an
 
 ### State model
 
-[State](state) describes everything that is the case at a certain point in time. Individual states of accounts or notes can be stored on-chain and off-chain. This chapter describes the three different state databases in Miden.
+[State](state) describes everything that is the case at a certain point in time. Individual states of accounts or notes can be stored onchain and offchain. This chapter describes the three different state databases in Miden.
 
 ### Blockchain
 
