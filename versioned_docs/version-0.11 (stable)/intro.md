@@ -30,7 +30,7 @@ If you want to join the technical discussion, please check out the following:
 Miden is currently at release v0.11 – approaching mainnet readiness, with parts of the protocol still being refined and new zk-rollup features under active development for the 2026 launch.
 
 :::warning
-Breaking changes may still occur across components.
+Breaking changes may still occur in some components.
 :::
 
 ### Feature highlights
@@ -49,7 +49,7 @@ Miden supports public smart contracts like Ethereum. The code and state of those
 
 #### Public notes
 
-With public notes, the users are able to store all note details onchain, thus eliminating the need to communicate note details via side-channels.
+With public notes, users are able to store all note details onchain, thus eliminating the need to communicate note details via side-channels.
 
 #### Local transaction execution
 
@@ -67,7 +67,7 @@ All accounts are written in [MASM](https://0xmiden.github.io/miden-vm/user_docs/
 
 #### Customized smart contracts
 
-Accounts can expose any interface putting custom account components together. Account components can be simple smart contracts, like the basic wallet, or they can be entirely custom-made and reflect any logic due to the underlying Turing-complete Miden VM.
+Accounts can expose any interface by combining custom account components. Account components can be simple smart contracts, like the basic wallet, or they can be entirely custom-made and reflect any logic due to the underlying Turing-complete Miden VM.
 
 #### P2ID, P2IDR, and SWAP note scripts
 
@@ -93,11 +93,11 @@ The following features are currently under active development.
 
 #### Network transactions
 
-Transaction execution and proving can be outsourced to the network and to the Miden operator. Those transactions will be necessary when it comes to public shared state, and they can be useful if the user's device is not powerful enough to prove transactions efficiently.
+Transaction execution and proving can be outsourced to the network and to the Miden operator. These transactions will be required for public shared state, and they can be useful if the user's device is not powerful enough to prove transactions efficiently.
 
 #### Rust compiler
 
-In order to write account code, note, or transaction scripts in Rust, there will be a compiler from Rust to Miden Assembly.
+In order to write account, note, or transaction scripts in Rust, there will be a compiler from Rust to Miden Assembly.
 
 #### Block and epoch proofs
 
