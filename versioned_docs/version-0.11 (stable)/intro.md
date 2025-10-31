@@ -7,17 +7,17 @@ sidebar_position: 1
 ![Miden Docs Background](/img/docs-background.png)
 
 :::note
-Welcome to the Miden book! The one-stop shop where you can find everything Miden related.
+Welcome to the Miden docs! The one-stop shop where you can find everything Miden related.
 :::
 
 Miden is a rollup for high-throughput, private applications.
 
-Using Miden, builders can create novel, high-throughput, private applications for payments, DeFi, digital assets, and gaming. Applications and users are secured by Ethereum and AggLayer.
+Using Miden, builders can create novel, high-throughput, private applications for payments, DeFi, digital assets, and gaming. Applications and users are secured by Ethereum and Agglayer.
 
 If you want to join the technical discussion, please check out the following:
 
 - [Telegram](https://t.me/BuildOnMiden)
-- [Miden Github](https://github.com/0xMiden)
+- [Miden GitHub](https://github.com/0xMiden)
 - [Roadmap](https://miden.xyz/roadmap)
 
 :::warning
@@ -28,13 +28,13 @@ If you want to join the technical discussion, please check out the following:
 
 ## Status and features
 
-Miden is currently on release v0.8 This is an early version of the protocol and its components.
+Miden is currently on release v0.11. This is an early version of the protocol and its components.
 
 :::warning
 We expect breaking changes on all components.
 :::
 
-At the time of writing, Miden doesn't offer all the features you may expect from a zkRollup yet. During 2025, we expect to gradually implement more features.
+At the time of writing, Miden doesn't offer all the features you may expect from a zk-rollup yet. During 2025, we expect to gradually implement more features.
 
 ### Feature highlights
 
@@ -44,7 +44,7 @@ The Miden operator only tracks a commitment to account data in the public databa
 
 #### Private notes
 
-Like private accounts, the Miden operator only tracks a commitment to notes in the public database. Users need to communicate note details to each other off-chain (via a side channel) in order to consume private notes in transactions.
+Like private accounts, the Miden operator only tracks a commitment to notes in the public database. Users need to communicate note details to each other offchain (via a side-channel) in order to consume private notes in transactions.
 
 #### Public accounts
 
@@ -52,7 +52,7 @@ Miden supports public smart contracts like Ethereum. The code and state of those
 
 #### Public notes
 
-With public notes, the users are be able to store all note details on-chain, thus, eliminating the need to communicate note details via side-channels.
+With public notes, the users are able to store all note details on-chain, thus eliminating the need to communicate note details via side-channels.
 
 #### Local transaction execution
 
@@ -60,17 +60,17 @@ The Miden client allows for local transaction execution and proving. The Miden o
 
 #### Delegated proving
 
-The Miden client allows for proof generation by an external service if the user choses to do so , e.g., if on a low powered device.
+The Miden client allows for proof generation by an external service if the user chooses to do so , e.g. if on a low-powered device.
 
 #### Standardized smart contracts
 
-Currently, there are three different standardized smart contracts available. A basic wallet smart contract that sends and receives assets, and fungible and non-fungible faucets to mint and burn assets.
+Currently, there are three different standardized smart contracts available. A basic wallet contract for sending and receiving assets, plus fungible and non-fungible faucets to mint and burn assets.
 
 All accounts are written in [MASM](https://0xmiden.github.io/miden-vm/user_docs/assembly/main.html).
 
 #### Customized smart contracts
 
-Accounts can expose any interface putting custom account components together. Account components can be simple smart contracts, like the basic wallet, or they can be entirely custom made and reflect any logic due to the underlying Turing-complete Miden VM.
+Accounts can expose any interface putting custom account components together. Account components can be simple smart contracts, like the basic wallet, or they can be entirely custom-made and reflect any logic due to the underlying Turing-complete Miden VM.
 
 #### P2ID, P2IDR, and SWAP note scripts
 
