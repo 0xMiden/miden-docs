@@ -7,7 +7,7 @@ sidebar_position: 1
 ![Miden Docs Background](/img/docs-background.png)
 
 :::note
-Welcome to the Miden docs! The one-stop shop where you can find everything Miden related.
+Welcome to the Miden docs – your one-stop shop for all things Miden.
 :::
 
 Miden is a rollup for high-throughput, private applications.
@@ -101,7 +101,7 @@ In order to write account code, note, or transaction scripts in Rust, there will
 
 #### Block and epoch proofs
 
-The Miden node will recursively verify transactions and in doing so build batches of transactions, blocks, and epochs.
+The Miden node will recursively verify transactions and, in doing so, build batches of transactions, blocks, and epochs.
 
 ## Benefits of Miden
 
