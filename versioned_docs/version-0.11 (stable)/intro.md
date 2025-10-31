@@ -12,7 +12,7 @@ Welcome to the Miden docs! The one-stop shop where you can find everything Miden
 
 Miden is a rollup for high-throughput, private applications.
 
-Using Miden, builders can create novel, high-throughput, private applications for payments, DeFi, digital assets, and gaming. Applications and users are secured by Ethereum and Agglayer.
+Using Miden, builders can create novel, high-throughput, private applications for payments, DeFi, asset management, etc. Applications and users are secured by Ethereum and Agglayer.
 
 If you want to join the technical discussion, please check out the following:
 
@@ -85,10 +85,10 @@ The Miden operator running the Miden node builds the blocks containing transacti
 
 The Miden node stores all necessary information in its state databases and provides this information via its RPC endpoints.
 
-### Planned features
+### WIP features
 
 :::warning
-The following features are at a planning stage only.
+The following features being worked on at the time of writing.
 :::
 
 #### Network transactions
@@ -108,9 +108,9 @@ The Miden node will recursively verify transactions and in doing so build batche
 - Ethereum security.
 - Developers can build applications that are infeasible on other systems. For example:
   - **onchain order book exchange** due to parallel transaction execution and updatable transactions.
-  - **complex, incomplete information games** due to client-side proving and cheap complex computations.
+  - **complex, incomplete information mechanisms** due to client-side proving and cheap complex computations.
   - **safe wallets** due to hidden account state.
-- Stronger privacy than on Ethereum – starting with Web2-level confidentiality, and evolving toward full self-sovereignty.
+- Stronger privacy than on Ethereum or Solana – starting with Web2-level confidentiality, and evolving toward full self-sovereignty.
 - Transactions can be recalled and updated.
 - Lower fees due to client-side proving.
 - dApps on Miden are safe to use due to account abstraction and compile-time safe Rust smart contracts.
