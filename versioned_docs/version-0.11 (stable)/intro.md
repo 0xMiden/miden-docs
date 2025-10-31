@@ -12,7 +12,7 @@ Welcome to the Miden docs! The one-stop shop where you can find everything Miden
 
 Miden is a rollup for high-throughput, private applications.
 
-Using Miden, builders can create novel, high-throughput, private applications for payments, DeFi, asset management, etc. Applications and users are secured by Ethereum and Agglayer.
+Using Miden, builders can create novel, high-throughput, private applications for payments, DeFi, asset management, and more. Applications and users are secured by Ethereum and Agglayer.
 
 If you want to join the technical discussion, please check out the following:
 
@@ -88,7 +88,7 @@ The Miden node stores all necessary information in its state databases and provi
 ### WIP features
 
 :::warning
-The following features being worked on at the time of writing.
+The following features are currently under active development.
 :::
 
 #### Network transactions
@@ -97,7 +97,7 @@ Transaction execution and proving can be outsourced to the network and to the Mi
 
 #### Rust compiler
 
-In order to write account code, note or transaction scripts, in Rust, there will be a compiler from Rust to Miden Assembly.
+In order to write account code, note, or transaction scripts in Rust, there will be a compiler from Rust to Miden Assembly.
 
 #### Block and epoch proofs
 
