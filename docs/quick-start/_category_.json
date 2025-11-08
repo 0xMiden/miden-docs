@@ -1,5 +1,8 @@
 {
   "label": "Quick Start",
-  "position": 1,
-  "collapsed": true
+  "position": 5,
+  "link": {
+    "type": "doc",
+    "id": "quick-start/index"
+  }
 }

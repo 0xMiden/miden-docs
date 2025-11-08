@@ -575,6 +575,21 @@ img {
 }
 
 /* ==========================================
+   10.1) FIX DOCCARDLIST SPACING IN MARKDOWN
+   ========================================== */
+
+/* Remove all margins from DocCardList containers and card grid elements */
+.theme-doc-markdown [class*="cardContainer"],
+.theme-doc-markdown article[class*="col"],
+.theme-doc-markdown div[class*="row"],
+.theme-doc-markdown section[class*="row"],
+.theme-doc-markdown ul[class*="cardContainer"] {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* ==========================================
    11) TABLES
    ========================================== */
 

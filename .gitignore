@@ -24,7 +24,5 @@ vendor/*
 
 .secrets
 
-docs/*/*
-
 # Local claude files
 .claude
