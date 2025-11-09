@@ -113,8 +113,6 @@ Storage:
 
 ## Mint Your First Tokens
 
-### `mint` command
-
 Use the built-in mint command to get test tokens:
 
 ```bash title=">_ Terminal"

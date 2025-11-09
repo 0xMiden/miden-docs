@@ -259,17 +259,4 @@ Alice's TEST token balance: 900
 
 </details>
 
-## Key Takeaways
-
-You've learned how to read and monitor account storage on Miden. This enables you to build reactive applications that respond to on-chain state changes.
-
-### Key Points for Application Development
-
-- **Accounts are smart contracts** that can hold tokens and run code
-- **Public and private storage** enables both transparency and privacy
-- **Independent execution** means no waiting for global state synchronization
-- **Flexible storage patterns** support various application architectures
-
-Reading account storage is essential for building responsive applications on Miden. The privacy and parallel execution capabilities make it perfect for applications that need to scale while protecting user data.
-
 ---
