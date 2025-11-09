@@ -711,6 +711,18 @@ code {
   border-bottom: 1px solid transparent;
 }
 
+/* Normal text variant - use .normal-text class to override uppercase */
+.theme-doc-markdown details.normal-text > summary,
+.theme-doc-markdown details > summary.normal-text {
+  text-transform: none !important;
+  font-family: var(
+    --font-sans
+  ) !important; /* Use monospace like code block titles */
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02rem !important;
+}
+
 /* Hide native disclosure marker */
 .theme-doc-markdown details > summary::marker,
 .theme-doc-markdown details > summary::-webkit-details-marker {
