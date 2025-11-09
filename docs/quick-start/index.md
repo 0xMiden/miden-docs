@@ -82,4 +82,14 @@ import DocCard from '@theme/DocCard';
       }}
     />
   </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './your-first-smart-contract',
+        label: 'Your First Smart Contract',
+        description: 'Learn to build, test, and deploy smart contracts on Miden using Rust.',
+      }}
+    />
+  </div>
 </div>
