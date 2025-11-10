@@ -55,7 +55,7 @@ pub struct MidenAccount {
     /// Determines mutability of the account (immutable, mutable).
     pub account_type: AccountType,
 
-    /// Storage placement preference (public/network/private).
+    /// Storage placement preference (public/private).
     pub storage_mode: StorageMode,
 
     /// Root commitment of the account CODE (MAST root).
@@ -102,8 +102,6 @@ pub enum AccountType {
 pub enum StorageMode {
     /// State stored on-chain and publicly readable.
     Public,
-    /// Public, with proving/execution provided by special network nodes.
-    Network,
     /// Only a commitment is on-chain; full state is held privately by the owner.
     Private,
 }
@@ -249,12 +247,12 @@ let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
     code:`import { WebClient, AccountStorageMode } from "@demox-labs/miden-sdk";
 
 export async function demo() {
-// Initialize client to connect with the Miden Testnet.
-// NOTE: The client is our entry point to the Miden network.
-// All interactions with the network go through the client.
-const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-const client = await WebClient.createClient(nodeEndpoint);
-await client.syncState();
+    // Initialize client to connect with the Miden Testnet.
+    // NOTE: The client is our entry point to the Miden network.
+    // All interactions with the network go through the client.
+    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await WebClient.createClient(nodeEndpoint);
+    await client.syncState();
 
     // Create new wallet account
     const account = await client.newWallet(
@@ -378,12 +376,12 @@ let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
     code:`import { WebClient, AccountStorageMode } from "@demox-labs/miden-sdk";
 
 export async function demo() {
-// Initialize client to connect with the Miden Testnet.
-// NOTE: The client is our entry point to the Miden network.
-// All interactions with the network go through the client.
-const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-const client = await WebClient.createClient(nodeEndpoint);
-await client.syncState();
+    // Initialize client to connect with the Miden Testnet.
+    // NOTE: The client is our entry point to the Miden network.
+    // All interactions with the network go through the client.
+    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await WebClient.createClient(nodeEndpoint);
+    await client.syncState();
 
     const symbol = "TEST";
     const decimals = 8;

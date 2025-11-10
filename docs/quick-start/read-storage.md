@@ -53,10 +53,10 @@ use std::sync::Arc;
 
 #[tokio::main]
 async fn main() -> Result<(), ClientError> {
-// Initialize RPC connection
-let endpoint = Endpoint::testnet();
-let timeout_ms = 10_000;
-let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
+    // Initialize RPC connection
+    let endpoint = Endpoint::testnet();
+    let timeout_ms = 10_000;
+    let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
@@ -109,32 +109,32 @@ let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
     code:`import { WebClient, AccountId } from "@demox-labs/miden-sdk";
 
 export async function demo() {
-// Initialize client to connect with the Miden Testnet.
-// NOTE: The client is our entry point to the Miden network.
-// All interactions with the network go through the client.
-const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-const client = await WebClient.createClient(nodeEndpoint);
-await client.syncState();
+    // Initialize client to connect with the Miden Testnet.
+    // NOTE: The client is our entry point to the Miden network.
+    // All interactions with the network go through the client.
+    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await WebClient.createClient(nodeEndpoint);
+    await client.syncState();
 
-const accountId = AccountId.fromHex("0xf3e8e740c0d3960013418eecb98ccf");
+    const accountId = AccountId.fromHex("0xf3e8e740c0d3960013418eecb98ccf");
 
-// Import the account into the client's database
-let account = await client.getAccount(accountId);
-if (account === undefined) {
-account = await client.getAccount(accountId);
-}
+    // Import the account into the client's database
+    let account = await client.getAccount(accountId);
+    if (account === undefined) {
+    account = await client.getAccount(accountId);
+    }
 
-// Define counter account instance
-const counter = await client.getAccount(accountId);
+    // Define counter account instance
+    const counter = await client.getAccount(accountId);
 
-// Get the count from the counter account by querying the first
-// storage slot.
-const count = counter?.storage().getItem(0);
+    // Get the count from the counter account by querying the first
+    // storage slot.
+    const count = counter?.storage().getItem(0);
 
-// Convert the 4th value of the WORD Storage value to a number.
-// NOTE: The WORD Storage value is an array of 4 values, each of which is a 64-bit unsigned integer.
-// NOTE: The 4th value is the u64 number of the counter.
-console.log("Count:", Number(count?.toU64s()[3]));
+    // Convert the 4th value of the WORD Storage value to a number.
+    // NOTE: The WORD Storage value is an array of 4 values, each of which is a 64-bit unsigned integer.
+    // NOTE: The 4th value is the u64 number of the counter.
+    console.log("Count:", Number(count?.toU64s()[3]));
 }
 `
 }
@@ -171,10 +171,10 @@ use std::sync::Arc;
 
 #[tokio::main]
 async fn main() -> Result<(), ClientError> {
-// Initialize RPC connection
-let endpoint = Endpoint::testnet();
-let timeout_ms = 10_000;
-let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
+    // Initialize RPC connection
+    let endpoint = Endpoint::testnet();
+    let timeout_ms = 10_000;
+    let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
@@ -225,25 +225,25 @@ let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
     code:`import { WebClient, AccountId } from "@demox-labs/miden-sdk";
 
 export async function demo() {
-// Initialize client to connect with the Miden Testnet.
-// NOTE: The client is our entry point to the Miden network.
-// All interactions with the network go through the client.
-const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-const client = await WebClient.createClient(nodeEndpoint);
-await client.syncState();
+    // Initialize client to connect with the Miden Testnet.
+    // NOTE: The client is our entry point to the Miden network.
+    // All interactions with the network go through the client.
+    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await WebClient.createClient(nodeEndpoint);
+    await client.syncState();
 
-const aliceId = AccountId.fromHex("0x49e27aa5fa5686102fde8e81b89999");
-const faucetId = AccountId.fromHex("0x9796be9c72f137206676f7821a9968");
+    const aliceId = AccountId.fromHex("0x49e27aa5fa5686102fde8e81b89999");
+    const faucetId = AccountId.fromHex("0x9796be9c72f137206676f7821a9968");
 
-// Import the account into the client's database
-let aliceAccount = await client.getAccount(aliceId);
-if (aliceAccount === undefined) {
-await client.importAccountById(aliceId);
-aliceAccount = await client.getAccount(aliceId);
-}
+    // Import the account into the client's database
+    let aliceAccount = await client.getAccount(aliceId);
+    if (aliceAccount === undefined) {
+    await client.importAccountById(aliceId);
+    aliceAccount = await client.getAccount(aliceId);
+    }
 
-const balance = aliceAccount?.vault().getBalance(faucetId);
-console.log("Alice's TEST token balance:", Number(balance));
+    const balance = aliceAccount?.vault().getBalance(faucetId);
+    console.log("Alice's TEST token balance:", Number(balance));
 }
 `
 }
