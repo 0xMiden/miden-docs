@@ -85,7 +85,7 @@ The Miden operator running the Miden node builds the blocks containing transacti
 
 The Miden node stores all necessary information in its state databases and provides this information via its RPC endpoints.
 
-### WIP features
+### Work-In-Progress features
 
 :::warning
 The following features are currently under active development.

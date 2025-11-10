@@ -1,9 +1,9 @@
 ---
-title: "Consuming onchain Price Data from the Pragma Oracle"
+title: "Consuming Onchain Price Data from the Pragma Oracle"
 sidebar_position: 13
 ---
 
-# Consuming onchain Price Data from the Pragma Oracle
+# Consuming Onchain Price Data from the Pragma Oracle
 
 _Using the Pragma oracle to get on chain price data_
 
