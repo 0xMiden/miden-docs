@@ -139,8 +139,8 @@ cargo run --bin demo --release
 Create a new Miden frontend project:
 
 ```bash title=">_ Terminal"
-miden new my-frontend --vite
-cd my-frontend/
+yarn create-miden-app
+cd miden-app/
 ```
 
 For each code example, create a demo file:
@@ -247,12 +247,12 @@ let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
     code:`import { WebClient, AccountStorageMode } from "@demox-labs/miden-sdk";
 
 export async function demo() {
-    // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
+// Initialize client to connect with the Miden Testnet.
+// NOTE: The client is our entry point to the Miden network.
+// All interactions with the network go through the client.
+const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+const client = await WebClient.createClient(nodeEndpoint);
+await client.syncState();
 
     // Create new wallet account
     const account = await client.newWallet(
@@ -376,12 +376,12 @@ let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
     code:`import { WebClient, AccountStorageMode } from "@demox-labs/miden-sdk";
 
 export async function demo() {
-    // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
+// Initialize client to connect with the Miden Testnet.
+// NOTE: The client is our entry point to the Miden network.
+// All interactions with the network go through the client.
+const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+const client = await WebClient.createClient(nodeEndpoint);
+await client.syncState();
 
     const symbol = "TEST";
     const decimals = 8;

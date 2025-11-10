@@ -190,7 +190,10 @@ Creates a **Rust workspace** for writing, testing and deploying Miden smart cont
 **Vite Frontend Project:**
 
 ```bash title=">_ Terminal"
-miden new my-frontend --vite
+# Using Yarn
+yarn create-miden-app
+# Using NPM
+npx create-miden-app
 ```
 
 Creates a minimal **Vite example project with Miden integration**, built on the standard Vite React TypeScript template. You can use this template for Miden frontend development.
