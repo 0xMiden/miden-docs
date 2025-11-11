@@ -70,7 +70,7 @@ Minting in Miden creates new tokens and packages them into a **P2ID note** (Pay-
 **Key Concepts:**
 
 - **P2ID Note**: A private note that can only be consumed by the account it's addressed to
-- **NoteType**: Determines visibility - `Public` notes are visible on-chain, `Private` notes are not
+- **NoteType**: Determines visibility - `Public` notes are visible onchain, `Private` notes are not
 - **FungibleAsset**: Represents tokens that can be divided and exchanged (like currencies)
 
 Let's see this in action:
@@ -234,7 +234,7 @@ export async function demo() {
     const decimals = 8;
     const initialSupply = BigInt(10_000_000 \* 10 \*\* decimals);
     const faucet = await client.newFaucet(
-        AccountStorageMode.public(), // Public: account state is visible on-chain
+        AccountStorageMode.public(), // Public: account state is visible onchain
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
@@ -247,7 +247,7 @@ export async function demo() {
     const mintTxRequest = client.newMintTransactionRequest(
         alice.id(), // Target account (who receives the tokens)
         faucet.id(), // Faucet account (who mints the tokens)
-        NoteType.Public, // Note visibility (public = on-chain)
+        NoteType.Public, // Note visibility (public = visible onchain)
         BigInt(1000) // Amount to mint (in base units)
     );
     const mintTx = await client.newTransaction(faucet.id(), mintTxRequest);
@@ -517,7 +517,7 @@ export async function demo() {
     const decimals = 8;
     const initialSupply = BigInt(10_000_000 \* 10 \*\* decimals);
     const faucet = await client.newFaucet(
-        AccountStorageMode.public(), // Public: account state is visible on-chain
+        AccountStorageMode.public(), // Public: account state is visible onchain
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
@@ -532,7 +532,7 @@ export async function demo() {
     const mintTxRequest = client.newMintTransactionRequest(
         alice.id(), // Target account (who receives the tokens)
         faucet.id(), // Faucet account (who mints the tokens)
-        NoteType.Public, // Note visibility (public = on-chain)
+        NoteType.Public, // Note visibility (public = visible onchain)
         BigInt(1000) // Amount to mint (in base units)
     );
     const mintTx = await client.newTransaction(faucet.id(), mintTxRequest);
@@ -597,8 +597,7 @@ Alice's TEST token balance: Ok(1000)
 
 ## Sending Tokens Between Accounts
 
-**How Sending Works in Miden**
-Sending tokens between accounts follows the same note-based pattern. The sender creates a new P2ID note containing tokens from their vault and addresses it to the recipient:
+**How Does Sending Work in Miden?** Sending tokens between accounts follows the same note-based pattern. The sender creates a new P2ID note containing tokens from their vault and addresses it to the recipient.
 
 **The Flow:**
 
@@ -879,7 +878,7 @@ export async function demo() {
     const decimals = 8;
     const initialSupply = BigInt(10_000_000 \* 10 \*\* decimals);
     const faucet = await client.newFaucet(
-        AccountStorageMode.public(), // Public: account state is visible on-chain
+        AccountStorageMode.public(), // Public: account state is visible onchain
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
@@ -894,7 +893,7 @@ export async function demo() {
     const mintTxRequest = client.newMintTransactionRequest(
         alice.id(), // Target account (who receives the tokens)
         faucet.id(), // Faucet account (who mints the tokens)
-        NoteType.Public, // Note visibility (public = on-chain)
+        NoteType.Public, // Note visibility (public = visible onchain)
         BigInt(1000) // Amount to mint (in base units)
     );
     const mintTx = await client.newTransaction(faucet.id(), mintTxRequest);

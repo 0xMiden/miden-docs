@@ -12,7 +12,7 @@ One of Miden's powerful features is the ability to read state from deployed smar
 
 ## Understanding Account Storage
 
-Miden accounts contain several types of data you can read:
+Miden accounts contain several types of data you can read.
 
 **Account Components:**
 
