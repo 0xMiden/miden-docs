@@ -12,7 +12,7 @@ Miden's account model is fundamentally different from traditional blockchains. L
 
 ## Understanding Miden Accounts
 
-Before diving into account creation, it's essential to understand what makes Miden accounts unique compared to traditional blockchain addresses:
+Before diving into account creation, it's essential to understand what makes Miden accounts unique compared to traditional blockchain addresses.
 
 **What Makes Miden Accounts Special:**
 
@@ -20,7 +20,7 @@ Before diving into account creation, it's essential to understand what makes Mid
 - **Modular Design**: Accounts are composed of reusable components (authentication, wallet functionality, etc.)
 - **Privacy Levels**: Choose between public or private storage modes
 
-Miden accounts differ from traditional blockchain addresses in fundamental ways:
+Miden accounts differ from traditional blockchain addresses in fundamental ways.
 
 **Account Architecture:**
 
@@ -31,8 +31,8 @@ Miden accounts differ from traditional blockchain addresses in fundamental ways:
 
 **Storage Modes:**
 
-- **Public**: All state visible on-chain (transparent operations)
-- **Private**: Only commitments on-chain, full state held privately
+- **Public**: All state visible onchain (transparent operations)
+- **Private**: Only commitments onchain, full state held privately
 
 ### Account Structure
 
@@ -66,7 +66,7 @@ pub struct MidenAccount {
     pub storage_commitment: [u8; 32],
 
     /// Vault commitment. For compact headers we keep only an optional aggregate commitment.
-    /// Indexers can materialize a richer view (e.g., list of assets) off-chain.
+    /// Indexers can materialize a richer view (e.g., list of assets) offchain.
     pub vault_commitment: Option<[u8; 32]>,
 
     /// Monotonically increasing counter; must increment exactly once when state changes.
@@ -100,9 +100,9 @@ pub enum AccountType {
 
 ```rust
 pub enum StorageMode {
-    /// State stored on-chain and publicly readable.
+    /// State stored onchain and publicly readable.
     Public,
-    /// Only a commitment is on-chain; full state is held privately by the owner.
+    /// Only a commitment is onchain; full state is held privately by the owner.
     Private,
 }
 ```
@@ -421,8 +421,8 @@ Faucet account ID: 0xde0ba31282f7522046d3d4af40722b
 
 **Storage Modes:**
 
-- **Public**: Account state is fully transparent and visible on-chain
-- **Private**: Only cryptographic commitments are stored on-chain, with full state maintained privately
+- **Public**: Account state is fully transparent and visible onchain
+- **Private**: Only cryptographic commitments are stored onchain, with full state maintained privately
 
 **Modular Components:**
 

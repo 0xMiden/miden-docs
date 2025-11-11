@@ -15,9 +15,9 @@ Miden is a privacy-focused, ZK-based blockchain that uses an actor model where e
 Key concepts you'll encounter:
 
 - **Accounts**: Smart contracts that hold assets and execute code
-- **Notes**: Private data transfers between accounts - also programmable
+- **Notes**: Private data transfers between accounts – also programmable
 - **Assets**: Tokens that can be fungible or non-fungible
-- **Privacy**: Every transaction and note in Miden is private by default — only the involved parties can view asset amounts or transfer details, offering strong confidentiality guarantees.
+- **Privacy**: Every transaction and note in Miden is private by default – only the involved parties can view asset amounts or transfer details, offering strong confidentiality guarantees.
 
 ## Getting started
 
