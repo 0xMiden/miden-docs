@@ -158,7 +158,7 @@ async fn counter_test() -> anyhow::Result<()> {
 
 ## Test Code Walkthrough
 
-Let's break down this test step by step to understand how Mockchain testing works:
+Let's break down this test step by step to understand how Mockchain testing works.
 
 ### 1. Setting Up the Mockchain Builder
 

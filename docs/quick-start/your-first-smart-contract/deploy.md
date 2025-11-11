@@ -25,7 +25,7 @@ You'll see a structure like:
 integration/
 ├── Cargo.toml                  # Integration crate configuration
 ├── src/
-│   ├── bin/                    # Executable scripts for on-chain interactions
+│   ├── bin/                    # Executable scripts for onchain interactions
 │   │   └── increment_count.rs  # Script to deploy and increment counter
 │   ├── helpers.rs              # Temporary helper file
 │   └── lib.rs                  # Exports helpers
@@ -103,17 +103,17 @@ The script demonstrates Miden's deployment flow:
 2. **Account Creation**: Creates a counter account with initial storage (counter value = 0)
 3. **Note Publishing**: Creates an increment note and publishes it to the network
 4. **Note Consumption**: The counter account consumes the note, executing the increment logic
-5. **State Update**: The counter value increases and the change is recorded on-chain
+5. **State Update**: The counter value increases and the change is recorded onchain
 
 This process shows how Miden contracts are deployed through state changes rather than separate deployment transactions.
 
-**Miden's Deployment Flow**: In Miden, accounts (contracts) become visible on-chain only when they undergo a state change. Simply creating an account locally doesn't deploy it - the account must participate in a transaction that modifies its state. In our case, by incrementing the counter, we're effectively "deploying" the contract and making it visible on the Miden testnet explorer. This is why the increment operation serves both as the deployment and the first interaction with the contract.
+**Miden's Deployment Flow**: In Miden, accounts (contracts) become visible onchain only when they undergo a state change. Simply creating an account locally doesn't deploy it - the account must participate in a transaction that modifies its state. In our case, by incrementing the counter, we're effectively "deploying" the contract and making it visible on the Miden testnet explorer. This is why the increment operation serves both as the deployment and the first interaction with the contract.
 
 ## How the Scripts Work
 
 The integration scripts work by connecting to the Miden client and then building contracts from the Miden package files. These package files are generated when you run `miden build` inside each contract directory, but the scripts handle this compilation step automatically - you don't need to manually build the contracts before running the scripts.
 
-Let's examine how the scripts convert your Rust contract code into deployable Miden contracts:
+Next, we look into how the scripts convert your Rust contract code into deployable Miden contracts.
 
 ## Script Breakdown
 
@@ -126,7 +126,7 @@ let ClientSetup { mut client, keystore } = setup_client().await?;
 let sync_summary = client.sync_state().await?;
 ```
 
-Establishes connection to the Miden testnet and synchronizes with the latest network state.
+This establishes connection to the Miden testnet and synchronizes with the latest network state.
 
 ### Building Contracts from Source
 
@@ -149,7 +149,7 @@ let note_package = Arc::new(
 The `build_project_in_dir()` function:
 
 - Takes the path to your contract's Rust source code
-- Compiles the Rust code into Miden assembly
+- Compiles the Rust code into Miden Assembly (MASM)
 - Generates a package containing the compiled contract bytecode and metadata
 - This is equivalent to manually running `miden build` in each contract directory
 

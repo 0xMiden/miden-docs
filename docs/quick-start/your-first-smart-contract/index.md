@@ -56,7 +56,7 @@ If you get stuck during this tutorial:
 
 - Check the rest of the Miden Docs for detailed technical references
 - Join the [Build On Miden](https://t.me/BuildOnMiden) Telegram community for support
-- Review the code examples in your project's `contracts` and `integration/` folder
+- Review the code examples in your project's `contracts/` and `integration/` folders
 
 ## Guide Structure
 
