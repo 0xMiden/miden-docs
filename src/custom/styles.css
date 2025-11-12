@@ -351,11 +351,16 @@ img {
 /* ThemeClassNames.layout.navbar.container */
 .theme-layout-navbar {
   height: var(--ifm-navbar-height);
-  backdrop-filter: saturate(1.1) blur(8px);
   border-bottom: 1px solid var(--ifm-border-color) !important;
   background: color-mix(in oklab, var(--ifm-background-color) 75%, transparent);
-  backdrop-filter: saturate(1.1) blur(8px);
   box-shadow: none;
+}
+
+/* Apply backdrop-filter only on desktop to avoid breaking mobile sidebar */
+@media (min-width: 997px) {
+  .theme-layout-navbar {
+    backdrop-filter: saturate(1.1) blur(8px);
+  }
 }
 
 /* ThemeClassNames.layout.footer.container */
@@ -893,7 +898,7 @@ code {
 }
 
 /* ==========================================
-   17) NUMERED LISTS
+   18) NUMERED LISTS
    ========================================== */
 
 /* === DOCUSAURUS "VitePress-style" numbered steps === */
@@ -997,7 +1002,7 @@ code {
 }
 
 /* ==========================================
-   18) DESIGN SYSTEM SPACING SPECIFICATIONS
+   19) DESIGN SYSTEM SPACING SPECIFICATIONS
    ========================================== */
 
 /* Apply design system spacing to documentation content */
