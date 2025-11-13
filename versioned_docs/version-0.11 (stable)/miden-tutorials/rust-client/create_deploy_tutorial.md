@@ -26,10 +26,10 @@ Before you begin, ensure that a Miden node is running locally in a separate term
 
 Before diving into coding, let's clarify the concepts of public and private accounts & notes on Miden:
 
-- Public accounts: The account's data and code are stored on-chain and are openly visible, including its assets.
-- Private accounts: The account's state and logic are off-chain, only known to its owner.
+- Public accounts: The account's data and code are stored onchain and are openly visible, including its assets.
+- Private accounts: The account's state and logic are , only known to its owner.
 - Public notes: The note's state is visible to anyone - perfect for scenarios where transparency is desired.
-- Private notes: The note's state is stored off-chain, you will need to share the note data with the relevant parties (via email or Telegram) for them to be able to consume the note.
+- Private notes: The note's state is stored offchain, you will need to share the note data with the relevant parties (via email or Telegram) for them to be able to consume the note.
 
 Note: _The term "account" can be used interchangeably with the term "smart contract" since account abstraction on Miden is handled natively._
 

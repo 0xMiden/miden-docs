@@ -34,7 +34,7 @@ Every `Transaction` describes the process of an account changing its state. This
 A `Transaction` requires several inputs:
 
 - **Account**: A `Transaction` is always executed against a single account. The executor must have complete knowledge of the account's state.
-- **Notes**: A `Transaction` can consume and output up to `1024` notes. The executor must have complete knowledge of the note data, including note inputs, before consumption. For private notes, the data cannot be fetched from the blockchain and must be received through an off-chain channel.
+- **Notes**: A `Transaction` can consume and output up to `1024` notes. The executor must have complete knowledge of the note data, including note inputs, before consumption. For private notes, the data cannot be fetched from the blockchain and must be received through an offchain channel.
 - **Blockchain state**: The current reference block and information about the notes database used to authenticate notes to be consumed must be retrieved from the Miden operator before execution. Usually, notes to be consumed in a `Transaction` must have been created before the reference block.
 - **Transaction script (optional)**: The `Transaction` script is code defined by the executor. And like note scripts, they can invoke account methods, e.g., sign a transaction. There is no limit to the amount of code a `Transaction` script can hold.
 - **Transaction arguments (optional)**: For every note, the executor can inject transaction arguments that are present at runtime. If the note script — and therefore the note creator — allows, the note script can read those arguments to allow dynamic execution. See below for an example.
@@ -43,7 +43,7 @@ A `Transaction` requires several inputs:
 ### Flow
 
 1. **Prologue**
-   Executes at the beginning of a transaction. It validates on-chain commitments against the provided data. This is to ensure that the transaction executes against a valid on-chain recorded state of the account and to be consumed notes. Notes to be consumed must be registered on-chain — except for [erasable notes](note) which can be consumed without block inclusion.
+   Executes at the beginning of a transaction. It validates onchain commitments against the provided data. This is to ensure that the transaction executes against a valid onchain recorded state of the account and to be consumed notes. Notes to be consumed must be registered onchain — except for [erasable notes](note) which can be consumed without block inclusion.
 2. **Note processing**
    Notes are executed sequentially against the account, following a sequence defined by the executor. To execute a note means processing the note script that calls methods exposed on the account interface. Notes must be consumed fully, which means that all assets must be transferred into the account or into other created notes. [Note scripts](note#script) can invoke the account interface during execution. They can push assets into the account's vault, create new notes, set a transaction expiration, and read from or write to the account's storage. Any method they call must be explicitly exposed by the account interface. Note scripts can also invoke methods of foreign accounts to read their state.
 3. **Transaction script processing**
@@ -69,13 +69,13 @@ In this example, account A uses the basic wallet and the authentication componen
 
 The executor inputs to the Miden VM a `Transaction` script in which he places on the stack the data (tag, aux, note_type, execution_hint, RECIPIENT) of the note(s) that he wants to create using `wallets::basic::create_note` during the said `Transaction`. The [`NoteRecipient`](https://github.com/0xMiden/miden-base/blob/main/crates/miden-objects/src/note/recipient.rs) is a value that describes under which condition a note can be consumed and is built using a `serial_number`, the `note_script` (in this case P2ID script) and the `note_inputs`. The Miden VM will execute the `Transaction` script and create the note(s). After having been created, the executor can use `wallets::basic::move_asset_to_note` to move assets from the account's vault to the notes vault.
 
-After finalizing the `Transaction` the updated state and created note(s) can now be submitted to the Miden operator to be recorded on-chain.
+After finalizing the `Transaction` the updated state and created note(s) can now be submitted to the Miden operator to be recorded onchain.
 
 ### Consuming a P2ID note
 
 Let's now assume that account A wants to consume a P2ID note to receive the assets contained in that note.
 
-To start the transaction process, the executor fetches and prepares all the input data to the `Transaction`. First, it retrieves blockchain data, like global inputs and block data of the most recent block. This information is needed to authenticate the native account's state and that the P2ID note exists on-chain. Then it loads the full account and note data, to start the `Transaction` execution.
+To start the transaction process, the executor fetches and prepares all the input data to the `Transaction`. First, it retrieves blockchain data, like global inputs and block data of the most recent block. This information is needed to authenticate the native account's state and that the P2ID note exists onchain. Then it loads the full account and note data, to start the `Transaction` execution.
 
 In the transaction's prologue the data is being authenticated by re-hashing the provided values and comparing them to the blockchain's data (this is how private data can be used and verified during the execution of transaction without actually revealing it to the network).
 
@@ -97,7 +97,7 @@ Users transition their account's state locally using the Miden VM and generate a
 
 They are useful, because:
 
-1. They enable privacy as neither the account state nor account code are needed to verify the zero-knowledge proof. Public inputs are only commitments and block information that are stored on-chain.
+1. They enable privacy as neither the account state nor account code are needed to verify the zero-knowledge proof. Public inputs are only commitments and block information that are stored onchain.
 2. They are cheaper (i.e., lower in fees) as the execution of the state transition and the generation of the zero-knowledge proof are already made by the users. Hence **privacy is the cheaper option on Miden**.
 3. They allow arbitrarily complex computation to be done. The proof size doesn't grow linearly with the complexity of the computation. Hence there is no gas limit for client-side proving.
 
@@ -119,7 +119,7 @@ The ability to facilitate both, local and network transactions, **is one of the 
 
 :::tip
 
-- Usually, notes that are consumed in a `Transaction` must be recorded on-chain in order for the `Transaction` to succeed. However, Miden supports **erasable notes** which are notes that can be consumed in a `Transaction` before being registered on-chain. For example, one can build a sub-second order book by allowing its traders to build faster transactions that depend on each other and are being validated or erased in batches.
+- Usually, notes that are consumed in a `Transaction` must be recorded onchain in order for the `Transaction` to succeed. However, Miden supports **erasable notes** which are notes that can be consumed in a `Transaction` before being registered onchain. For example, one can build a sub-second order book by allowing its traders to build faster transactions that depend on each other and are being validated or erased in batches.
 
 - There is no nullifier check during a `Transaction`. Nullifiers are checked by the Miden operator during `Transaction` verification. So at the local level, there is "double spending." If a note was already spent, i.e. there exists a nullifier for that note, the block producer would never include the `Transaction` as it would make the block invalid.
 

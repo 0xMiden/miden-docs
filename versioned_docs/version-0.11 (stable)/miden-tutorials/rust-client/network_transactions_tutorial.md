@@ -17,7 +17,7 @@ We'll build a network counter smart contract using the same MASM code as the reg
 
 - Understanding Network Transactions and when to use them
 - Deploying smart contracts with network storage mode
-- Using transaction scripts to initialize network contracts on-chain
+- Using transaction scripts to initialize network contracts onchain
 - Creating network notes for user interactions
 - Validating network transaction results
 
@@ -127,7 +127,7 @@ begin
 end
 ```
 
-This script executes a function call (increment) that creates a necessary state change for our contract to be deployed and stored on the network on-chain. In Miden, network contracts must have their state modified through a transaction to be properly registered and committed to the blockchain - simply creating the account isn't sufficient for network storage mode.
+This script executes a function call (increment) that creates a necessary state change for our contract to be deployed and stored on the network onchain. In Miden, network contracts must have their state modified through a transaction to be properly registered and committed to the blockchain - simply creating the account isn't sufficient for network storage mode.
 
 ### Network Note for User Interaction
 
@@ -355,7 +355,7 @@ This step creates a network smart contract with `AccountStorageMode::Network`, w
 
 ## Step 5: Deploy the network account with a transaction script
 
-We use a transaction script to deploy the network account and ensure it's properly registered on-chain. The script calls the `increment` function, which initializes the counter to 1.
+We use a transaction script to deploy the network account and ensure it's properly registered onchain. The script calls the `increment` function, which initializes the counter to 1.
 
 Add this code to your `main()` function:
 
@@ -399,7 +399,7 @@ wait_for_tx(&mut client, tx_id).await.unwrap();
 
 ```
 
-This step uses a transaction script to deploy the network account and ensure it's properly registered on-chain. The script calls the `increment` function, which initializes the counter to 1.
+This step uses a transaction script to deploy the network account and ensure it's properly registered onchain. The script calls the `increment` function, which initializes the counter to 1.
 
 ## Step 6: Create a network note for user interaction
 
@@ -836,7 +836,7 @@ Network transactions on Miden enable powerful use cases by allowing the operator
 
 1. **Create user account**: Standard account creation for interaction
 2. **Create network account**: Use `AccountStorageMode::Network` instead of `Public`
-3. **Deploy with transaction script**: Ensures the contract is registered on-chain
+3. **Deploy with transaction script**: Ensures the contract is registered onchain
 4. **Interact with network notes**: Users create public notes that the operator executes
 
 The same MASM code works for both regular and network contracts - the difference is purely in the Rust configuration. This makes network transactions a powerful tool for building applications like AMMs where multiple users need to interact with shared state efficiently.
