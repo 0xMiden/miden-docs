@@ -62,7 +62,7 @@ Delegated provers can use optimized hardware that wouldn't be available to end-u
 ### 7. L1 Submission
 
 - Transaction data is posted to the data availability layer
-- The block proof and state delta commitment are submitted to the Miden contract (that is bridged to Ethereum/AggLayer)
+- The block proof and state delta commitment are submitted to the Miden contract (that is bridged to Ethereum/Agglayer)
 - The L1 contract verifies validity of the proof
 - Upon successful verification, the L1 contract updates the state root
 
