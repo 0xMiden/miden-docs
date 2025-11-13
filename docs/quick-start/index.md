@@ -10,14 +10,14 @@ Welcome to Miden! This guide will get you up and running with the Miden blockcha
 
 ## What is Miden?
 
-Miden is a privacy-focused, STARK-based blockchain that uses an account model where each account is a smart contract. Unlike traditional blockchases where accounts simply hold balances, Miden accounts are programmable entities that can execute custom logic, store data, and manage assets autonomously.
+Miden is a privacy-focused, ZK-based blockchain that uses an actor model where each account is a smart contract. Unlike traditional blockchains where accounts simply hold balances, Miden accounts are programmable entities that can execute custom logic, store data, and manage assets autonomously.
 
 Key concepts you'll encounter:
 
 - **Accounts**: Smart contracts that hold assets and execute code
-- **Notes**: Private data transfers between accounts
+- **Notes**: Messages that exchange data and assets between accounts - also programmable
 - **Assets**: Tokens that can be fungible or non-fungible
-- **Privacy**: Every transaction and note in Miden is private by default — only the involved parties can view asset amounts or transfer details, offering strong confidentiality guarantees.
+- **Privacy**: Every transaction, note and account in Miden is private by default — only the involved parties can view asset amounts or transfer details, offering strong confidentiality guarantees.
 
 ## Getting Started
 

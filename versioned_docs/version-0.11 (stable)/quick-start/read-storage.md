@@ -8,11 +8,11 @@ import { CodeTabs } from '@site/src/components';
 
 # Read Storage Values
 
-One of Miden's powerful features is the ability to read state from deployed smart contracts. Let's explore how to interact with public accounts and retrieve their storage data.
+Let's explore how to interact with public accounts and retrieve their storage data.
 
 ## Understanding Account Storage
 
-Miden accounts contain several types of data you can read:
+Miden accounts contain several types of data you can read.
 
 **Account Components:**
 
@@ -23,7 +23,7 @@ Miden accounts contain several types of data you can read:
 
 **Storage Visibility:**
 
-- **Public accounts**: All data is visible on-chain and can be read by anyone
+- **Public accounts**: All data is publicly accessible and can be read by anyone
 - **Private accounts**: Only commitments are public; full data is held privately
 
 ## Set Up Development Environment
@@ -42,17 +42,16 @@ rustFilename="integration/src/bin/read-count.rs"
 example={{
 rust: {
 code: `use miden_client::{
-account::AccountId,
-builder::ClientBuilder,
-keystore::FilesystemKeyStore,
-rpc::{Endpoint, TonicRpcClient},
-ClientError,
+    account::AccountId,
+    builder::ClientBuilder,
+    keystore::FilesystemKeyStore,
+    rpc::{Endpoint, TonicRpcClient},
 };
 use rand::rngs::StdRng;
 use std::sync::Arc;
 
 #[tokio::main]
-async fn main() -> Result<(), ClientError> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -61,10 +60,12 @@ async fn main() -> Result<(), ClientError> {
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
 
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path).unwrap());
+    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path.to_str().unwrap();
+    let store_path_str = store_path
+        .to_str()
+        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
@@ -75,36 +76,36 @@ async fn main() -> Result<(), ClientError> {
         .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
-        .await
-        .unwrap();
+        .await?;
 
-    client.sync_state().await.unwrap();
+    client.sync_state().await?;
 
     //------------------------------------------------------------
     // READ PUBLIC STATE OF THE COUNTER ACCOUNT
     //------------------------------------------------------------
 
-    let counter_account_id = AccountId::from_hex("0xf3e8e740c0d3960013418eecb98ccf").unwrap();
+    let counter_account_id = AccountId::from_hex("0xf3e8e740c0d3960013418eecb98ccf")?;
 
-    client
-        .import_account_by_id(counter_account_id)
-        .await
-        .unwrap();
+    client.import_account_by_id(counter_account_id).await?;
 
     let counter_account = client
         .get_account(counter_account_id)
-        .await
-        .unwrap()
-        .unwrap();
+        .await?
+        .ok_or_else(|| anyhow::anyhow!("Account not found"))?;
 
     println!(
         "Count: {:?}",
-        counter_account.account().storage().slots().first().unwrap()
+        counter_account
+            .account()
+            .storage()
+            .slots()
+            .first()
+            .ok_or_else(|| anyhow::anyhow!("No storage slots found"))?
     );
 
     Ok(())
-
-}` },
+}
+` },
   typescript: {
     code:`import { WebClient, AccountId } from "@demox-labs/miden-sdk";
 
@@ -160,17 +161,16 @@ rustFilename="integration/src/bin/token-balance.rs"
 example={{
 rust: {
 code: `use miden_client::{
-account::AccountId,
-builder::ClientBuilder,
-keystore::FilesystemKeyStore,
-rpc::{Endpoint, TonicRpcClient},
-ClientError,
+    account::AccountId,
+    builder::ClientBuilder,
+    keystore::FilesystemKeyStore,
+    rpc::{Endpoint, TonicRpcClient},
 };
 use rand::rngs::StdRng;
 use std::sync::Arc;
 
 #[tokio::main]
-async fn main() -> Result<(), ClientError> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -179,10 +179,12 @@ async fn main() -> Result<(), ClientError> {
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
 
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path).unwrap());
+    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path.to_str().unwrap();
+    let store_path_str = store_path
+        .to_str()
+        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
@@ -193,32 +195,32 @@ async fn main() -> Result<(), ClientError> {
         .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
-        .await
-        .unwrap();
+        .await?;
 
-    client.sync_state().await.unwrap();
+    client.sync_state().await?;
 
     //------------------------------------------------------------
     // READ TOKEN BALANCE OF AN ACCOUNT
     //------------------------------------------------------------
 
-    let alice_account_id = AccountId::from_hex("0x49e27aa5fa5686102fde8e81b89999").unwrap();
-    let faucet_account_id = AccountId::from_hex("0x9796be9c72f137206676f7821a9968").unwrap();
+    let alice_account_id = AccountId::from_hex("0x49e27aa5fa5686102fde8e81b89999")?;
+    let faucet_account_id = AccountId::from_hex("0x9796be9c72f137206676f7821a9968")?;
 
-    client.import_account_by_id(alice_account_id).await.unwrap();
+    client.import_account_by_id(alice_account_id).await?;
 
-    let alice_account = client.get_account(alice_account_id).await.unwrap().unwrap();
+    let alice_account = client
+        .get_account(alice_account_id)
+        .await?
+        .ok_or_else(|| anyhow::anyhow!("Account not found"))?;
 
     let balance = alice_account
         .account()
         .vault()
-        .get_balance(faucet_account_id)
-        .unwrap();
+        .get_balance(faucet_account_id)?;
 
     println!("Alice's TEST token balance: {:?}", balance);
 
     Ok(())
-
 }
 `},
   typescript: {

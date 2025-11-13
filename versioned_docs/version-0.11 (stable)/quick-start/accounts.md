@@ -12,7 +12,7 @@ Miden's account model is fundamentally different from traditional blockchains. L
 
 ## Understanding Miden Accounts
 
-Before diving into account creation, it's essential to understand what makes Miden accounts unique compared to traditional blockchain addresses:
+Before diving into account creation, it's essential to understand what makes Miden accounts unique compared to traditional blockchain addresses.
 
 **What Makes Miden Accounts Special:**
 
@@ -20,19 +20,19 @@ Before diving into account creation, it's essential to understand what makes Mid
 - **Modular Design**: Accounts are composed of reusable components (authentication, wallet functionality, etc.)
 - **Privacy Levels**: Choose between public or private storage modes
 
-Miden accounts differ from traditional blockchain addresses in fundamental ways:
+Miden accounts differ from traditional blockchain addresses in fundamental ways.
 
 **Account Architecture:**
 
 - Every account is a **smart contract** with programmable logic
 - Accounts can store **assets** (fungible and non-fungible tokens) in their vault
-- Each account has **storage slots** for custom data (up to 255 slots)
+- Each account has **storage slots** for custom data
 - Accounts are composed of **modular components** for different functionalities
 
 **Storage Modes:**
 
-- **Public**: All state visible on-chain (transparent operations)
-- **Private**: Only commitments on-chain, full state held privately
+- **Public**: All state visible onchain (transparent operations)
+- **Private**: Only commitments onchain, full state held privately
 
 ### Account Structure
 
@@ -40,7 +40,7 @@ Every Miden account contains these core components:
 
 - **Vault**: Secure asset storage
 - **Storage**: Key-value data store (up to 255 slots)
-- **Code**: Smart contract logic (MAST root)
+- **Code**: Smart contract logic
 - **Nonce**: Anti-replay counter
 - **Components**: Modular functionality (authentication, wallet, etc.)
 
@@ -66,7 +66,7 @@ pub struct MidenAccount {
     pub storage_commitment: [u8; 32],
 
     /// Vault commitment. For compact headers we keep only an optional aggregate commitment.
-    /// Indexers can materialize a richer view (e.g., list of assets) off-chain.
+    /// Indexers can materialize a richer view (e.g., list of assets) offchain.
     pub vault_commitment: Option<[u8; 32]>,
 
     /// Monotonically increasing counter; must increment exactly once when state changes.
@@ -85,14 +85,14 @@ pub struct MidenAccount {
 
 ```rust
 pub enum AccountType {
-    /// Regular account with updatable code.
-    BasicMutable,
-    /// Regular account with immutable code.
-    BasicImmutable,
-    /// Faucet that can issue fungible assets.
-    FaucetFungible,
-    /// Faucet that can issue non-fungible assets.
-    FaucetNonFungible,
+    // Faucet that can issue fungible assets
+    FungibleFaucet = 2,
+    // Faucet that can issue non-fungible assets
+    NonFungibleFaucet = 3,
+    // Regular account with immutable code
+    RegularAccountImmutableCode = 0,
+    /// Regular account with updateable code
+    RegularAccountUpdatableCode = 1,
 }
 ```
 
@@ -100,9 +100,9 @@ pub enum AccountType {
 
 ```rust
 pub enum StorageMode {
-    /// State stored on-chain and publicly readable.
+    /// State stored onchain and publicly readable.
     Public,
-    /// Only a commitment is on-chain; full state is held privately by the owner.
+    /// Only a commitment is onchain; full state is held privately by the owner.
     Private,
 }
 ```
@@ -171,35 +171,36 @@ rustFilename="integration/src/bin/account.rs"
 example={{
 rust: {
 code: `use miden_client::{
-account::{
-component::{AuthRpoFalcon512, BasicWallet},
-AccountBuilder,
-},
-account::{AccountStorageMode, AccountType},
-auth::AuthSecretKey,
-builder::ClientBuilder,
-crypto::SecretKey,
-keystore::FilesystemKeyStore,
-rpc::{Endpoint, TonicRpcClient},
-ClientError,
+    account::{
+        component::{AuthRpoFalcon512, BasicWallet},
+        AccountBuilder,
+    },
+    account::{AccountStorageMode, AccountType},
+    auth::AuthSecretKey,
+    builder::ClientBuilder,
+    crypto::SecretKey,
+    keystore::FilesystemKeyStore,
+    rpc::{Endpoint, TonicRpcClient},
 };
 use rand::{rngs::StdRng, RngCore};
 use std::sync::Arc;
 
 #[tokio::main]
-async fn main() -> Result<(), ClientError> {
-// Initialize RPC connection
-let endpoint = Endpoint::testnet();
-let timeout_ms = 10_000;
-let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Initialize RPC connection
+    let endpoint = Endpoint::testnet();
+    let timeout_ms = 10_000;
+    let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
 
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path).unwrap());
+    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path.to_str().unwrap();
+    let store_path_str = store_path
+        .to_str()
+        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
@@ -210,10 +211,9 @@ let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
         .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
-        .await
-        .unwrap();
+        .await?;
 
-    client.sync_state().await.unwrap();
+    client.sync_state().await?;
 
     let mut init_seed = [0_u8; 32];
     client.rng().fill_bytes(&mut init_seed);
@@ -226,46 +226,40 @@ let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
         .with_auth_component(AuthRpoFalcon512::new(key_pair.public_key()))
         .with_component(BasicWallet);
 
-    let (account, seed) = builder.build().unwrap();
+    let (account, seed) = builder.build()?;
 
-    client
-        .add_account(&account, Some(seed), false)
-        .await
-        .unwrap();
+    client.add_account(&account, Some(seed), false).await?;
 
-    keystore
-        .add_key(&AuthSecretKey::RpoFalcon512(key_pair))
-        .unwrap();
+    keystore.add_key(&AuthSecretKey::RpoFalcon512(key_pair))?;
 
     println!("Account ID: {}", account.id());
     println!("No assets in Vault: {:?}", account.vault().is_empty());
 
     Ok(())
-
-}` },
+}
+` },
   typescript: {
     code:`import { WebClient, AccountStorageMode } from "@demox-labs/miden-sdk";
 
 export async function demo() {
-// Initialize client to connect with the Miden Testnet.
-// NOTE: The client is our entry point to the Miden network.
-// All interactions with the network go through the client.
-const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-const client = await WebClient.createClient(nodeEndpoint);
-await client.syncState();
+    // Initialize client to connect with the Miden Testnet.
+    // NOTE: The client is our entry point to the Miden network.
+    // All interactions with the network go through the client.
+    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await WebClient.createClient(nodeEndpoint);
+    await client.syncState();
 
     // Create new wallet account
     const account = await client.newWallet(
-        AccountStorageMode.public(), // Public: account state is visible on-chain
+        AccountStorageMode.public(), // Public: account state is visible onchain
         true // Mutable: account code can be upgraded later
     );
 
     console.log("Account ID:", account.id().toString());
     console.log(
-    "No Assets in Vault:",
-    account.vault().fungibleAssets().length === 0
+        "No Assets in Vault:",
+        account.vault().fungibleAssets().length === 0
     );
-
 }
 `
 }
@@ -292,36 +286,38 @@ rustFilename="integration/src/bin/faucet.rs"
 example={{
 rust: {
 code: `use miden_client::{
-account::{
-component::{AuthRpoFalcon512, BasicFungibleFaucet},
-AccountBuilder,
-},
-account::{AccountStorageMode, AccountType},
-asset::TokenSymbol,
-auth::AuthSecretKey,
-builder::ClientBuilder,
-crypto::SecretKey,
-keystore::FilesystemKeyStore,
-rpc::{Endpoint, TonicRpcClient},
-ClientError, Felt,
+    account::{
+        component::{AuthRpoFalcon512, BasicFungibleFaucet},
+        AccountBuilder,
+    },
+    account::{AccountStorageMode, AccountType},
+    asset::TokenSymbol,
+    auth::AuthSecretKey,
+    builder::ClientBuilder,
+    crypto::SecretKey,
+    keystore::FilesystemKeyStore,
+    rpc::{Endpoint, TonicRpcClient},
+    Felt,
 };
 use rand::{rngs::StdRng, RngCore};
 use std::sync::Arc;
 
 #[tokio::main]
-async fn main() -> Result<(), ClientError> {
-// Initialize RPC connection
-let endpoint = Endpoint::testnet();
-let timeout_ms = 10_000;
-let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Initialize RPC connection
+    let endpoint = Endpoint::testnet();
+    let timeout_ms = 10_000;
+    let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
 
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path).unwrap());
+    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path.to_str().unwrap();
+    let store_path_str = store_path
+        .to_str()
+        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
@@ -332,17 +328,16 @@ let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
         .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
-        .await
-        .unwrap();
+        .await?;
 
-    client.sync_state().await.unwrap();
+    client.sync_state().await?;
 
     // Faucet seed
     let mut init_seed = [0u8; 32];
     client.rng().fill_bytes(&mut init_seed);
 
     // Faucet parameters
-    let symbol = TokenSymbol::new("TEST").unwrap();
+    let symbol = TokenSymbol::new("TEST")?;
     let decimals = 8;
     let max_supply = Felt::new(1_000_000);
 
@@ -354,34 +349,31 @@ let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
         .with_auth_component(AuthRpoFalcon512::new(key_pair.public_key()))
-        .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply).unwrap());
+        .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
-    let (faucet_account, seed) = builder.build().unwrap();
+    let (faucet_account, seed) = builder.build()?;
 
     client
         .add_account(&faucet_account, Some(seed), false)
-        .await
-        .unwrap();
+        .await?;
 
-    keystore
-        .add_key(&AuthSecretKey::RpoFalcon512(key_pair))
-        .unwrap();
+    keystore.add_key(&AuthSecretKey::RpoFalcon512(key_pair))?;
 
     println!("Faucet account ID: {}", faucet_account.id());
 
     Ok(())
-
-}`},
+}
+`},
   typescript: {
     code:`import { WebClient, AccountStorageMode } from "@demox-labs/miden-sdk";
 
 export async function demo() {
-// Initialize client to connect with the Miden Testnet.
-// NOTE: The client is our entry point to the Miden network.
-// All interactions with the network go through the client.
-const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-const client = await WebClient.createClient(nodeEndpoint);
-await client.syncState();
+    // Initialize client to connect with the Miden Testnet.
+    // NOTE: The client is our entry point to the Miden network.
+    // All interactions with the network go through the client.
+    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await WebClient.createClient(nodeEndpoint);
+    await client.syncState();
 
     const symbol = "TEST";
     const decimals = 8;
@@ -396,7 +388,6 @@ await client.syncState();
     );
 
     console.log("Faucet account ID:", faucet.id().toString());
-
 }
 `
 }
@@ -421,8 +412,8 @@ Faucet account ID: 0xde0ba31282f7522046d3d4af40722b
 
 **Storage Modes:**
 
-- **Public**: Account state is fully transparent and visible on-chain
-- **Private**: Only cryptographic commitments are stored on-chain, with full state maintained privately
+- **Public**: Account state is fully transparent and visible onchain
+- **Private**: Only cryptographic commitments are stored onchain, with full state maintained privately
 
 **Modular Components:**
 

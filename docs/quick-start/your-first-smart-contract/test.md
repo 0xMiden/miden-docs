@@ -158,7 +158,7 @@ async fn counter_test() -> anyhow::Result<()> {
 
 ## Test Code Walkthrough
 
-Let's break down this test step by step to understand how Mockchain testing works:
+Let's break down this test step by step to understand how Mockchain testing works.
 
 ### 1. Setting Up the Mockchain Builder
 
@@ -168,6 +168,7 @@ let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
 ```
 
 **What's happening:**
+
 - We instantiate the **Mockchain builder**, which is used to configure our testing environment
 - We create a **sender account** using basic authentication - this account will publish the increment note
 - The builder pattern allows us to incrementally add all the components needed for our test
@@ -186,6 +187,7 @@ let note_package = Arc::new(build_project_in_dir(
 ```
 
 **What's happening:**
+
 - Just like in the deployment script, we **build both contract packages** (counter account and increment note)
 - The `build_project_in_dir()` function compiles the Rust contracts into Miden packages
 - We wrap them in `Arc` for efficient memory sharing across the test
@@ -213,6 +215,7 @@ let counter_note = create_testing_note_from_package(
 ```
 
 **What's happening:**
+
 - We configure the **counter account's initial storage** with count = 0 at storage key `[0, 0, 0, 1]`
 - We create the **testing counter account** from the compiled package using `create_testing_account_from_package()`
 - We create the **testing increment note** using `create_testing_note_from_package()`
@@ -228,6 +231,7 @@ let mut mock_chain = builder.build()?;
 ```
 
 **What's happening:**
+
 - We **add the counter account** to the mockchain builder
 - We **add the increment note** as a full output note to the mockchain
 - We **build the mockchain** - now we have a complete testing environment ready to use
@@ -251,6 +255,7 @@ let executed_transaction = tx_context.execute().await?;
 ```
 
 **What's happening:**
+
 - We **get transaction inputs** from the mockchain, specifying we want to consume the increment note
 - We **build the transaction context** using the counter account and transaction inputs
 - We **execute the transaction** - this runs the increment logic locally in the mockchain
@@ -272,6 +277,7 @@ assert_eq!(
 ```
 
 **What's happening:**
+
 - We **add the executed transaction** to the mockchain and get the updated counter account
 - We **read the counter value** from storage using the same key we initialized
 - We **assert that the count equals 1** - verifying the increment operation worked correctly

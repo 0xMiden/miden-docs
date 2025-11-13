@@ -111,31 +111,6 @@ Storage:
 - **Code Commitment**: Hash of the account's smart contract logic
 - **Nonce**: Counter that increments with each state change
 
-## Mint Your First Tokens
-
-Use the built-in mint command to get test tokens:
-
-```bash title=">_ Terminal"
-miden client mint
-```
-
-<details>
-<summary>Expected output</summary>
-
-```text
-Successfully minted 100 tokens to account 0x970e3e4dbcd09b8035532edaa87bc9
-Transaction ID (mint request): 0x1a2b3c4d5e6f7890abcdef1234567890
-Transaction ID (P2ID note consumption): 0x1a2b3c4d5e6f7890abcdef1234567890
-```
-
-</details>
-
-This command:
-
-1. Connects to a testnet faucet and requests new tokens
-2. Creates a P2ID (Pay-to-ID) note containing tokens
-3. Consumes the P2ID note and adds the assets to your account's vault
-
 ### Verify Your Token Balance
 
 Check that tokens were added to your account:

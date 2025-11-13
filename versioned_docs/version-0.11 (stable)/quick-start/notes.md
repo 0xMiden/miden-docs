@@ -23,7 +23,7 @@ Traditional blockchains move tokens directly between account balances. Miden use
 
 **Key Components:**
 
-- **Notes**: Sealed containers that carry information between accounts
+- **Notes**: Sealed containers that carry data and assets between accounts
 - **P2ID (Pay-To-ID) Notes**: Notes addressed to a specific account ID (like Bob's address)
 - **Nullifiers**: Prevent someone from opening the same envelope twice
 - **Zero-Knowledge Proofs**: Prove transactions are valid without revealing private details
@@ -36,7 +36,7 @@ Miden uses a **two-transaction model** for asset transfers that provides enhance
 
 - **Alice's account** creates a P2ID (Pay-To-ID) note containing 100 tokens
 - The note specifies **Bob** as the only valid consumer
-- Alice's balance decreases, note is published to the network
+- Alice's balance decreases, note is available for consumption
 - Alice's transaction is complete and final
 
 ### Transaction 2: Recipient Consumes Note
@@ -51,7 +51,7 @@ Miden uses a **two-transaction model** for asset transfers that provides enhance
 This approach provides several advantages over direct transfers:
 
 1. **Privacy**: Alice and Bob's transactions are unlinkable
-2. **Parallelization**: Both transactions can be processed independently
+2. **Parallelization**: Multiple transactions can be processed concurrently, enabling simultaneous creation of notes.
 3. **Flexibility**: Notes can include complex conditions (time locks, multi-sig, etc.)
 4. **Scalability**: No global state synchronization required
 
@@ -69,8 +69,8 @@ Minting in Miden creates new tokens and packages them into a **P2ID note** (Pay-
 
 **Key Concepts:**
 
-- **P2ID Note**: A private note that can only be consumed by the account it's addressed to
-- **NoteType**: Determines visibility - `Public` notes are visible on-chain, `Private` notes are not
+- **P2ID Note**: A note that can only be consumed by the account it's addressed to
+- **NoteType**: Determines visibility - `Public` notes are visible onchain and are stored by the Miden network, while `Private` notes are not stored by the network and must be exchanged directly between parties via other channels.
 - **FungibleAsset**: Represents tokens that can be divided and exchanged (like currencies)
 
 Let's see this in action:
@@ -81,26 +81,25 @@ rustFilename="integration/src/bin/mint.rs"
 example={{
 rust: {
 code: `use miden_client::{
-account::{
-component::{AuthRpoFalcon512, BasicFungibleFaucet, BasicWallet},
-AccountBuilder, AccountId, AccountStorageMode, AccountType,
-},
-asset::{FungibleAsset, TokenSymbol},
-auth::AuthSecretKey,
-builder::ClientBuilder,
-crypto::SecretKey,
-keystore::FilesystemKeyStore,
-note::{create_p2id_note, NoteType},
-rpc::{Endpoint, TonicRpcClient},
-transaction::{OutputNote, TransactionRequestBuilder},
-ClientError, Felt,
+    account::{
+        component::{AuthRpoFalcon512, BasicFungibleFaucet, BasicWallet},
+        AccountBuilder, AccountStorageMode, AccountType,
+    },
+    asset::{FungibleAsset, TokenSymbol},
+    auth::AuthSecretKey,
+    builder::ClientBuilder,
+    crypto::SecretKey,
+    keystore::FilesystemKeyStore,
+    note::NoteType,
+    rpc::{Endpoint, TonicRpcClient},
+    transaction::TransactionRequestBuilder,
+    Felt,
 };
 use rand::{rngs::StdRng, RngCore};
 use std::sync::Arc;
-use tokio::time::Duration;
 
 #[tokio::main]
-async fn main() -> Result<(), ClientError> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -109,10 +108,12 @@ async fn main() -> Result<(), ClientError> {
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
 
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path).unwrap());
+    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path.to_str().unwrap();
+    let store_path_str = store_path
+        .to_str()
+        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
@@ -123,10 +124,9 @@ async fn main() -> Result<(), ClientError> {
         .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
-        .await
-        .unwrap();
+        .await?;
 
-    client.sync_state().await.unwrap();
+    client.sync_state().await?;
 
     //------------------------------------------------------------
     // CREATING A FAUCET AND MINTING TOKENS
@@ -137,7 +137,7 @@ async fn main() -> Result<(), ClientError> {
     client.rng().fill_bytes(&mut init_seed);
 
     // Faucet parameters
-    let symbol = TokenSymbol::new("TEST").unwrap();
+    let symbol = TokenSymbol::new("TEST")?;
     let decimals = 8;
     let max_supply = Felt::new(1_000_000);
 
@@ -157,10 +157,10 @@ async fn main() -> Result<(), ClientError> {
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
         .with_auth_component(AuthRpoFalcon512::new(faucet_key_pair.public_key()))
-        .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply).unwrap());
+        .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
-    let (alice_account, alice_seed) = account_builder.build().unwrap();
-    let (faucet_account, faucet_seed) = faucet_builder.build().unwrap();
+    let (alice_account, alice_seed) = account_builder.build()?;
+    let (faucet_account, faucet_seed) = faucet_builder.build()?;
 
     println!("Alice's account ID: {:?}", alice_account.id().to_hex());
     println!("Faucet account ID: {:?}", faucet_account.id().to_hex());
@@ -168,43 +168,34 @@ async fn main() -> Result<(), ClientError> {
     // Add accounts to client
     client
         .add_account(&alice_account, Some(alice_seed), false)
-        .await
-        .unwrap();
+        .await?;
     client
         .add_account(&faucet_account, Some(faucet_seed), false)
-        .await
-        .unwrap();
+        .await?;
 
     // Add keys to keystore
-    keystore
-        .add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))
-        .unwrap();
-    keystore
-        .add_key(&AuthSecretKey::RpoFalcon512(faucet_key_pair))
-        .unwrap();
+    keystore.add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))?;
+    keystore.add_key(&AuthSecretKey::RpoFalcon512(faucet_key_pair))?;
 
     let amount: u64 = 1000;
-    let fungible_asset = FungibleAsset::new(faucet_account.id(), amount).unwrap();
+    let fungible_asset = FungibleAsset::new(faucet_account.id(), amount)?;
 
     // Build transaction request to mint fungible asset to Alice's account
     // NOTE: This transaction will create a P2ID note (a Miden note containing the minted asset)
     // for Alice's account. Alice will be able to consume these notes to get the fungible asset in her vault
-    let transaction_request = TransactionRequestBuilder::new()
-        .build_mint_fungible_asset(
-            fungible_asset,
-            alice_account.id(),
-            NoteType::Public,
-            client.rng(),
-        )
-        .unwrap();
+    let transaction_request = TransactionRequestBuilder::new().build_mint_fungible_asset(
+        fungible_asset,
+        alice_account.id(),
+        NoteType::Public,
+        client.rng(),
+    )?;
 
     // Create transaction and submit it to create P2ID notes for Alice's account
     let tx_result = client
         .new_transaction(faucet_account.id(), transaction_request)
-        .await
-        .unwrap();
-    client.submit_transaction(tx_result.clone()).await.unwrap();
-    client.sync_state().await.unwrap();
+        .await?;
+    client.submit_transaction(tx_result.clone()).await?;
+    client.sync_state().await?;
 
     println!(
         "Mint transaction submitted successfully, ID: {:?}",
@@ -212,8 +203,8 @@ async fn main() -> Result<(), ClientError> {
     );
 
     Ok(())
-
-}`},
+}
+`},
   typescript: {
     code:`import { WebClient, AccountStorageMode, NoteType } from "@demox-labs/miden-sdk";
 
@@ -234,7 +225,7 @@ export async function demo() {
     const decimals = 8;
     const initialSupply = BigInt(10_000_000 \* 10 \*\* decimals);
     const faucet = await client.newFaucet(
-        AccountStorageMode.public(), // Public: account state is visible on-chain
+        AccountStorageMode.public(), // Public: account state is visible onchain
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
@@ -247,7 +238,7 @@ export async function demo() {
     const mintTxRequest = client.newMintTransactionRequest(
         alice.id(), // Target account (who receives the tokens)
         faucet.id(), // Faucet account (who mints the tokens)
-        NoteType.Public, // Note visibility (public = on-chain)
+        NoteType.Public, // Note visibility (public = onchain)
         BigInt(1000) // Amount to mint (in base units)
     );
     const mintTx = await client.newTransaction(faucet.id(), mintTxRequest);
@@ -298,26 +289,26 @@ rustFilename="integration/src/bin/consume.rs"
 example={{
 rust: {
 code: `use miden_client::{
-account::{
-component::{AuthRpoFalcon512, BasicFungibleFaucet, BasicWallet},
-AccountBuilder, AccountId, AccountStorageMode, AccountType,
-},
-asset::{FungibleAsset, TokenSymbol},
-auth::AuthSecretKey,
-builder::ClientBuilder,
-crypto::SecretKey,
-keystore::FilesystemKeyStore,
-note::{create_p2id_note, NoteType},
-rpc::{Endpoint, TonicRpcClient},
-transaction::{OutputNote, TransactionRequestBuilder},
-ClientError, Felt,
+    account::{
+        component::{AuthRpoFalcon512, BasicFungibleFaucet, BasicWallet},
+        AccountBuilder, AccountStorageMode, AccountType,
+    },
+    asset::{FungibleAsset, TokenSymbol},
+    auth::AuthSecretKey,
+    builder::ClientBuilder,
+    crypto::SecretKey,
+    keystore::FilesystemKeyStore,
+    note::NoteType,
+    rpc::{Endpoint, TonicRpcClient},
+    transaction::TransactionRequestBuilder,
+    Felt,
 };
 use rand::{rngs::StdRng, RngCore};
 use std::sync::Arc;
 use tokio::time::Duration;
 
 #[tokio::main]
-async fn main() -> Result<(), ClientError> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -326,10 +317,12 @@ async fn main() -> Result<(), ClientError> {
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
 
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path).unwrap());
+    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path.to_str().unwrap();
+    let store_path_str = store_path
+        .to_str()
+        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
@@ -340,10 +333,9 @@ async fn main() -> Result<(), ClientError> {
         .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
-        .await
-        .unwrap();
+        .await?;
 
-    client.sync_state().await.unwrap();
+    client.sync_state().await?;
 
     //------------------------------------------------------------
     // CREATING A FAUCET AND MINTING TOKENS
@@ -354,7 +346,7 @@ async fn main() -> Result<(), ClientError> {
     client.rng().fill_bytes(&mut init_seed);
 
     // Faucet parameters
-    let symbol = TokenSymbol::new("TEST").unwrap();
+    let symbol = TokenSymbol::new("TEST")?;
     let decimals = 8;
     let max_supply = Felt::new(1_000_000);
 
@@ -374,10 +366,10 @@ async fn main() -> Result<(), ClientError> {
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
         .with_auth_component(AuthRpoFalcon512::new(faucet_key_pair.public_key()))
-        .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply).unwrap());
+        .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
-    let (alice_account, alice_seed) = account_builder.build().unwrap();
-    let (faucet_account, faucet_seed) = faucet_builder.build().unwrap();
+    let (alice_account, alice_seed) = account_builder.build()?;
+    let (faucet_account, faucet_seed) = faucet_builder.build()?;
 
     println!("Alice's account ID: {:?}", alice_account.id().to_hex());
     println!("Faucet account ID: {:?}", faucet_account.id().to_hex());
@@ -385,43 +377,34 @@ async fn main() -> Result<(), ClientError> {
     // Add accounts to client
     client
         .add_account(&alice_account, Some(alice_seed), false)
-        .await
-        .unwrap();
+        .await?;
     client
         .add_account(&faucet_account, Some(faucet_seed), false)
-        .await
-        .unwrap();
+        .await?;
 
     // Add keys to keystore
-    keystore
-        .add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))
-        .unwrap();
-    keystore
-        .add_key(&AuthSecretKey::RpoFalcon512(faucet_key_pair))
-        .unwrap();
+    keystore.add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))?;
+    keystore.add_key(&AuthSecretKey::RpoFalcon512(faucet_key_pair))?;
 
     let amount: u64 = 1000;
-    let fungible_asset = FungibleAsset::new(faucet_account.id(), amount).unwrap();
+    let fungible_asset = FungibleAsset::new(faucet_account.id(), amount)?;
 
     // Build transaction request to mint fungible asset to Alice's account
     // NOTE: This transaction will create a P2ID note (a Miden note containing the minted asset)
     // for Alice's account. Alice will be able to consume these notes to get the fungible asset in her vault
-    let transaction_request = TransactionRequestBuilder::new()
-        .build_mint_fungible_asset(
-            fungible_asset,
-            alice_account.id(),
-            NoteType::Public,
-            client.rng(),
-        )
-        .unwrap();
+    let transaction_request = TransactionRequestBuilder::new().build_mint_fungible_asset(
+        fungible_asset,
+        alice_account.id(),
+        NoteType::Public,
+        client.rng(),
+    )?;
 
     // Create transaction and submit it to create P2ID notes for Alice's account
     let tx_result = client
         .new_transaction(faucet_account.id(), transaction_request)
-        .await
-        .unwrap();
-    client.submit_transaction(tx_result.clone()).await.unwrap();
-    client.sync_state().await.unwrap();
+        .await?;
+    client.submit_transaction(tx_result.clone()).await?;
+    client.sync_state().await?;
 
     println!(
         "Mint transaction submitted successfully, ID: {:?}",
@@ -434,12 +417,11 @@ async fn main() -> Result<(), ClientError> {
 
     loop {
         // Sync state to get the latest block
-        client.sync_state().await.unwrap();
+        client.sync_state().await?;
 
         let consumable_notes = client
             .get_consumable_notes(Some(alice_account.id()))
-            .await
-            .unwrap();
+            .await?;
         let note_ids = consumable_notes
             .iter()
             .map(|(note, _)| note.id())
@@ -451,33 +433,25 @@ async fn main() -> Result<(), ClientError> {
             continue;
         }
 
-        let consume_tx_request = TransactionRequestBuilder::new()
-            .build_consume_notes(note_ids)
-            .unwrap();
+        let consume_tx_request = TransactionRequestBuilder::new().build_consume_notes(note_ids)?;
 
         // Create transaction and submit it to consume notes
         let consume_tx_result = client
             .new_transaction(alice_account.id(), consume_tx_request)
-            .await
-            .unwrap();
+            .await?;
 
         println!(
             "Consume transaction submitted successfully, ID: {:?}",
             consume_tx_result.executed_transaction().id().to_hex()
         );
 
-        client
-            .submit_transaction(consume_tx_result.clone())
-            .await
-            .unwrap();
-        client.sync_state().await.unwrap();
+        client.submit_transaction(consume_tx_result.clone()).await?;
+        client.sync_state().await?;
 
         let alice_account_record = client
             .get_account(alice_account.id())
-            .await
-            .unwrap()
-            .ok_or_else(|| anyhow::anyhow!("Alice account not found"))
-            .unwrap();
+            .await?
+            .ok_or_else(|| anyhow::anyhow!("Account not found"))?;
         let alice_account = alice_account_record.account().clone();
         let vault = alice_account.vault();
         println!(
@@ -489,7 +463,6 @@ async fn main() -> Result<(), ClientError> {
     }
 
     Ok(())
-
 }
 `},
   typescript: {
@@ -517,7 +490,7 @@ export async function demo() {
     const decimals = 8;
     const initialSupply = BigInt(10_000_000 \* 10 \*\* decimals);
     const faucet = await client.newFaucet(
-        AccountStorageMode.public(), // Public: account state is visible on-chain
+        AccountStorageMode.public(), // Public: account state is visible onchain
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
@@ -532,7 +505,7 @@ export async function demo() {
     const mintTxRequest = client.newMintTransactionRequest(
         alice.id(), // Target account (who receives the tokens)
         faucet.id(), // Faucet account (who mints the tokens)
-        NoteType.Public, // Note visibility (public = on-chain)
+        NoteType.Public, // Note visibility (public = onchain)
         BigInt(1000) // Amount to mint (in base units)
     );
     const mintTx = await client.newTransaction(faucet.id(), mintTxRequest);
@@ -555,7 +528,7 @@ export async function demo() {
     }
 
     const noteIds = consumableNotes.map((note) =>
-        note.inputNoteRecord().id().toString()  
+        note.inputNoteRecord().id().toString()
     );
 
     // Create transaction request to consume notes
@@ -617,26 +590,26 @@ rustFilename="integration/src/bin/send.rs"
 example={{
 rust: {
 code: `use miden_client::{
-account::{
-component::{AuthRpoFalcon512, BasicFungibleFaucet, BasicWallet},
-AccountBuilder, AccountId, AccountStorageMode, AccountType,
-},
-asset::{FungibleAsset, TokenSymbol},
-auth::AuthSecretKey,
-builder::ClientBuilder,
-crypto::SecretKey,
-keystore::FilesystemKeyStore,
-note::{create_p2id_note, NoteType},
-rpc::{Endpoint, TonicRpcClient},
-transaction::{OutputNote, TransactionRequestBuilder},
-ClientError, Felt,
+    account::{
+        component::{AuthRpoFalcon512, BasicFungibleFaucet, BasicWallet},
+        AccountBuilder, AccountId, AccountStorageMode, AccountType,
+    },
+    asset::{FungibleAsset, TokenSymbol},
+    auth::AuthSecretKey,
+    builder::ClientBuilder,
+    crypto::SecretKey,
+    keystore::FilesystemKeyStore,
+    note::{create_p2id_note, NoteType},
+    rpc::{Endpoint, TonicRpcClient},
+    transaction::{OutputNote, TransactionRequestBuilder},
+    Felt,
 };
 use rand::{rngs::StdRng, RngCore};
 use std::sync::Arc;
 use tokio::time::Duration;
 
 #[tokio::main]
-async fn main() -> Result<(), ClientError> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -645,10 +618,12 @@ async fn main() -> Result<(), ClientError> {
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
 
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path).unwrap());
+    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path.to_str().unwrap();
+    let store_path_str = store_path
+        .to_str()
+        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
@@ -659,10 +634,9 @@ async fn main() -> Result<(), ClientError> {
         .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
-        .await
-        .unwrap();
+        .await?;
 
-    client.sync_state().await.unwrap();
+    client.sync_state().await?;
 
     //------------------------------------------------------------
     // CREATING A FAUCET AND MINTING TOKENS
@@ -673,7 +647,7 @@ async fn main() -> Result<(), ClientError> {
     client.rng().fill_bytes(&mut init_seed);
 
     // Faucet parameters
-    let symbol = TokenSymbol::new("TEST").unwrap();
+    let symbol = TokenSymbol::new("TEST")?;
     let decimals = 8;
     let max_supply = Felt::new(1_000_000);
 
@@ -693,10 +667,10 @@ async fn main() -> Result<(), ClientError> {
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
         .with_auth_component(AuthRpoFalcon512::new(faucet_key_pair.public_key()))
-        .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply).unwrap());
+        .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
-    let (alice_account, alice_seed) = account_builder.build().unwrap();
-    let (faucet_account, faucet_seed) = faucet_builder.build().unwrap();
+    let (alice_account, alice_seed) = account_builder.build()?;
+    let (faucet_account, faucet_seed) = faucet_builder.build()?;
 
     println!("Alice's account ID: {:?}", alice_account.id().to_hex());
     println!("Faucet account ID: {:?}", faucet_account.id().to_hex());
@@ -704,43 +678,34 @@ async fn main() -> Result<(), ClientError> {
     // Add accounts to client
     client
         .add_account(&alice_account, Some(alice_seed), false)
-        .await
-        .unwrap();
+        .await?;
     client
         .add_account(&faucet_account, Some(faucet_seed), false)
-        .await
-        .unwrap();
+        .await?;
 
     // Add keys to keystore
-    keystore
-        .add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))
-        .unwrap();
-    keystore
-        .add_key(&AuthSecretKey::RpoFalcon512(faucet_key_pair))
-        .unwrap();
+    keystore.add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))?;
+    keystore.add_key(&AuthSecretKey::RpoFalcon512(faucet_key_pair))?;
 
     let amount: u64 = 1000;
-    let fungible_asset = FungibleAsset::new(faucet_account.id(), amount).unwrap();
+    let fungible_asset = FungibleAsset::new(faucet_account.id(), amount)?;
 
     // Build transaction request to mint fungible asset to Alice's account
     // NOTE: This transaction will create a P2ID note (a Miden note containing the minted asset)
     // for Alice's account. Alice will be able to consume these notes to get the fungible asset in her vault
-    let transaction_request = TransactionRequestBuilder::new()
-        .build_mint_fungible_asset(
-            fungible_asset,
-            alice_account.id(),
-            NoteType::Public,
-            client.rng(),
-        )
-        .unwrap();
+    let transaction_request = TransactionRequestBuilder::new().build_mint_fungible_asset(
+        fungible_asset,
+        alice_account.id(),
+        NoteType::Public,
+        client.rng(),
+    )?;
 
     // Create transaction and submit it to create P2ID notes for Alice's account
     let tx_result = client
         .new_transaction(faucet_account.id(), transaction_request)
-        .await
-        .unwrap();
-    client.submit_transaction(tx_result.clone()).await.unwrap();
-    client.sync_state().await.unwrap();
+        .await?;
+    client.submit_transaction(tx_result.clone()).await?;
+    client.sync_state().await?;
 
     println!(
         "Mint transaction submitted successfully, ID: {:?}",
@@ -753,12 +718,11 @@ async fn main() -> Result<(), ClientError> {
 
     loop {
         // Sync state to get the latest block
-        client.sync_state().await.unwrap();
+        client.sync_state().await?;
 
         let consumable_notes = client
             .get_consumable_notes(Some(alice_account.id()))
-            .await
-            .unwrap();
+            .await?;
         let note_ids = consumable_notes
             .iter()
             .map(|(note, _)| note.id())
@@ -770,33 +734,25 @@ async fn main() -> Result<(), ClientError> {
             continue;
         }
 
-        let consume_tx_request = TransactionRequestBuilder::new()
-            .build_consume_notes(note_ids)
-            .unwrap();
+        let consume_tx_request = TransactionRequestBuilder::new().build_consume_notes(note_ids)?;
 
         // Create transaction and submit it to consume notes
         let consume_tx_result = client
             .new_transaction(alice_account.id(), consume_tx_request)
-            .await
-            .unwrap();
+            .await?;
 
         println!(
             "Consume transaction submitted successfully, ID: {:?}",
             consume_tx_result.executed_transaction().id().to_hex()
         );
 
-        client
-            .submit_transaction(consume_tx_result.clone())
-            .await
-            .unwrap();
-        client.sync_state().await.unwrap();
+        client.submit_transaction(consume_tx_result.clone()).await?;
+        client.sync_state().await?;
 
         let alice_account_record = client
             .get_account(alice_account.id())
-            .await
-            .unwrap()
-            .ok_or_else(|| anyhow::anyhow!("Alice account not found"))
-            .unwrap();
+            .await?
+            .ok_or_else(|| anyhow::anyhow!("Account not found"))?;
         let alice_account = alice_account_record.account().clone();
         let vault = alice_account.vault();
         println!(
@@ -811,9 +767,9 @@ async fn main() -> Result<(), ClientError> {
     // SENDING TOKENS TO BOB
     //------------------------------------------------------------
 
-    let bob_account_id = AccountId::from_hex("0x599a54603f0cf9000000ed7a11e379").unwrap();
+    let bob_account_id = AccountId::from_hex("0x599a54603f0cf9000000ed7a11e379")?;
     let send_amount = 100;
-    let fungible_asset_to_send = FungibleAsset::new(faucet_account.id(), send_amount).unwrap();
+    let fungible_asset_to_send = FungibleAsset::new(faucet_account.id(), send_amount)?;
 
     let p2id_note = create_p2id_note(
         alice_account.id(),
@@ -822,24 +778,21 @@ async fn main() -> Result<(), ClientError> {
         NoteType::Public,
         Felt::new(0),
         client.rng(),
-    );
+    )?;
 
     // Create transaction request to send P2ID note to Bob
     let send_p2id_note_transaction_request = TransactionRequestBuilder::new()
-        .own_output_notes(vec![OutputNote::Full(p2id_note.unwrap())])
-        .build()
-        .unwrap();
+        .own_output_notes(vec![OutputNote::Full(p2id_note)])
+        .build()?;
 
     // Create transaction and submit it to send P2ID note to Bob
     let send_p2id_note_tx_result = client
         .new_transaction(alice_account.id(), send_p2id_note_transaction_request)
-        .await
-        .unwrap();
+        .await?;
     client
         .submit_transaction(send_p2id_note_tx_result.clone())
-        .await
-        .unwrap();
-    client.sync_state().await.unwrap();
+        .await?;
+    client.sync_state().await?;
 
     println!(
         "Send 100 tokens to Bob note transaction ID: {:?}",
@@ -850,7 +803,6 @@ async fn main() -> Result<(), ClientError> {
     );
 
     Ok(())
-
 }
 `},
   typescript: {
@@ -879,7 +831,7 @@ export async function demo() {
     const decimals = 8;
     const initialSupply = BigInt(10_000_000 \* 10 \*\* decimals);
     const faucet = await client.newFaucet(
-        AccountStorageMode.public(), // Public: account state is visible on-chain
+        AccountStorageMode.public(), // Public: account state is visible onchain
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
@@ -894,7 +846,7 @@ export async function demo() {
     const mintTxRequest = client.newMintTransactionRequest(
         alice.id(), // Target account (who receives the tokens)
         faucet.id(), // Faucet account (who mints the tokens)
-        NoteType.Public, // Note visibility (public = on-chain)
+        NoteType.Public, // Note visibility (public = onchain)
         BigInt(1000) // Amount to mint (in base units)
     );
     const mintTx = await client.newTransaction(faucet.id(), mintTxRequest);
