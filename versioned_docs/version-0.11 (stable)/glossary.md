@@ -46,7 +46,7 @@ A Block is a fundamental data structure which groups multiple batches together a
 
 ## Delta
 
-A Delta represents the changes between two states `s` and `s'`. By applying a Delta `d` to `s` would result in `s'`.
+A Delta represents the changes between two states `s` and `s'`. Applying a Delta `d` to `s` would result in `s'`.
 
 ## Felt
 
