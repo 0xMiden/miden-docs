@@ -83,19 +83,20 @@ rust: {
 code: `use miden_client::{
     account::{
         component::{AuthRpoFalcon512, BasicFungibleFaucet, BasicWallet},
-        AccountBuilder, AccountStorageMode, AccountType,
+        AccountBuilder, AccountId, AccountStorageMode, AccountType,
     },
     asset::{FungibleAsset, TokenSymbol},
     auth::AuthSecretKey,
     builder::ClientBuilder,
-    crypto::SecretKey,
+    crypto::rpo_falcon512::SecretKey,
     keystore::FilesystemKeyStore,
-    note::NoteType,
-    rpc::{Endpoint, TonicRpcClient},
-    transaction::TransactionRequestBuilder,
+    note::{create_p2id_note, NoteType},
+    rpc::{Endpoint, GrpcClient},
+    transaction::{OutputNote, TransactionRequestBuilder},
     Felt,
 };
-use rand::{rngs::StdRng, RngCore};
+use miden_client_sqlite_store::ClientBuilderSqliteExt;
+use rand::RngCore;
 use std::sync::Arc;
 
 #[tokio::main]
@@ -103,25 +104,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
-    let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
+    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
+    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
+        FilesystemKeyStore::new(keystore_path).unwrap().into();
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path
-        .to_str()
-        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     let mut client = ClientBuilder::new()
-        .rpc(rpc_api)
-        .sqlite_store(store_path_str)
-        .authenticator(keystore.clone())
+        .rpc(rpc_client)
+        .sqlite_store(store_path)
+        .authenticator(keystore.clone().into())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -149,29 +147,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let account_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(alice_key_pair.public_key()))
+        .with_auth_component(AuthRpoFalcon512::new(
+            alice_key_pair.public_key().to_commitment().into(),
+        ))
         .with_component(BasicWallet);
 
     // Build the faucet
     let faucet_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(faucet_key_pair.public_key()))
+        .with_auth_component(AuthRpoFalcon512::new(
+            faucet_key_pair.public_key().to_commitment().into(),
+        ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
-    let (alice_account, alice_seed) = account_builder.build()?;
-    let (faucet_account, faucet_seed) = faucet_builder.build()?;
+    let alice_account = account_builder.build()?;
+    let faucet_account = faucet_builder.build()?;
 
     println!("Alice's account ID: {:?}", alice_account.id().to_hex());
     println!("Faucet account ID: {:?}", faucet_account.id().to_hex());
 
     // Add accounts to client
-    client
-        .add_account(&alice_account, Some(alice_seed), false)
-        .await?;
-    client
-        .add_account(&faucet_account, Some(faucet_seed), false)
-        .await?;
+    client.add_account(&alice_account, false).await?;
+    client.add_account(&faucet_account, false).await?;
 
     // Add keys to keystore
     keystore.add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))?;
@@ -191,15 +189,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
 
     // Create transaction and submit it to create P2ID notes for Alice's account
-    let tx_result = client
-        .new_transaction(faucet_account.id(), transaction_request)
+    let tx_id = client
+        .submit_new_transaction(faucet_account.id(), transaction_request)
         .await?;
-    client.submit_transaction(tx_result.clone()).await?;
     client.sync_state().await?;
 
     println!(
         "Mint transaction submitted successfully, ID: {:?}",
-        tx_result.executed_transaction().id().to_hex()
+        tx_id.to_hex()
     );
 
     Ok(())
@@ -296,14 +293,15 @@ code: `use miden_client::{
     asset::{FungibleAsset, TokenSymbol},
     auth::AuthSecretKey,
     builder::ClientBuilder,
-    crypto::SecretKey,
+    crypto::rpo_falcon512::SecretKey,
     keystore::FilesystemKeyStore,
-    note::NoteType,
-    rpc::{Endpoint, TonicRpcClient},
-    transaction::TransactionRequestBuilder,
+    note::{NoteType},
+    rpc::{Endpoint, GrpcClient},
+    transaction::{TransactionRequestBuilder},
     Felt,
 };
-use rand::{rngs::StdRng, RngCore};
+use miden_client_sqlite_store::ClientBuilderSqliteExt;
+use rand::RngCore;
 use std::sync::Arc;
 use tokio::time::Duration;
 
@@ -312,25 +310,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
-    let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
+    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
+    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
+        FilesystemKeyStore::new(keystore_path).unwrap().into();
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path
-        .to_str()
-        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     let mut client = ClientBuilder::new()
-        .rpc(rpc_api)
-        .sqlite_store(store_path_str)
-        .authenticator(keystore.clone())
+        .rpc(rpc_client)
+        .sqlite_store(store_path)
+        .authenticator(keystore.clone().into())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -358,29 +353,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let account_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(alice_key_pair.public_key()))
+        .with_auth_component(AuthRpoFalcon512::new(
+            alice_key_pair.public_key().to_commitment().into(),
+        ))
         .with_component(BasicWallet);
 
     // Build the faucet
     let faucet_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(faucet_key_pair.public_key()))
+        .with_auth_component(AuthRpoFalcon512::new(
+            faucet_key_pair.public_key().to_commitment().into(),
+        ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
-    let (alice_account, alice_seed) = account_builder.build()?;
-    let (faucet_account, faucet_seed) = faucet_builder.build()?;
+    let alice_account = account_builder.build()?;
+    let faucet_account = faucet_builder.build()?;
 
     println!("Alice's account ID: {:?}", alice_account.id().to_hex());
     println!("Faucet account ID: {:?}", faucet_account.id().to_hex());
 
     // Add accounts to client
-    client
-        .add_account(&alice_account, Some(alice_seed), false)
-        .await?;
-    client
-        .add_account(&faucet_account, Some(faucet_seed), false)
-        .await?;
+    client.add_account(&alice_account, false).await?;
+    client.add_account(&faucet_account, false).await?;
 
     // Add keys to keystore
     keystore.add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))?;
@@ -400,15 +395,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
 
     // Create transaction and submit it to create P2ID notes for Alice's account
-    let tx_result = client
-        .new_transaction(faucet_account.id(), transaction_request)
+    let tx_id = client
+        .submit_new_transaction(faucet_account.id(), transaction_request)
         .await?;
-    client.submit_transaction(tx_result.clone()).await?;
     client.sync_state().await?;
 
     println!(
         "Mint transaction submitted successfully, ID: {:?}",
-        tx_result.executed_transaction().id().to_hex()
+        tx_id.to_hex()
     );
 
     //------------------------------------------------------------
@@ -436,16 +430,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let consume_tx_request = TransactionRequestBuilder::new().build_consume_notes(note_ids)?;
 
         // Create transaction and submit it to consume notes
-        let consume_tx_result = client
-            .new_transaction(alice_account.id(), consume_tx_request)
+        let consume_tx_id = client
+            .submit_new_transaction(alice_account.id(), consume_tx_request)
             .await?;
 
         println!(
             "Consume transaction submitted successfully, ID: {:?}",
-            consume_tx_result.executed_transaction().id().to_hex()
+            consume_tx_id.to_hex()
         );
 
-        client.submit_transaction(consume_tx_result.clone()).await?;
         client.sync_state().await?;
 
         let alice_account_record = client
@@ -597,14 +590,15 @@ code: `use miden_client::{
     asset::{FungibleAsset, TokenSymbol},
     auth::AuthSecretKey,
     builder::ClientBuilder,
-    crypto::SecretKey,
+    crypto::rpo_falcon512::SecretKey,
     keystore::FilesystemKeyStore,
     note::{create_p2id_note, NoteType},
-    rpc::{Endpoint, TonicRpcClient},
+    rpc::{Endpoint, GrpcClient},
     transaction::{OutputNote, TransactionRequestBuilder},
     Felt,
 };
-use rand::{rngs::StdRng, RngCore};
+use miden_client_sqlite_store::ClientBuilderSqliteExt;
+use rand::RngCore;
 use std::sync::Arc;
 use tokio::time::Duration;
 
@@ -613,25 +607,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
-    let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
+    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
+    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
+        FilesystemKeyStore::new(keystore_path).unwrap().into();
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path
-        .to_str()
-        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     let mut client = ClientBuilder::new()
-        .rpc(rpc_api)
-        .sqlite_store(store_path_str)
-        .authenticator(keystore.clone())
+        .rpc(rpc_client)
+        .sqlite_store(store_path)
+        .authenticator(keystore.clone().into())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -659,29 +650,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let account_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(alice_key_pair.public_key()))
+        .with_auth_component(AuthRpoFalcon512::new(
+            alice_key_pair.public_key().to_commitment().into(),
+        ))
         .with_component(BasicWallet);
 
     // Build the faucet
     let faucet_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(faucet_key_pair.public_key()))
+        .with_auth_component(AuthRpoFalcon512::new(
+            faucet_key_pair.public_key().to_commitment().into(),
+        ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
-    let (alice_account, alice_seed) = account_builder.build()?;
-    let (faucet_account, faucet_seed) = faucet_builder.build()?;
+    let alice_account = account_builder.build()?;
+    let faucet_account = faucet_builder.build()?;
 
     println!("Alice's account ID: {:?}", alice_account.id().to_hex());
     println!("Faucet account ID: {:?}", faucet_account.id().to_hex());
 
     // Add accounts to client
-    client
-        .add_account(&alice_account, Some(alice_seed), false)
-        .await?;
-    client
-        .add_account(&faucet_account, Some(faucet_seed), false)
-        .await?;
+    client.add_account(&alice_account, false).await?;
+    client.add_account(&faucet_account, false).await?;
 
     // Add keys to keystore
     keystore.add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))?;
@@ -701,15 +692,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
 
     // Create transaction and submit it to create P2ID notes for Alice's account
-    let tx_result = client
-        .new_transaction(faucet_account.id(), transaction_request)
+    let tx_id = client
+        .submit_new_transaction(faucet_account.id(), transaction_request)
         .await?;
-    client.submit_transaction(tx_result.clone()).await?;
     client.sync_state().await?;
 
     println!(
         "Mint transaction submitted successfully, ID: {:?}",
-        tx_result.executed_transaction().id().to_hex()
+        tx_id.to_hex()
     );
 
     //------------------------------------------------------------
@@ -737,16 +727,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let consume_tx_request = TransactionRequestBuilder::new().build_consume_notes(note_ids)?;
 
         // Create transaction and submit it to consume notes
-        let consume_tx_result = client
-            .new_transaction(alice_account.id(), consume_tx_request)
+        let consume_tx_id = client
+            .submit_new_transaction(alice_account.id(), consume_tx_request)
             .await?;
 
         println!(
             "Consume transaction submitted successfully, ID: {:?}",
-            consume_tx_result.executed_transaction().id().to_hex()
+            consume_tx_id.to_hex()
         );
 
-        client.submit_transaction(consume_tx_result.clone()).await?;
         client.sync_state().await?;
 
         let alice_account_record = client
@@ -786,20 +775,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()?;
 
     // Create transaction and submit it to send P2ID note to Bob
-    let send_p2id_note_tx_result = client
-        .new_transaction(alice_account.id(), send_p2id_note_transaction_request)
-        .await?;
-    client
-        .submit_transaction(send_p2id_note_tx_result.clone())
+    let send_p2id_note_tx_id = client
+        .submit_new_transaction(alice_account.id(), send_p2id_note_transaction_request)
         .await?;
     client.sync_state().await?;
 
     println!(
         "Send 100 tokens to Bob note transaction ID: {:?}",
-        send_p2id_note_tx_result
-            .executed_transaction()
-            .id()
-            .to_hex()
+        send_p2id_note_tx_id.to_hex()
     );
 
     Ok(())

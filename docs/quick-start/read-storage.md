@@ -45,9 +45,9 @@ code: `use miden_client::{
     account::AccountId,
     builder::ClientBuilder,
     keystore::FilesystemKeyStore,
-    rpc::{Endpoint, TonicRpcClient},
+    rpc::{Endpoint, GrpcClient},
 };
-use rand::rngs::StdRng;
+use miden_client_sqlite_store::ClientBuilderSqliteExt;
 use std::sync::Arc;
 
 #[tokio::main]
@@ -55,25 +55,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
-    let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
+    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
+    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
+        FilesystemKeyStore::new(keystore_path).unwrap().into();
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path
-        .to_str()
-        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     let mut client = ClientBuilder::new()
-        .rpc(rpc_api)
-        .sqlite_store(store_path_str)
-        .authenticator(keystore.clone())
+        .rpc(rpc_client)
+        .sqlite_store(store_path)
+        .authenticator(keystore.clone().into())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -164,9 +161,9 @@ code: `use miden_client::{
     account::AccountId,
     builder::ClientBuilder,
     keystore::FilesystemKeyStore,
-    rpc::{Endpoint, TonicRpcClient},
+    rpc::{Endpoint, GrpcClient},
 };
-use rand::rngs::StdRng;
+use miden_client_sqlite_store::ClientBuilderSqliteExt;
 use std::sync::Arc;
 
 #[tokio::main]
@@ -174,25 +171,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
-    let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
+    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
+    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
+        FilesystemKeyStore::new(keystore_path).unwrap().into();
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path
-        .to_str()
-        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     let mut client = ClientBuilder::new()
-        .rpc(rpc_api)
-        .sqlite_store(store_path_str)
-        .authenticator(keystore.clone())
+        .rpc(rpc_client)
+        .sqlite_store(store_path)
+        .authenticator(keystore.clone().into())
         .in_debug_mode(true.into())
         .build()
         .await?;

@@ -173,16 +173,16 @@ rust: {
 code: `use miden_client::{
     account::{
         component::{AuthRpoFalcon512, BasicWallet},
-        AccountBuilder,
+        AccountBuilder, AccountStorageMode, AccountType,
     },
-    account::{AccountStorageMode, AccountType},
     auth::AuthSecretKey,
     builder::ClientBuilder,
-    crypto::SecretKey,
+    crypto::rpo_falcon512::SecretKey,
     keystore::FilesystemKeyStore,
-    rpc::{Endpoint, TonicRpcClient},
+    rpc::{Endpoint, GrpcClient},
 };
-use rand::{rngs::StdRng, RngCore};
+use miden_client_sqlite_store::ClientBuilderSqliteExt;
+use rand::RngCore;
 use std::sync::Arc;
 
 #[tokio::main]
@@ -190,25 +190,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
-    let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
+    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
+    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
+        FilesystemKeyStore::new(keystore_path).unwrap().into();
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path
-        .to_str()
-        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     let mut client = ClientBuilder::new()
-        .rpc(rpc_api)
-        .sqlite_store(store_path_str)
-        .authenticator(keystore.clone())
+        .rpc(rpc_client)
+        .sqlite_store(store_path)
+        .authenticator(keystore.clone().into())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -223,12 +220,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(key_pair.public_key()))
+        .with_auth_component(AuthRpoFalcon512::new(
+            key_pair.public_key().to_commitment().into(),
+        ))
         .with_component(BasicWallet);
 
-    let (account, seed) = builder.build()?;
+    let account = builder.build()?;
 
-    client.add_account(&account, Some(seed), false).await?;
+    client.add_account(&account, false).await?;
 
     keystore.add_key(&AuthSecretKey::RpoFalcon512(key_pair))?;
 
@@ -288,18 +287,18 @@ rust: {
 code: `use miden_client::{
     account::{
         component::{AuthRpoFalcon512, BasicFungibleFaucet},
-        AccountBuilder,
+        AccountBuilder, AccountStorageMode, AccountType,
     },
-    account::{AccountStorageMode, AccountType},
     asset::TokenSymbol,
     auth::AuthSecretKey,
     builder::ClientBuilder,
-    crypto::SecretKey,
+    crypto::rpo_falcon512::SecretKey,
     keystore::FilesystemKeyStore,
-    rpc::{Endpoint, TonicRpcClient},
+    rpc::{Endpoint, GrpcClient},
     Felt,
 };
-use rand::{rngs::StdRng, RngCore};
+use miden_client_sqlite_store::ClientBuilderSqliteExt;
+use rand::RngCore;
 use std::sync::Arc;
 
 #[tokio::main]
@@ -307,25 +306,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
-    let rpc_api = Arc::new(TonicRpcClient::new(&endpoint, timeout_ms));
+    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-
-    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path)?);
+    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
+        FilesystemKeyStore::new(keystore_path).unwrap().into();
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
-    let store_path_str = store_path
-        .to_str()
-        .ok_or_else(|| anyhow::anyhow!("Invalid store path"))?;
 
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     let mut client = ClientBuilder::new()
-        .rpc(rpc_api)
-        .sqlite_store(store_path_str)
-        .authenticator(keystore.clone())
+        .rpc(rpc_client)
+        .sqlite_store(store_path)
+        .authenticator(keystore.clone().into())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -348,15 +344,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(key_pair.public_key()))
+        .with_auth_component(AuthRpoFalcon512::new(
+            key_pair.public_key().to_commitment().into(),
+        ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
-    let (faucet_account, seed) = builder.build()?;
+    let faucet_account = builder.build()?;
 
-    client
-        .add_account(&faucet_account, Some(seed), false)
-        .await?;
-
+    client.add_account(&faucet_account, false).await?;
     keystore.add_key(&AuthSecretKey::RpoFalcon512(key_pair))?;
 
     println!("Faucet account ID: {}", faucet_account.id());
