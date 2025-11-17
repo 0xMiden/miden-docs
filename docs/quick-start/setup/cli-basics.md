@@ -154,7 +154,11 @@ miden client new-wallet --deploy
 
 ## Create a New Project
 
-**Rust Workspace (default):**
+**Rust workspace template**: Designed for developing, testing, and deploying Miden smart contracts using Rust
+
+**Frontend project template**: Provides a simple starting point for building web applications that interact with deployed contracts on the Miden Testnet, including publishing and consuming notes.
+
+**Rust Workspace:**
 
 ```bash title=">_ Terminal"
 miden new my-project
@@ -171,6 +175,6 @@ yarn create-miden-app
 npx create-miden-app
 ```
 
-Creates a minimal **Vite example project with Miden integration**, built on the standard Vite React TypeScript template. You can use this template for Miden frontend development.
+Creates a minimal **Vite example project with Miden integration**, built on the standard Vite React TypeScript template.
 
 ---
