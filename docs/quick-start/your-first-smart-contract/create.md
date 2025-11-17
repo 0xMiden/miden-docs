@@ -4,8 +4,6 @@ title: Create Your Project
 description: Set up a new Miden project and understand the counter contract implementation.
 ---
 
-# Create Your Project
-
 In this section, you'll set up a new Miden project and understand the structure and implementation of both the counter account contract and increment note script.
 
 ## Setting Up Your Project
@@ -65,20 +63,12 @@ Let's examine the counter account contract that comes with the project template.
 // Do not link against libstd (i.e. anything defined in `std::`)
 #![no_std]
 
-// Global allocator to use heap memory in no-std environment
-#[global_allocator]
-static ALLOC: miden::BumpAlloc = miden::BumpAlloc::new();
-
-// Define a panic handler as required by the `no_std` environment
-#[cfg(not(test))]
-#[panic_handler]
-fn panic(_info: &core::panic::PanicInfo) -> ! {
-    loop {}
-}
+// However, we could still use some standard library types while
+// remaining no-std compatible, if we uncommented the following lines:
+//
+// extern crate alloc;
 
 use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
-
-use crate::bindings::exports::miden::counter_contract::counter::Guest;
 
 /// Main contract structure for the counter example.
 #[component]
@@ -88,29 +78,26 @@ struct CounterContract {
     count_map: StorageMap,
 }
 
-impl Guest for CounterContract {
+#[component]
+impl CounterContract {
     /// Returns the current counter value stored in the contract's storage map.
-    fn get_count() -> Felt {
-        // Get the instance of the contract
-        let contract = CounterContract::default();
+    pub fn get_count(&self) -> Felt {
         // Define a fixed key for the counter value within the map
         let key = Word::from([felt!(0), felt!(0), felt!(0), felt!(1)]);
         // Read the value associated with the key from the storage map
-        contract.count_map.get(&key)
+        self.count_map.get(&key)
     }
 
     /// Increments the counter value stored in the contract's storage map by one.
-    fn increment_count() -> Felt {
-        // Get the instance of the contract
-        let contract = CounterContract::default();
+    pub fn increment_count(&self) -> Felt {
         // Define the same fixed key
         let key = Word::from([felt!(0), felt!(0), felt!(0), felt!(1)]);
         // Read the current value
-        let current_value: Felt = contract.count_map.get(&key);
+        let current_value: Felt = self.count_map.get(&key);
         // Increment the value by one
         let new_value = current_value + felt!(1);
         // Write the new value back to the storage map
-        contract.count_map.set(key, new_value);
+        self.count_map.set(key, new_value);
         new_value
     }
 }
@@ -126,23 +113,10 @@ impl Guest for CounterContract {
 
 Miden contracts run in a `no_std` environment, meaning they don't link against Rust's standard library. This is essential for blockchain execution where contracts need to be deterministic and lightweight.
 
-The global allocator and panic handler are required boilerplate for `no_std` environments:
-
-```rust
-#[global_allocator]
-static ALLOC: miden::BumpAlloc = miden::BumpAlloc::new();
-
-#[panic_handler]
-fn panic(_info: &core::panic::PanicInfo) -> ! {
-    loop {}
-}
-```
-
 #### Miden Library Imports
 
 ```rust
 use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
-use crate::bindings::exports::miden::counter_contract::counter::Guest;
 ```
 
 These imports provide:
@@ -150,13 +124,14 @@ These imports provide:
 - **`component`**: Macro for defining contract components
 - **`Felt`/`Word`**: Miden's native field element and word types
 - **`StorageMap`**: Key-value storage within account storage slots
-- **`Guest`**: The interface trait this contract implements
+- **`StorageMapAccess`**: Needed for reading storage values (`get_count` function)
 
 #### Contract Structure Definition
 
 ```rust
 #[component]
 struct CounterContract {
+    /// Storage map holding the counter value.
     #[storage(slot(0), description = "counter contract storage map")]
     count_map: StorageMap,
 }
@@ -166,15 +141,15 @@ The `#[component]` attribute marks this as a Miden component. The `count_map` fi
 
 **Important**: Storage slots in Miden hold `Word` values, which are composed of four field elements (`Felt`). Each `Felt` is a 64-bit unsigned integer (u64). The `StorageMap` provides a key-value interface within a single storage slot, allowing you to store multiple key-value pairs within the four-element word structure.
 
-#### Guest Implementation
+#### Contract Implementation
 
 ```rust
-impl Guest for CounterContract {
+impl CounterContract {
     // Function implementations...
 }
 ```
 
-The `Guest` trait defines the external interface that other contracts and notes can call. This is the contract's public API.
+The `CounterContract` implementation defines the external interface that other contracts and notes can call. This is the contract's public API.
 
 #### Storage Key Strategy
 
@@ -192,27 +167,22 @@ Now let's examine the increment note script at `contracts/increment-note/src/lib
 // Do not link against libstd (i.e. anything defined in `std::`)
 #![no_std]
 
-// Global allocator to use heap memory in no-std environment
-#[global_allocator]
-static ALLOC: miden::BumpAlloc = miden::BumpAlloc::new();
-
-// Required for no-std crates
-#[cfg(not(test))]
-#[panic_handler]
-fn my_panic(_info: &core::panic::PanicInfo) -> ! {
-    loop {}
-}
+// However, we could still use some standard library types while
+// remaining no-std compatible, if we uncommented the following lines:
+//
+// extern crate alloc;
+// use alloc::vec::Vec;
 
 use miden::*;
 
-use crate::bindings::miden::counter_contract::counter;
+use crate::bindings::miden::counter_account::counter_account;
 
 #[note_script]
 fn run(_arg: Word) {
-    let initial_value = counter::get_count();
-    counter::increment_count();
+    let initial_value = counter_account::get_count();
+    counter_account::increment_count();
     let expected_value = initial_value + Felt::from_u32(1);
-    let final_value = counter::get_count();
+    let final_value = counter_account::get_count();
     assert_eq(final_value, expected_value);
 }
 ```
@@ -227,10 +197,11 @@ Similar to the account contract, the note script uses `#![no_std]` with the same
 
 ```rust
 use miden::*;
-use crate::bindings::miden::counter_contract::counter;
+
+use crate::bindings::miden::counter_account::counter_account;
 ```
 
-The wildcard import brings in all Miden note script functionality. The `counter` binding imports the interface functions from the counter contract, allowing the note script to call them.
+The wildcard import brings in all Miden note script functionality. The `counter_account` binding imports the interface functions from the counter contract, allowing the note script to call them.
 
 #### No Struct Definition
 
@@ -243,21 +214,21 @@ Learn more about [note scripts in the Miden documentation](http://docs.miden.xyz
 ```rust
 #[note_script]
 fn run(_arg: Word) {
-    let initial_value = counter::get_count();
-    counter::increment_count();
+    let initial_value = counter_account::get_count();
+    counter_account::increment_count();
     let expected_value = initial_value + Felt::from_u32(1);
-    let final_value = counter::get_count();
+    let final_value = counter_account::get_count();
     assert_eq(final_value, expected_value);
 }
 ```
 
 The `#[note_script]` attribute marks this function as the entry point for note execution. The function:
 
-1. **Gets the initial counter value** using the imported `counter::get_count()` function
+1. **Gets the initial counter value** using the imported `counter_account::get_count()` function
 2. **Calls increment_count()** to increment the counter on the target account
 3. **Verifies the operation succeeded** by checking the final value matches expectations
 
-This demonstrates how note scripts interact with account contracts through their public interfaces, calling functions defined in the `Guest` implementation.
+This demonstrates how note scripts interact with account contracts through their public interfaces, calling functions to change state.
 
 The counter example demonstrates a complete interaction pattern: the account contract manages persistent state, while the note script provides a mechanism to trigger state changes through note consumption.
 

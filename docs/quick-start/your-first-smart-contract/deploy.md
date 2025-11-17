@@ -134,7 +134,7 @@ The first step is building the Rust contracts into Miden packages:
 
 ```rust
 // Build the counter account contract from source
-let contract_package = Arc::new(
+let counter_package = Arc::new(
     build_project_in_dir(Path::new("../contracts/counter-account"), true)
         .context("Failed to build counter account contract")?
 );
@@ -233,8 +233,8 @@ let consume_note_request = TransactionRequestBuilder::new()
     .build()
     .context("Failed to build consume note transaction request")?;
 
-let consume_tx_result = client
-    .new_transaction(counter_account.id(), consume_note_request)
+let consume_tx_id = client
+    .submit_new_transaction(counter_account.id(), consume_note_request)
     .await
     .context("Failed to create consume note transaction")?;
 ```

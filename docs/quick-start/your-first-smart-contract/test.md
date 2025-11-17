@@ -40,7 +40,7 @@ Execute your tests from the integration directory using the standard Cargo test 
 
 ```bash title="Terminal"
 cd integration
-cargo test
+cargo test --release
 ```
 
 You should see output confirming the test passes:
@@ -67,7 +67,7 @@ use integration::helpers::{
 };
 
 use miden_client::{account::StorageMap, transaction::OutputNote, Felt, Word};
-use miden_testing::{Auth, MockChain, TransactionContextBuilder};
+use miden_testing::{Auth, MockChain};
 use std::{path::Path, sync::Arc};
 
 #[tokio::test]
@@ -75,7 +75,7 @@ async fn counter_test() -> anyhow::Result<()> {
     // Test that after executing the increment note, the counter value is incremented by 1
     let mut builder = MockChain::builder();
 
-    // Create note sender account
+    // Crate note sender account
     let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
 
     // Build contracts
@@ -98,47 +98,44 @@ async fn counter_test() -> anyhow::Result<()> {
         ..Default::default()
     };
 
-    // Create testing counter account
-    let counter_account =
+    // create testing counter account
+    let mut counter_account =
         create_testing_account_from_package(contract_package.clone(), counter_cfg).await?;
 
-    // Create testing increment note
+    // create testing increment note
     let counter_note = create_testing_note_from_package(
         note_package.clone(),
         sender.id(),
         NoteCreationConfig::default(),
     )?;
 
-    // Add counter account and note to mockchain
+    // add counter account and note to mockchain
     builder.add_account(counter_account.clone())?;
-    builder.add_note(OutputNote::Full(counter_note.clone().into()));
+    builder.add_output_note(OutputNote::Full(counter_note.clone().into()));
 
     // Build the mock chain
     let mut mock_chain = builder.build()?;
-
-    // Get transaction inputs (for increment the count)
-    let tx_inputs = mock_chain.get_transaction_inputs(
-        counter_account.clone(),
-        None,
-        &[counter_note.id()],
-        &[],
-    )?;
-
     // Build the transaction context
-    let tx_context = TransactionContextBuilder::new(counter_account.clone())
-        .account_seed(None)
-        .tx_inputs(tx_inputs)
+    let tx_context = mock_chain
+        .build_tx_context(counter_account.id(), &[counter_note.id()], &[])?
         .build()?;
+
+    println!("before executing tx");
 
     // Execute the transaction
     let executed_transaction = tx_context.execute().await?;
 
+    println!("after executing tx");
+
+    // Apply the account delta to the counter account
+    counter_account.apply_delta(&executed_transaction.account_delta())?;
+
     // Add the executed transaction to the mockchain
-    let updated_counter_account =
-        mock_chain.add_pending_executed_transaction(&executed_transaction)?;
+    mock_chain.add_pending_executed_transaction(&executed_transaction)?;
+    mock_chain.prove_next_block()?;
 
     // Get the count from the updated counter account
-    let count = updated_counter_account
+    let count = counter_account
         .storage()
         .get_map_item(0, count_storage_key)?;
 
@@ -195,7 +192,7 @@ let note_package = Arc::new(build_project_in_dir(
 ### 3. Creating the Test Account and Note
 
 ```rust
-// Configure storage
+// Create the counter account with initial storage and no-auth auth component
 let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
 let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
 let counter_cfg = AccountCreationConfig {
@@ -225,8 +222,7 @@ let counter_note = create_testing_note_from_package(
 
 ```rust
 builder.add_account(counter_account.clone())?;
-builder.add_note(OutputNote::Full(counter_note.clone().into()));
-
+builder.add_output_note(OutputNote::Full(counter_note.clone().into()));
 let mut mock_chain = builder.build()?;
 ```
 
@@ -239,16 +235,8 @@ let mut mock_chain = builder.build()?;
 ### 5. Creating and Executing the Transaction
 
 ```rust
-let tx_inputs = mock_chain.get_transaction_inputs(
-    counter_account.clone(),
-    None,
-    &[counter_note.id()],
-    &[],
-)?;
-
-let tx_context = TransactionContextBuilder::new(counter_account.clone())
-    .account_seed(None)
-    .tx_inputs(tx_inputs)
+let tx_context = mock_chain.
+    .build_tx_context(counter_account.id(), &[counter_note.id()], &[])?
     .build()?;
 
 let executed_transaction = tx_context.execute().await?;
@@ -256,19 +244,25 @@ let executed_transaction = tx_context.execute().await?;
 
 **What's happening:**
 
-- We **get transaction inputs** from the mockchain, specifying we want to consume the increment note
-- We **build the transaction context** using the counter account and transaction inputs
+- We **build the transaction context** using the counter account and counter note
 - We **execute the transaction** - this runs the increment logic locally in the mockchain
 
 ### 6. Verifying the Results
 
 ```rust
-let updated_counter_account = mock_chain.add_pending_executed_transaction(&executed_transaction)?;
+// Apply the account delta to the counter account
+counter_account.apply_delta(&executed_transaction.account_delta())?;
 
-let count = updated_counter_account
+// Add the executed transaction to the mockchain
+mock_chain.add_pending_executed_transaction(&executed_transaction)?;
+mock_chain.prove_next_block()?;
+
+// Get the count from the updated counter account
+let count = counter_account
     .storage()
     .get_map_item(0, count_storage_key)?;
 
+// Assert that the count value is equal to 1 after executing the transaction
 assert_eq!(
     count,
     Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]),
@@ -278,7 +272,8 @@ assert_eq!(
 
 **What's happening:**
 
-- We **add the executed transaction** to the mockchain and get the updated counter account
+- We **apply the account delta** from the executed transaction to the counter account to update its state
+- We **add the executed transaction** to the mockchain
 - We **read the counter value** from storage using the same key we initialized
 - We **assert that the count equals 1** - verifying the increment operation worked correctly
 
