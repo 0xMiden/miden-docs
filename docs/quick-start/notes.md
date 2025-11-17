@@ -203,14 +203,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 `},
   typescript: {
-    code:`import { WebClient, AccountStorageMode, NoteType } from "@demox-labs/miden-sdk";
+    code:`import {
+    WebClient,
+    AccountStorageMode,
+    NoteType,
+} from "@demox-labs/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-    const client = await WebClient.createClient(nodeEndpoint);
+
+    // Initialize client
+    const client = new WebClient();
+    await client.createClient(nodeEndpoint);
     await client.syncState();
 
     // Creating Alice's account
@@ -220,9 +227,9 @@ export async function demo() {
     // Creating a faucet account
     const symbol = "TEST";
     const decimals = 8;
-    const initialSupply = BigInt(10_000_000 \* 10 \*\* decimals);
+    const initialSupply = BigInt(10_000_000 * 10 ** decimals);
     const faucet = await client.newFaucet(
-        AccountStorageMode.public(), // Public: account state is visible onchain
+        AccountStorageMode.public(), // Public: account state is visible on-chain
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
@@ -230,21 +237,24 @@ export async function demo() {
     );
     console.log("Faucet account ID:", faucet.id().toString());
 
-    // Creating mint transaction
+    // Create transaction request to mint fungible asset to Alice's account
+    // NOTE: This transaction will create a P2ID note (a Miden note containing the minted asset)
+    // for Alice's account. Alice will be able to consume these notes to get the fungible asset in her vault
     console.log("Minting 1000 tokens to Alice...");
     const mintTxRequest = client.newMintTransactionRequest(
         alice.id(), // Target account (who receives the tokens)
         faucet.id(), // Faucet account (who mints the tokens)
-        NoteType.Public, // Note visibility (public = onchain)
+        NoteType.Public, // Note visibility (public = on-chain)
         BigInt(1000) // Amount to mint (in base units)
     );
-    const mintTx = await client.newTransaction(faucet.id(), mintTxRequest);
-    await client.submitTransaction(mintTx);
-
-    console.log(
-    "Mint transaction submitted successfully, ID:",
-    mintTx.executedTransaction().id().toHex()
+    const mintTxId = await client.submitNewTransaction(
+        faucet.id(),
+        mintTxRequest
     );
+
+    console.log("Mint transaction submitted successfully, ID:", mintTxId.toHex());
+
+    await client.syncState();
 }
 `
 }
@@ -460,10 +470,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 `},
   typescript: {
     code:`import {
-WebClient,
-AccountStorageMode,
-NoteType,
-ConsumableNoteRecord,
+    WebClient,
+    AccountStorageMode,
+    NoteType,
+    ConsumableNoteRecord,
 } from "@demox-labs/miden-sdk";
 
 export async function demo() {
@@ -471,7 +481,10 @@ export async function demo() {
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-    const client = await WebClient.createClient(nodeEndpoint);
+
+    // Initialize client
+    const client = new WebClient();
+    await client.createClient(nodeEndpoint);
     await client.syncState();
 
     // Creating Alice's account
@@ -481,9 +494,9 @@ export async function demo() {
     // Creating a faucet account
     const symbol = "TEST";
     const decimals = 8;
-    const initialSupply = BigInt(10_000_000 \* 10 \*\* decimals);
+    const initialSupply = BigInt(10_000_000 * 10 ** decimals);
     const faucet = await client.newFaucet(
-        AccountStorageMode.public(), // Public: account state is visible onchain
+        AccountStorageMode.public(), // Public: account state is visible on-chain
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
@@ -498,16 +511,15 @@ export async function demo() {
     const mintTxRequest = client.newMintTransactionRequest(
         alice.id(), // Target account (who receives the tokens)
         faucet.id(), // Faucet account (who mints the tokens)
-        NoteType.Public, // Note visibility (public = onchain)
+        NoteType.Public, // Note visibility (public = on-chain)
         BigInt(1000) // Amount to mint (in base units)
     );
-    const mintTx = await client.newTransaction(faucet.id(), mintTxRequest);
-    await client.submitTransaction(mintTx);
-
-    console.log(
-        "Mint transaction submitted successfully, ID:",
-        mintTx.executedTransaction().id().toHex()
+    const mintTxId = await client.submitNewTransaction(
+        faucet.id(),
+        mintTxRequest
     );
+
+    console.log("Mint transaction submitted successfully, ID:", mintTxId.toHex());
 
     await client.syncState();
 
@@ -527,11 +539,13 @@ export async function demo() {
     // Create transaction request to consume notes
     // NOTE: This transaction will consume the notes and add the fungible asset to Alice's vault
     const consumeTxRequest = client.newConsumeTransactionRequest(noteIds);
-    const consumeTx = await client.newTransaction(alice.id(), consumeTxRequest);
-    await client.submitTransaction(consumeTx);
+    const consumeTxId = await client.submitNewTransaction(
+        alice.id(),
+        consumeTxRequest
+    );
     console.log(
         "Consume transaction submitted successfully, ID:",
-        consumeTx.executedTransaction().id().toHex()
+        consumeTxId.toHex()
     );
 
     console.log(
@@ -790,11 +804,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 `},
   typescript: {
     code:`import {
-WebClient,
-AccountStorageMode,
-NoteType,
-ConsumableNoteRecord,
-AccountId,
+    WebClient,
+    AccountStorageMode,
+    NoteType,
+    ConsumableNoteRecord,
+    AccountId,
 } from "@demox-labs/miden-sdk";
 
 export async function demo() {
@@ -802,7 +816,10 @@ export async function demo() {
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-    const client = await WebClient.createClient(nodeEndpoint);
+
+    // Initialize client
+    const client = new WebClient();
+    await client.createClient(nodeEndpoint);
     await client.syncState();
 
     // Creating Alice's account
@@ -812,9 +829,9 @@ export async function demo() {
     // Creating a faucet account
     const symbol = "TEST";
     const decimals = 8;
-    const initialSupply = BigInt(10_000_000 \* 10 \*\* decimals);
+    const initialSupply = BigInt(10_000_000 * 10 ** decimals);
     const faucet = await client.newFaucet(
-        AccountStorageMode.public(), // Public: account state is visible onchain
+        AccountStorageMode.public(), // Public: account state is visible on-chain
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
@@ -829,16 +846,15 @@ export async function demo() {
     const mintTxRequest = client.newMintTransactionRequest(
         alice.id(), // Target account (who receives the tokens)
         faucet.id(), // Faucet account (who mints the tokens)
-        NoteType.Public, // Note visibility (public = onchain)
+        NoteType.Public, // Note visibility (public = on-chain)
         BigInt(1000) // Amount to mint (in base units)
     );
-    const mintTx = await client.newTransaction(faucet.id(), mintTxRequest);
-    await client.submitTransaction(mintTx);
-
-    console.log(
-        "Mint transaction submitted successfully, ID:",
-        mintTx.executedTransaction().id().toHex()
+    const mintTxId = await client.submitNewTransaction(
+        faucet.id(),
+        mintTxRequest
     );
+
+    console.log("Mint transaction submitted successfully, ID:", mintTxId.toHex());
 
     await client.syncState();
 
@@ -849,7 +865,6 @@ export async function demo() {
 
         console.log("Waiting for note to be consumable...");
         await new Promise((resolve) => setTimeout(resolve, 3000));
-
     }
 
     const noteIds = consumableNotes.map((note) =>
@@ -859,11 +874,13 @@ export async function demo() {
     // Create transaction request to consume notes
     // NOTE: This transaction will consume the notes and add the fungible asset to Alice's vault
     const consumeTxRequest = client.newConsumeTransactionRequest(noteIds);
-    const consumeTx = await client.newTransaction(alice.id(), consumeTxRequest);
-    await client.submitTransaction(consumeTx);
+    const consumeTxId = await client.submitNewTransaction(
+        alice.id(),
+        consumeTxRequest
+    );
     console.log(
         "Consume transaction submitted successfully, ID:",
-        consumeTx.executedTransaction().id().toHex()
+        consumeTxId.toHex()
     );
 
     console.log(
@@ -886,9 +903,8 @@ export async function demo() {
         BigInt(100) // Amount to send
     );
 
-    const sendTx = await client.newTransaction(alice.id(), sendTxRequest);
-    await client.submitTransaction(sendTx);
-    console.log("Send transaction submitted successfully!");
+    const sendTxId = await client.submitNewTransaction(alice.id(), sendTxRequest);
+    console.log("Send transaction submitted successfully, ID:", sendTxId.toHex());
 
     await client.syncState();
 }
