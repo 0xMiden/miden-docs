@@ -5,5 +5,5 @@ refs: # exact, immutable refs per source repo (tags or release branches)
   miden-client: "refs/tags/v0.12.3"
   miden-tutorials: "refs/heads/main"
   miden-vm: "refs/tags/v0.19.1"
-  compiler: "refs/tags/v0.5.1"
+  compiler: "refs/tags/0.5.1"
 next_version: "0.13"
