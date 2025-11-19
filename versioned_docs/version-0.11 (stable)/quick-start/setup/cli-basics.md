@@ -111,8 +111,6 @@ Storage:
 - **Code Commitment**: Hash of the account's smart contract logic
 - **Nonce**: Counter that increments with each state change
 
-</details>
-
 ## Account Management
 
 ### Switch Between Accounts
