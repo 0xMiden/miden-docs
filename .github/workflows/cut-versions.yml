@@ -153,8 +153,8 @@ jobs:
             echo "Synced compiler docs"
           fi
 
-          if [ -d "vendor/miden-tutorials/docs/src/src" ]; then
-            cp -r vendor/miden-tutorials/docs/src/src/ docs/miden-tutorials/
+          if [ -d "vendor/miden-tutorials/docs/src" ]; then
+            cp -r vendor/miden-tutorials/docs/src/ docs/miden-tutorials/
             echo "Synced miden-tutorials docs"
           fi
 
