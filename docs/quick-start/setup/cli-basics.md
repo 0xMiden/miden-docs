@@ -111,29 +111,6 @@ Storage:
 - **Code Commitment**: Hash of the account's smart contract logic
 - **Nonce**: Counter that increments with each state change
 
-### Verify Your Token Balance
-
-Check that tokens were added to your account:
-
-```bash title=">_ Terminal"
-miden client account -s <ACCOUNT_ID>
-```
-
-You should now see assets in the Assets section:
-
-<details>
-<summary>Expected output (Assets section)</summary>
-
-```text
-Assets:
-
-| Asset Type | Faucet | Amount |
-|------------|---------|---------|
-| Fungible | 0x0123...abc | 100 |
-```
-
-</details>
-
 ## Account Management
 
 ### Switch Between Accounts
