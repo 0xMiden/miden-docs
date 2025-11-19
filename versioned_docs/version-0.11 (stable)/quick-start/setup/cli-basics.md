@@ -26,7 +26,7 @@ Private keys in the `keystore/` directory are **not encrypted**. Keep these file
 Create a new Miden wallet account:
 
 ```bash title=">_ Terminal"
-miden client new-wallet --deploy
+miden client new-wallet
 ```
 
 <details>
