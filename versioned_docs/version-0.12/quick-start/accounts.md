@@ -247,8 +247,7 @@ export async function demo() {
     const nodeEndpoint = "https://rpc.testnet.miden.io:443";
 
     // Initialize client
-    const client = new WebClient();
-    await client.createClient(nodeEndpoint);
+    const client = await WebClient.createClient(nodeEndpoint);
     await client.syncState();
 
     // Create new wallet account
@@ -372,8 +371,7 @@ export async function demo() {
     const nodeEndpoint = "https://rpc.testnet.miden.io:443";
 
     // Initialize client
-    const client = new WebClient();
-    await client.createClient(nodeEndpoint);
+    const client = await WebClient.createClient(nodeEndpoint);
     await client.syncState();
 
     const symbol = "TEST";

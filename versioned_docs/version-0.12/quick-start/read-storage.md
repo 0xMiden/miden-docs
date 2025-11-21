@@ -111,6 +111,8 @@ export async function demo() {
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+
+    // Initialize client
     const client = await WebClient.createClient(nodeEndpoint);
     await client.syncState();
 
@@ -225,6 +227,8 @@ export async function demo() {
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
     const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+
+    // Initialize client
     const client = await WebClient.createClient(nodeEndpoint);
     await client.syncState();
 
