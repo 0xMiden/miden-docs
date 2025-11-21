@@ -241,7 +241,7 @@ console.log('All notes created ✅');
 Your `lib/multiSendWithDelegatedProver.ts` file sould now look like this:
 
 ```ts
-//**
+/**
  * Demonstrates multi-send functionality using a delegated prover on the Miden Network
  * Creates multiple P2ID (Pay to ID) notes for different recipients
  *
