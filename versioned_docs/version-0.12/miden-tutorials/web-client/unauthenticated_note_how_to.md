@@ -1,5 +1,5 @@
 ---
-title: "How to Use Unauthenticated Notes"
+title: 'How to Use Unauthenticated Notes'
 sidebar_position: 6
 ---
 
@@ -39,18 +39,22 @@ This tutorial assumes you have a basic understanding of Miden assembly. To quick
 ## Step-by-step process
 
 1. **Next.js Project Setup:**
+
    - Create a new Next.js application with TypeScript.
    - Install the Miden WebClient SDK.
 
 2. **WebClient Initialization:**
+
    - Set up the WebClient to connect with the Miden testnet.
    - Configure a delegated prover for improved performance.
 
 3. **Account Creation:**
+
    - Create wallet accounts for Alice and multiple transfer recipients.
    - Deploy a fungible faucet for token minting.
 
 4. **Initial Token Setup:**
+
    - Mint tokens from the faucet to Alice's account.
    - Consume the minted tokens to prepare for transfers.
 
@@ -96,9 +100,9 @@ This tutorial assumes you have a basic understanding of Miden assembly. To quick
 Add the following code to the `app/page.tsx` file. This code defines the main page of our web application:
 
 ```tsx
-"use client";
-import { useState } from "react";
-import { unauthenticatedNoteTransfer } from "../lib/unauthenticatedNoteTransfer";
+'use client';
+import { useState } from 'react';
+import { unauthenticatedNoteTransfer } from '../lib/unauthenticatedNoteTransfer';
 
 export default function Home() {
   const [isTransferring, setIsTransferring] = useState(false);
@@ -120,9 +124,7 @@ export default function Home() {
             onClick={handleUnauthenticatedNoteTransfer}
             className="w-full px-6 py-3 text-lg cursor-pointer bg-transparent border-2 border-orange-600 text-white rounded-lg transition-all hover:bg-orange-600 hover:text-white"
           >
-            {isTransferring
-              ? "Working..."
-              : "Tutorial #4: Unauthenticated Note Transfer"}
+            {isTransferring ? 'Working...' : 'Tutorial #4: Unauthenticated Note Transfer'}
           </button>
         </div>
       </div>
@@ -151,7 +153,7 @@ Copy and paste the following code into the `lib/unauthenticatedNoteTransfer.ts` 
  */
 export async function unauthenticatedNoteTransfer(): Promise<void> {
   // Ensure this runs only in a browser context
-  if (typeof window === "undefined") return console.warn("Run in browser");
+  if (typeof window === 'undefined') return console.warn('Run in browser');
 
   const {
     WebClient,
@@ -159,71 +161,59 @@ export async function unauthenticatedNoteTransfer(): Promise<void> {
     AccountId,
     NoteType,
     TransactionProver,
-    NoteInputs,
     Note,
     NoteAssets,
-    NoteRecipient,
-    Word,
-    OutputNotesArray,
-    NoteExecutionHint,
-    NoteTag,
-    NoteExecutionMode,
-    NoteMetadata,
-    FeltArray,
+    OutputNoteArray,
     Felt,
     FungibleAsset,
     NoteAndArgsArray,
     NoteAndArgs,
     TransactionRequestBuilder,
     OutputNote,
-  } = await import("@demox-labs/miden-sdk");
+  } = await import('@demox-labs/miden-sdk');
 
-  const client = await WebClient.createClient("https://rpc.testnet.miden.io");
-  const prover = TransactionProver.newRemoteProver(
-    "https://tx-prover.testnet.miden.io",
-  );
+  const client = await WebClient.createClient('https://rpc.testnet.miden.io');
+  const prover = TransactionProver.newRemoteProver('https://tx-prover.testnet.miden.io');
 
-  console.log("Latest block:", (await client.syncState()).blockNum());
+  console.log('Latest block:', (await client.syncState()).blockNum());
 
   // ── Creating new account ──────────────────────────────────────────────────────
-  console.log("Creating accounts");
+  console.log('Creating accounts');
 
-  console.log("Creating account for Alice…");
-  const alice = await client.newWallet(AccountStorageMode.public(), true);
-  console.log("Alice accout ID:", alice.id().toString());
+  console.log('Creating account for Alice…');
+  const alice = await client.newWallet(AccountStorageMode.public(), true, 0);
+  console.log('Alice accout ID:', alice.id().toString());
 
-  let wallets = [];
+  const wallets = [];
   for (let i = 0; i < 5; i++) {
-    let wallet = await client.newWallet(AccountStorageMode.public(), true);
+    const wallet = await client.newWallet(AccountStorageMode.public(), true, 0);
     wallets.push(wallet);
-    console.log("wallet ", i.toString(), wallet.id().toString());
+    console.log('wallet ', i.toString(), wallet.id().toString());
   }
 
   // ── Creating new faucet ──────────────────────────────────────────────────────
   const faucet = await client.newFaucet(
     AccountStorageMode.public(),
     false,
-    "MID",
+    'MID',
     8,
     BigInt(1_000_000),
+    0,
   );
-  console.log("Faucet ID:", faucet.id().toString());
+  console.log('Faucet ID:', faucet.id().toString());
 
   // ── mint 10 000 MID to Alice ──────────────────────────────────────────────────────
-  await client.submitTransaction(
-    await client.newTransaction(
+  {
+    const txResult = await client.executeTransaction(
       faucet.id(),
-      client.newMintTransactionRequest(
-        alice.id(),
-        faucet.id(),
-        NoteType.Public,
-        BigInt(10_000),
-      ),
-    ),
-    prover,
-  );
+      client.newMintTransactionRequest(alice.id(), faucet.id(), NoteType.Public, BigInt(10_000)),
+    );
+    const proven = await client.proveTransaction(txResult, prover);
+    const submissionHeight = await client.submitProvenTransaction(proven, txResult);
+    await client.applyTransaction(txResult, submissionHeight);
+  }
 
-  console.log("Waiting for settlement");
+  console.log('Waiting for settlement');
   await new Promise((r) => setTimeout(r, 7_000));
   await client.syncState();
 
@@ -232,14 +222,16 @@ export async function unauthenticatedNoteTransfer(): Promise<void> {
     rec.inputNoteRecord().id().toString(),
   );
 
-  await client.submitTransaction(
-    await client.newTransaction(
+  {
+    const txResult = await client.executeTransaction(
       alice.id(),
       client.newConsumeTransactionRequest(noteIds),
-    ),
-    prover,
-  );
-  await client.syncState();
+    );
+    const proven = await client.proveTransaction(txResult, prover);
+    const submissionHeight = await client.submitProvenTransaction(proven, txResult);
+    await client.applyTransaction(txResult, submissionHeight);
+    await client.syncState();
+  }
 
   // ── Create unauthenticated note transfer chain ─────────────────────────────────────────────
   // Alice → wallet 1 → wallet 2 → wallet 3 → wallet 4
@@ -250,13 +242,13 @@ export async function unauthenticatedNoteTransfer(): Promise<void> {
     const sender = i === 0 ? alice : wallets[i - 1];
     const receiver = wallets[i];
 
-    console.log("Sender:", sender.id().toString());
-    console.log("Receiver:", receiver.id().toString());
+    console.log('Sender:', sender.id().toString());
+    console.log('Receiver:', receiver.id().toString());
 
     const assets = new NoteAssets([new FungibleAsset(faucet.id(), BigInt(50))]);
     const receiverAccountId = AccountId.fromHex(receiver.id().toString());
 
-    let p2idNote = Note.createP2IDNote(
+    const p2idNote = Note.createP2IDNote(
       sender.id(),
       receiverAccountId,
       assets,
@@ -264,44 +256,42 @@ export async function unauthenticatedNoteTransfer(): Promise<void> {
       new Felt(BigInt(0)), // aux value
     );
 
-    let outputP2ID = OutputNote.full(p2idNote);
+    const outputP2ID = OutputNote.full(p2idNote);
 
-    console.log("Creating P2ID note...");
-    let transaction = await client.newTransaction(
-      sender.id(),
-      new TransactionRequestBuilder()
-        .withOwnOutputNotes(new OutputNotesArray([outputP2ID]))
-        .build(),
-    );
-    await client.submitTransaction(transaction, prover);
+    console.log('Creating P2ID note...');
+    {
+      const txResult = await client.executeTransaction(
+        sender.id(),
+        new TransactionRequestBuilder()
+          .withOwnOutputNotes(new OutputNoteArray([outputP2ID]))
+          .build(),
+      );
+      const proven = await client.proveTransaction(txResult, prover);
+      const submissionHeight = await client.submitProvenTransaction(proven, txResult);
+      await client.applyTransaction(txResult, submissionHeight);
+    }
 
-    console.log("Consuming P2ID note...");
+    console.log('Consuming P2ID note...');
 
-    let noteIdAndArgs = new NoteAndArgs(p2idNote, null);
+    const noteIdAndArgs = new NoteAndArgs(p2idNote, null);
 
-    let consumeRequest = new TransactionRequestBuilder()
+    const consumeRequest = new TransactionRequestBuilder()
       .withUnauthenticatedInputNotes(new NoteAndArgsArray([noteIdAndArgs]))
       .build();
 
-    let txExecutionResult = await client.newTransaction(
-      receiver.id(),
-      consumeRequest,
-    );
+    {
+      const txResult = await client.executeTransaction(receiver.id(), consumeRequest);
+      const proven = await client.proveTransaction(txResult, prover);
+      const submissionHeight = await client.submitProvenTransaction(proven, txResult);
+      const txExecutionResult = await client.applyTransaction(txResult, submissionHeight);
 
-    await client.submitTransaction(txExecutionResult, prover);
+      const txId = txExecutionResult.executedTransaction().id().toHex().toString();
 
-    const txId = txExecutionResult
-      .executedTransaction()
-      .id()
-      .toHex()
-      .toString();
-
-    console.log(
-      `Consumed Note Tx on MidenScan: https://testnet.midenscan.com/tx/${txId}`,
-    );
+      console.log(`Consumed Note Tx on MidenScan: https://testnet.midenscan.com/tx/${txId}`);
+    }
   }
 
-  console.log("Asset transfer chain completed ✅");
+  console.log('Asset transfer chain completed ✅');
 }
 ```
 
@@ -414,7 +404,7 @@ The Miden webclient stores account and note data in the browser. If you get erro
     await indexedDB.deleteDatabase(db.name);
     console.log(`Deleted database: ${db.name}`);
   }
-  console.log("All databases deleted.");
+  console.log('All databases deleted.');
 })();
 ```
 
