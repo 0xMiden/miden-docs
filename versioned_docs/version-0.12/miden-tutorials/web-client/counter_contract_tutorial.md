@@ -108,8 +108,6 @@ touch lib/incrementCounterContract.ts
 Copy and paste the following code into the `lib/incrementCounterContract.ts` file:
 
 ```ts
-import { AccountBuilder, AccountStorageMode, AccountType, SecretKey } from '@demox-labs/miden-sdk';
-
 // lib/incrementCounterContract.ts
 export async function incrementCounterContract(): Promise<void> {
   if (typeof window === 'undefined') {
@@ -120,8 +118,12 @@ export async function incrementCounterContract(): Promise<void> {
   // dynamic import → only in the browser, so WASM is loaded client‑side
   const {
     AccountId,
+    AccountBuilder,
     AccountComponent,
+    AccountStorageMode,
+    AccountType,
     ScriptBuilder,
+    SecretKey,
     StorageMap,
     StorageSlot,
     TransactionRequestBuilder,
