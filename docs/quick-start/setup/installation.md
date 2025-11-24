@@ -137,7 +137,7 @@ midenup install stable
 Configure the client for the network you'll use:
 
 ```bash title=">_ Terminal"
-miden-client init --network testnet
+miden client init --network testnet
 ```
 
 Available networks:
