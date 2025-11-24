@@ -122,7 +122,6 @@ export async function incrementCounterContract(): Promise<void> {
     AccountComponent,
     AccountStorageMode,
     AccountType,
-    ScriptBuilder,
     SecretKey,
     StorageMap,
     StorageSlot,
