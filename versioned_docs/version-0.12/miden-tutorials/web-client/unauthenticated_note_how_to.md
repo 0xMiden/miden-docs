@@ -3,8 +3,6 @@ title: 'How to Use Unauthenticated Notes'
 sidebar_position: 6
 ---
 
-# How to Use Unauthenticated Notes
-
 _Using unauthenticated notes for optimistic note consumption with the Miden WebClient_
 
 ## Overview
@@ -32,29 +30,25 @@ Alice ➡ Wallet 1 ➡ Wallet 2 ➡ Wallet 3 ➡ Wallet 4 ➡ Wallet 5
 
 - Node `v20` or greater
 - Familiarity with TypeScript
-- `pnpm`
+- `yarn`
 
 This tutorial assumes you have a basic understanding of Miden assembly. To quickly get up to speed with Miden assembly (MASM), please play around with running basic Miden assembly programs in the [Miden playground](https://0xmiden.github.io/examples/).
 
 ## Step-by-step process
 
 1. **Next.js Project Setup:**
-
    - Create a new Next.js application with TypeScript.
    - Install the Miden WebClient SDK.
 
 2. **WebClient Initialization:**
-
    - Set up the WebClient to connect with the Miden testnet.
    - Configure a delegated prover for improved performance.
 
 3. **Account Creation:**
-
    - Create wallet accounts for Alice and multiple transfer recipients.
    - Deploy a fungible faucet for token minting.
 
 4. **Initial Token Setup:**
-
    - Mint tokens from the faucet to Alice's account.
    - Consume the minted tokens to prepare for transfers.
 
@@ -68,7 +62,7 @@ This tutorial assumes you have a basic understanding of Miden assembly. To quick
 1. Create a new Next.js app with TypeScript:
 
    ```bash
-   npx create-next-app@latest miden-web-app --typescript
+   yarn create next-app@latest miden-web-app --typescript
    ```
 
    Hit enter for all terminal prompts.
@@ -81,7 +75,7 @@ This tutorial assumes you have a basic understanding of Miden assembly. To quick
 
 3. Install the Miden WebClient SDK:
    ```bash
-   pnpm install @demox-labs/miden-sdk@0.12.3
+   yarn add @demox-labs/miden-sdk@0.12.3
    ```
 
 **NOTE!**: Be sure to add the `--webpack` command to your `package.json` when running the `dev script`. The dev script should look like this:
@@ -124,7 +118,9 @@ export default function Home() {
             onClick={handleUnauthenticatedNoteTransfer}
             className="w-full px-6 py-3 text-lg cursor-pointer bg-transparent border-2 border-orange-600 text-white rounded-lg transition-all hover:bg-orange-600 hover:text-white"
           >
-            {isTransferring ? 'Working...' : 'Tutorial #4: Unauthenticated Note Transfer'}
+            {isTransferring
+              ? 'Working...'
+              : 'Tutorial #4: Unauthenticated Note Transfer'}
           </button>
         </div>
       </div>
@@ -173,7 +169,9 @@ export async function unauthenticatedNoteTransfer(): Promise<void> {
   } = await import('@demox-labs/miden-sdk');
 
   const client = await WebClient.createClient('https://rpc.testnet.miden.io');
-  const prover = TransactionProver.newRemoteProver('https://tx-prover.testnet.miden.io');
+  const prover = TransactionProver.newRemoteProver(
+    'https://tx-prover.testnet.miden.io',
+  );
 
   console.log('Latest block:', (await client.syncState()).blockNum());
 
@@ -206,10 +204,18 @@ export async function unauthenticatedNoteTransfer(): Promise<void> {
   {
     const txResult = await client.executeTransaction(
       faucet.id(),
-      client.newMintTransactionRequest(alice.id(), faucet.id(), NoteType.Public, BigInt(10_000)),
+      client.newMintTransactionRequest(
+        alice.id(),
+        faucet.id(),
+        NoteType.Public,
+        BigInt(10_000),
+      ),
     );
     const proven = await client.proveTransaction(txResult, prover);
-    const submissionHeight = await client.submitProvenTransaction(proven, txResult);
+    const submissionHeight = await client.submitProvenTransaction(
+      proven,
+      txResult,
+    );
     await client.applyTransaction(txResult, submissionHeight);
   }
 
@@ -228,7 +234,10 @@ export async function unauthenticatedNoteTransfer(): Promise<void> {
       client.newConsumeTransactionRequest(noteIds),
     );
     const proven = await client.proveTransaction(txResult, prover);
-    const submissionHeight = await client.submitProvenTransaction(proven, txResult);
+    const submissionHeight = await client.submitProvenTransaction(
+      proven,
+      txResult,
+    );
     await client.applyTransaction(txResult, submissionHeight);
     await client.syncState();
   }
@@ -267,7 +276,10 @@ export async function unauthenticatedNoteTransfer(): Promise<void> {
           .build(),
       );
       const proven = await client.proveTransaction(txResult, prover);
-      const submissionHeight = await client.submitProvenTransaction(proven, txResult);
+      const submissionHeight = await client.submitProvenTransaction(
+        proven,
+        txResult,
+      );
       await client.applyTransaction(txResult, submissionHeight);
     }
 
@@ -280,14 +292,29 @@ export async function unauthenticatedNoteTransfer(): Promise<void> {
       .build();
 
     {
-      const txResult = await client.executeTransaction(receiver.id(), consumeRequest);
+      const txResult = await client.executeTransaction(
+        receiver.id(),
+        consumeRequest,
+      );
       const proven = await client.proveTransaction(txResult, prover);
-      const submissionHeight = await client.submitProvenTransaction(proven, txResult);
-      const txExecutionResult = await client.applyTransaction(txResult, submissionHeight);
+      const submissionHeight = await client.submitProvenTransaction(
+        proven,
+        txResult,
+      );
+      const txExecutionResult = await client.applyTransaction(
+        txResult,
+        submissionHeight,
+      );
 
-      const txId = txExecutionResult.executedTransaction().id().toHex().toString();
+      const txId = txExecutionResult
+        .executedTransaction()
+        .id()
+        .toHex()
+        .toString();
 
-      console.log(`Consumed Note Tx on MidenScan: https://testnet.midenscan.com/tx/${txId}`);
+      console.log(
+        `Consumed Note Tx on MidenScan: https://testnet.midenscan.com/tx/${txId}`,
+      );
     }
   }
 
@@ -328,8 +355,8 @@ To run the unauthenticated note transfer example:
 
 ```bash
 cd miden-web-app
-pnpm install
-pnpm run dev
+yarn install
+yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser, click the **"Tutorial #4: Unauthenticated Note Transfer"** button, and check the browser console for detailed logs.
@@ -414,8 +441,8 @@ To run a full working example navigate to the `web-client` directory in the [mid
 
 ```bash
 cd web-client
-pnpm install
-pnpm run start
+yarn install
+yarn start
 ```
 
 ### Continue learning

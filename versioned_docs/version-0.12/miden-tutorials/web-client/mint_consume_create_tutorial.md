@@ -3,8 +3,6 @@ title: 'Mint, Consume, and Create Notes'
 sidebar_position: 3
 ---
 
-# Mint, Consume, and Transfer Assets
-
 _Using the Miden WebClient in TypeScript to mint, consume, and transfer assets_
 
 ## Overview
@@ -79,7 +77,9 @@ To identify notes that are ready to consume, the Miden WebClient provides the `g
 const consumableNotes = await client.getConsumableNotes(alice.id());
 console.log(`Found ${consumableNotes.length} note(s) to consume`);
 
-const noteIds = consumableNotes.map((note) => note.inputNoteRecord().id().toString());
+const noteIds = consumableNotes.map((note) =>
+  note.inputNoteRecord().id().toString(),
+);
 console.log('Consumable note IDs:', noteIds);
 ```
 
@@ -201,7 +201,9 @@ export async function createMintConsume(): Promise<void> {
 
   // 5. Fetch minted notes
   const mintedNotes = await client.getConsumableNotes(alice.id());
-  const mintedNoteIds = mintedNotes.map((n) => n.inputNoteRecord().id().toString());
+  const mintedNoteIds = mintedNotes.map((n) =>
+    n.inputNoteRecord().id().toString(),
+  );
   console.log('Consumable note IDs:', mintedNoteIds);
 
   // 6. Consume minted notes

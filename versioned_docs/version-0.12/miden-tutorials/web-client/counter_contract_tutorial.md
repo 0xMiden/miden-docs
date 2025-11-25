@@ -3,8 +3,6 @@ title: 'Incrementing the Count of the Counter Contract'
 sidebar_position: 5
 ---
 
-# Incrementing the Count of the Counter Contract
-
 _Using the Miden WebClient to interact with a custom smart contract_
 
 ## Overview
@@ -22,7 +20,7 @@ Using a script, we will invoke the increment function within the counter contrac
 
 - Node `v20` or greater
 - Familiarity with TypeScript
-- `pnpm`
+- `yarn`
 
 This tutorial assumes you have a basic understanding of Miden assembly. To quickly get up to speed with Miden assembly (MASM), please play around with running basic Miden assembly programs in the [Miden playground](https://0xmiden.github.io/examples/).
 
@@ -31,7 +29,7 @@ This tutorial assumes you have a basic understanding of Miden assembly. To quick
 1. Create a new Next.js app with TypeScript:
 
    ```bash
-   npx create-next-app@latest miden-web-app --typescript
+   yarn create next-app@latest miden-web-app --typescript
    ```
 
    Hit enter for all terminal prompts.
@@ -44,7 +42,7 @@ This tutorial assumes you have a basic understanding of Miden assembly. To quick
 
 3. Install the Miden WebClient SDK:
    ```bash
-   pnpm i @demox-labs/miden-sdk@0.12.3
+   yarn add @demox-labs/miden-sdk@0.12.3
    ```
 
 **NOTE!**: Be sure to add the `--webpack` command to your `package.json` when running the `dev script`. The dev script should look like this:
@@ -87,7 +85,9 @@ export default function Home() {
             onClick={handleIncrementCounterContract}
             className="w-full px-6 py-3 text-lg cursor-pointer bg-transparent border-2 border-orange-600 text-white rounded-lg transition-all hover:bg-orange-600 hover:text-white"
           >
-            {isIncrementCounter ? 'Working...' : 'Tutorial #3: Increment Counter Contract'}
+            {isIncrementCounter
+              ? 'Working...'
+              : 'Tutorial #3: Increment Counter Contract'}
           </button>
         </div>
       </div>
@@ -135,54 +135,56 @@ export async function incrementCounterContract(): Promise<void> {
 
   // Counter contract code in Miden Assembly
   const counterContractCode = `
-use.miden::active_account
-use miden::native_account
-use.std::sys
+  use.miden::active_account
+  use miden::native_account
+  use.std::sys
 
-const.COUNTER_SLOT=0
+  const.COUNTER_SLOT=0
 
-#! Inputs:  []
-#! Outputs: [count]
-export.get_count
-    push.COUNTER_SLOT
-    # => [index]
+  #! Inputs:  []
+  #! Outputs: [count]
+  export.get_count
+      push.COUNTER_SLOT
+      # => [index]
 
-    exec.active_account::get_item
-    # => [count]
+      exec.active_account::get_item
+      # => [count]
 
-    # clean up stack
-    movdn.4 dropw
-    # => [count]
-end
+      # clean up stack
+      movdn.4 dropw
+      # => [count]
+  end
 
-#! Inputs:  []
-#! Outputs: []
-export.increment_count
-    push.COUNTER_SLOT
-    # => [index]
+  #! Inputs:  []
+  #! Outputs: []
+  export.increment_count
+      push.COUNTER_SLOT
+      # => [index]
 
-    exec.active_account::get_item
-    # => [count]
+      exec.active_account::get_item
+      # => [count]
 
-    add.1
-    # => [count+1]
+      add.1
+      # => [count+1]
 
-    debug.stack
+      debug.stack
 
-    push.COUNTER_SLOT
-    # [index, count+1]
+      push.COUNTER_SLOT
+      # [index, count+1]
 
-    exec.native_account::set_item
-    # => [OLD_VALUE]
+      exec.native_account::set_item
+      # => [OLD_VALUE]
 
-    dropw
-    # => []
-end
+      dropw
+      # => []
+  end
 `;
 
   // Building the counter contract
   // Counter contract account id on testnet
-  const counterContractId = AccountId.fromHex('0xe59d8cd3c9ff2a0055da0b83ed6432');
+  const counterContractId = AccountId.fromHex(
+    '0xe59d8cd3c9ff2a0055da0b83ed6432',
+  );
 
   // Reading the public state of the counter contract from testnet,
   // and importing it into the WebClient
@@ -200,9 +202,11 @@ end
   const storageMap = new StorageMap();
   const storageSlotMap = StorageSlot.map(storageMap);
 
-  const mappingAccountComponent = AccountComponent.compile(counterContractCode, builder, [
-    storageSlotMap,
-  ]).withSupportsAllTypes();
+  const mappingAccountComponent = AccountComponent.compile(
+    counterContractCode,
+    builder,
+    [storageSlotMap],
+  ).withSupportsAllTypes();
 
   const walletSeed = new Uint8Array(32);
   crypto.getRandomValues(walletSeed);
@@ -238,10 +242,15 @@ end
 `;
 
   const txScript = builder.compileTxScript(txScriptCode);
-  const txIncrementRequest = new TransactionRequestBuilder().withCustomScript(txScript).build();
+  const txIncrementRequest = new TransactionRequestBuilder()
+    .withCustomScript(txScript)
+    .build();
 
   // Executing the transaction script against the counter contract
-  await client.submitNewTransaction(counterContractAccount.id(), txIncrementRequest);
+  await client.submitNewTransaction(
+    counterContractAccount.id(),
+    txIncrementRequest,
+  );
 
   // Sync state
   await client.syncState();
@@ -265,7 +274,7 @@ end
 To run the code above in our frontend, run the following command:
 
 ```
-pnpm run dev
+yarn dev
 ```
 
 Open the browser console and click the button "Increment Counter Contract".
@@ -345,13 +354,11 @@ end
 
 **Note**: _It's a good habit to add comments below each line of MASM code with the expected stack state. This improves readability and helps with debugging._
 
-### Concept of function visibility and modifiers in Miden smart contracts
+### Authentication Component
 
-The `export.increment_count` function in our Miden smart contract behaves like an "external" Solidity function without a modifier, meaning any user can call it to increment the contract's count. This is because it calls `account::incr_nonce` during execution. For internal procedures, use the `proc` keyword as opposed to `export`.
+**Important**: Starting with Miden Client 0.10.0, all accounts must have an authentication component. For smart contracts that don't require authentication (like our counter contract), we use a `NoAuth` component.
 
-If the `increment_count` procedure did not call the `account::incr_nonce` procedure during its execution, only the deployer of the counter contract would be able to increment the count of the smart contract (if the RpoFalcon512 component was added to the account, in this case we didn't add it).
-
-In essence, if a procedure performs a state change in the Miden smart contract, and does not call `account::incr_nonce` at some point during its execution, this function can be equated to having an `onlyOwner` Solidity modifer, meaning only the user with knowledge of the private key of the account can execute transactions that result in a state change.
+This `NoAuth` component allows any user to interact with the smart contract without requiring signature verification.ivate key of the account can execute transactions that result in a state change.
 
 **Note**: _Adding the `account::incr_nonce` to a state changing procedure allows any user to call the procedure._
 
@@ -373,8 +380,8 @@ To run a full working example navigate to the `web-client` directory in the [mid
 
 ```bash
 cd web-client
-pnpm i
-pnpm run start
+yarn install
+yarn start
 ```
 
 ### Resetting the `MidenClientDB`
