@@ -185,7 +185,7 @@ export async function createMintConsume(): Promise<void> {
   // 4. Mint tokens to Alice
   await client.syncState();
 
-  console.log('Minting tokens to Alice...');
+  console.log('Minting 1000 tokens to Alice...');
   const mintTxRequest = client.newMintTransactionRequest(
     alice.id(),
     faucet.id(),
@@ -202,7 +202,7 @@ export async function createMintConsume(): Promise<void> {
   // 5. Fetch minted notes
   const mintedNotes = await client.getConsumableNotes(alice.id());
   const mintedNoteIds = mintedNotes.map((n) => n.inputNoteRecord().id().toString());
-  console.log('Minted note IDs:', mintedNoteIds);
+  console.log('Consumable note IDs:', mintedNoteIds);
 
   // 6. Consume minted notes
   console.log('Consuming minted notes...');
@@ -239,10 +239,10 @@ Creating account for Alice...
 Alice ID: 0x1a20f4d1321e681000005020e69b1a
 Creating faucet...
 Faucet ID: 0xaa86a6f05ae40b2000000f26054d5d
-Minting tokens to Alice...
+Minting 1000 tokens to Alice...
 Waiting 10 seconds for transaction confirmation...
-Minted note IDs: ['0x4edbb3d5dbdf694...']
-Consuming minted notes...
+Consumable note IDs: ['0x4edbb3d5dbdf694...']
+Consuming notes...
 Notes consumed.
 Sending tokens to Bob's account...
 Tokens sent successfully!
