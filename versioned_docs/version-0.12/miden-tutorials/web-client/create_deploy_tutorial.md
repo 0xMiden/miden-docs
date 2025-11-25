@@ -1,9 +1,7 @@
 ---
-title: 'Creating Accounts and Faucets'
+title: 'Creating Accounts and Deploying Faucets'
 sidebar_position: 2
 ---
-
-## Creating Accounts and Deploying Faucets
 
 _Using the Miden WebClient in TypeScript to create accounts and deploy faucets_
 
@@ -22,7 +20,7 @@ In this tutorial, we'll build a simple Next.js application that demonstrates the
 
 - Node `v20` or greater
 - Familiarity with TypeScript
-- `pnpm`
+- `yarn`
 
 ## Public vs. private accounts & notes
 
@@ -42,7 +40,7 @@ It is useful to think of notes on Miden as "cryptographic cashier's checks" that
 1. Create a new Next.js app with TypeScript:
 
    ```bash
-   npx create-next-app@latest miden-web-app --typescript
+   yarn create next-app@latest miden-web-app --typescript
    ```
 
    Hit enter for all terminal prompts.
@@ -55,7 +53,7 @@ It is useful to think of notes on Miden as "cryptographic cashier's checks" that
 
 3. Install the Miden WebClient SDK:
    ```bash
-   pnpm install @demox-labs/miden-sdk@0.12.3
+   yarn add @demox-labs/miden-sdk@0.12.3
    ```
 
 **NOTE!**: Be sure to add the `--webpack` command to your `package.json` when running the `dev script`. The dev script should look like this:
@@ -96,7 +94,7 @@ export async function createMintConsume(): Promise<void> {
   );
 
   // Connect to Miden testnet RPC endpoint
-  const nodeEndpoint = 'https://rpc.testnet.miden.io:443';
+  const nodeEndpoint = 'https://rpc.testnet.miden.io';
   const client = await WebClient.createClient(nodeEndpoint);
 
   // 1. Sync with the latest blockchain state
@@ -142,7 +140,9 @@ export default function Home() {
             onClick={handleCreateMintConsume}
             className="w-full px-6 py-3 text-lg cursor-pointer bg-transparent border-2 border-orange-600 text-white rounded-lg transition-all hover:bg-orange-600 hover:text-white"
           >
-            {isCreatingNotes ? 'Working...' : 'Tutorial #1: Create a wallet and deploy a faucet'}
+            {isCreatingNotes
+              ? 'Working...'
+              : 'Tutorial #1: Create a wallet and deploy a faucet'}
           </button>
         </div>
       </div>
@@ -170,7 +170,7 @@ export async function createMintConsume(): Promise<void> {
     "@demox-labs/miden-sdk"
   );
 
-  const nodeEndpoint = 'https://rpc.testnet.miden.io:443';
+  const nodeEndpoint = 'https://rpc.testnet.miden.io';
   const client = await WebClient.createClient(nodeEndpoint);
 
   // 1. Sync with the latest blockchain state
@@ -243,9 +243,11 @@ export async function createMintConsume(): Promise<void> {
     return;
   }
 
-  const { WebClient, AccountStorageMode } = await import('@demox-labs/miden-sdk');
+  const { WebClient, AccountStorageMode } = await import(
+    '@demox-labs/miden-sdk'
+  );
 
-  const nodeEndpoint = 'https://rpc.testnet.miden.io:443';
+  const nodeEndpoint = 'https://rpc.testnet.miden.io';
   const client = await WebClient.createClient(nodeEndpoint);
 
   // 1. Sync with the latest blockchain state
@@ -277,8 +279,8 @@ export async function createMintConsume(): Promise<void> {
 
 ```bash
 cd miden-web-app
-npm i
-npm run dev
+yarn install
+yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser, click **Tutorial #1: Create a wallet and deploy a faucet**, and check the browser console (F12 or right-click → Inspect → Console):

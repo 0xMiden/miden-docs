@@ -35,7 +35,7 @@ The diagram above depicts the "count copy" smart contract using foreign procedur
 
 - Node `v20` or greater
 - Familiarity with TypeScript
-- `pnpm`
+- `yarn`
 
 This tutorial assumes you have a basic understanding of Miden assembly and completed the previous tutorial on incrementing the counter contract. To quickly get up to speed with Miden assembly (MASM), please play around with running basic Miden assembly programs in the [Miden playground](https://0xmiden.github.io/examples/).
 
@@ -44,7 +44,7 @@ This tutorial assumes you have a basic understanding of Miden assembly and compl
 1. Create a new Next.js app with TypeScript:
 
    ```bash
-   npx create-next-app@latest miden-fpi-app --typescript
+   yarn create next-app@latest miden-fpi-app --typescript
    ```
 
    Hit enter for all terminal prompts.
@@ -57,7 +57,7 @@ This tutorial assumes you have a basic understanding of Miden assembly and compl
 
 3. Install the Miden WebClient SDK:
    ```bash
-   pnpm i @demox-labs/miden-sdk@0.12.3
+   yarn install @demox-labs/miden-sdk@0.12.3
    ```
 
 **NOTE!**: Be sure to add the `--webpack` command to your `package.json` when running the `dev script`. The dev script should look like this:
@@ -402,7 +402,7 @@ export async function foreignProcedureInvocation(): Promise<void> {
 To run the code above in our frontend, run the following command:
 
 ```bash
-pnpm run dev
+yarn dev
 ```
 
 Open the browser console and click the button "Foreign Procedure Invocation Tutorial".
@@ -462,7 +462,7 @@ use.std::sys
 export.copy_count
     exec.tx::execute_foreign_procedure
     # => [count]
-    
+
     push.0
     # [index, count]
 
@@ -523,7 +523,7 @@ This script:
 
 ### Getting Procedure Hashes
 
-In the WebClient, we get the procedure hash using the [`getProcedureHash`](https://github.com/0xMiden/miden-tutorials/blob/b281dea26ab0946e1c0aa68d4ea30e15765d456b/web-client/lib/foreignProcedureInvocation.ts#L178) method:
+In the WebClient, we get the procedure hash using the [`getProcedureHash`](https://github.com/0xMiden/miden-tutorials/blob/7bfa1996979cbb221b8cab455596093535787784/web-client/lib/foreignProcedureInvocation.ts#L176) method:
 
 ```ts
 let getCountProcHash = counterContractComponent.getProcedureHash('get_count');
@@ -575,8 +575,8 @@ To run a full working example navigate to the `web-client` directory in the [mid
 
 ```bash
 cd web-client
-pnpm i
-pnpm run start
+yarn install
+yarn start
 ```
 
 ### Resetting the `MidenClientDB`
