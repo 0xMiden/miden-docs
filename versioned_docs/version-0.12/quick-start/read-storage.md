@@ -238,8 +238,8 @@ export async function demo() {
     // Import the account into the client's database
     let aliceAccount = await client.getAccount(aliceId);
     if (aliceAccount === undefined) {
-    await client.importAccountById(aliceId);
-    aliceAccount = await client.getAccount(aliceId);
+        await client.importAccountById(aliceId);
+        aliceAccount = await client.getAccount(aliceId);
     }
 
     const balance = aliceAccount?.vault().getBalance(faucetId);
