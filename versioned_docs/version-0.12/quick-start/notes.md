@@ -70,7 +70,7 @@ Minting in Miden creates new tokens and packages them into a **P2ID note** (Pay-
 **Key Concepts:**
 
 - **P2ID Note**: A note that can only be consumed by the account it's addressed to
-- **NoteType**: Determines visibility - `Public` notes are visible onchain and are stored by the Miden network, while `Private` notes are not stored by the network and must be exchanged directly between parties via other channels.
+- **NoteType**: Determines visibility - `Public` notes are visible on-chain and are stored by the Miden network, while `Private` notes are not stored by the network and must be exchanged directly between parties via other channels.
 - **FungibleAsset**: Represents tokens that can be divided and exchanged (like currencies)
 
 Let's see this in action:

@@ -449,7 +449,7 @@ println!(
 
 client.sync_state().await?;
 
-println!("network increment note creation tx submitted, waiting for onchain commitment");
+println!("network increment note creation tx submitted, waiting for on-chain commitment");
 
 // Wait for the note transaction to be committed
 wait_for_tx(&mut client, note_tx_id).await.unwrap();
@@ -736,7 +736,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     client.sync_state().await?;
 
-    println!("network increment note creation tx submitted, waiting for onchain commitment");
+    println!("network increment note creation tx submitted, waiting for on-chain commitment");
 
     // Wait for the note transaction to be committed
     wait_for_tx(&mut client, note_tx_id).await.unwrap();
@@ -786,7 +786,7 @@ View transaction on MidenScan: https://testnet.midenscan.com/tx/0xbe8dddab040354
 
 [STEP 4] Creating a network note for network counter contract
 View transaction on MidenScan: https://testnet.midenscan.com/tx/0x0bb5f6b786eb0f129d944975e3fae226084441eaf422f187657afbd74641327c
-network increment note created, waiting for onchain commitment
+network increment note created, waiting for on-chain commitment
 ✅ transaction 0x0bb5f6b786eb0f129d944975e3fae226084441eaf422f187657afbd74641327c committed
 🔢 Final counter value: 2
 ```

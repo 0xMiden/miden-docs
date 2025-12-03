@@ -31,8 +31,8 @@ Miden accounts differ from traditional blockchain addresses in fundamental ways.
 
 **Storage Modes:**
 
-- **Public**: All state visible onchain (transparent operations)
-- **Private**: Only commitments onchain, full state held privately
+- **Public**: All state visible on-chain (transparent operations)
+- **Private**: Only commitments on-chain, full state held privately
 
 ### Account Structure
 
@@ -100,9 +100,9 @@ pub enum AccountType {
 
 ```rust
 pub enum StorageMode {
-    /// State stored onchain and publicly readable.
+    /// State stored on-chain and publicly readable.
     Public,
-    /// Only a commitment is onchain; full state is held privately by the owner.
+    /// Only a commitment is on-chain; full state is held privately by the owner.
     Private,
 }
 ```
@@ -252,7 +252,7 @@ export async function demo() {
 
     // Create new wallet account
     const account = await client.newWallet(
-        AccountStorageMode.public(), // Public: account state is visible onchain
+        AccountStorageMode.public(), // Public: account state is visible on-chain
         true // Mutable: account code can be upgraded later
     );
 
@@ -411,8 +411,8 @@ Faucet account ID: 0xde0ba31282f7522046d3d4af40722b
 
 **Storage Modes:**
 
-- **Public**: Account state is fully transparent and visible onchain
-- **Private**: Only cryptographic commitments are stored onchain, with full state maintained privately
+- **Public**: Account state is fully transparent and visible on-chain
+- **Private**: Only cryptographic commitments are stored on-chain, with full state maintained privately
 
 **Modular Components:**
 

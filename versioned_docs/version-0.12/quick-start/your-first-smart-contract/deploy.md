@@ -25,7 +25,7 @@ You'll see a structure like:
 integration/
 ├── Cargo.toml                  # Integration crate configuration
 ├── src/
-│   ├── bin/                    # Executable scripts for onchain interactions
+│   ├── bin/                    # Executable scripts for on-chain interactions
 │   │   └── increment_count.rs  # Script to deploy and increment counter
 │   ├── helpers.rs              # Temporary helper file
 │   └── lib.rs                  # Exports helpers
@@ -103,11 +103,11 @@ The script demonstrates Miden's deployment flow:
 2. **Account Creation**: Creates a counter account with initial storage (counter value = 0)
 3. **Note Publishing**: Creates an increment note and publishes it to the network
 4. **Note Consumption**: The counter account consumes the note, executing the increment logic
-5. **State Update**: The counter value increases and the change is recorded onchain
+5. **State Update**: The counter value increases and the change is recorded on-chain
 
 This process shows how Miden contracts are deployed through state changes rather than separate deployment transactions.
 
-**Miden's Deployment Flow**: In Miden, accounts (contracts) become visible onchain only when they undergo a state change. Simply creating an account locally doesn't deploy it - the account must participate in a transaction that modifies its state. In our case, by incrementing the counter, we're effectively "deploying" the contract and making it visible on the Miden testnet explorer. This is why the increment operation serves both as the deployment and the first interaction with the contract.
+**Miden's Deployment Flow**: In Miden, accounts (contracts) become visible on-chain only when they undergo a state change. Simply creating an account locally doesn't deploy it - the account must participate in a transaction that modifies its state. In our case, by incrementing the counter, we're effectively "deploying" the contract and making it visible on the Miden testnet explorer. This is why the increment operation serves both as the deployment and the first interaction with the contract.
 
 ## How the Scripts Work
 

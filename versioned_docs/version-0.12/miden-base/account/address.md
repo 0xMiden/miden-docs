@@ -98,7 +98,7 @@ The supported **address interfaces** are:
 
 #### Note Tag Length
 
-The note tag length routing parameter allows specifying the length of the [note tag](../note#note-discovery) that the sender should create. This parameter determines how many bits of the account ID are encoded into note tags of notes targeted to this address. This lets the owner of the account choose their level of privacy. A higher tag length makes the address ID more uniquely identifiable and reduces privacy, while a shorter length increases privacy at the cost of matching more notes published onchain.
+The note tag length routing parameter allows specifying the length of the [note tag](../note#note-discovery) that the sender should create. This parameter determines how many bits of the account ID are encoded into note tags of notes targeted to this address. This lets the owner of the account choose their level of privacy. A higher tag length makes the address ID more uniquely identifiable and reduces privacy, while a shorter length increases privacy at the cost of matching more notes published on-chain.
 
 #### Encryption Key
 
