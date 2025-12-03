@@ -35,7 +35,7 @@ For notes which are sent privately, the sender needs to communicate the full not
 
 Instead, our Miden client connects to a _Note Transport Layer_, which stores encrypted note details together with the associated public metadata for each note. The receiver can query the Note Transport Layer for `NoteTag`s they are interested in. Typically, a `NoteTag` encodes a few leading bits (14 by default) of the receiver's `AccountId`. Querying the Note Transport Layer for 14-bit `NoteTag`s reduces the receiver's privacy, but at the same time allows them to perform less work downloading and trial-decrypting the notes than if fewer bits were encoded.
 
-With an `Address`, e.g. the [`AddressId::AccountId`](./address#addressaccountid) variant, the receiver could specify how many bits of their `AccountId` they want to disclose to the sender and thus choose their level of privacy.
+With an `Address`, e.g. the [`AddressId::AccountId`](./address#address-types) variant, the receiver could specify how many bits of their `AccountId` they want to disclose to the sender and thus choose their level of privacy.
 
 ### Account interface discovery
 
