@@ -17,8 +17,8 @@ The receiver can choose to disclose various pieces of information that control h
 Consider a few examples that use different address mechanisms:
 
 - The [Pay-to-ID note](../note#p2id-pay-to-id): the note itself can only be consumed if the account ID encoded in the note details matches the ID of the account that tries to consume it. To receive a P2ID note, the receiver should communicate an `AddressId::AccountId` type to the sender.
-- A "Pay-to-PoW" note that can only be consumed if the receiver can provide a valid seed such that the hash of the seed results in a value with n leading zero bits. The receiver communicates an `AddressId::PoW` type to the sender, which encodes the target number of leading zero bits (and a salt to avoid re-use of the same seed).*
-- A "Pay-to-Public-Key" note that stores a public (signature) key and checks if the receiver can provide a valid cryptographic signature for that key. The `AddressId::PublicKey` type must encode the public key.*
+- A "Pay-to-PoW" note that can only be consumed if the receiver can provide a valid seed such that the hash of the seed results in a value with n leading zero bits. The receiver communicates an `AddressId::PoW` type to the sender, which encodes the target number of leading zero bits (and a salt to avoid re-use of the same seed).
+- A "Pay-to-Public-Key" note that stores a public (signature) key and checks if the receiver can provide a valid cryptographic signature for that key. The `AddressId::PublicKey` type must encode the public key.
 
 These different address mechanisms provide different levels of privacy and security:
 - `AddressId::AccountId`: the receiver is uniquely identifiable, but they are the only ones who can consume the note.
