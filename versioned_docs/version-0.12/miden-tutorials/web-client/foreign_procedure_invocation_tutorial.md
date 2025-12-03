@@ -134,7 +134,7 @@ export async function foreignProcedureInvocation(): Promise<void> {
   const {
     AccountBuilder,
     AccountComponent,
-    AccountId,
+    Address,
     AccountType,
     MidenArrays,
     SecretKey,
@@ -158,7 +158,7 @@ export async function foreignProcedureInvocation(): Promise<void> {
   // Count reader contract code in Miden Assembly (exactly from count_reader.masm)
   const countReaderCode = `
     use.miden::active_account
-    use miden::native_account
+    use.miden::native_account
     use.miden::tx
     use.std::sys
 
@@ -218,9 +218,9 @@ export async function foreignProcedureInvocation(): Promise<void> {
   console.log('\n[STEP 2] Building counter contract from public state');
 
   // Define the Counter Contract account id from counter contract deploy (same as Rust)
-  const counterContractId = AccountId.fromHex(
-    '0xe59d8cd3c9ff2a0055da0b83ed6432',
-  );
+  const counterContractId = Address.fromBech32(
+    'mtst1arjemrxne8lj5qz4mg9c8mtyxg954483',
+  ).accountId();
 
   // Import the counter contract
   let counterContractAccount = await client.getAccount(counterContractId);
@@ -247,7 +247,7 @@ export async function foreignProcedureInvocation(): Promise<void> {
   // Counter contract code (exactly from counter.masm)
   const counterContractCode = `
     use.miden::active_account
-    use miden::native_account
+    use.miden::native_account
     use.std::sys
 
     const.COUNTER_SLOT=0
@@ -454,7 +454,7 @@ The count reader smart contract contains a `copy_count` procedure that uses `tx:
 
 ```masm
 use.miden::active_account
-use miden::native_account
+use.miden::native_account
 use.miden::tx
 use.std::sys
 
