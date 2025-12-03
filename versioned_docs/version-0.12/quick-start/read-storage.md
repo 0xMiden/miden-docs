@@ -121,7 +121,7 @@ export async function demo() {
     // Import the account into the client's database
     let account = await client.getAccount(accountId);
     if (account === undefined) {
-    account = await client.getAccount(accountId);
+        account = await client.getAccount(accountId);
     }
 
     // Define counter account instance
