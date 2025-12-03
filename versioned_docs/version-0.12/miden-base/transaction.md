@@ -128,7 +128,7 @@ The ability to facilitate both, local and network transactions, **is one of the 
 
 - Not all transactions require notes. For example, the owner of a faucet can mint new tokens using only a `Transaction` script, without interacting with external notes.
 
-- In Miden executors can choose arbitrary reference blocks to execute against their state. Hence it is possible to set `Transaction` expiration heights and in doing so, to define a block height until a `Transaction` should be included into a block. If the `Transaction` is expired, the resulting account state change is not valid and the `Transaction` cannot be verified anymore.
+- In Miden, executors can choose arbitrary reference blocks to execute against their state. Hence it is possible to set `Transaction` expiration heights and in doing so, to define a block height until a `Transaction` should be included into a block. If the `Transaction` is expired, the resulting account state change is not valid and the `Transaction` cannot be verified anymore.
 
 - Note and `Transaction` scripts can read the state of foreign accounts during execution. This is called foreign procedure invocation. For example, the price of an asset for the **Swap** script might depend on a certain value stored in the oracle account.
 
