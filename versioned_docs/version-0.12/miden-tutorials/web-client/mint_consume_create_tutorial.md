@@ -46,7 +46,7 @@ console.log("Minting tokens to Alice...");
 const mintTxRequest = client.newMintTransactionRequest(
   alice.id(),           // Target account (who receives the tokens)
   faucet.id(),          // Faucet account (who mints the tokens)
-  NoteType.Public,      // Note visibility (public = on-chain)
+  NoteType.Public,      // Note visibility (public = onchain)
   BigInt(1000),         // Amount to mint (in base units)
 );
 
@@ -139,7 +139,7 @@ The transaction creates a **P2ID (Pay-to-ID)** note:
 
 - It's the standard way to transfer assets in Miden
 - The note is "locked" to Bob's account ID, i.e. only Bob can consume this note to receive the tokens
-- Public notes are visible on-chain; private notes would need to be shared offchain (e.g. via a private channel)
+- Public notes are visible onchain; private notes would need to be shared offchain (e.g. via a private channel)
 
 ## Summary
 
