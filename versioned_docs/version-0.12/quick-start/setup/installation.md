@@ -132,20 +132,6 @@ Install the latest stable Miden components:
 midenup install stable
 ```
 
-**Initialize Miden Client**
-
-Configure the client for the network you'll use:
-
-```bash title=">_ Terminal"
-miden client init --network testnet
-```
-
-Available networks:
-
-- `testnet` - Miden's public test network
-- `devnet` - Development network
-- `localhost` - Local node for testing
-
 ### Verify Installation
 
 Check that everything is working correctly:

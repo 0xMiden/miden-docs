@@ -6,19 +6,6 @@ description: Learn essential Miden CLI commands to create your wallet and mint y
 
 This guide covers essential Miden CLI commands for creating accounts, minting and managing tokens. Make sure to have [installed Miden development tools](#installation.md) using the `midenup` toollchain.
 
-## Important Files Created
-
-When you work with the Miden CLI, several local files are created:
-
-- **`miden-client.toml`**: Configuration file with network settings
-- **`store.sqlite3`**: Database storing your account data and transaction history
-- **`keystore/`**: Directory containing your private keys (keep secure!)
-- **`templates/`**: Pre-built smart contract components
-
-:::danger
-Private keys in the `keystore/` directory are **not encrypted**. Keep these files secure and never share them.
-:::
-
 ## Create Your First Account
 
 ### Generate a New Wallet
@@ -26,7 +13,7 @@ Private keys in the `keystore/` directory are **not encrypted**. Keep these file
 Create a new Miden wallet account:
 
 ```bash title=">_ Terminal"
-miden client new-wallet --deploy
+miden client new-wallet
 ```
 
 <details>
@@ -126,7 +113,7 @@ miden client account --default <ACCOUNT_ID>
 To make your account visible on-chain, deploy it using:
 
 ```bash title=">_ Terminal"
-miden client new-wallet --deploy
+miden client new-wallet
 ```
 
 ## Create a New Project
@@ -153,5 +140,34 @@ npx create-miden-app
 ```
 
 Creates a minimal **Vite example project with Miden integration**, built on the standard Vite React TypeScript template.
+
+## Custom client configuration
+
+Initialize the client in your working directory when you want to test against a custom network endpoint or use different keys without touching your global config:
+
+```bash title=">_ Terminal"
+miden client init --network devnet
+```
+
+Available networks:
+
+- `testnet` - Miden's public test network
+- `devnet` - Development network
+- `localhost` - Local node for testing
+
+### Important Files Created
+
+When you manually initialize the Miden client in your working directory, several local files are created:
+
+- **`miden-client.toml`**: Configuration file with network settings
+- **`store.sqlite3`**: Database storing your account data and transaction history
+- **`keystore/`**: Directory containing your private keys (keep secure!)
+- **`templates/`**: Pre-built smart contract components
+
+:::danger
+Private keys in the `keystore/` directory are **not encrypted**. Keep these files secure and never share them.
+:::
+
+To return to your global client configuration, remove the local `miden-client.toml` (and any local store/keystore files you no longer need).
 
 ---
