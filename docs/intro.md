@@ -27,7 +27,7 @@ If you want to join the technical discussion, please check out the following:
 
 ## Status and features
 
-Miden is currently at release v0.12 – approaching mainnet readiness, with parts of the protocol still being refined and new zk-rollup features under active development for the 2026 launch.
+Miden is currently at release v0.13 – approaching mainnet readiness, with parts of the protocol still being refined and new zk-rollup features under active development for the 2026 launch.
 
 :::warning
 Breaking changes may still occur in some components.
