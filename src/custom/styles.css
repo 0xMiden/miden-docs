@@ -162,6 +162,21 @@
 }
 
 /* ==========================================
+   1a) DARK THEME TOKENS
+   ========================================== */
+
+:root[data-theme="dark"] {
+  --color-bg: #191919;
+  --color-surface: #232323;
+  --color-elevated: #3f3f3f99;
+  --color-border: color-mix(in oklab, #ffffff 22%, transparent);
+  --color-text: #e6e6e6;
+  --color-muted: color-mix(in oklab, #e6e6e6 65%, transparent);
+  --color-link: var(--color-brand);
+  --ifm-code-color: #abb2bf;
+}
+
+/* ==========================================
    2) BASE ELEMENTS
    ========================================== */
 
@@ -175,6 +190,11 @@ body {
   background: var(--ifm-background-color);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+[data-theme="dark"] body {
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 /* Remove underlines from all links by default */
@@ -237,12 +257,23 @@ h6 {
   font-family: var(--font-sans);
   letter-spacing: 0em;
   font-weight: bold;
+  color: var(--ifm-color-primary);
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+  color: var(--color-text);
 }
 
 /* H1: 28px font, 32px line height */
 h1 {
   font-size: var(--ifm-h1-font-size);
   line-height: var(--ifm-h1-line-height);
+  color: var(--ifm-color-primary);
 }
 
 /* H2: 24px font, 28px line height */
@@ -442,6 +473,12 @@ img {
 .button--outline:not(.button--link) {
   border-color: color-mix(in oklab, var(--ifm-color-primary) 70%, transparent);
 }
+
+[data-theme="dark"] .button--outline:not(.button--link) {
+  background: #3f3f3f99;
+  color: #ffffff;
+  border-color: color-mix(in oklab, #ffffff 30%, transparent);
+}
 .button--link {
   color: var(--ifm-link-color);
 }
@@ -485,6 +522,16 @@ img {
   /* padding: 1rem 1.25rem; */
 }
 
+[data-theme="dark"] .theme-admonition.alert {
+  --ifm-alert-background-color: #3f3f3f99;
+  --ifm-alert-background-color-highlight: #3f3f3f99;
+  background: #3f3f3f99;
+  color: var(--color-text);
+  border: 1px solid #3f3f3f99;
+  border-top: 5px solid var(--ifm-alert-border-color);
+  border-left: none;
+}
+
 /* NOTE */
 .theme-admonition.alert--secondary {
   --ifm-alert-border-color: var(--ifm-color-primary);
@@ -499,6 +546,17 @@ img {
 .theme-admonition.alert--info {
   --ifm-alert-border-color: #1764a8;
   border-top-color: #1764a8;
+}
+
+[data-theme="dark"] .theme-admonition.alert--info {
+  --ifm-alert-border-color: #7b9cff;
+  border-top-color: #7b9cff;
+}
+
+[data-theme="dark"] .theme-admonition.alert--info .admonition-icon svg {
+  color: #7b9cff !important;
+  fill: #7b9cff !important;
+  stroke: #7b9cff !important;
 }
 /* WARNING */
 .theme-admonition.alert--warning {
@@ -680,6 +738,25 @@ code {
   background: color-mix(in oklab, var(--color-surface) 85%, transparent);
 }
 
+[data-theme="dark"] .theme-code-block {
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .theme-code-block pre {
+  background: #3f3f3f99;
+}
+
+[data-theme="dark"] .theme-code-block code {
+  background: transparent;
+  color: var(--ifm-code-color, #abb2bf);
+}
+
+[data-theme="dark"] code {
+  background: #3f3f3f99;
+  color: var(--ifm-code-color, #abb2bf);
+  border-color: #3f3f3f99;
+}
+
 /* ==========================================
    12.1) DETAILS/SUMMARY (Expandable Sections) - styled like code blocks
    ========================================== */
@@ -814,6 +891,10 @@ code {
   color: color-mix(in oklab, #292929bf 75%, #000);
 }
 
+[data-theme="dark"] .pagination-nav__label {
+  color: #ffffff;
+}
+
 /* Arrow text characters (>> and <<) */
 .pagination-nav__link--prev::before,
 .pagination-nav__link--next::after {
@@ -877,6 +958,12 @@ code {
   letter-spacing: 0.05em !important;
   margin-top: 0.571rem !important;
   margin-bottom: 0.571rem !important;
+}
+
+[data-theme="dark"] .theme-doc-version-badge {
+  background: #3f3f3f99 !important;
+  border-color: var(--ifm-color-primary) !important;
+  color: var(--ifm-color-primary) !important;
 }
 
 /* ==========================================
