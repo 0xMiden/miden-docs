@@ -141,7 +141,7 @@ const config: Config = {
       ],
       colorMode: {
         defaultMode: "light",
-        disableSwitch: true,
+        disableSwitch: false,
       },
       // TODO: implement exact code theme styling
       prism: {
