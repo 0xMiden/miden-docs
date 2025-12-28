@@ -37,7 +37,7 @@ Before starting this guide, ensure you have completed the [Installation](../setu
 - **midenup toolchain** installed with Miden CLI tools
 
 :::tip Prerequisites Required
-You need those developments tools installed for this guide. If you haven't set up your environment yet, please complete the [installation](../setup/installation) guide first.
+You need those development tools installed for this guide. If you haven't set up your environment yet, please complete the [installation](../setup/installation) guide first.
 :::
 
 ## No Prior Experience Required

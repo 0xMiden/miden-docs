@@ -93,7 +93,7 @@ Account delta: AccountDelta { account_id: V0(AccountIdV0 { prefix: 7255964780328
 
 </details>
 
-Congratulations, you have succesfully deployed the Counter Contract to the Miden Testnet, and incremented its count by one!
+Congratulations, you have successfully deployed the Counter Contract to the Miden Testnet, and incremented its count by one!
 
 ### What Happens During Execution
 
@@ -126,7 +126,7 @@ let ClientSetup { mut client, keystore } = setup_client().await?;
 let sync_summary = client.sync_state().await?;
 ```
 
-This establishes connection to the Miden testnet and synchronizes with the latest network state.
+This establishes a connection to the Miden testnet and synchronizes with the latest network state.
 
 ### Building Contracts from Source
 
