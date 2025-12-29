@@ -35,7 +35,7 @@ To do this, we use two terminals with their own state (using their own `miden-cl
     miden-client init --network testnet # Creates a miden-client.toml file configured with the testnet node's IP
     ```
 
-3. On the new client, create a new [basic account](https://0xMiden.github.io/miden-docs/miden-base/architecture/accounts.html):
+3. On the new client, create a new [basic account](https://docs.miden.xyz/quick-start/accounts/):
 
     ```shell
     miden-client new-wallet --mutable -s public
