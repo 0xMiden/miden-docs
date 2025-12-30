@@ -257,7 +257,7 @@ h6 {
   font-family: var(--font-sans);
   letter-spacing: 0em;
   font-weight: bold;
-  color: var(--ifm-color-primary);
+  color: var(--color-text);
 }
 
 [data-theme="dark"] h1,
