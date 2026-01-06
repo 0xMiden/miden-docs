@@ -1,0 +1,546 @@
+---
+title: "How to Create Notes in Miden Assembly"
+sidebar_position: 11
+---
+
+# Creating Notes in Miden Assembly
+
+_Creating notes inside the MidenVM using Miden assembly_
+
+## Overview
+
+In this tutorial, we will create a custom note that generates a copy of itself when it is consumed by an account. The purpose of this tutorial is to demonstrate how to create notes inside the MidenVM using Miden assembly (MASM). By the end of this tutorial, you will understand how to write MASM code that creates notes.
+
+## What We'll Cover
+
+- Computing the note inputs commitment in MASM
+- Creating notes in MASM
+
+## Prerequisites
+
+This tutorial assumes you have a basic understanding of Miden assembly and that you have completed the tutorial on [creating a custom note](./custom_note_how_to.md).
+
+## Why Creating Notes in MASM Is Useful
+
+Being able to create a note in MASM enables you to build various types of applications. Creating a note during the consumption of another note or from an account allows you to develop complex DeFi applications.
+
+Here are some tangible examples of when creating a note in MASM is useful in a DeFi context:
+
+- Creating snapshots of an account's state at a specific point in time (not possible in an EVM context)
+- Representing partially fillable buy/sell orders as notes (SWAPP)
+- Handling withdrawals from a smart contract
+
+## What We Will Be Building
+
+![Iterative Note Creation](../img/note_creation_masm.png)
+
+In the diagram above, note A is consumed by an account, and during the transaction, note A' is created.
+
+In this tutorial, we will create a note that contains an asset. When consumed, it outputs a copy of itself and allows the consuming account to take half of the asset. Although this type of note would not be used in a real-world context, it demonstrates several key concepts for writing MASM code that can create notes.
+
+## Step 1: Initialize Your Repository
+
+Create a new Rust repository for your Miden project and navigate to it with the following command:
+
+```bash
+cargo new miden-project
+cd miden-project
+```
+
+Add the following dependencies to your `Cargo.toml` file:
+
+```toml
+[dependencies]
+miden-client = { version = "0.12", features = ["testing", "tonic"] }
+miden-client-sqlite-store = { version = "0.12", package = "miden-client-sqlite-store" }
+miden-lib = { version = "0.12", default-features = false }
+miden-objects = { version = "0.12", default-features = false, features = ["testing"] }
+miden-crypto = { version = "0.17.1", features = ["executable"] }
+miden-assembly = "0.18.3"
+rand = { version = "0.9" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1.0", features = ["raw_value"] }
+tokio = { version = "1.46", features = ["rt-multi-thread", "net", "macros", "fs"] }
+rand_chacha = "0.9.0"
+```
+
+## Step 2: Write the Note Script
+
+For better code organization, we will separate the Miden assembly code from our Rust code.
+
+Create a directory named `masm` at the **root** of your `miden-project` directory. This directory will contain our contract and MASM script code.
+
+Initialize the `masm` directory:
+
+```bash
+mkdir masm/notes
+```
+
+This will create:
+
+```text
+masm/
+└── notes/
+```
+
+Inside the `masm/notes/` directory, create the file `iterative_output_note.masm`:
+
+```masm
+use.miden::active_note
+use.miden::tx
+use.miden::note
+use.miden::output_note
+use.std::sys
+use.std::crypto::hashes::rpo
+use.miden::contracts::wallets::basic->wallet
+
+# Memory Addresses
+const.ASSET=0
+const.ASSET_HALF=4
+const.ACCOUNT_ID_PREFIX=8
+const.ACCOUNT_ID_SUFFIX=9
+const.TAG=10
+
+# => []
+begin
+    # Drop word if user accidentally pushes note_args
+    dropw
+    # => []
+
+    # Get note inputs
+    push.ACCOUNT_ID_PREFIX exec.active_note::get_inputs drop drop
+    # => []
+
+    # Get asset contained in note
+    push.ASSET exec.active_note::get_assets drop drop
+    # => []
+
+    mem_loadw_be.ASSET
+    # => [ASSET]
+
+    # Compute half amount of asset
+    swap.3 push.2 div swap.3
+    # => [ASSET_HALF]
+
+    mem_storew_be.ASSET_HALF dropw
+    # => []
+
+    mem_loadw_be.ASSET
+    # => [ASSET]
+
+    # Receive the entire asset amount to the wallet
+    call.wallet::receive_asset
+    # => []
+
+    # Get note inputs commitment
+    push.8.ACCOUNT_ID_PREFIX
+    # => [memory_address_pointer, number_of_inputs]
+
+    # Note: Must pad with 0s to nearest multiple of 8
+    exec.rpo::hash_memory
+    # => [INPUTS_COMMITMENT]
+
+    # Push script hash
+    exec.active_note::get_script_root
+    # => [SCRIPT_HASH, INPUTS_COMMITMENT]
+
+    # Get the current note serial number
+    exec.active_note::get_serial_number
+    # => [SERIAL_NUM, SCRIPT_HASH, INPUTS_COMMITMENT]
+
+    # Increment serial number by 1
+    push.1 add
+    # => [SERIAL_NUM+1, SCRIPT_HASH, INPUTS_COMMITMENT]
+
+    exec.note::build_recipient_hash
+    # => [RECIPIENT]
+
+    # Push hint, note type, and aux to stack
+    push.1.1.0
+    # => [aux, public_note, execution_hint_always, RECIPIENT]
+
+    # Load tag from memory
+    mem_load.TAG
+    # => [tag, aux, note_type, execution_hint, RECIPIENT]
+
+    call.output_note::create
+    # => [note_idx, pad(15) ...]
+
+    padw mem_loadw_be.ASSET_HALF
+    # => [ASSET / 2, note_idx]
+
+    call.wallet::move_asset_to_note
+    # => [ASSET, note_idx, pad(11)]
+
+    dropw drop
+    # => []
+
+    exec.sys::truncate_stack
+    # => []
+end
+```
+
+### How the Assembly Code Works:
+
+1. **Reads note inputs:**  
+   The note begins by writing the note inputs to memory by calling the `note::get_inputs` procedure. It writes the note inputs starting at memory address 8, which is defined as the constant `ACCOUNT_ID_PREFIX`.
+2. **Retrieving the asset:**  
+   The note then calls `active_note::get_assets` to write the asset contained in the note to memory address 0, defined as `ASSET`. It computes half of the asset and stores the value at memory address 4, defined as `ASSET_HALF`. Finally, the note calls the `wallet::receive_asset` procedure to move the asset contained in the note to the consuming account.
+3. **Computing note inputs hash in MASM:**  
+   The script calls the `rpo::hash_memory` procedure with the number of inputs and the memory address where the inputs begin. This procedure returns the note inputs commitment.
+4. **Getting the script hash:**  
+   Next, the note script calls the `active_note::get_script_root` procedure, which returns the note's script hash.
+5. **Getting the serial number for the future note:**  
+   Although not strictly necessary in this scenario, preventing two identical notes from having the same serial number is important. If an account creates two identical notes with the same serial number, recipient, and asset vault, one of the notes may not be consumed. Therefore, the MASM code increments the serial number of the current note by 1.
+6. **Computing the `RECIPIENT` hash:**  
+   The `RECIPIENT` hash is defined as:  
+   `hash(hash(hash(serial_num, [0; 4]), script_root), input_commitment)`  
+   To compute it in MASM, the script calls the `note::build_recipient_hash` procedure with the serial number, script hash, and inputs commitment on the stack.
+7. **Creating the note:**  
+   To create the note, the script pushes the execution hint, note type, aux value, and tag onto the stack, then calls the `output_note::create` procedure, which returns a pointer to the note.
+8. **Moving assets to the note:**  
+   After the note is created, the script loads the half asset value computed in step 2 onto the stack and calls the `wallet::move_asset_to_note` procedure.
+9. **Stack cleanup:**  
+   Finally, the script cleans up the stack by calling `sys::truncate_stack` after creating the note and adding the assets.
+
+## Step 3: Rust Program
+
+With the Miden assembly note script written, we can move on to writing the Rust script to create and consume the note.
+
+Copy and paste the following code into your `src/main.rs` file.
+
+```rust
+use miden_lib::account::auth::AuthRpoFalcon512;
+use miden_lib::transaction::TransactionKernel;
+use rand::{rngs::StdRng, RngCore};
+use std::{fs, path::Path, sync::Arc};
+use tokio::time::{sleep, Duration};
+
+use miden_client::{
+    account::{
+        component::{BasicFungibleFaucet, BasicWallet},
+        Account,
+    },
+    address::NetworkId,
+    asset::{FungibleAsset, TokenSymbol},
+    auth::AuthSecretKey,
+    builder::ClientBuilder,
+    crypto::FeltRng,
+    keystore::FilesystemKeyStore,
+    note::{
+        Note, NoteAssets, NoteExecutionHint, NoteExecutionMode, NoteInputs, NoteMetadata,
+        NoteRecipient, NoteScript, NoteTag, NoteType,
+    },
+    rpc::{Endpoint, GrpcClient},
+    transaction::{OutputNote, TransactionRequestBuilder},
+    Client, ClientError, Felt,
+};
+use miden_client_sqlite_store::ClientBuilderSqliteExt;
+use miden_objects::{
+    account::{AccountBuilder, AccountStorageMode, AccountType},
+    note::NoteDetails,
+};
+
+// Helper to create a basic account
+async fn create_basic_account(
+    client: &mut Client<FilesystemKeyStore<StdRng>>,
+    keystore: &Arc<FilesystemKeyStore<StdRng>>,
+) -> Result<Account, ClientError> {
+    let mut init_seed = [0u8; 32];
+    client.rng().fill_bytes(&mut init_seed);
+
+    let key_pair = AuthSecretKey::new_rpo_falcon512();
+
+    let account = AccountBuilder::new(init_seed)
+        .account_type(AccountType::RegularAccountUpdatableCode)
+        .storage_mode(AccountStorageMode::Public)
+        .with_auth_component(AuthRpoFalcon512::new(key_pair.public_key().to_commitment()))
+        .with_component(BasicWallet)
+        .build()
+        .unwrap();
+
+    client.add_account(&account, false).await?;
+    keystore.add_key(&key_pair).unwrap();
+
+    Ok(account)
+}
+
+async fn create_basic_faucet(
+    client: &mut Client<FilesystemKeyStore<StdRng>>,
+    keystore: &Arc<FilesystemKeyStore<StdRng>>,
+) -> Result<Account, ClientError> {
+    let mut init_seed = [0u8; 32];
+    client.rng().fill_bytes(&mut init_seed);
+
+    let key_pair = AuthSecretKey::new_rpo_falcon512();
+    let symbol = TokenSymbol::new("MID").unwrap();
+    let decimals = 8;
+    let max_supply = Felt::new(1_000_000);
+
+    let account = AccountBuilder::new(init_seed)
+        .account_type(AccountType::FungibleFaucet)
+        .storage_mode(AccountStorageMode::Public)
+        .with_auth_component(AuthRpoFalcon512::new(key_pair.public_key().to_commitment()))
+        .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply).unwrap())
+        .build()
+        .unwrap();
+
+    client.add_account(&account, false).await?;
+    keystore.add_key(&key_pair).unwrap();
+
+    Ok(account)
+}
+
+// Helper to wait until an account has the expected number of consumable notes
+async fn wait_for_notes(
+    client: &mut Client<FilesystemKeyStore<StdRng>>,
+    account_id: &Account,
+    expected: usize,
+) -> Result<(), ClientError> {
+    loop {
+        client.sync_state().await?;
+        let notes = client.get_consumable_notes(Some(account_id.id())).await?;
+        if notes.len() >= expected {
+            break;
+        }
+        println!(
+            "{} consumable notes found for account {}. Waiting...",
+            notes.len(),
+            account_id.id().to_bech32(NetworkId::Testnet)
+        );
+        sleep(Duration::from_secs(3)).await;
+    }
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() -> Result<(), ClientError> {
+    // Initialize client
+    let endpoint = Endpoint::testnet();
+    let timeout_ms = 10_000;
+    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
+
+    // Initialize keystore
+    let keystore_path = std::path::PathBuf::from("./keystore");
+    let keystore = Arc::new(FilesystemKeyStore::<StdRng>::new(keystore_path).unwrap());
+
+    let store_path = std::path::PathBuf::from("./store.sqlite3");
+
+    let mut client = ClientBuilder::new()
+        .rpc(rpc_client)
+        .sqlite_store(store_path)
+        .authenticator(keystore.clone())
+        .in_debug_mode(true.into())
+        .build()
+        .await?;
+
+    let sync_summary = client.sync_state().await.unwrap();
+    println!("Latest block: {}", sync_summary.block_num);
+
+    // -------------------------------------------------------------------------
+    // STEP 1: Create accounts and deploy faucet
+    // -------------------------------------------------------------------------
+    println!("\n[STEP 1] Creating new accounts");
+    let alice_account = create_basic_account(&mut client, &keystore).await?;
+    println!(
+        "Alice's account ID: {:?}",
+        alice_account.id().to_bech32(NetworkId::Testnet)
+    );
+    let bob_account = create_basic_account(&mut client, &keystore).await?;
+    println!(
+        "Bob's account ID: {:?}",
+        bob_account.id().to_bech32(NetworkId::Testnet)
+    );
+
+    println!("\nDeploying a new fungible faucet.");
+    let faucet = create_basic_faucet(&mut client, &keystore).await?;
+    println!(
+        "Faucet account ID: {:?}",
+        faucet.id().to_bech32(NetworkId::Testnet)
+    );
+    client.sync_state().await?;
+
+    // -------------------------------------------------------------------------
+    // STEP 2: Mint tokens with P2ID
+    // -------------------------------------------------------------------------
+    println!("\n[STEP 2] Mint tokens with P2ID");
+    let faucet_id = faucet.id();
+    let amount: u64 = 100;
+    let mint_amount = FungibleAsset::new(faucet_id, amount).unwrap();
+
+    let tx_req = TransactionRequestBuilder::new()
+        .build_mint_fungible_asset(
+            mint_amount,
+            alice_account.id(),
+            NoteType::Public,
+            client.rng(),
+        )
+        .unwrap();
+
+    let tx_id = client.submit_new_transaction(faucet.id(), tx_req).await?;
+    println!("Minted tokens. TX: {:?}", tx_id);
+
+    wait_for_notes(&mut client, &alice_account, 1).await?;
+
+    // Consume the minted note
+    let consumable_notes = client
+        .get_consumable_notes(Some(alice_account.id()))
+        .await?;
+
+    if let Some((note_record, _)) = consumable_notes.first() {
+        let consume_req = TransactionRequestBuilder::new()
+            .build_consume_notes(vec![note_record.id()])
+            .unwrap();
+
+        let tx_id = client
+            .submit_new_transaction(alice_account.id(), consume_req)
+            .await?;
+        println!("Consumed minted note. TX: {:?}", tx_id);
+    }
+
+    client.sync_state().await?;
+
+    // -------------------------------------------------------------------------
+    // STEP 3: Create iterative output note
+    // -------------------------------------------------------------------------
+    println!("\n[STEP 3] Create iterative output note");
+
+    let assembler = TransactionKernel::assembler().with_debug_mode(true);
+    let code = fs::read_to_string(Path::new("../masm/notes/iterative_output_note.masm")).unwrap();
+    let serial_num = client.rng().draw_word();
+
+    // Create note metadata and tag
+    let tag = NoteTag::for_public_use_case(0, 0, NoteExecutionMode::Local).unwrap();
+    let metadata = NoteMetadata::new(
+        alice_account.id(),
+        NoteType::Public,
+        tag,
+        NoteExecutionHint::always(),
+        Felt::new(0),
+    )?;
+    let program = assembler.clone().assemble_program(&code).unwrap();
+    let note_script = NoteScript::new(program);
+    let note_inputs = NoteInputs::new(vec![
+        alice_account.id().prefix().as_felt(),
+        alice_account.id().suffix(),
+        tag.into(),
+        Felt::new(0),
+    ])
+    .unwrap();
+
+    let recipient = NoteRecipient::new(serial_num, note_script.clone(), note_inputs.clone());
+    let vault = NoteAssets::new(vec![mint_amount.into()])?;
+    let custom_note = Note::new(vault, metadata, recipient);
+
+    let note_req = TransactionRequestBuilder::new()
+        .own_output_notes(vec![OutputNote::Full(custom_note.clone())])
+        .build()
+        .unwrap();
+
+    let tx_id = client
+        .submit_new_transaction(alice_account.id(), note_req)
+        .await?;
+    println!(
+        "View transaction on MidenScan: https://testnet.midenscan.com/tx/{:?}",
+        tx_id
+    );
+
+    client.sync_state().await?;
+
+    // -------------------------------------------------------------------------
+    // STEP 4: Consume the iterative output note
+    // -------------------------------------------------------------------------
+    println!("\n[STEP 4] Bob consumes the note and creates a copy");
+
+    // Increment the serial number for the new note
+    let serial_num_1 = [
+        serial_num[0],
+        serial_num[1],
+        serial_num[2],
+        Felt::new(serial_num[3].as_int() + 1),
+    ]
+    .into();
+
+    // Reuse the note_script and note_inputs
+    let recipient = NoteRecipient::new(serial_num_1, note_script, note_inputs);
+
+    // Note: Change metadata to include Bob's account as the creator
+    let metadata = NoteMetadata::new(
+        bob_account.id(),
+        NoteType::Public,
+        tag,
+        NoteExecutionHint::always(),
+        Felt::new(0),
+    )?;
+
+    let asset_amount_1 = FungibleAsset::new(faucet_id, 50).unwrap();
+    let vault = NoteAssets::new(vec![asset_amount_1.into()])?;
+    let output_note = Note::new(vault, metadata, recipient);
+
+    let consume_custom_req = TransactionRequestBuilder::new()
+        .unauthenticated_input_notes([(custom_note, None)])
+        .expected_future_notes(vec![(
+            NoteDetails::from(output_note.clone()),
+            output_note.metadata().tag(),
+        )
+            .clone()])
+        .expected_output_recipients(vec![output_note.recipient().clone()])
+        .build()
+        .unwrap();
+
+    let tx_id = client
+        .submit_new_transaction(bob_account.id(), consume_custom_req)
+        .await?;
+    println!(
+        "Consumed Note Tx on MidenScan: https://testnet.midenscan.com/tx/{:?}",
+        tx_id
+    );
+
+    Ok(())
+}
+```
+
+Run the following command to execute `src/main.rs`:
+
+```bash
+cargo run --release
+```
+
+The output will look something like this:
+
+```text
+Latest block: 226933
+
+[STEP 1] Creating new accounts
+Alice's account ID: "mtst1qpljtarjtawzcyqqqdcqu53adytw09yw"
+Bob's account ID: "mtst1qzaynsxth84vsyqqq0emse6ygcax3j59"
+
+Deploying a new fungible faucet.
+Faucet account ID: "mtst1qpqpq6z8vrqvugqqqwjdnajgvurs9zgl"
+
+[STEP 2] Mint tokens with P2ID
+0 consumable notes found for account mtst1qpljtarjtawzcyqqqdcqu53adytw09yw. Waiting...
+0 consumable notes found for account mtst1qpljtarjtawzcyqqqdcqu53adytw09yw. Waiting...
+
+[STEP 3] Create iterative output note
+View transaction on MidenScan: https://testnet.midenscan.com/tx/0x335061a434ccccbf9619052bdeacbc71b6e755b24f0ead0c3741a3b0954c78af
+
+[STEP 4] Bob consumes the note and creates a copy
+Consumed Note Tx on MidenScan: https://testnet.midenscan.com/tx/0xa39acf2bb965b4669b91bf564e8aa2987a9fc86ee350cd159ad5db1054cb67ab
+Account delta: AccountVaultDelta { fungible: FungibleAssetDelta({V0(Accoun
+```
+
+---
+
+### Running the example
+
+To run the full example, navigate to the `rust-client` directory in the [miden-tutorials](https://github.com/0xMiden/miden-tutorials/) repository and run this command:
+
+```bash
+cd rust-client
+cargo run --release --bin note_creation_in_masm
+```
+
+### Continue learning
+
+Next tutorial: [Delegated Proving](./delegated_proving_tutorial.md)
