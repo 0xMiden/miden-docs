@@ -6,9 +6,8 @@ sidebar_position: 4
 This guide summarizes how to run and observe a PSM node.
 
 ## Prerequisites
-- Rust toolchain, 
-- access to a Miden node endpoint.
-- Storage/metadata/keystore paths (see env vars below).
+- Rust toolchain (version 1.90.0 or greater).
+- Docker client.
 
 ## Clone the repository
 - Clone the repository: `git clone https://github.com/OpenZeppelin/private-state-manager.git`
@@ -41,4 +40,4 @@ This guide summarizes how to run and observe a PSM node.
 
 ## Links
 - Repository: https://github.com/OpenZeppelin/private-state-manager
-- Server README: [crates/server/README.md](https://github.com/OpenZeppelin/private-state-manager/blob/main/private-state-manager/crates/server/README.md)
+- Server README: [crates/server/README.md](https://github.com/OpenZeppelin/private-state-manager/blob/main/crates/server/README.md)
