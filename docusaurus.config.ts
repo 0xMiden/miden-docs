@@ -131,6 +131,15 @@ const config: Config = {
     ],
   ],
 
+  scripts: [
+    {
+      src: "https://scripts.simpleanalyticscdn.com/latest.js",
+      async: true,
+      defer: true,
+      "data-hostname": "miden.xyz",
+    },
+  ],
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     {
