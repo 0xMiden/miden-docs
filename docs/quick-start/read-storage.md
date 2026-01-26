@@ -81,7 +81,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // READ PUBLIC STATE OF THE COUNTER ACCOUNT
     //------------------------------------------------------------
 
-    let counter_account_id = AccountId::from_hex("0xf3e8e740c0d3960013418eecb98ccf")?;
+    let counter_account_id = AccountId::from_hex("0xe59d8cd3c9ff2a0055da0b83ed6432")?;
 
     client.import_account_by_id(counter_account_id).await?;
 
@@ -116,7 +116,7 @@ export async function demo() {
     const client = await WebClient.createClient(nodeEndpoint);
     await client.syncState();
 
-    const accountId = AccountId.fromHex("0xf3e8e740c0d3960013418eecb98ccf");
+    const accountId = AccountId.fromHex("0xe59d8cd3c9ff2a0055da0b83ed6432");
 
     // Import the account into the client's database
     let account = await client.getAccount(accountId);
