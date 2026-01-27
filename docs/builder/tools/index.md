@@ -1,30 +1,30 @@
 ---
-title: Client
+title: Tools
 sidebar_position: 1
 ---
 
-# Miden client
+<!--
+ARCHITECTURE NOTE:
+Client documentation is canonical in versioned_docs/version-X.Y/miden-client/.
+This landing page exists only for the "current/next" version.
+Full client docs are available by selecting a released version.
+-->
 
-The Miden client currently has three main components:
+# Tools
 
-1. [Miden client library](#miden-client-library).
-2. [Miden client CLI](#miden-client-cli).
-3. [Miden web client](#miden-web-client).
+:::info Version Note
+Full client documentation (Rust Client, Web Client, CLI reference) is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete client documentation.
+:::
 
-### Miden client library
+## Miden Client
 
-The Miden client library is a Rust library that can be integrated into projects, allowing developers to interact with the Miden rollup.
+The Miden client has three main components:
 
-The library provides a set of APIs and functions for executing transactions, generating proofs, and managing activity on the Miden network.
+1. **Miden client library** - A Rust library for integrating with the Miden rollup
+2. **Miden client CLI** - Command-line interface for interacting with the network
+3. **Miden web client** - Browser-based interface for managing accounts and transactions
 
-### Miden client CLI
+## Additional Tools
 
-The Miden client also includes a command-line interface (CLI) that serves as a wrapper around the library, exposing its basic functionality in a user-friendly manner.
-
-The CLI provides commands for interacting with the Miden rollup, such as submitting transactions, syncing with the network, and managing account data.
-
-More information about the CLI can be found in the [CLI section](./rust-client/cli).
-
-### Miden web client
-
-The Miden web client is a web-based interface that allows users to interact with the Miden rollup through a browser. It wraps most of the functionality of the Rust library and provides a user-friendly interface for managing accounts, submitting transactions, and monitoring activity on the network.
+- **Playground** - Interactive environment for testing Miden assembly
+- **Explorer** - Block explorer for the Miden network

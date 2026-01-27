@@ -1,15 +1,18 @@
+<!--
+ARCHITECTURE NOTE:
+This is the Builder landing page for the "current/next" (unreleased) version.
+Full Builder documentation (Get Started, Tutorials, Client) is available in versioned releases.
+Content authored in this repo: core-concepts, smart-contracts, reference (placeholders).
+Ingested content (tutorials, client, quick-start) lives in versioned_docs only.
+-->
+
 # Build on Miden
 
 Welcome to the Miden Builder documentation. This section contains everything you need to build applications on the Miden network.
 
-## Getting Started
-
-New to Miden? Start here:
-
-- **[Installation](./get-started/setup/installation)** - Install the Miden CLI and configure your environment
-- **[CLI Basics](./get-started/setup/cli-basics)** - Learn essential CLI commands
-- **[Accounts](./get-started/accounts)** - Create your first account
-- **[Your First Smart Contract](./get-started/your-first-smart-contract)** - Build and deploy a contract
+:::info Version Note
+Full Builder documentation (Get Started, Tutorials, Client guides) is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete Builder documentation.
+:::
 
 ## Documentation Sections
 
@@ -27,13 +30,6 @@ Developer tooling including Rust Client, Web Client, Playground, and Explorer.
 
 ### [Reference](./reference)
 API documentation for CLI, clients, and assembly/stdlib.
-
-## Learning Path
-
-1. **Setup** - Install tools and configure your environment
-2. **Get Started** - Learn core concepts through hands-on examples
-3. **Smart Contracts** - Write and deploy your first contract
-4. **Develop** - Explore tutorials and build real applications
 
 ## Resources
 
