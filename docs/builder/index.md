@@ -1,9 +1,9 @@
 <!--
 ARCHITECTURE NOTE:
 This is the Builder landing page for the "current/next" (unreleased) version.
-Full Builder documentation (Get Started, Tutorials, Client) is available in versioned releases.
-Content authored in this repo: core-concepts, smart-contracts, reference (placeholders).
-Ingested content (tutorials, client, quick-start) lives in versioned_docs only.
+Full Builder documentation (Tutorials, Client) is available in versioned releases.
+Content authored in this repo: quick-start, core-concepts, smart-contracts, faq, glossary, reference.
+Ingested content (tutorials, client) lives in versioned_docs only.
 -->
 
 # Build on Miden
@@ -11,8 +11,18 @@ Ingested content (tutorials, client, quick-start) lives in versioned_docs only.
 Welcome to the Miden Builder documentation. This section contains everything you need to build applications on the Miden network.
 
 :::info Version Note
-Full Builder documentation (Get Started, Tutorials, Client guides) is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete Builder documentation.
+Full Builder documentation (Tutorials, Client guides) is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete Builder documentation.
 :::
+
+## Builder Journey
+
+If you are new to Miden, follow this path:
+
+1. **[Quick Start](./quick-start)** – Build your first account and transaction
+2. **[Core Concepts](./core-concepts)** – Understand accounts, notes, assets, and transactions
+3. **[Smart Contracts](./smart-contracts)** – Write your first contract in Rust
+4. **[Develop](./develop)** – Deeper tutorials and real-world examples
+5. **[Tools](./tools)** – Integrate with the Miden Client libraries
 
 ## Documentation Sections
 

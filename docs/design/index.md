@@ -12,6 +12,8 @@ Welcome to the Miden Design documentation. This section explains the architectur
 
 :::info Version Note
 Design documentation (Protocol, Virtual Machine, Compiler, Node) is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the full Design documentation.
+
+Design content is authored in the source repositories ([miden-base](https://github.com/0xMiden/miden-base), [miden-vm](https://github.com/0xMiden/miden-vm), [compiler](https://github.com/0xMiden/compiler), [miden-node](https://github.com/0xMiden/miden-node)) and ingested into this documentation site during version cuts.
 :::
 
 ## Architecture Overview
