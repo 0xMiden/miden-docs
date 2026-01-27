@@ -43,4 +43,4 @@ This documentation assumes familiarity with:
 - Zero-knowledge proofs (conceptual understanding)
 - Blockchain state machines
 
-For practical usage guides, see the [Builder documentation](/builder).
+For practical usage guides, see the [Builder documentation](../builder/).
