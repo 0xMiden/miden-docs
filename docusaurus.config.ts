@@ -166,10 +166,19 @@ const config: Config = {
         },
         title: "MIDEN",
         items: [
-          // LEFT - Placeholder tabs (update to docSidebar when folders exist)
-          { to: "/", label: "Build", position: "left" },
-          { to: "/", label: "Design", position: "left" },
-          { to: "/", label: "Release", position: "left" },
+          // LEFT - Section tabs using docSidebar
+          {
+            type: "docSidebar",
+            sidebarId: "designSidebar",
+            label: "Design",
+            position: "left",
+          },
+          {
+            type: "docSidebar",
+            sidebarId: "builderSidebar",
+            label: "Build",
+            position: "left",
+          },
 
           // RIGHT - Social icons
           {
