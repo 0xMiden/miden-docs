@@ -444,6 +444,111 @@ img {
 }
 
 /* ==========================================
+   4.1) SIDEBAR NESTED HIERARCHY GUIDE LINES
+   ========================================== */
+
+/* Vertical guide line for nested items - using Docusaurus built-in level classes */
+.theme-doc-sidebar-item-category-level-1 > ul.menu__list {
+  position: relative;
+  margin-left: 10px;
+  padding-left: 14px;
+}
+
+.theme-doc-sidebar-item-category-level-1 > ul.menu__list::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: var(--ifm-border-color);
+}
+
+/* Deeper nesting - lighter guide line */
+.theme-doc-sidebar-item-category-level-2 > ul.menu__list {
+  position: relative;
+  margin-left: 8px;
+  padding-left: 12px;
+}
+
+.theme-doc-sidebar-item-category-level-2 > ul.menu__list::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: color-mix(in oklab, var(--ifm-border-color) 60%, transparent);
+}
+
+/* ==========================================
+   4.2) SIDEBAR CHEVRON ANIMATION
+   ========================================== */
+
+/* Smooth chevron rotation for categories */
+.menu__link--sublist-caret::after,
+.menu__caret::before {
+  transition: transform 0.2s ease;
+}
+
+/* ==========================================
+   4.3) TOP-LEVEL SECTION STYLING
+   ========================================== */
+
+/* Top-level categories get more visual weight */
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible > .menu__link {
+  font-weight: 600;
+}
+
+/* Spacing between top-level items */
+.theme-doc-sidebar-item-category-level-1 {
+  margin-top: 0.5rem;
+}
+
+/* First top-level item has no top margin */
+.theme-doc-sidebar-item-category-level-1:first-child {
+  margin-top: 0;
+}
+
+/* Active category highlight */
+.theme-doc-sidebar-item-category-level-1
+  > .menu__list-item-collapsible:has(.menu__link--active) {
+  background: color-mix(in oklab, var(--ifm-color-primary) 8%, transparent);
+  border-radius: var(--radius-md);
+}
+
+/* Nested items - lighter weight */
+.theme-doc-sidebar-item-category-level-2 .menu__link,
+.theme-doc-sidebar-item-link-level-2 .menu__link,
+.theme-doc-sidebar-item-category-level-3 .menu__link,
+.theme-doc-sidebar-item-link-level-3 .menu__link {
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+/* ==========================================
+   4.4) MOBILE SIDEBAR ADJUSTMENTS
+   ========================================== */
+
+@media (max-width: 996px) {
+  /* Ensure guide lines work on mobile */
+  .theme-doc-sidebar-item-category-level-1 > ul.menu__list::before {
+    background: var(--ifm-border-color);
+  }
+
+  /* Touch-friendly tap targets */
+  .theme-doc-sidebar-menu .menu__link {
+    padding: 12px 10px;
+    min-height: 44px;
+  }
+}
+
+/* Navbar mobile sidebar inherits these styles */
+.navbar-sidebar .menu__list-item-collapsible {
+  border-radius: var(--radius-md);
+}
+
+/* ==========================================
    5) BREADCRUMBS
    ========================================== */
 
