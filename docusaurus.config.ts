@@ -45,6 +45,12 @@ const config: Config = {
       "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       {
+        // GA4 Analytics (alongside Simple Analytics)
+        // Replace 'G-XXXXXXXXXX' with actual tracking ID
+        gtag: {
+          trackingID: "G-XXXXXXXXXX",
+          anonymizeIP: true,
+        },
         docs: {
           // Single global docs root
           routeBasePath: "/", // site lives at /
