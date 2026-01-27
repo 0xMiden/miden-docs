@@ -402,6 +402,35 @@ img {
 }
 
 /* ==========================================
+   3.1) NAVBAR ICON LINKS
+   ========================================== */
+
+.navbar-icon-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  color: var(--ifm-navbar-link-color);
+  opacity: 0.7;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.navbar-icon-link:hover {
+  opacity: 1;
+  color: var(--ifm-color-primary);
+}
+
+.navbar-icon-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Spacing between icon links */
+.navbar__item.navbar__item--html {
+  margin: 0 2px;
+}
+
+/* ==========================================
    4) SIDEBAR (Docs)
    ========================================== */
 
