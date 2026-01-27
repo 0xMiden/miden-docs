@@ -56,10 +56,8 @@ flowchart TD
         MidenTutorials["0xMiden/miden-tutorials"]
     end
 
-    subgraph Workflows["CI/CD Workflows"]
-        CutVersions["cut-versions.yml<br/>(ingest + snapshot)"]
-        DeployDocs["deploy-docs.yml<br/>(render-only)"]
-    end
+    CutVersions["CICD cut-versions.yml<br/>(ingest + snapshot)"]
+    DeployDocs["CICD deploy-docs.yml<br/>(render-only)"]
 
     %% External repos feed into versioned_docs via cut-versions
     MidenBase -->|"ingested @v0.12.3"| CutVersions
