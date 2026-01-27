@@ -158,7 +158,7 @@ npm run dev
 ```
 
 :::tip
-For detailed frontend setup guidance, see the [Web Client tutorial](https://docs.miden.xyz/miden-tutorials/web-client/create_deploy_tutorial#step-2-set-up-the-webclient).
+For detailed frontend setup guidance, see the [Web Client tutorial](/miden-tutorials/web-client/create_deploy_tutorial#step-2-set-up-the-webclient).
 :::
 
 ## Creating Accounts Programmatically
