@@ -12,41 +12,19 @@ Miden is a zero-knowledge rollup built on STARKs. The network consists of:
 - **Client** - Libraries for building and submitting transactions
 - **Node** - Infrastructure for running network operators
 
-## Section Guide
+## Documentation Sections
 
-### Protocol
+### [Miden Base](./miden-base)
+The foundational protocol design: accounts, notes, assets, transactions, and blockchain structure.
 
-The foundational design of the Miden state machine:
+### [Miden VM](./miden-vm)
+Virtual machine architecture: chiplets, decoder, stack operations, and lookup tables.
 
-- Blockchain structure and state transitions
-- Account model and storage
-- Note-based transaction semantics
-- Asset definitions and fungibility
+### [Compiler](./compiler)
+Compiler design, usage guides, and technical appendix.
 
-### Virtual Machine
-
-How the Miden VM executes programs:
-
-- Chiplet architecture (Memory, Hasher, Bitwise, ACE)
-- Decoder constraints
-- Stack operations
-- Lookup tables (LogUp, Multiset)
-
-### Proving
-
-The cryptographic foundation:
-
-- STARK proof background
-- Execution trace optimization
-- Performance characteristics
-
-### Client & Node
-
-System architecture for network participants:
-
-- Client design and capabilities
-- Node operator infrastructure
-- RPC interfaces
+### [Miden Node](./miden-node)
+Node operator documentation and infrastructure guides.
 
 ## Prerequisites
 

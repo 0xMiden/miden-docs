@@ -169,14 +169,14 @@ const config: Config = {
           // LEFT - Section tabs using docSidebar
           {
             type: "docSidebar",
-            sidebarId: "designSidebar",
-            label: "Design",
+            sidebarId: "builderSidebar",
+            label: "Build",
             position: "left",
           },
           {
             type: "docSidebar",
-            sidebarId: "builderSidebar",
-            label: "Build",
+            sidebarId: "designSidebar",
+            label: "Design",
             position: "left",
           },
 

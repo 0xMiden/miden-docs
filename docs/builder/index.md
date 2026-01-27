@@ -9,20 +9,31 @@ New to Miden? Start here:
 - **[Installation](./get-started/setup/installation)** - Install the Miden CLI and configure your environment
 - **[CLI Basics](./get-started/setup/cli-basics)** - Learn essential CLI commands
 - **[Accounts](./get-started/accounts)** - Create your first account
+- **[Your First Smart Contract](./get-started/your-first-smart-contract)** - Build and deploy a contract
+
+## Documentation Sections
+
+### [Core Concepts](./core-concepts)
+Understand the fundamentals of Miden: accounts, notes, assets, transactions, and authentication.
+
+### [Smart Contracts](./smart-contracts)
+The "Miden in Rust" guide - learn to write, test, and deploy smart contracts.
+
+### [Develop on Miden](./develop)
+Tutorials, examples, debugging guides, and testing workflows.
+
+### [Tools](./tools)
+Developer tooling including Rust Client, Web Client, Playground, and Explorer.
+
+### [Reference](./reference)
+API documentation for CLI, clients, and assembly/stdlib.
 
 ## Learning Path
 
 1. **Setup** - Install tools and configure your environment
 2. **Get Started** - Learn core concepts through hands-on examples
 3. **Smart Contracts** - Write and deploy your first contract
-
-## What You'll Learn
-
-- **Accounts** - Create and manage Miden accounts
-- **Notes** - Understand Miden's note-based transaction model
-- **Assets** - Work with native and custom assets
-- **Transactions** - Build and submit transactions
-- **Smart Contracts** - Write contracts in Rust for the Miden VM
+4. **Develop** - Explore tutorials and build real applications
 
 ## Resources
 
