@@ -1,29 +1,24 @@
+# ============================================================
+# ARCHITECTURE NOTE:
+# This workflow is RENDER-ONLY. It builds and deploys using:
+#   - docs/ (Builder-authored content only)
+#   - versioned_docs/ (Design, Tutorials, Client, Quick Start)
+#
+# External repo ingestion happens ONLY in cut-versions.yml.
+# DO NOT add vendor checkouts or docs aggregation here.
+#
+# The canonical-source architecture:
+#   - Builder content: authored in docs/builder/
+#   - Design/Tutorials/Client: ingested into versioned_docs/ during version cuts
+#   - docs/ must never contain miden-base, miden-vm, miden-node, etc.
+# ============================================================
+
 name: Build & Deploy Docs (Pages)
 
 on:
   push:
-    branches: [main] # deploy when aggregator changes
-  workflow_dispatch:
-    inputs:
-      # optional per-repo overrides (branch/ref/SHA); leave empty to use defaults
-      miden_base_ref:
-        description: "Ref for 0xMiden/miden-base"
-        required: false
-      miden_tutorials_ref:
-        description: "Ref for 0xMiden/miden-tutorials"
-        required: false
-      miden_client_ref:
-        description: "Ref for 0xMiden/miden-client"
-        required: false
-      miden_node_ref:
-        description: "Ref for 0xMiden/miden-node"
-        required: false
-      miden_vm_ref:
-        description: "Ref for 0xMiden/miden-vm"
-        required: false
-      compiler_ref:
-        description: "Ref for 0xMiden/compiler"
-        required: false
+    branches: [main]
+  workflow_dispatch: {}
   repository_dispatch:
     types: [rebuild]
 
@@ -39,9 +34,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DEFAULT_REF: next
-      DEFAULT_TUTORIALS_REF: main
     steps:
       - name: Checkout docs site
         uses: actions/checkout@v4
@@ -52,139 +44,13 @@ jobs:
           node-version: 20
           cache: "npm"
 
-      # Resolve refs per repo (inputs override DEFAULT_REF)
-      - name: Resolve refs
-        id: refs
-        run: |
-          set -e
-          def="${DEFAULT_REF}"
-          tutorials_def="${DEFAULT_TUTORIALS_REF}"
-
-          # For each input: use it if set, else fallback to default ref
-          base_ref='${{ inputs.miden_base_ref }}'
-          [ -z "$base_ref" ] && base_ref="$def"
-          echo "MIDEN_BASE_REF=$base_ref" >> $GITHUB_OUTPUT
-
-          tutorials_ref='${{ inputs.miden_tutorials_ref }}'
-          [ -z "$tutorials_ref" ] && tutorials_ref="$tutorials_def"
-          echo "MIDEN_TUTORIALS_REF=$tutorials_ref" >> $GITHUB_OUTPUT
-
-          client_ref='${{ inputs.miden_client_ref }}'
-          [ -z "$client_ref" ] && client_ref="$def"
-          echo "MIDEN_CLIENT_REF=$client_ref" >> $GITHUB_OUTPUT
-
-          node_ref='${{ inputs.miden_node_ref }}'
-          [ -z "$node_ref" ] && node_ref="$def"
-          echo "MIDEN_NODE_REF=$node_ref" >> $GITHUB_OUTPUT
-
-          vm_ref='${{ inputs.miden_vm_ref }}'
-          [ -z "$vm_ref" ] && vm_ref="$def"
-          echo "MIDEN_VM_REF=$vm_ref" >> $GITHUB_OUTPUT
-
-          compiler_ref='${{ inputs.compiler_ref }}'
-          [ -z "$compiler_ref" ] && compiler_ref="$def"
-          echo "COMPILER_REF=$compiler_ref" >> $GITHUB_OUTPUT
-
-          echo "Resolved refs:"
-          echo "  miden-base:       $base_ref"
-          echo "  miden-tutorials:  $tutorials_ref"
-          echo "  miden-client:     $client_ref"
-          echo "  miden-node:       $node_ref"
-          echo "  miden-vm:         $vm_ref"
-          echo "  compiler:         $compiler_ref"
-
-      # Check out each source repo into vendor/*
-      - name: Checkout 0xMiden/miden-base
-        uses: actions/checkout@v4
-        with:
-          repository: 0xMiden/miden-base
-          ref: ${{ steps.refs.outputs.MIDEN_BASE_REF }}
-          path: vendor/miden-base
-
-      - name: Checkout 0xMiden/miden-tutorials
-        uses: actions/checkout@v4
-        with:
-          repository: 0xMiden/miden-tutorials
-          ref: ${{ steps.refs.outputs.MIDEN_TUTORIALS_REF }}
-          path: vendor/miden-tutorials
-
-      - name: Checkout 0xMiden/miden-client
-        uses: actions/checkout@v4
-        with:
-          repository: 0xMiden/miden-client
-          ref: ${{ steps.refs.outputs.MIDEN_CLIENT_REF }}
-          path: vendor/miden-client
-
-      - name: Checkout 0xMiden/miden-node
-        uses: actions/checkout@v4
-        with:
-          repository: 0xMiden/miden-node
-          ref: ${{ steps.refs.outputs.MIDEN_NODE_REF }}
-          path: vendor/miden-node
-
-      - name: Checkout 0xMiden/miden-vm
-        uses: actions/checkout@v4
-        with:
-          repository: 0xMiden/miden-vm
-          ref: ${{ steps.refs.outputs.MIDEN_VM_REF }}
-          path: vendor/miden-vm
-
-      - name: Checkout 0xMiden/compiler
-        uses: actions/checkout@v4
-        with:
-          repository: 0xMiden/compiler
-          ref: ${{ steps.refs.outputs.COMPILER_REF }}
-          path: vendor/compiler
-
-      - name: Aggregate docs into single docs tree
-        run: |
-          echo "Aggregating vendor docs into docs/ structure..."
-          # Clean only vendor directories that will be re-synced
-          rm -rf docs/miden-base docs/miden-node docs/miden-client docs/miden-tutorials docs/miden-vm docs/compiler
-
-          # Copy each vendor repo's docs into docs/
-          if [ -d "vendor/miden-node/docs/external/src" ]; then
-            cp -r vendor/miden-node/docs/external/src/ docs/miden-node/
-            echo "Synced miden-node docs"
-          fi
-
-          if [ -d "vendor/miden-vm/docs/src" ]; then
-            cp -r vendor/miden-vm/docs/src/ docs/miden-vm/
-            echo "Synced miden-vm docs"
-          fi
-
-          if [ -d "vendor/miden-base/docs/src" ]; then
-            cp -r vendor/miden-base/docs/src/ docs/miden-base/
-            echo "Synced miden-base docs"
-          fi
-
-          if [ -d "vendor/miden-client/docs/external/src" ]; then
-            cp -r vendor/miden-client/docs/external/src/ docs/miden-client/
-            echo "Synced miden-client docs"
-          fi
-
-          if [ -d "vendor/compiler/docs/external/src" ]; then
-            cp -r vendor/compiler/docs/external/src/ docs/compiler/
-            echo "Synced compiler docs"
-          fi
-
-          if [ -d "vendor/miden-tutorials/docs/src" ]; then
-            cp -r vendor/miden-tutorials/docs/src/ docs/miden-tutorials/
-            echo "Synced miden-tutorials docs"
-          fi
-
-          echo "Content aggregation complete. Final docs structure:"
-          ls -la docs/
-
       - name: Install deps
-        run: npm install --frozen-lockfile
+        run: npm ci
 
       - name: Build site
         env:
-          NODE_OPTIONS: "--max-old-space-size=6144" # 6GB
-        run: |
-          echo "Building Docusaurus site"
-          npm run build
+          NODE_OPTIONS: "--max-old-space-size=6144"
+        run: npm run build
 
       - name: Add CNAME
         run: echo docs.miden.xyz > build/CNAME

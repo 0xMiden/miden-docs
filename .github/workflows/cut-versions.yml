@@ -1,3 +1,23 @@
+# ============================================================
+# ARCHITECTURE NOTE:
+# This is the ONLY workflow that ingests external repos.
+#
+# Workflow responsibilities:
+#   1. Check out external repos at pinned refs (miden-base, miden-vm, etc.)
+#   2. Aggregate their docs into docs/ TEMPORARILY
+#   3. Run `docusaurus docs:version` to snapshot into versioned_docs/
+#   4. CLEAN UP docs/ (remove miden-* folders)
+#   5. Commit versioned_docs/ snapshot
+#
+# After this workflow runs, docs/ returns to authored-only state.
+# The deploy workflow (deploy-docs.yml) is render-only and MUST NOT
+# ingest external repos.
+#
+# Canonical-source architecture:
+#   - Builder content: authored in docs/builder/
+#   - Design/Tutorials/Client: ingested here, stored in versioned_docs/
+# ============================================================
+
 name: Cut Docs Version (global)
 
 on:
@@ -121,6 +141,8 @@ jobs:
           checkout_ref "${REPO_COMPILER}"  "${{ steps.manifest.outputs.compiler_ref }}"  vendor/compiler
           checkout_ref "${REPO_TUTORIALS}" "${{ steps.manifest.outputs.miden_tutorials_ref }}" vendor/miden-tutorials
 
+      # TEMPORARY aggregation: docs/ is populated only for version snapshot
+      # This content is cleaned up after versioning (see "Clean up" step below)
       - name: Aggregate docs into single docs tree
         run: |
           echo "Aggregating vendor docs into docs/ structure..."
@@ -167,6 +189,9 @@ jobs:
           echo "Creating Docusaurus version: $VERSION"
           npm run docusaurus -- docs:version "$VERSION"
 
+      # CRITICAL: Clean up docs/ to maintain canonical-source architecture
+      # docs/ must only contain authored content (builder/, design/ landing pages)
+      # All ingested content lives in versioned_docs/ after versioning
       - name: Clean up (delete vendor and docs files)
         run: |
           rm -rf vendor
