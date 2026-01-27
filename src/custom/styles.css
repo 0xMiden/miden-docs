@@ -1120,6 +1120,73 @@ code {
 }
 
 /* ==========================================
+   16.1) SEARCH BUTTON - DocSearch-style pill
+   ========================================== */
+
+/* Detached mode search button (pill shape) */
+.aa-DetachedSearchButton {
+  min-width: 200px;
+  border-radius: 2rem;
+  padding: 0 12px;
+  height: 36px;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-border-color);
+  transition: border-color 0.2s ease, background 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.aa-DetachedSearchButton:hover {
+  border-color: var(--ifm-color-emphasis-400);
+  background: var(--ifm-hover-overlay);
+}
+
+/* Search icon */
+.aa-DetachedSearchButtonIcon {
+  width: 16px;
+  height: 16px;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Placeholder text */
+.aa-DetachedSearchButtonPlaceholder {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-500);
+}
+
+/* Keyboard shortcut keys container */
+.aa-DetachedSearchButtonKeys {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+/* Individual key styling */
+.aa-DetachedSearchButtonKey {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-family: var(--font-sans);
+  color: var(--ifm-color-emphasis-500);
+  background: var(--ifm-background-color);
+  border: 1px solid var(--ifm-border-color);
+  border-radius: 4px;
+  box-shadow: 0 1px 0 var(--ifm-border-color);
+}
+
+/* Hide shortcut keys on mobile */
+@media (max-width: 996px) {
+  .aa-DetachedSearchButtonKeys {
+    display: none;
+  }
+}
+
+/* ==========================================
    18) NUMERED LISTS
    ========================================== */
 
