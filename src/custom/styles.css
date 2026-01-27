@@ -486,9 +486,12 @@ img {
    ========================================== */
 
 /* Smooth chevron rotation for categories */
+/* Also make arrow smaller and thinner (Infima default is 2rem - too large) */
 .menu__link--sublist-caret::after,
 .menu__caret::before {
   transition: transform 0.2s ease;
+  background-size: 1.25rem 1.25rem;
+  opacity: 0.6;
 }
 
 /* ==========================================
