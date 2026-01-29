@@ -1,0 +1,64 @@
+.copyButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: var(--ifm-color-primary);
+  background: transparent;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.copyButton:hover {
+  color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  background: color-mix(in oklab, var(--ifm-color-primary) 8%, transparent);
+}
+
+.copyButton:active {
+  transform: scale(0.98);
+}
+
+.copyButton.copied {
+  color: var(--color-success, #00871d);
+  border-color: var(--color-success, #00871d);
+  background: color-mix(in oklab, var(--color-success, #00871d) 8%, transparent);
+}
+
+.copyButton svg {
+  flex-shrink: 0;
+}
+
+.label {
+  display: inline;
+}
+
+/* Hide label on smaller screens */
+@media (max-width: 768px) {
+  .label {
+    display: none;
+  }
+
+  .copyButton {
+    padding: 0.5rem;
+  }
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .copyButton {
+  background: transparent;
+}
+
+[data-theme="dark"] .copyButton:hover {
+  background: color-mix(in oklab, var(--ifm-color-primary) 15%, transparent);
+}
+
+[data-theme="dark"] .copyButton.copied {
+  background: color-mix(in oklab, var(--color-success, #00871d) 15%, transparent);
+}

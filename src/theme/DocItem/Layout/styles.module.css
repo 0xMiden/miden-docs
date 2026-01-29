@@ -1,0 +1,28 @@
+.docItemWrapper {
+  position: relative;
+}
+
+.copyButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+  padding-right: 0;
+}
+
+/* Adjust position on larger screens */
+@media (min-width: 997px) {
+  .copyButtonContainer {
+    position: absolute;
+    top: 0;
+    right: -60px;
+    margin-bottom: 0;
+    z-index: 10;
+  }
+}
+
+/* Even wider screens - push further right */
+@media (min-width: 1200px) {
+  .copyButtonContainer {
+    right: -100px;
+  }
+}
