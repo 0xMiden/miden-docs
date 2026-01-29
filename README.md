@@ -57,9 +57,9 @@ flowchart TD
     end
 
     CutVersions["CICD cut-versions.yml<br/>(ingest + snapshot)"]
-    DeployDocs["CICD deploy-docs.yml<br/>(render-only)"]
+    DeployDocs["CICD deploy-docs.yml<br/>(ingest + build)"]
 
-    %% External repos feed into versioned_docs via cut-versions
+    %% External repos feed into both workflows
     MidenBase -->|"ingested @v0.12.3"| CutVersions
     MidenVM -->|"ingested @v0.19.1"| CutVersions
     MidenNode -->|"ingested @v0.12.3"| CutVersions
@@ -67,10 +67,17 @@ flowchart TD
     MidenClient -->|"ingested @v0.12.3"| CutVersions
     MidenTutorials -->|"ingested @main"| CutVersions
 
+    MidenBase -->|"ingested @next"| DeployDocs
+    MidenVM -->|"ingested @next"| DeployDocs
+    MidenNode -->|"ingested @next"| DeployDocs
+    Compiler -->|"ingested @next"| DeployDocs
+    MidenClient -->|"ingested @next"| DeployDocs
+    MidenTutorials -->|"ingested @main"| DeployDocs
+
     CutVersions -->|"snapshots all content"| VersionedDocs
 
-    %% Deploy workflow reads both
-    DocsDir -->|"current/next"| DeployDocs
+    %% Deploy workflow uses authored + ingested + versioned
+    DocsDir -->|"authored content"| DeployDocs
     VersionedDocs -->|"versioned releases"| DeployDocs
 
     DeployDocs -->|"builds"| Site["docs.miden.xyz"]
@@ -80,8 +87,9 @@ flowchart TD
 
 | Category | Location | Source | Example |
 |----------|----------|--------|---------|
-| **Authored** | `docs/` | Written in this repo | `docs/builder/quick-start/`, `docs/builder/faq.md` |
-| **Ingested** | `versioned_docs/` only | External repos | `versioned_docs/version-0.12/miden-base/` |
+| **Authored** | `docs/builder/` | Written in this repo | `docs/builder/quick-start/`, `docs/builder/faq.md` |
+| **Ingested (live)** | `docs/design/`, `docs/builder/` | External repos @ next | `docs/design/miden-base/`, `docs/builder/tutorials/` |
+| **Ingested (versioned)** | `versioned_docs/` | External repos @ release tags | `versioned_docs/version-0.12/miden-base/` |
 | **Snapshots** | `versioned_docs/` | Frozen via `docs:version` | All versioned content |
 
 ### What Each Location Contains
@@ -167,15 +175,20 @@ The workflow commits directly to the branch. Review and merge to `main`.
 Deployment is **automatic** on push to `main`.
 
 The `.github/workflows/deploy-docs.yml` workflow:
-1. Checks out **only this repository** (no external repos)
-2. Runs `npm run build` to generate the static site
-3. Deploys to GitHub Pages at `docs.miden.xyz`
+1. Checks out this repository and all external source repos
+2. Ingests external docs into v0.4 IA structure:
+   - Design docs → `docs/design/miden-base/`, `miden-vm/`, `compiler/`, `miden-node/`
+   - Builder docs → `docs/builder/tutorials/`, `docs/builder/client/`
+3. Runs `npm run build` to generate the static site
+4. Deploys to GitHub Pages at `docs.miden.xyz`
 
 The build uses:
-- `docs/` → serves as "current/next" (unreleased) version
+- `docs/` → serves as "current/next" version (authored + ingested content)
 - `versioned_docs/` → serves as versioned releases (0.11, 0.12, etc.)
 
-**The deploy workflow never ingests external repositories.** All external content must be snapshotted via `cut-versions.yml` first.
+**Both workflows ingest external content**, but with different purposes:
+- `deploy-docs.yml` → live "next" docs from `next` branch of source repos
+- `cut-versions.yml` → versioned snapshots at pinned release tags
 
 ---
 
@@ -191,10 +204,9 @@ The build uses:
 
 ### ❌ DON'T
 
-- **Never** copy external content into `docs/`
-- **Never** create `docs/miden-base/`, `docs/miden-vm/`, etc.
+- **Never** manually copy external content into `docs/` (use CI/CD ingestion)
+- **Never** create root-level `docs/miden-base/`, `docs/miden-vm/`, etc. (use nested paths in `docs/design/`)
 - **Never** edit `versioned_docs/` directly (snapshots are immutable)
-- **Never** add external repo ingestion to `deploy-docs.yml`
 - **Never** create a root-level `docs/quick-start/` (Quick Start lives in `docs/builder/`)
 
 ### Quick Reference
