@@ -1,0 +1,202 @@
+/* =========================
+   12. Code block card + header
+   ========================= */
+
+.theme-code-block {
+  border: 1px solid var(--ifm-border-color);
+  border-radius: 0.357rem;
+  position: relative;
+}
+
+/* Target CSS module class using attribute selector to handle hashed names */
+.theme-code-block [class*="codeBlockTitle"] {
+  display: flex;
+  align-items: center;
+  gap: 0.714rem;
+  padding: 0.714rem 0.857rem;
+  font-family: var(--font-sans) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02rem !important;
+  color: var(--color-base) !important;
+  border-bottom: 1px solid var(--ifm-border-color) !important;
+}
+
+/* Body */
+.theme-code-block pre {
+  margin: 0;
+  background: color-mix(
+    in oklab,
+    var(--color-surface) 96%,
+    var(--color-bg, #fff)
+  );
+  padding: 0.857rem 1.286rem; /* Reduced vertical padding from 1.143rem to 0.857rem */
+}
+
+/* Code text - design specifications */
+.theme-code-block code {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: var(--ifm-code-font-size); /* 14px */
+  line-height: var(--ifm-code-line-height); /* 24px */
+  letter-spacing: var(--ifm-code-letter-spacing); /* -2% */
+  color: var(--color-text);
+}
+
+/* Inline code - design specifications */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.857rem; /* 12px converted to rem */
+  line-height: 120%; /* Further reduced for tighter spacing */
+  letter-spacing: var(--ifm-code-letter-spacing); /* -2% */
+  font-weight: 400;
+  background: var(--ifm-background-surface-color);
+  padding: var(--ifm-code-padding-vertical) var(--ifm-code-padding-horizontal);
+  border-radius: var(--ifm-code-border-radius);
+  border: 1px solid var(--ifm-border-color);
+}
+
+/* Highlighted lines / magic comments */
+.token-line.highlighted,
+.code-block-highlighted-line {
+  background: color-mix(in oklab, var(--ifm-color-primary) 12%, transparent);
+}
+
+/* Optional: softer $ prompt tint in bash */
+.theme-code-block[data-language="bash"] pre code .token.operator {
+  opacity: 0.9;
+}
+
+/* Dark tweaks */
+[data-theme="dark"] .theme-code-block .codeBlockTitle {
+  background: color-mix(in oklab, var(--color-surface) 85%, transparent);
+}
+
+[data-theme="dark"] .theme-code-block {
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .theme-code-block pre {
+  background: #3f3f3f99;
+}
+
+[data-theme="dark"] .theme-code-block code {
+  background: transparent;
+  color: var(--ifm-code-color, #abb2bf);
+}
+
+[data-theme="dark"] code {
+  background: #3f3f3f99;
+  color: var(--ifm-code-color, #abb2bf);
+  border-color: #3f3f3f99;
+}
+
+/* ==========================================
+   12.1) DETAILS/SUMMARY (Expandable Sections) - styled like code blocks
+   ========================================== */
+
+/* Scope to docs content only */
+.theme-doc-markdown details {
+  border: 1px solid var(--ifm-border-color);
+  border-radius: 0.357rem;
+  background: var(--ifm-background-surface-color);
+  margin: 0.75rem 0 1rem;
+  overflow: hidden; /* crisp rounded corners */
+  padding: 0;
+}
+
+/* The clickable header row */
+.theme-doc-markdown details > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.714rem;
+  padding: 0.714rem 0.857rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  color: var(--color-text);
+  border-bottom: 1px solid transparent;
+}
+
+/* Normal text variant - use .normal-text class to override uppercase */
+.theme-doc-markdown details.normal-text > summary,
+.theme-doc-markdown details > summary.normal-text {
+  text-transform: none !important;
+  font-family: var(
+    --font-sans
+  ) !important; /* Use monospace like code block titles */
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02rem !important;
+}
+
+/* Hide native disclosure marker */
+.theme-doc-markdown details > summary::marker,
+.theme-doc-markdown details > summary::-webkit-details-marker {
+  display: none;
+  content: "";
+}
+
+/* Custom caret icon */
+.theme-doc-markdown details > summary::before {
+  content: "";
+  width: 0.214rem;
+  height: 0.214rem;
+  flex-shrink: 0;
+  -webkit-mask: url("/img/custom_caret.svg") no-repeat center / contain;
+  mask: url("/img/custom_caret.svg") no-repeat center / contain;
+  background: currentColor;
+  transition: transform 0.15s ease;
+  transform: rotate(0deg);
+  transform-origin: center center; /* Rotate around its own center */
+  opacity: 0.8;
+  position: relative;
+  top: 0;
+}
+
+.theme-doc-markdown details[open] > summary {
+  border-bottom-color: var(--ifm-border-color);
+}
+
+/* Rotate caret when details is open */
+.theme-doc-markdown details[open] > summary::before {
+  transform: rotate(90deg);
+  transform-origin: center center; /* Keep center rotation when open */
+}
+
+/* Body content area */
+.theme-doc-markdown details > :not(summary) {
+  padding: 1rem;
+}
+
+/* Code block inside details (optional polish) */
+.theme-doc-markdown details pre {
+  margin: 0;
+  background: color-mix(in oklab, var(--color-surface) 96%, var(--color-bg));
+  border-radius: 0.429rem;
+}
+
+.theme-doc-markdown details > summary {
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+[class^="collapsibleContent_"],
+[class*=" collapsibleContent_"] {
+  padding-top: 0 !important;
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+[class^="collapsibleContent_"]::before,
+[class*=" collapsibleContent_"]::before {
+  display: none !important;
+  content: none !important;
+}

@@ -1,0 +1,90 @@
+/* ==========================================
+   3) NAVBAR & FOOTER (scoped to stable classes)
+   ========================================== */
+
+/* ThemeClassNames.layout.navbar.container */
+.theme-layout-navbar {
+  height: var(--ifm-navbar-height);
+  border-bottom: 1px solid var(--ifm-border-color) !important;
+  background: color-mix(in oklab, var(--ifm-background-color) 75%, transparent);
+  box-shadow: none;
+}
+
+/* Apply backdrop-filter only on desktop to avoid breaking mobile sidebar */
+@media (min-width: 997px) {
+  .theme-layout-navbar {
+    backdrop-filter: saturate(1.1) blur(8px);
+  }
+}
+
+/* ThemeClassNames.layout.footer.container */
+.theme-layout-footer {
+  --ifm-footer-background-color: var(--color-elevated);
+  background: var(--ifm-footer-background-color);
+  color: var(--ifm-color-content);
+}
+
+/* ==========================================
+   3.1) NAVBAR ICON LINKS
+   ========================================== */
+
+.navbar-icon-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  color: var(--ifm-navbar-link-color);
+  opacity: 0.7;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.navbar-icon-link:hover {
+  opacity: 1;
+  color: var(--ifm-color-primary);
+}
+
+.navbar-icon-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Spacing between icon links */
+.navbar__item.navbar__item--html {
+  margin: 0 2px;
+}
+
+/* ==========================================
+   3.2) UNIFIED HORIZONTAL GUTTER & TAB COLORS
+   ========================================== */
+
+/* Unified horizontal gutter - navbar, sidebar, and docs content alignment */
+.navbar__inner,
+aside[class*="docSidebarContainer"],
+main[class*="docMainContainer"] {
+  padding-inline: 24px;
+}
+
+@media (min-width: 1440px) {
+  .navbar__inner,
+  aside[class*="docSidebarContainer"],
+  main[class*="docMainContainer"] {
+    padding-inline: 32px;
+  }
+}
+
+/* Navbar tabs - neutral by default */
+.navbar__link {
+  color: var(--ifm-navbar-link-color) !important;
+  font-weight: 500;
+}
+
+/* Hover - accent color */
+.navbar__link:hover {
+  color: var(--ifm-color-primary) !important;
+}
+
+/* Active - accent color + stronger weight */
+.navbar__link--active {
+  color: var(--ifm-color-primary) !important;
+  font-weight: 600;
+}

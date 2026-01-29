@@ -1,0 +1,251 @@
+/* ==========================================
+   13) PAGINATION
+   ========================================== */
+
+.pagination-nav__link {
+  border: 1px solid var(--ifm-border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--ifm-global-shadow-lw);
+  background: var(--ifm-background-surface-color);
+  transition: all 0.2s ease;
+}
+
+/* Hide "Previous" and "Next" labels */
+.pagination-nav__sublabel {
+  display: none;
+}
+
+/* Main pagination link text - uppercase */
+.pagination-nav__label {
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  font-size: 1.2rem;
+  font-family: var(--font-sans);
+  color: color-mix(in oklab, #292929bf 75%, #000);
+}
+
+[data-theme="dark"] .pagination-nav__label {
+  color: #ffffff;
+}
+
+/* Arrow text characters (>> and <<) */
+.pagination-nav__link--prev::before,
+.pagination-nav__link--next::after {
+  color: var(--ifm-color-primary) !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem !important;
+}
+
+/* If arrows are in a separate element */
+.pagination-nav__link .pagination-nav__icon,
+.pagination-nav__link--prev .pagination-nav__icon,
+.pagination-nav__link--next .pagination-nav__icon {
+  color: var(--ifm-color-primary) !important;
+}
+
+/* ==========================================
+   14) TOC (right sidebar)
+   ========================================== */
+
+/* TOC links styling */
+.table-of-contents {
+  font-family: var(--font-sans);
+  letter-spacing: 0.01rem;
+  border-left: 1px solid var(--ifm-border-color);
+  padding-left: var(--space-4);
+  font-size: 0.875rem;
+}
+
+.table-of-contents__link {
+  color: var(--color-text);
+  display: block;
+  padding: 0.286rem 0;
+}
+
+.table-of-contents__link--active {
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+}
+
+/* ==========================================
+   18) NUMERED LISTS
+   ========================================== */
+
+/* === DOCUSAURUS "VitePress-style" numbered steps === */
+.steps {
+  counter-reset: step-counter;
+  list-style: none;
+  padding-left: 1.5rem;
+  margin-left: 2.5rem; /* Space for number badges and line */
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.steps > ol,
+.steps > ul {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+.steps li {
+  counter-increment: step-counter;
+  position: relative;
+  margin-bottom: 2rem;
+  min-height: 2rem;
+}
+
+/* Number badge - dynamically aligns with first element */
+.steps li::before {
+  content: counter(step-counter);
+  position: absolute;
+  left: -4rem; /* Align with .steps margin-left */
+  top: 0.15rem; /* Slight offset for visual centering with text baseline */
+  width: 2rem;
+  min-height: 2rem;
+  border-radius: 0px;
+  background: var(--ifm-background-surface-color);
+  color: var(--color-text);
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  padding: 0.3rem 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ifm-border-color);
+  z-index: 2;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* All headings inside steps get proper spacing */
+.steps li > h1,
+.steps li > h2,
+.steps li > h3,
+.steps li > h4,
+.steps li > h5,
+.steps li > h6 {
+  margin-top: 0rem !important;
+  margin-bottom: 1.5rem !important;
+  line-height: 1.3 !important;
+  padding-top: 0.7rem !important;
+} /* Specific h5 styling (most common) */
+.steps li > h5 {
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+} /* Style for all content inside step items */
+.steps li > * {
+  margin-bottom: 1rem;
+}
+.steps li > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Paragraphs right after headings - reduce space */
+.steps li > h1 + p,
+.steps li > h2 + p,
+.steps li > h3 + p,
+.steps li > h4 + p,
+.steps li > h5 + p,
+.steps li > h6 + p {
+  margin-top: -0.75rem;
+}
+
+/* First paragraph without heading */
+.steps li > p:first-child {
+  margin-top: 0;
+} /* Code blocks within steps */
+.steps li pre,
+.steps li .theme-code-block {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Lists within steps */
+.steps li ul,
+.steps li ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+} /* Admonitions within steps */
+.steps li .theme-admonition {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ==========================================
+   19) DESIGN SYSTEM SPACING SPECIFICATIONS
+   ========================================== */
+
+/* Apply design system spacing to documentation content */
+.theme-doc-markdown h1 {
+  margin-bottom: var(--space-24px); /* H1 → First content block: 24px */
+}
+
+.theme-doc-markdown h2 {
+  margin-top: var(
+    --space-32px
+  ); /* H2 → previous section (major section break): 32px */
+  margin-bottom: var(--space-16px); /* H2 → Paragraph below: 16px */
+}
+
+.theme-doc-markdown h3 {
+  margin-bottom: var(--space-16px); /* H3 → Paragraph below: 16px */
+}
+
+.theme-doc-markdown h4 {
+  margin-bottom: var(--space-16px); /* H4 → Paragraph below: 16px */
+}
+
+/* Paragraph spacing */
+.theme-doc-markdown p {
+  margin-bottom: var(--space-16px); /* Paragraph → Paragraph: 16px */
+}
+
+/* List spacing - only outermost lists get large indent */
+.theme-doc-markdown > ul,
+.theme-doc-markdown > ol,
+.theme-doc-markdown p + ul,
+.theme-doc-markdown p + ol,
+.theme-doc-markdown h1 + ul,
+.theme-doc-markdown h1 + ol,
+.theme-doc-markdown h2 + ul,
+.theme-doc-markdown h2 + ol,
+.theme-doc-markdown h3 + ul,
+.theme-doc-markdown h3 + ol,
+.theme-doc-markdown h4 + ul,
+.theme-doc-markdown h4 + ol,
+.theme-doc-markdown h5 + ul,
+.theme-doc-markdown h5 + ol,
+.theme-doc-markdown h6 + ul,
+.theme-doc-markdown h6 + ol {
+  margin-top: var(--space-16px); /* Paragraph → List: 16px */
+  margin-bottom: var(--space-16px); /* List → Next Paragraph: 16px */
+  padding-left: var(--space-24px); /* Large indent for outermost lists: 24px */
+}
+
+/* Nested lists get enhanced indent and padding for better differentiation */
+.theme-doc-markdown ul ul,
+.theme-doc-markdown ul ol,
+.theme-doc-markdown ol ul,
+.theme-doc-markdown ol ol {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem; /* Increased from 1.5rem for better visual differentiation */
+}
+
+/* H2 to large components (images, tables, diagrams) */
+.theme-doc-markdown h2 + img,
+.theme-doc-markdown h2 + table,
+.theme-doc-markdown h2 + .theme-admonition {
+  margin-top: var(--space-24px); /* H2 → large component: 24px */
+}
+
+/* Major structural reset for dramatic transitions */
+.theme-doc-markdown > *:first-child {
+  margin-top: 0;
+}
+
+/* Section breaks - ensure consistent spacing between major sections */
+.theme-doc-markdown h1 + h2 {
+  margin-top: var(--space-32px); /* Major section break */
+}
