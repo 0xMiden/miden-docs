@@ -69,6 +69,10 @@
 
   /* Docs sidebar width */
   --doc-sidebar-width: 17.857rem !important;
+
+  /* Sidebar vertical rail system */
+  --sidebar-rail-width: 1px;
+  --sidebar-rail-overdraw: 5px;
 }
 
 /* ==========================================

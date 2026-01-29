@@ -48,50 +48,66 @@
   padding-left: 12px;
 }
 
-/* ==============================================
-   ROW-INDICATOR VERTICAL LINES
-   Each row owns a line with fixed height = row height.
-   Lines do NOT connect rows - they indicate depth.
-   Visual continuity comes from alignment, not geometry.
-   No sibling logic. Each row is independent.
-   ============================================== */
+/* ======================================================
+   SIDEBAR ROW-INDICATOR RAIL (UNIFIED)
+   One geometry rule + depth via CSS variables.
+   No transforms, no percentages, no cumulative drift.
+   ====================================================== */
 
-/* All nested menu links get position relative for ::before */
-.theme-doc-sidebar-item-category-level-1 ul.menu__list .menu__link {
+.theme-doc-sidebar-menu .menu__link {
   position: relative;
 }
 
-/* Row-aligned vertical indicator - slight overdraw for visual continuity */
-.theme-doc-sidebar-item-category-level-1 ul.menu__list .menu__link::before {
+/* Default rail (depth-aware via CSS variables) */
+.theme-doc-sidebar-menu .menu__link::before {
   content: "";
   position: absolute;
-  left: -14px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: calc(100% + 4px); /* Overdraw so adjacent rows visually merge */
-  width: 1px;
-  background: var(--ifm-border-color);
+
+  /* Horizontal placement (overridden by depth) */
+  left: var(--sidebar-rail-left, -14px);
+
+  /* Row-box anchoring — no padding math, no transforms */
+  top: -2px;
+  height: calc(100% + var(--sidebar-rail-overdraw));
+
+  width: var(--sidebar-rail-width);
+  background: var(--sidebar-rail-color, var(--ifm-border-color));
   pointer-events: none;
 }
 
-/* Active leaf item line = brand color */
-.theme-doc-sidebar-item-category-level-1 ul.menu__list .menu__link--active::before {
-  background: var(--ifm-color-primary);
+/* --- Depth configuration --- */
+
+/* Level 1 (top-level children) */
+.theme-doc-sidebar-item-category-level-1 {
+  --sidebar-rail-left: -14px;
+  --sidebar-rail-color: var(--ifm-border-color);
 }
 
-/* Category links (with sublist) - muted line */
-.theme-doc-sidebar-item-category-level-1 ul.menu__list .menu__link--sublist::before {
-  background: var(--ifm-border-color);
+/* Level 2 (nested items) */
+.theme-doc-sidebar-item-category-level-2,
+.theme-doc-sidebar-item-link-level-2 {
+  --sidebar-rail-left: -12px;
+  --sidebar-rail-color: color-mix(
+    in oklab,
+    var(--ifm-border-color) 60%,
+    transparent
+  );
 }
 
-/* Deeper nesting (L2) - lighter guide line, adjusted position */
-.theme-doc-sidebar-item-category-level-2 ul.menu__list .menu__link::before {
-  left: -12px;
-  background: color-mix(in oklab, var(--ifm-border-color) 60%, transparent);
+/* Level 3 (optional) */
+.theme-doc-sidebar-item-category-level-3,
+.theme-doc-sidebar-item-link-level-3 {
+  --sidebar-rail-left: -10px;
+  --sidebar-rail-color: color-mix(
+    in oklab,
+    var(--ifm-border-color) 40%,
+    transparent
+  );
 }
 
-.theme-doc-sidebar-item-category-level-2 ul.menu__list .menu__link--active::before {
-  background: color-mix(in oklab, var(--ifm-color-primary) 70%, transparent);
+/* --- Active state --- */
+.theme-doc-sidebar-menu .menu__link--active {
+  --sidebar-rail-color: var(--ifm-color-primary);
 }
 
 /* ==========================================
@@ -230,16 +246,6 @@ aside[class*="docSidebarContainer"] .menu__caret {
    ========================================== */
 
 @media (max-width: 996px) {
-  /* Ensure row-based guide lines work on mobile */
-  .theme-doc-sidebar-item-category-level-1 ul.menu__list .menu__link::before {
-    background: var(--ifm-border-color);
-  }
-
-  /* Active item line on mobile */
-  .theme-doc-sidebar-item-category-level-1 ul.menu__list .menu__link--active::before {
-    background: var(--ifm-color-primary);
-  }
-
   /* Touch-friendly tap targets */
   .theme-doc-sidebar-menu .menu__link {
     padding: 12px 10px;
