@@ -227,22 +227,13 @@ The build uses:
 
 ### Analytics Configuration
 
-The site uses two analytics providers:
+The site uses **Simple Analytics** for privacy-first, cookie-less metrics.
 
 | Provider | Purpose | Configuration |
 |----------|---------|---------------|
 | **Simple Analytics** | Privacy-first baseline metrics | `scripts` array in `docusaurus.config.ts` |
-| **GA4** | Funnel analysis (TTFS measurement) | `themeConfig.gtag` in `docusaurus.config.ts` |
-
-**GA4 Tracking ID:** Replace `G-XXXXXXXXXX` in `docusaurus.config.ts` with actual tracking ID.
 
 ### Verification in Production
-
-**GA4:**
-1. Open browser DevTools → Network tab
-2. Filter for `gtag` or `google-analytics`
-3. Navigate between pages and verify `page_view` events fire
-4. Use [GA4 DebugView](https://support.google.com/analytics/answer/7201382) or [Tag Assistant](https://tagassistant.google.com/)
 
 **Simple Analytics:**
 - Dashboard: https://simpleanalytics.com/miden.xyz
