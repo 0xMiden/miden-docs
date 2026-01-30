@@ -102,7 +102,7 @@ P2ID Inputs: [suffix, prefix, 0, 0, 0, 0, 0, 0]
 ```
 
 :::warning Array Ordering
-Note the order: `suffix` comes before `prefix`. This is the opposite of how `AccountId` fields are typically accessed. See [Common Pitfalls](../../pitfalls#array-ordering-rustmasm-reversal) for more details.
+Note the order: `suffix` comes before `prefix`. This is the opposite of how `AccountId` fields are typically accessed. See [Common Pitfalls](../pitfalls#array-ordering-rustmasm-reversal) for more details.
 :::
 
 ## Step 3: Creating the Output Note
