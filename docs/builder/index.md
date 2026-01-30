@@ -92,31 +92,6 @@ import DocCard from '@theme/DocCard';
   </div>
 </div>
 
-## How Miden Works
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: '/design',
-        label: 'Architecture',
-        description: 'Learn how the Miden network is designed and how components interact.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: 'https://0xmiden.github.io/miden-vm/',
-        label: 'Virtual Machine',
-        description: 'Miden VM architecture, chiplets, and stack operations.',
-      }}
-    />
-  </div>
-</div>
-
 ## Resources
 
 <div className="row">
