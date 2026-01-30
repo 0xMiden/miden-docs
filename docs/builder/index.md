@@ -1,5 +1,4 @@
 ---
-slug: /
 sidebar_label: Introduction
 sidebar_position: 0
 ---
@@ -36,7 +35,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: '/builder/quick-start',
+        href: './quick-start',
         label: 'Quick Start',
         description: 'Install Miden tools, create your first wallet, and build your first transaction.',
       }}
@@ -46,7 +45,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: '/builder/quick-start/setup/installation',
+        href: './quick-start/setup/installation',
         label: 'Installation',
         description: 'Set up your development environment with the midenup toolchain.',
       }}
@@ -61,7 +60,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: '/builder/develop',
+        href: './develop',
         label: 'Tutorials',
         description: 'Step-by-step guides for building applications on Miden.',
       }}
@@ -71,7 +70,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: '/builder/tools',
+        href: './tools',
         label: 'Tools',
         description: 'Miden Client libraries, CLI, and developer tooling.',
       }}
@@ -84,7 +83,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: '/builder/migration',
+        href: './migration',
         label: 'Migration',
         description: 'Upgrade guides for migrating between Miden versions.',
       }}
@@ -99,7 +98,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: '/builder/faq',
+        href: './faq',
         label: 'FAQ',
         description: 'Frequently asked questions about Miden.',
       }}
@@ -109,7 +108,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: '/builder/glossary',
+        href: './glossary',
         label: 'Glossary',
         description: 'Key terms and definitions used in Miden.',
       }}

@@ -85,6 +85,46 @@ const config: Config = {
 
   plugins: [
     [
+      "@docusaurus/plugin-client-redirects",
+      {
+        redirects: [
+          // Root redirect to builder
+          { from: "/", to: "/builder/" },
+          // v0.12 → v0.13 path migrations
+          { from: "/intro", to: "/builder/" },
+          { from: "/quick-start", to: "/builder/quick-start" },
+          { from: "/faq", to: "/builder/faq" },
+          { from: "/glossary", to: "/builder/glossary" },
+        ],
+        createRedirects(existingPath: string) {
+          // Build section redirects
+          if (existingPath.startsWith("/builder/quick-start")) {
+            return [existingPath.replace("/builder/quick-start", "/quick-start")];
+          }
+          if (existingPath.startsWith("/builder/develop/tutorials")) {
+            return [existingPath.replace("/builder/develop/tutorials", "/miden-tutorials")];
+          }
+          if (existingPath.startsWith("/builder/tools")) {
+            return [existingPath.replace("/builder/tools", "/miden-client")];
+          }
+          // Design section redirects
+          if (existingPath.startsWith("/design/miden-base")) {
+            return [existingPath.replace("/design/miden-base", "/miden-base")];
+          }
+          if (existingPath.startsWith("/design/miden-vm")) {
+            return [existingPath.replace("/design/miden-vm", "/miden-vm")];
+          }
+          if (existingPath.startsWith("/design/compiler")) {
+            return [existingPath.replace("/design/compiler", "/compiler")];
+          }
+          if (existingPath.startsWith("/design/miden-node")) {
+            return [existingPath.replace("/design/miden-node", "/miden-node")];
+          }
+          return undefined;
+        },
+      },
+    ],
+    [
       "@cmfcmf/docusaurus-search-local",
       {
         indexDocs: true,

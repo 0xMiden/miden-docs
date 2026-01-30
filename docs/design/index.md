@@ -56,4 +56,4 @@ This documentation assumes familiarity with:
 - Zero-knowledge proofs (conceptual understanding of STARKs)
 - Blockchain state machines and consensus
 
-For practical usage guides, see the [Build documentation](../builder/).
+For practical usage guides, see the [Build documentation](/).
