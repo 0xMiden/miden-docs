@@ -156,7 +156,7 @@ const config: Config = {
       prism: {
         theme: prismThemes.oneLight,
         darkTheme: prismThemes.oneDark,
-        additionalLanguages: ["rust", "solidity", "toml", "yaml"],
+        additionalLanguages: ["rust", "solidity", "toml", "yaml", "diff"],
       },
       navbar: {
         logo: {
