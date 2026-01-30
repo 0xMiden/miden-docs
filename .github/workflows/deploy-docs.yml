@@ -198,23 +198,23 @@ jobs:
           echo "Tutorials subdirs:"
           ls -la docs/builder/develop/tutorials/ || true
 
-      # - name: Install deps
-      #   run: npm install --frozen-lockfile
+      - name: Install deps
+        run: npm install --frozen-lockfile
 
-      # - name: Build site
-      #   env:
-      #     NODE_OPTIONS: "--max-old-space-size=6144" # 6GB
-      #   run: |
-      #     echo "Building Docusaurus site"
-      #     npm run build
+      - name: Build site
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144" # 6GB
+        run: |
+          echo "Building Docusaurus site"
+          npm run build
 
-      # - name: Add CNAME
-      #   run: echo docs.miden.xyz > build/CNAME
+      - name: Add CNAME
+        run: echo docs.miden.xyz > build/CNAME
 
-      # - name: Upload artifact
-      #   uses: actions/upload-pages-artifact@v3
-      #   with:
-      #     path: build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
 
-      # - name: Deploy to GitHub Pages
-      #   uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
