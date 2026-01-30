@@ -87,40 +87,46 @@ const config: Config = {
     [
       "@docusaurus/plugin-client-redirects",
       {
-        redirects: [
-          // Root redirect to builder
-          { from: "/", to: "/builder/" },
-          // v0.12 → v0.13 path migrations
-          { from: "/intro", to: "/builder/" },
-          { from: "/quick-start", to: "/builder/quick-start" },
-          { from: "/faq", to: "/builder/faq" },
-          { from: "/glossary", to: "/builder/glossary" },
-        ],
+        // Use createRedirects for v0.12 → v0.13 path migrations
+        // This ensures redirects are only created for paths that exist
         createRedirects(existingPath: string) {
-          // Build section redirects
+          const redirects: string[] = [];
+
+          // Builder section: redirect old root-level paths to new /builder/ paths
+          if (existingPath === "/builder/") {
+            redirects.push("/intro");
+          }
           if (existingPath.startsWith("/builder/quick-start")) {
-            return [existingPath.replace("/builder/quick-start", "/quick-start")];
+            redirects.push(existingPath.replace("/builder/quick-start", "/quick-start"));
+          }
+          if (existingPath === "/builder/faq") {
+            redirects.push("/faq");
+          }
+          if (existingPath === "/builder/glossary") {
+            redirects.push("/glossary");
           }
           if (existingPath.startsWith("/builder/develop/tutorials")) {
-            return [existingPath.replace("/builder/develop/tutorials", "/miden-tutorials")];
+            redirects.push(existingPath.replace("/builder/develop/tutorials", "/miden-tutorials"));
           }
           if (existingPath.startsWith("/builder/tools")) {
-            return [existingPath.replace("/builder/tools", "/miden-client")];
+            redirects.push(existingPath.replace("/builder/tools", "/miden-client"));
           }
-          // Design section redirects
+
+          // Design section: redirect old root-level paths to new /design/ paths
           if (existingPath.startsWith("/design/miden-base")) {
-            return [existingPath.replace("/design/miden-base", "/miden-base")];
+            redirects.push(existingPath.replace("/design/miden-base", "/miden-base"));
           }
           if (existingPath.startsWith("/design/miden-vm")) {
-            return [existingPath.replace("/design/miden-vm", "/miden-vm")];
+            redirects.push(existingPath.replace("/design/miden-vm", "/miden-vm"));
           }
           if (existingPath.startsWith("/design/compiler")) {
-            return [existingPath.replace("/design/compiler", "/compiler")];
+            redirects.push(existingPath.replace("/design/compiler", "/compiler"));
           }
           if (existingPath.startsWith("/design/miden-node")) {
-            return [existingPath.replace("/design/miden-node", "/miden-node")];
+            redirects.push(existingPath.replace("/design/miden-node", "/miden-node"));
           }
-          return undefined;
+
+          return redirects.length > 0 ? redirects : undefined;
         },
       },
     ],
