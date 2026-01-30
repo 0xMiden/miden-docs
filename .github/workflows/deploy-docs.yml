@@ -147,7 +147,8 @@ jobs:
 
           # Clean directories that will be re-synced (v0.4 nested paths)
           rm -rf docs/design/miden-base docs/design/miden-vm docs/design/miden-node docs/design/compiler
-          rm -rf docs/builder/develop/tutorials docs/builder/client
+          rm -rf docs/builder/client
+          # Note: docs/builder/develop/tutorials is NOT fully cleaned to preserve local tutorials (e.g. miden-bank)
 
           # Design docs → docs/design/*
           if [ -d "vendor/miden-base/docs/src" ]; then
@@ -175,6 +176,7 @@ jobs:
           fi
 
           # Builder docs → docs/builder/*
+          # Sync miden-tutorials into develop/tutorials (local tutorials are preserved)
           if [ -d "vendor/miden-tutorials/docs/src" ]; then
             mkdir -p docs/builder/develop/tutorials
             cp -r vendor/miden-tutorials/docs/src/* docs/builder/develop/tutorials/
@@ -196,23 +198,23 @@ jobs:
           echo "Tutorials subdirs:"
           ls -la docs/builder/develop/tutorials/ || true
 
-      - name: Install deps
-        run: npm install --frozen-lockfile
+      # - name: Install deps
+      #   run: npm install --frozen-lockfile
 
-      - name: Build site
-        env:
-          NODE_OPTIONS: "--max-old-space-size=6144" # 6GB
-        run: |
-          echo "Building Docusaurus site"
-          npm run build
+      # - name: Build site
+      #   env:
+      #     NODE_OPTIONS: "--max-old-space-size=6144" # 6GB
+      #   run: |
+      #     echo "Building Docusaurus site"
+      #     npm run build
 
-      - name: Add CNAME
-        run: echo docs.miden.xyz > build/CNAME
+      # - name: Add CNAME
+      #   run: echo docs.miden.xyz > build/CNAME
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: build
+      # - name: Upload artifact
+      #   uses: actions/upload-pages-artifact@v3
+      #   with:
+      #     path: build
 
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+      # - name: Deploy to GitHub Pages
+      #   uses: actions/deploy-pages@v4
