@@ -1,36 +1,153 @@
-<!--
-ARCHITECTURE NOTE:
-This is the Builder landing page for the "current/next" (unreleased) version.
-Full Builder documentation (Tutorials, Client) is available in versioned releases.
-Ingested content (tutorials, client) lives in versioned_docs only.
--->
+---
+slug: /
+sidebar_label: Introduction
+sidebar_position: 0
+---
 
-# Build on Miden
+# Miden Documentation
 
-Welcome to the Miden Builder documentation. This section contains everything you need to build applications on the Miden network.
+![Miden Docs Background](/img/docs-background.png)
 
-:::info Version Note
-Full Builder documentation (Tutorials, Client guides) is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete Builder documentation.
+Miden is a zero-knowledge rollup for high-throughput, private applications. Build payments, DeFi, and asset management apps secured by Ethereum and Agglayer.
+
+:::note
+Miden is currently on **v0.13** – approaching mainnet readiness for the 2026 launch. Breaking changes may still occur in some components.
 :::
+
+### Why Miden?
+
+- **Privacy by default** – Accounts and notes are private, with the network only storing cryptographic commitments
+- **Client-side execution** – Transactions are executed and proven locally, enabling parallel processing and lower fees
+- **Programmable everything** – Accounts are smart contracts, and notes can contain arbitrary logic
+- **Ethereum security** – Settled on Ethereum with validity proofs via the Agglayer
+
+### Key Concepts
+
+- **Accounts** – Smart contracts that hold assets and execute custom logic
+- **Notes** – Programmable messages that transfer assets between accounts
+- **Transactions** – State changes proven locally using zero-knowledge proofs
+
+import DocCard from '@theme/DocCard';
 
 ## Getting Started
 
-1. **[Quick Start](./quick-start)** – Build your first account and transaction
-2. **[Develop](./develop)** – Tutorials and real-world examples
-3. **[Tools](./tools)** – Miden Client libraries and developer tooling
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '/builder/quick-start',
+        label: 'Quick Start',
+        description: 'Install Miden tools, create your first wallet, and build your first transaction.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '/builder/quick-start/setup/installation',
+        label: 'Installation',
+        description: 'Set up your development environment with the midenup toolchain.',
+      }}
+    />
+  </div>
+</div>
 
-## Documentation Sections
+## Build on Miden
 
-### [Quick Start](./quick-start)
-Get up and running with Miden in minutes.
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '/builder/develop',
+        label: 'Tutorials',
+        description: 'Step-by-step guides for building applications on Miden.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '/builder/tools',
+        label: 'Tools',
+        description: 'Miden Client libraries, CLI, and developer tooling.',
+      }}
+    />
+  </div>
+</div>
 
-### [Develop on Miden](./develop)
-Tutorials, examples, and workflows for building on Miden.
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '/builder/migration',
+        label: 'Migration',
+        description: 'Upgrade guides for migrating between Miden versions.',
+      }}
+    />
+  </div>
+</div>
 
-### [Tools](./tools)
-Developer tooling including Rust Client, Web Client, and more.
+## How Miden Works
+
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '/design',
+        label: 'Architecture',
+        description: 'Learn how the Miden network is designed and how components interact.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: 'https://0xmiden.github.io/miden-vm/',
+        label: 'Virtual Machine',
+        description: 'Miden VM architecture, chiplets, and stack operations.',
+      }}
+    />
+  </div>
+</div>
 
 ## Resources
 
-- [FAQ](./faq) - Frequently asked questions
-- [Glossary](./glossary) - Key terms and definitions
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '/builder/faq',
+        label: 'FAQ',
+        description: 'Frequently asked questions about Miden.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '/builder/glossary',
+        label: 'Glossary',
+        description: 'Key terms and definitions used in Miden.',
+      }}
+    />
+  </div>
+</div>
+
+### Community
+
+- [Telegram](https://t.me/BuildOnMiden) – Join the technical discussion
+- [GitHub](https://github.com/0xMiden) – Explore the source code
+- [Roadmap](https://miden.xyz/roadmap) – See what's coming next
+
+---
+
+Licensed under the [MIT License](http://opensource.org/licenses/MIT).
