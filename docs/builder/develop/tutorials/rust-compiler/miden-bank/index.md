@@ -38,7 +38,7 @@ This tutorial covers the following Miden Rust compiler features:
 
 Before starting this tutorial, ensure you have:
 
-- Completed the [Quick Start guide](../../../quick-start/) (familiarity with `midenup`, `miden new`, basic tooling)
+- Completed the [Quick Start guide](../../../../quick-start/) (familiarity with `midenup`, `miden new`, basic tooling)
 - Basic understanding of Miden concepts (accounts, notes, transactions)
 - Rust programming experience
 
@@ -148,9 +148,9 @@ import DocCard from '@theme/DocCard';
 
 These standalone guides complement the tutorial:
 
-- **[Testing with MockChain](../../testing)** - Learn to test your contracts
-- **[Debugging](../../debugging)** - Troubleshoot common issues
-- **[Common Pitfalls](../../pitfalls)** - Avoid known gotchas
+- **[Testing with MockChain](../testing)** - Learn to test your contracts
+- **[Debugging](../debugging)** - Troubleshoot common issues
+- **[Common Pitfalls](../pitfalls)** - Avoid known gotchas
 
 ## Source Code Repository
 

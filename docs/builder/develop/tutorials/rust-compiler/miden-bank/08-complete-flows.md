@@ -359,9 +359,9 @@ Congratulations! You've built a complete banking application with the Miden Rust
 
 ### Continue Learning
 
-- **[Testing with MockChain](../../testing)** - Deep dive into testing patterns
-- **[Debugging Guide](../../debugging)** - Troubleshoot common issues
-- **[Common Pitfalls](../../pitfalls)** - Avoid known gotchas
+- **[Testing with MockChain](../testing)** - Deep dive into testing patterns
+- **[Debugging Guide](../debugging)** - Troubleshoot common issues
+- **[Common Pitfalls](../pitfalls)** - Avoid known gotchas
 
 ### Build More
 

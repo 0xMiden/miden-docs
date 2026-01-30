@@ -248,7 +248,7 @@ Design your input layout carefully:
 | 10 | Type | Felt | Public(1) or Private(2) |
 
 :::warning Stack Limits
-Note inputs are limited. Keep your input layout compact. See [Common Pitfalls](../../pitfalls) for stack-related constraints.
+Note inputs are limited. Keep your input layout compact. See [Common Pitfalls](../pitfalls) for stack-related constraints.
 :::
 
 ## Building Note Scripts

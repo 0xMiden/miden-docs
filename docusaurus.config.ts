@@ -85,6 +85,52 @@ const config: Config = {
 
   plugins: [
     [
+      "@docusaurus/plugin-client-redirects",
+      {
+        // Use createRedirects for v0.12 → v0.13 path migrations
+        // This ensures redirects are only created for paths that exist
+        createRedirects(existingPath: string) {
+          const redirects: string[] = [];
+
+          // Builder section: redirect old root-level paths to new /builder/ paths
+          if (existingPath === "/builder/") {
+            redirects.push("/intro");
+          }
+          if (existingPath.startsWith("/builder/quick-start")) {
+            redirects.push(existingPath.replace("/builder/quick-start", "/quick-start"));
+          }
+          if (existingPath === "/builder/faq") {
+            redirects.push("/faq");
+          }
+          if (existingPath === "/builder/glossary") {
+            redirects.push("/glossary");
+          }
+          if (existingPath.startsWith("/builder/develop/tutorials")) {
+            redirects.push(existingPath.replace("/builder/develop/tutorials", "/miden-tutorials"));
+          }
+          if (existingPath.startsWith("/builder/tools")) {
+            redirects.push(existingPath.replace("/builder/tools", "/miden-client"));
+          }
+
+          // Design section: redirect old root-level paths to new /design/ paths
+          if (existingPath.startsWith("/design/miden-base")) {
+            redirects.push(existingPath.replace("/design/miden-base", "/miden-base"));
+          }
+          if (existingPath.startsWith("/design/miden-vm")) {
+            redirects.push(existingPath.replace("/design/miden-vm", "/miden-vm"));
+          }
+          if (existingPath.startsWith("/design/compiler")) {
+            redirects.push(existingPath.replace("/design/compiler", "/compiler"));
+          }
+          if (existingPath.startsWith("/design/miden-node")) {
+            redirects.push(existingPath.replace("/design/miden-node", "/miden-node"));
+          }
+
+          return redirects.length > 0 ? redirects : undefined;
+        },
+      },
+    ],
+    [
       "@cmfcmf/docusaurus-search-local",
       {
         indexDocs: true,
@@ -156,7 +202,7 @@ const config: Config = {
       prism: {
         theme: prismThemes.oneLight,
         darkTheme: prismThemes.oneDark,
-        additionalLanguages: ["rust", "solidity", "toml", "yaml"],
+        additionalLanguages: ["rust", "solidity", "toml", "yaml", "diff"],
       },
       navbar: {
         logo: {
