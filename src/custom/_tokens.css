@@ -68,11 +68,13 @@
   --navbar-height: 4.571rem;
 
   /* Docs sidebar width */
-  --doc-sidebar-width: 17.857rem !important;
+  --doc-sidebar-width: 18rem !important;
 
   /* Sidebar vertical rail system */
   --sidebar-rail-width: 1px;
   --sidebar-rail-overdraw: 5px;
+  --sidebar-indent-step: 16px;
+  --sidebar-indent-base: 16px;
 }
 
 /* ==========================================
@@ -140,7 +142,7 @@
   --ifm-container-width: var(--container-width);
   --ifm-navbar-height: var(--navbar-height);
   --ifm-menu-link-padding-horizontal: 6px;
-  --ifm-menu-link-padding-vertical: 12px;
+  --ifm-menu-link-padding-vertical: 10px;
 
   /* Borders & shadows */
   --ifm-border-color: var(--color-border);

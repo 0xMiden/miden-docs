@@ -5,7 +5,6 @@
 /* ThemeClassNames.docs.docSidebarContainer */
 .theme-doc-sidebar-container {
   border-right: 1px solid var(--ifm-border-color) !important;
-  padding: 5px;
   font-size: 0.875rem; /* Sidebar-specific font size */
 }
 
@@ -19,8 +18,6 @@
   font-family: var(--font-sans);
   letter-spacing: -2%;
   border-radius: var(--radius-md);
-  padding: var(--ifm-menu-link-padding-vertical)
-    var(--ifm-menu-link-padding-horizontal);
 }
 
 /* Base active link styling - color only, backgrounds handled by depth-specific rules */
@@ -37,15 +34,20 @@
    4.1) SIDEBAR NESTED HIERARCHY GUIDE LINES
    ========================================== */
 
-/* Indentation for nested lists - keep margin/padding for structure */
+/* Unified indentation using CSS variables */
 .theme-doc-sidebar-item-category-level-1 > ul.menu__list {
-  margin-left: 10px;
-  padding-left: 14px;
+  margin-left: 0;
+  padding-left: calc(var(--sidebar-indent-base) + var(--sidebar-indent-step));
 }
 
 .theme-doc-sidebar-item-category-level-2 > ul.menu__list {
-  margin-left: 8px;
-  padding-left: 12px;
+  margin-left: 0;
+  padding-left: calc(var(--sidebar-indent-base) + var(--sidebar-indent-step));
+}
+
+.theme-doc-sidebar-item-category-level-3 > ul.menu__list {
+  margin-left: 0;
+  padding-left: calc(var(--sidebar-indent-base) + var(--sidebar-indent-step));
 }
 
 /* ======================================================
@@ -63,8 +65,8 @@
   content: "";
   position: absolute;
 
-  /* Horizontal placement (overridden by depth) */
-  left: var(--sidebar-rail-left, -14px);
+  /* Rail position derives from indent (sits 2px left of text) */
+  left: calc(-1 * var(--sidebar-indent-step) + 2px);
 
   /* Row-box anchoring — no padding math, no transforms */
   top: -2px;
@@ -75,18 +77,16 @@
   pointer-events: none;
 }
 
-/* --- Depth configuration --- */
+/* --- Depth configuration (color only, position derived from indent) --- */
 
 /* Level 1 (top-level children) */
 .theme-doc-sidebar-item-category-level-1 {
-  --sidebar-rail-left: -14px;
   --sidebar-rail-color: var(--ifm-border-color);
 }
 
 /* Level 2 (nested items) */
 .theme-doc-sidebar-item-category-level-2,
 .theme-doc-sidebar-item-link-level-2 {
-  --sidebar-rail-left: -12px;
   --sidebar-rail-color: color-mix(
     in oklab,
     var(--ifm-border-color) 60%,
@@ -97,7 +97,6 @@
 /* Level 3 (optional) */
 .theme-doc-sidebar-item-category-level-3,
 .theme-doc-sidebar-item-link-level-3 {
-  --sidebar-rail-left: -10px;
   --sidebar-rail-color: color-mix(
     in oklab,
     var(--ifm-border-color) 40%,
@@ -122,7 +121,6 @@ aside[class*="docSidebarContainer"] .menu__list-item-collapsible,
 aside[class*="docSidebarContainer"] .menu__link,
 aside[class*="docSidebarContainer"] .menu__caret {
   box-sizing: border-box;
-  max-width: 95%;
 }
 
 /* Smooth chevron rotation for categories */
@@ -135,28 +133,28 @@ aside[class*="docSidebarContainer"] .menu__caret {
 }
 
 /* ==============================================
-   NORMALIZE CATEGORY ROW LAYOUT
-   Fix inconsistent rendering between categories
-   with index pages (a.menu__link) vs without (span.menu__link)
+   NORMALIZE CATEGORY ROW LAYOUT (GRID-BASED)
+   2-column grid: text | caret
+   Ensures all carets align vertically regardless of depth
    ============================================== */
 
-/* Force unified flex layout for all collapsible categories */
+/* Force all menu rows into 2-column grid */
 .menu__list-item-collapsible {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
 }
 
-/* Normalize caret positioning across all categories */
+/* Lock caret to right column */
 .menu__list-item-collapsible > .menu__caret {
-  margin-left: auto;
-  align-self: center;
-  transform: translateY(0); /* kill inherited offsets */
+  grid-column: 2;
+  justify-self: end;
+  margin-left: 0;
 }
 
-/* Ensure non-link category labels align like links */
+/* Menu links within collapsible sit in first column */
 .menu__list-item-collapsible > .menu__link {
-  display: flex;
-  align-items: center;
+  grid-column: 1;
 }
 
 /* ==========================================
