@@ -147,7 +147,8 @@ jobs:
 
           # Clean directories that will be re-synced (v0.4 nested paths)
           rm -rf docs/design/miden-base docs/design/miden-vm docs/design/miden-node docs/design/compiler
-          rm -rf docs/builder/tutorials docs/builder/client
+          rm -rf docs/builder/client
+          # Note: docs/builder/develop/tutorials is NOT fully cleaned to preserve local tutorials (e.g. miden-bank)
 
           # Design docs → docs/design/*
           if [ -d "vendor/miden-base/docs/src" ]; then
@@ -175,10 +176,11 @@ jobs:
           fi
 
           # Builder docs → docs/builder/*
+          # Sync miden-tutorials into develop/tutorials (local tutorials are preserved)
           if [ -d "vendor/miden-tutorials/docs/src" ]; then
-            mkdir -p docs/builder/tutorials
-            cp -r vendor/miden-tutorials/docs/src/* docs/builder/tutorials/
-            echo "Synced miden-tutorials → docs/builder/tutorials"
+            mkdir -p docs/builder/develop/tutorials
+            cp -r vendor/miden-tutorials/docs/src/* docs/builder/develop/tutorials/
+            echo "Synced miden-tutorials → docs/builder/develop/tutorials"
           fi
 
           if [ -d "vendor/miden-client/docs/external/src" ]; then
@@ -193,6 +195,8 @@ jobs:
           ls -la docs/design/ || true
           echo "Builder subdirs:"
           ls -la docs/builder/ || true
+          echo "Tutorials subdirs:"
+          ls -la docs/builder/develop/tutorials/ || true
 
       - name: Install deps
         run: npm install --frozen-lockfile
