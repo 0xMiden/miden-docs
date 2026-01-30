@@ -61,7 +61,7 @@
 .navbar__inner,
 aside[class*="docSidebarContainer"],
 main[class*="docMainContainer"] {
-  padding-inline: 24px;
+  padding-inline: 6px;
 }
 
 @media (min-width: 1440px) {
