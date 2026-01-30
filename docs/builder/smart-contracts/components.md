@@ -1,3 +1,0 @@
-# Contract Components
-
-TODO

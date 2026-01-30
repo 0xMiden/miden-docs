@@ -1,3 +1,0 @@
-# Notes and Outputs
-
-TODO
