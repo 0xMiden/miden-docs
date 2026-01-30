@@ -68,13 +68,13 @@
   --navbar-height: 4.571rem;
 
   /* Docs sidebar width */
-  --doc-sidebar-width: 18rem !important;
+  --doc-sidebar-width: 20rem !important;
 
   /* Sidebar vertical rail system */
   --sidebar-rail-width: 1px;
   --sidebar-rail-overdraw: 5px;
-  --sidebar-indent-step: 16px;
-  --sidebar-indent-base: 16px;
+  --sidebar-indent-step: 12px;
+  --sidebar-indent-base: 12px;
 }
 
 /* ==========================================
