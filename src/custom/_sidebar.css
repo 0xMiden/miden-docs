@@ -65,6 +65,7 @@
 .theme-doc-sidebar-menu .menu__link::before {
   content: "";
   position: absolute;
+  z-index: 1; /* Ensure rail paints above active background */
 
   /* Rail position derives from indent (sits 2px left of text) */
   left: calc(-1 * var(--sidebar-indent-step) + 2px);
@@ -142,7 +143,7 @@ aside[class*="docSidebarContainer"] .menu__caret {
 /* Force all menu rows into 2-column grid */
 .menu__list-item-collapsible {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
 }
 
@@ -156,6 +157,7 @@ aside[class*="docSidebarContainer"] .menu__caret {
 /* Menu links within collapsible sit in first column */
 .menu__list-item-collapsible > .menu__link {
   grid-column: 1;
+  min-width: 0;
 }
 
 /* ==========================================

@@ -54,23 +54,8 @@
 }
 
 /* ==========================================
-   3.2) UNIFIED HORIZONTAL GUTTER & TAB COLORS
+   3.2) NAVBAR TAB COLORS
    ========================================== */
-
-/* Unified horizontal gutter - navbar, sidebar, and docs content alignment */
-.navbar__inner,
-aside[class*="docSidebarContainer"],
-main[class*="docMainContainer"] {
-  padding-inline: 6px;
-}
-
-@media (min-width: 1440px) {
-  .navbar__inner,
-  aside[class*="docSidebarContainer"],
-  main[class*="docMainContainer"] {
-    padding-inline: 32px;
-  }
-}
 
 /* Navbar tabs - neutral by default */
 .navbar__link {
