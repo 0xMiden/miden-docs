@@ -1,0 +1,179 @@
+/* ============================
+   0) SEMANTIC TOKENS (your brand)
+   ============================ */
+
+:root {
+  /* ---- Brand palette (LIGHT) ---- */
+  --color-brand: #ff5500; /* TODO: replace with your primary */
+  --color-brand-600: #ff6a26; /* TODO */
+  --color-brand-700: #e24c00; /* TODO */
+  --color-brand-800: #b63c00; /* TODO */
+  --color-secondary: #102445;
+
+  --color-accent: #1764a8; /* TODO secondary/accent */
+  --color-success: #00871d;
+  --color-warning: #ff5500;
+  --color-danger: #ff0000;
+
+  /* ---- Neutral & Surfaces ---- */
+  --color-bg: #ffffff;
+  --color-surface: #f9f9f9;
+  --color-elevated: color-mix(in oklab, #000 5%, transparent);
+  --color-border: color-mix(in oklab, #000 20%, transparent);
+  --color-text: #363636;
+  --color-muted: color-mix(in oklab, var(--color-text) 70%, transparent);
+  --color-link: var(--color-brand);
+
+  /* ---- Typography ---- */
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    "Liberation Mono", monospace;
+  --font-size-base: 16px;
+  --line-height-base: 150%;
+  --letter-spacing-base: 0;
+
+  /* ---- Radii & Spacing ---- */
+  --radius-xs: 0.357rem;
+  --radius-md: 0.357rem;
+  --radius-lg: 0.357rem;
+  --radius-xl: 0.357rem;
+
+  /* Design system spacing - rem values based on 14px base */
+  --space-4px: 0.286rem; /* Inline code padding */
+  --space-16px: 1.143rem; /* Standard paragraph, list, heading spacing */
+  --space-24px: 1.714rem; /* H1 to first content, H2 to large components, list indent */
+  --space-32px: 2.286rem; /* Section breaks, major structural spacing */
+  --space-40px: 2.857rem; /* Major structural reset (lower bound) */
+  --space-48px: 3.429rem; /* Major structural reset (upper bound) */
+
+  /* Legacy spacing variables for compatibility */
+  --space-1: 0.25rem; /* 4px  */
+  --space-2: 0.5rem; /* 8px  */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-5: 1.25rem; /* 20px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem; /* 32px */
+  --space-10: 2.5rem; /* 40px */
+
+  /* ---- Shadows ---- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.12);
+
+  /* ---- Container widths ---- */
+
+  /* Common layout sizes */
+  --navbar-height: 4.571rem;
+
+  /* Docs sidebar width */
+  --doc-sidebar-width: 20rem !important;
+
+  /* Sidebar vertical rail system */
+  --sidebar-rail-width: 1px;
+  --sidebar-rail-overdraw: 5px;
+  --sidebar-indent-step: 12px;
+  --sidebar-indent-base: 12px;
+}
+
+/* ==========================================
+   1) MAP SEMANTIC → INFIMA (core variables)
+   ========================================== */
+
+:root {
+  /* Brand */
+  --ifm-color-primary: var(--color-brand);
+  --ifm-color-secondary: var(--color-secondary);
+  --ifm-color-primary-dark: var(--color-brand-700);
+  --ifm-color-primary-darker: var(--color-brand-800);
+  --ifm-color-primary-darkest: var(--color-brand-800);
+  --ifm-color-primary-light: var(--color-brand-600);
+  --ifm-color-primary-lighter: var(--color-brand-600);
+  --ifm-color-primary-lightest: var(--color-brand-600);
+
+  /* Text & surfaces */
+  --ifm-color-content: var(--color-text);
+  --ifm-color-content-secondary: var(--color-muted);
+  --ifm-link-color: var(--color-link);
+  --ifm-background-color: var(--color-bg);
+  --ifm-background-surface-color: var(--color-surface);
+
+  /* Typography */
+  --ifm-font-family-base: var(--font-sans);
+  --ifm-font-family-monospace: var(--font-mono);
+  --ifm-font-size-base: var(--font-size-base);
+  --ifm-line-height-base: var(--line-height-base);
+  --ifm-font-weight-base: 400;
+  --ifm-heading-font-weight: 700;
+
+  /* Heading typography specifications */
+  --ifm-h1-font-size: 2rem;
+  --ifm-h1-line-height: 114.3%;
+  --ifm-h2-font-size: 1.714rem;
+  --ifm-h2-line-height: 116.7%;
+  --ifm-h3-font-size: 1.429rem;
+  --ifm-h3-line-height: 120%;
+  --ifm-h4-font-size: 1.143rem;
+  --ifm-h4-line-height: 100%;
+
+  /* Code typography specifications */
+  --ifm-code-font-size: 1rem;
+  --ifm-code-line-height: 150%; /* Reduced from 171.4% for tighter spacing */
+  --ifm-code-letter-spacing: -2%;
+  --ifm-code-padding-horizontal: 0.286rem;
+  --ifm-code-padding-vertical: 0.214rem; /* Reduced from 0.286rem */
+
+  /* Layout & spacing */
+  --ifm-spacing-horizontal: var(--space-4);
+  --ifm-global-radius: var(--radius-md);
+
+  /* Component radii (Infima) */
+  --ifm-breadcrumb-border-radius: var(--radius-md);
+  --ifm-button-border-radius: var(--radius-md);
+  --ifm-card-border-radius: var(--radius-md);
+  --ifm-alert-border-radius: var(--radius-md);
+  --ifm-badge-border-radius: var(--radius-md);
+  --ifm-tabs-border-radius: var(--radius-md);
+  --ifm-table-border-radius: var(--radius-md);
+  --ifm-code-border-radius: var(--radius-md);
+
+  /* Sizes */
+  --ifm-container-width: var(--container-width);
+  --ifm-navbar-height: var(--navbar-height);
+  --ifm-menu-link-padding-horizontal: 6px;
+  --ifm-menu-link-padding-vertical: 10px;
+
+  /* Borders & shadows */
+  --ifm-border-color: var(--color-border);
+  --ifm-card-box-shadow: var(--shadow-md);
+  --ifm-global-shadow-lw: var(--shadow-sm);
+  --ifm-global-shadow-md: var(--shadow-md);
+  --ifm-global-shadow-tl: var(--shadow-lg);
+
+  /* Tables */
+  --ifm-table-cell-padding: 0.75rem;
+
+  /* Alerts */
+  --ifm-alert-background-color: var(--color-elevated);
+  --ifm-alert-border-color: var(--color-border);
+
+  /* Breadcrumbs */
+  --ifm-breadcrumb-color-active: var(--color-text);
+  --ifm-breadcrumb-item-background-active: var(--color-elevated);
+}
+
+/* ==========================================
+   1a) DARK THEME TOKENS
+   ========================================== */
+
+:root[data-theme="dark"] {
+  --color-bg: #191919;
+  --color-surface: #232323;
+  --color-elevated: #3f3f3f99;
+  --color-border: color-mix(in oklab, #ffffff 22%, transparent);
+  --color-text: #e6e6e6;
+  --color-muted: color-mix(in oklab, #e6e6e6 65%, transparent);
+  --color-link: var(--color-brand);
+  --ifm-code-color: #abb2bf;
+}

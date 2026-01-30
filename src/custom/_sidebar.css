@@ -1,0 +1,330 @@
+/* ==========================================
+   4) SIDEBAR (Docs)
+   ========================================== */
+
+/* ThemeClassNames.docs.docSidebarContainer */
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--ifm-border-color) !important;
+  font-size: 0.875rem; /* Sidebar-specific font size */
+}
+
+/* Main docs content area - wider to fill space */
+.theme-doc-markdown {
+  max-width: 100%; /* Use full available width */
+}
+
+/* ThemeClassNames.docs.docSidebarMenu */
+.theme-doc-sidebar-menu .menu__link {
+  font-family: var(--font-sans);
+  letter-spacing: -2%;
+  border-radius: var(--radius-md);
+}
+
+
+/* Base active link styling - color only, backgrounds handled by depth-specific rules */
+.theme-doc-sidebar-menu .menu__link--active {
+  color: var(--ifm-color-primary);
+}
+
+/* Category collapsible */
+.menu__list-item-collapsible {
+  border-radius: var(--radius-md);
+}
+
+/* ==========================================
+   4.1) SIDEBAR NESTED HIERARCHY GUIDE LINES
+   ========================================== */
+
+/* Unified indentation using CSS variables */
+.theme-doc-sidebar-item-category-level-1 > ul.menu__list {
+  margin-left: 0;
+  padding-left: calc(var(--sidebar-indent-base) + var(--sidebar-indent-step));
+}
+
+.theme-doc-sidebar-item-category-level-2 > ul.menu__list {
+  margin-left: 0;
+  padding-left: calc(var(--sidebar-indent-base) + var(--sidebar-indent-step));
+}
+
+.theme-doc-sidebar-item-category-level-3 > ul.menu__list {
+  margin-left: 0;
+  padding-left: calc(var(--sidebar-indent-base) + var(--sidebar-indent-step));
+}
+
+.theme-doc-sidebar-item-category-level-4 > ul.menu__list {
+  margin-left: 0;
+  padding-left: calc(var(--sidebar-indent-base) + var(--sidebar-indent-step));
+}
+
+.theme-doc-sidebar-item-category-level-5 > ul.menu__list {
+  margin-left: 0;
+  padding-left: calc(var(--sidebar-indent-base) + var(--sidebar-indent-step));
+}
+
+.theme-doc-sidebar-item-category-level-6 > ul.menu__list {
+  margin-left: 0;
+  padding-left: calc(var(--sidebar-indent-base) + var(--sidebar-indent-step));
+}
+
+/* ======================================================
+   SIDEBAR ROW-INDICATOR RAIL (UNIFIED)
+   One geometry rule + depth via CSS variables.
+   No transforms, no percentages, no cumulative drift.
+   ====================================================== */
+
+.theme-doc-sidebar-menu .menu__link {
+  position: relative;
+}
+
+/* Default rail (depth-aware via CSS variables) */
+.theme-doc-sidebar-menu .menu__link::before {
+  content: "";
+  position: absolute;
+  z-index: 1; /* Ensure rail paints above active background */
+
+  /* Rail position derives from indent (sits 2px left of text) */
+  left: calc(-1 * var(--sidebar-indent-step) + 2px);
+
+  /* Row-box anchoring — no padding math, no transforms */
+  top: -2px;
+  height: calc(100% + var(--sidebar-rail-overdraw));
+
+  width: var(--sidebar-rail-width);
+  background: var(--sidebar-rail-color, var(--ifm-border-color));
+  pointer-events: none;
+}
+
+/* --- Depth configuration (color only, position derived from indent) --- */
+
+/* Level 1 (top-level children) */
+.theme-doc-sidebar-item-category-level-1 {
+  --sidebar-rail-color: var(--ifm-border-color);
+}
+
+/* Level 2 (nested items) */
+.theme-doc-sidebar-item-category-level-2,
+.theme-doc-sidebar-item-link-level-2 {
+  --sidebar-rail-color: color-mix(
+    in oklab,
+    var(--ifm-border-color) 60%,
+    transparent
+  );
+}
+
+/* Level 3 (optional) */
+.theme-doc-sidebar-item-category-level-3,
+.theme-doc-sidebar-item-link-level-3 {
+  --sidebar-rail-color: color-mix(
+    in oklab,
+    var(--ifm-border-color) 40%,
+    transparent
+  );
+}
+
+/* Level 4 */
+.theme-doc-sidebar-item-category-level-4,
+.theme-doc-sidebar-item-link-level-4 {
+  --sidebar-rail-color: color-mix(
+    in oklab,
+    var(--ifm-border-color) 25%,
+    transparent
+  );
+}
+
+/* Level 5 */
+.theme-doc-sidebar-item-category-level-5,
+.theme-doc-sidebar-item-link-level-5 {
+  --sidebar-rail-color: color-mix(
+    in oklab,
+    var(--ifm-border-color) 15%,
+    transparent
+  );
+}
+
+/* Level 6 */
+.theme-doc-sidebar-item-category-level-6,
+.theme-doc-sidebar-item-link-level-6 {
+  --sidebar-rail-color: color-mix(
+    in oklab,
+    var(--ifm-border-color) 10%,
+    transparent
+  );
+}
+
+/* --- Active state --- */
+.theme-doc-sidebar-menu .menu__link--active {
+  --sidebar-rail-color: var(--ifm-color-primary);
+}
+
+/* ==========================================
+   4.2) SIDEBAR BOX MODEL & CHEVRON ANIMATION
+   ========================================== */
+
+/* Make ALL sidebar menu elements respect container padding (prevents background overflow) */
+aside[class*="docSidebarContainer"] .menu,
+aside[class*="docSidebarContainer"] .menu__list,
+aside[class*="docSidebarContainer"] .menu__list-item,
+aside[class*="docSidebarContainer"] .menu__list-item-collapsible,
+aside[class*="docSidebarContainer"] .menu__link,
+aside[class*="docSidebarContainer"] .menu__caret {
+  box-sizing: border-box;
+}
+
+/* Smooth chevron rotation for categories */
+/* Also make arrow smaller and thinner (Infima default is 2rem - too large) */
+.menu__link--sublist-caret::after,
+.menu__caret::before {
+  transition: transform 0.2s ease;
+  background-size: 1.25rem 1.25rem;
+  opacity: 0.6;
+}
+
+/* ==============================================
+   NORMALIZE CATEGORY ROW LAYOUT (GRID-BASED)
+   2-column grid: text | caret
+   Ensures all carets align vertically regardless of depth
+   ============================================== */
+
+/* Force all menu rows into 2-column grid */
+.menu__list-item-collapsible {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+/* Lock caret to right column */
+.menu__list-item-collapsible > .menu__caret {
+  grid-column: 2;
+  justify-self: end;
+  margin-left: 0;
+}
+
+/* Menu links within collapsible sit in first column */
+.menu__list-item-collapsible > .menu__link {
+  grid-column: 1;
+  min-width: 0;
+}
+
+/* ==========================================
+   4.3) TOP-LEVEL SECTION STYLING
+   ========================================== */
+
+/* Top-level categories get more visual weight */
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible > .menu__link {
+  font-weight: 600;
+}
+
+/* Spacing between top-level items */
+.theme-doc-sidebar-item-category-level-1 {
+  margin-top: 0.5rem;
+}
+
+/* First top-level item has no top margin */
+.theme-doc-sidebar-item-category-level-1:first-child {
+  margin-top: 0;
+}
+
+/* --- Background highlight scoping (prevent stacking) --- */
+
+/* Only highlight top-level category when IT is the active link (not descendants) */
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible > .menu__link--active {
+  background: color-mix(in oklab, var(--ifm-color-primary) 8%, transparent);
+  border-radius: var(--radius-md);
+}
+
+/* Active LEAF items get subtle surface background */
+.theme-doc-sidebar-item-link-level-2 > .menu__link--active,
+.theme-doc-sidebar-item-link-level-3 > .menu__link--active,
+.theme-doc-sidebar-item-link-level-4 > .menu__link--active,
+.theme-doc-sidebar-item-link-level-5 > .menu__link--active,
+.theme-doc-sidebar-item-link-level-6 > .menu__link--active {
+  background: var(--ifm-background-surface-color);
+}
+
+/* Child CATEGORIES should NOT get background when expanded */
+.theme-doc-sidebar-item-category-level-2 > .menu__list-item-collapsible,
+.theme-doc-sidebar-item-category-level-3 > .menu__list-item-collapsible,
+.theme-doc-sidebar-item-category-level-4 > .menu__list-item-collapsible,
+.theme-doc-sidebar-item-category-level-5 > .menu__list-item-collapsible,
+.theme-doc-sidebar-item-category-level-6 > .menu__list-item-collapsible {
+  background: transparent !important;
+}
+
+/* --- Depth-based text emphasis --- */
+
+/* L1: Brand color, semibold */
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible > .menu__link--active {
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+/* L2 category: Brand color, medium weight */
+.theme-doc-sidebar-item-category-level-2 > .menu__list-item-collapsible > .menu__link--active {
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+}
+
+/* L3+ active leaf: Strongest brand emphasis */
+.theme-doc-sidebar-item-link-level-2 > .menu__link--active,
+.theme-doc-sidebar-item-link-level-3 > .menu__link--active,
+.theme-doc-sidebar-item-link-level-4 > .menu__link--active,
+.theme-doc-sidebar-item-link-level-5 > .menu__link--active,
+.theme-doc-sidebar-item-link-level-6 > .menu__link--active {
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+/* Inactive items: Neutral text */
+.theme-doc-sidebar-item-link-level-2 > .menu__link:not(.menu__link--active),
+.theme-doc-sidebar-item-link-level-3 > .menu__link:not(.menu__link--active),
+.theme-doc-sidebar-item-link-level-4 > .menu__link:not(.menu__link--active),
+.theme-doc-sidebar-item-link-level-5 > .menu__link:not(.menu__link--active),
+.theme-doc-sidebar-item-link-level-6 > .menu__link:not(.menu__link--active) {
+  color: var(--ifm-color-content);
+  font-weight: 400;
+}
+
+/* --- Nested items base styling --- */
+
+/* L2 category links (like "Set Up", "Rust Client") - consistent weight */
+.theme-doc-sidebar-item-category-level-2 > .menu__list-item-collapsible > .menu__link {
+  font-weight: 500;
+}
+
+/* L4/L5/L6 category links - lighter weight for deep nesting */
+.theme-doc-sidebar-item-category-level-4 > .menu__list-item-collapsible > .menu__link,
+.theme-doc-sidebar-item-category-level-5 > .menu__list-item-collapsible > .menu__link,
+.theme-doc-sidebar-item-category-level-6 > .menu__list-item-collapsible > .menu__link {
+  font-weight: 400;
+}
+
+/* L2+ leaf items and nested content - smaller font */
+.theme-doc-sidebar-item-link-level-2 .menu__link,
+.theme-doc-sidebar-item-link-level-3 .menu__link,
+.theme-doc-sidebar-item-link-level-4 .menu__link,
+.theme-doc-sidebar-item-link-level-5 .menu__link,
+.theme-doc-sidebar-item-link-level-6 .menu__link,
+.theme-doc-sidebar-item-category-level-2 ul .menu__link,
+.theme-doc-sidebar-item-category-level-3 ul .menu__link,
+.theme-doc-sidebar-item-category-level-4 ul .menu__link,
+.theme-doc-sidebar-item-category-level-5 ul .menu__link,
+.theme-doc-sidebar-item-category-level-6 ul .menu__link {
+  font-size: 0.85rem;
+}
+
+/* ==========================================
+   4.4) MOBILE SIDEBAR ADJUSTMENTS
+   ========================================== */
+
+@media (max-width: 996px) {
+  /* Touch-friendly tap targets */
+  .theme-doc-sidebar-menu .menu__link {
+    padding: 12px 10px;
+    min-height: 44px;
+  }
+}
+
+/* Navbar mobile sidebar inherits these styles */
+.navbar-sidebar .menu__list-item-collapsible {
+  border-radius: var(--radius-md);
+}

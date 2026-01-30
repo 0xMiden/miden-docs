@@ -136,45 +136,67 @@ jobs:
           ref: ${{ steps.refs.outputs.COMPILER_REF }}
           path: vendor/compiler
 
+      # ============================================================
+      # v0.4 IA: Aggregate into nested structure
+      #   - Design docs (miden-base, miden-vm, compiler, miden-node) → docs/design/
+      #   - Builder docs (miden-tutorials, miden-client) → docs/builder/
+      # ============================================================
       - name: Aggregate docs into single docs tree
         run: |
-          echo "Aggregating vendor docs into docs/ structure..."
-          # Clean only vendor directories that will be re-synced
-          rm -rf docs/miden-base docs/miden-node docs/miden-client docs/miden-tutorials docs/miden-vm docs/compiler
+          echo "Aggregating vendor docs into v0.4 IA structure..."
 
-          # Copy each vendor repo's docs into docs/
-          if [ -d "vendor/miden-node/docs/external/src" ]; then
-            cp -r vendor/miden-node/docs/external/src/ docs/miden-node/
-            echo "Synced miden-node docs"
+          # Clean directories that will be re-synced (v0.4 nested paths)
+          rm -rf docs/design/miden-base docs/design/miden-vm docs/design/miden-node docs/design/compiler
+          rm -rf docs/builder/client
+          # Note: docs/builder/develop/tutorials is NOT fully cleaned to preserve local tutorials (e.g. miden-bank)
+
+          # Design docs → docs/design/*
+          if [ -d "vendor/miden-base/docs/src" ]; then
+            mkdir -p docs/design/miden-base
+            cp -r vendor/miden-base/docs/src/* docs/design/miden-base/
+            echo "Synced miden-base → docs/design/miden-base"
           fi
 
           if [ -d "vendor/miden-vm/docs/src" ]; then
-            cp -r vendor/miden-vm/docs/src/ docs/miden-vm/
-            echo "Synced miden-vm docs"
+            mkdir -p docs/design/miden-vm
+            cp -r vendor/miden-vm/docs/src/* docs/design/miden-vm/
+            echo "Synced miden-vm → docs/design/miden-vm"
           fi
 
-          if [ -d "vendor/miden-base/docs/src" ]; then
-            cp -r vendor/miden-base/docs/src/ docs/miden-base/
-            echo "Synced miden-base docs"
-          fi
-
-          if [ -d "vendor/miden-client/docs/external/src" ]; then
-            cp -r vendor/miden-client/docs/external/src/ docs/miden-client/
-            echo "Synced miden-client docs"
+          if [ -d "vendor/miden-node/docs/external/src" ]; then
+            mkdir -p docs/design/miden-node
+            cp -r vendor/miden-node/docs/external/src/* docs/design/miden-node/
+            echo "Synced miden-node → docs/design/miden-node"
           fi
 
           if [ -d "vendor/compiler/docs/external/src" ]; then
-            cp -r vendor/compiler/docs/external/src/ docs/compiler/
-            echo "Synced compiler docs"
+            mkdir -p docs/design/compiler
+            cp -r vendor/compiler/docs/external/src/* docs/design/compiler/
+            echo "Synced compiler → docs/design/compiler"
           fi
 
+          # Builder docs → docs/builder/*
+          # Sync miden-tutorials into develop/tutorials (local tutorials are preserved)
           if [ -d "vendor/miden-tutorials/docs/src" ]; then
-            cp -r vendor/miden-tutorials/docs/src/ docs/miden-tutorials/
-            echo "Synced miden-tutorials docs"
+            mkdir -p docs/builder/develop/tutorials
+            cp -r vendor/miden-tutorials/docs/src/* docs/builder/develop/tutorials/
+            echo "Synced miden-tutorials → docs/builder/develop/tutorials"
+          fi
+
+          if [ -d "vendor/miden-client/docs/external/src" ]; then
+            mkdir -p docs/builder/client
+            cp -r vendor/miden-client/docs/external/src/* docs/builder/client/
+            echo "Synced miden-client → docs/builder/client"
           fi
 
           echo "Content aggregation complete. Final docs structure:"
           ls -la docs/
+          echo "Design subdirs:"
+          ls -la docs/design/ || true
+          echo "Builder subdirs:"
+          ls -la docs/builder/ || true
+          echo "Tutorials subdirs:"
+          ls -la docs/builder/develop/tutorials/ || true
 
       - name: Install deps
         run: npm install --frozen-lockfile

@@ -1,0 +1,10 @@
+{
+  "label": "Builder",
+  "position": 1,
+  "collapsible": false,
+  "collapsed": false,
+  "link": {
+    "type": "doc",
+    "id": "builder/index"
+  }
+}

@@ -1,0 +1,73 @@
+# Miden Documentation
+
+> Miden is a zero-knowledge rollup for Ethereum that enables private, scalable smart contracts using STARK proofs. Build applications with account-based state, note-based transactions, and client-side proving.
+
+## Quick Start
+
+Get up and running with Miden in minutes.
+
+- [Installation](/builder/quick-start/setup/installation): Install the Miden toolchain using `midenup`
+- [CLI Basics](/builder/quick-start/setup/cli-basics): Create your first wallet and mint tokens
+- [Accounts](/builder/quick-start/accounts): Understand Miden's account model
+- [Notes & Transactions](/builder/quick-start/notes): Learn note-based transaction flow
+- [Read Storage](/builder/quick-start/read-storage): Query on-chain state
+
+## Your First Smart Contract
+
+Build, test, and deploy a contract on Miden.
+
+- [Create a Contract](/builder/quick-start/your-first-smart-contract/create): Write your first Miden smart contract in Rust
+- [Test Locally](/builder/quick-start/your-first-smart-contract/test): Run tests with the Miden testing framework
+- [Deploy](/builder/quick-start/your-first-smart-contract/deploy): Deploy your contract to Miden
+
+## Core Concepts
+
+Understand the fundamentals of building on Miden.
+
+- [Accounts](/builder/core-concepts): Miden uses an account-based state model with STARK-provable execution
+- [Notes](/builder/core-concepts): Transactions consume and produce notes (UTXOs with attached scripts)
+- [Assets](/builder/core-concepts): Native and custom fungible/non-fungible assets
+- [Transactions](/builder/core-concepts): Client-side proven transactions with privacy guarantees
+
+## Smart Contracts (Miden in Rust)
+
+Write smart contracts in Rust that compile to Miden Assembly.
+
+- [Smart Contracts Guide](/builder/smart-contracts): The "Miden in Rust" guide for contract development
+- [Account Components](/builder/smart-contracts): Build reusable account components
+- [Note Scripts](/builder/smart-contracts): Create custom note scripts for complex logic
+
+## Developer Tools
+
+- [Rust Client](/builder/tools): Programmatic access to Miden network
+- [Web Client](/builder/tools): Browser-based Miden interactions
+- [Playground](/builder/tools): Interactive Miden Assembly explorer
+- [Block Explorer](/builder/tools): View transactions and accounts
+
+## Tutorials
+
+Step-by-step guides for common tasks.
+
+- [Tutorials](/builder/develop): Build real applications on Miden
+- [Examples](/builder/develop/examples): Reference implementations and patterns
+
+## Reference
+
+- [FAQ](/builder/faq): Frequently asked questions
+- [Glossary](/builder/glossary): Key terms and definitions
+- [CLI Reference](/builder/reference): Command-line tool documentation
+
+## Architecture (For Advanced Users)
+
+Deep dives into Miden internals (select a versioned release for full documentation):
+
+- Protocol: Account model, note semantics, transaction kernel
+- Virtual Machine: Stack-based VM with STARK proving
+- Compiler: Rust to Miden Assembly compilation
+- Node: Network operator infrastructure
+
+---
+
+Documentation: https://docs.miden.xyz
+GitHub: https://github.com/0xMiden
+Version: See version selector for release-specific docs

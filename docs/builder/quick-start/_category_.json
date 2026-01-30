@@ -1,8 +1,8 @@
 {
   "label": "Quick Start",
-  "position": 2,
+  "position": 1,
   "link": {
     "type": "doc",
-    "id": "quick-start/index"
+    "id": "builder/quick-start/index"
   }
 }

@@ -1,0 +1,198 @@
+/* ==========================================
+   2) BASE ELEMENTS
+   ========================================== */
+
+html,
+body {
+  font-family: var(--ifm-font-family-base);
+  font-size: var(--ifm-font-size-base);
+  font-weight: var(--ifm-font-weight-base);
+  line-height: var(--ifm-line-height-base);
+  color: var(--ifm-color-content);
+  background: var(--ifm-background-color);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+[data-theme="dark"] body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Remove underlines from all links by default */
+a {
+  color: var(--ifm-link-color);
+  text-decoration: none;
+}
+
+/* Add underlines only to links within text content */
+p a,
+li a,
+blockquote a,
+.theme-doc-markdown a,
+.markdown a,
+article a,
+main a {
+  text-decoration: underline;
+  text-decoration-color: var(--ifm-link-color);
+  text-underline-offset: 0.2em;
+}
+
+/* Hover effects for text links */
+p a:hover,
+li a:hover,
+blockquote a:hover,
+.theme-doc-markdown a:hover,
+.markdown a:hover,
+article a:hover,
+main a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Ensure navigation links have no underlines */
+.navbar a,
+.theme-doc-sidebar-container a,
+.menu__link,
+.breadcrumbs__link,
+.pagination-nav__link,
+.table-of-contents a {
+  text-decoration: none !important;
+}
+
+/* Hover effects for navigation links */
+.navbar a:hover,
+.theme-doc-sidebar-container a:hover,
+.menu__link:hover,
+.breadcrumbs__link:hover,
+.pagination-nav__link:hover,
+.table-of-contents a:hover {
+  text-decoration: none !important;
+}
+
+/* Headings - exact design specifications */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-sans);
+  letter-spacing: 0em;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+  color: var(--color-text);
+}
+
+/* H1: 28px font, 32px line height */
+h1 {
+  font-size: var(--ifm-h1-font-size);
+  line-height: var(--ifm-h1-line-height);
+  color: var(--ifm-color-primary);
+}
+
+/* H2: 24px font, 28px line height */
+h2 {
+  font-size: var(--ifm-h2-font-size);
+  line-height: var(--ifm-h2-line-height);
+}
+
+/* H3: 20px font, 24px line height */
+h3 {
+  font-size: var(--ifm-h3-font-size);
+  line-height: var(--ifm-h3-line-height);
+}
+
+/* H4: 16px line height */
+h4 {
+  font-size: var(--ifm-h4-font-size);
+  line-height: var(--ifm-h4-line-height);
+}
+
+h5 {
+  font-size: 1.125rem;
+  line-height: 111.1%;
+}
+
+h6 {
+  font-size: 1rem;
+  text-transform: none;
+  line-height: 100%;
+}
+
+/* Bold text styling */
+strong,
+b {
+  font-weight: 600;
+  color: var(--ifm-color-content);
+}
+
+/* Body/Paragraph: 14px, 130% line height, Regular */
+p {
+  font-size: var(--ifm-font-size-base);
+  line-height: var(--line-height-base);
+  font-weight: 400;
+  letter-spacing: 0em;
+}
+
+/* Links (text): 14px, 130% line height, Semibold */
+a {
+  line-height: 130%;
+}
+
+/* List/Bulletpoints: 14-16px, 150% line height, Regular */
+ul {
+  list-style-type: disc;
+  line-height: 150%;
+}
+
+ul li::marker {
+  color: var(--color-border);
+}
+
+/* Nested unordered lists */
+ul ul {
+  list-style-type: circle;
+}
+
+ul ul ul {
+  list-style-type: square;
+}
+
+/* Ordered lists: 14-16px, 150% line height, Regular */
+ol {
+  list-style-type: decimal;
+  line-height: 150%;
+  font-size: var(--font-size-base);
+  font-weight: 400;
+}
+
+/* Nested ordered lists keep default styling */
+ol ol {
+  list-style-type: lower-alpha;
+}
+
+ol ol ol {
+  list-style-type: lower-roman;
+}
+
+/* Blockquote */
+blockquote {
+  border-left: 3px solid var(--ifm-color-primary);
+  background: var(--ifm-background-surface-color);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  color: var(--ifm-color-content);
+}
+
+/* Images */
+img {
+  border-radius: var(--radius-md);
+}
