@@ -1,3 +1,22 @@
+# ============================================================
+# ARCHITECTURE NOTE:
+# This workflow ingests external repos and creates versioned snapshots.
+#
+# v0.4 Information Architecture:
+#   - Design docs (miden-base, miden-vm, compiler, miden-node) → docs/design/
+#   - Builder docs (miden-tutorials, miden-client) → docs/builder/
+#
+# Workflow responsibilities:
+#   1. Check out external repos at pinned refs
+#   2. Aggregate their docs into docs/ TEMPORARILY (v0.4 nested paths)
+#   3. Run `docusaurus docs:version` to snapshot into versioned_docs/
+#   4. CLEAN UP docs/ (remove ingested folders)
+#   5. Commit versioned_docs/ snapshot
+#
+# After this workflow runs, docs/ returns to authored-only state.
+# The deploy workflow (deploy-docs.yml) also ingests for live "next" docs.
+# ============================================================
+
 name: Cut Docs Version (global)
 
 on:
@@ -121,45 +140,62 @@ jobs:
           checkout_ref "${REPO_COMPILER}"  "${{ steps.manifest.outputs.compiler_ref }}"  vendor/compiler
           checkout_ref "${REPO_TUTORIALS}" "${{ steps.manifest.outputs.miden_tutorials_ref }}" vendor/miden-tutorials
 
-      - name: Aggregate docs into single docs tree
+      # ============================================================
+      # v0.4 IA: Aggregate into nested structure (TEMPORARY)
+      # This content is cleaned up after versioning (see "Clean up" step below)
+      # ============================================================
+      - name: Aggregate docs into v0.4 IA structure
         run: |
-          echo "Aggregating vendor docs into docs/ structure..."
-          # Clean only vendor directories that will be re-synced
-          rm -rf docs/miden-base docs/miden-node docs/miden-client docs/miden-tutorials docs/miden-vm docs/compiler
+          echo "Aggregating vendor docs into v0.4 IA structure..."
 
-          # Copy each vendor repo's docs into docs/
-          if [ -d "vendor/miden-node/docs/external/src" ]; then
-            cp -r vendor/miden-node/docs/external/src/ docs/miden-node/
-            echo "Synced miden-node docs"
+          # Clean directories that will be re-synced (v0.4 nested paths)
+          rm -rf docs/design/miden-base docs/design/miden-vm docs/design/miden-node docs/design/compiler
+          rm -rf docs/builder/tutorials docs/builder/client
+
+          # Design docs → docs/design/*
+          if [ -d "vendor/miden-base/docs/src" ]; then
+            mkdir -p docs/design/miden-base
+            cp -r vendor/miden-base/docs/src/* docs/design/miden-base/
+            echo "Synced miden-base → docs/design/miden-base"
           fi
 
           if [ -d "vendor/miden-vm/docs/src" ]; then
-            cp -r vendor/miden-vm/docs/src/ docs/miden-vm/
-            echo "Synced miden-vm docs"
+            mkdir -p docs/design/miden-vm
+            cp -r vendor/miden-vm/docs/src/* docs/design/miden-vm/
+            echo "Synced miden-vm → docs/design/miden-vm"
           fi
 
-          if [ -d "vendor/miden-base/docs/src" ]; then
-            cp -r vendor/miden-base/docs/src/ docs/miden-base/
-            echo "Synced miden-base docs"
-          fi
-
-          if [ -d "vendor/miden-client/docs/src" ]; then
-            cp -r vendor/miden-client/docs/src/ docs/miden-client/
-            echo "Synced miden-client docs"
+          if [ -d "vendor/miden-node/docs/external/src" ]; then
+            mkdir -p docs/design/miden-node
+            cp -r vendor/miden-node/docs/external/src/* docs/design/miden-node/
+            echo "Synced miden-node → docs/design/miden-node"
           fi
 
           if [ -d "vendor/compiler/docs/external/src" ]; then
-            cp -r vendor/compiler/docs/external/src/ docs/compiler/
-            echo "Synced compiler docs"
+            mkdir -p docs/design/compiler
+            cp -r vendor/compiler/docs/external/src/* docs/design/compiler/
+            echo "Synced compiler → docs/design/compiler"
           fi
 
+          # Builder docs → docs/builder/*
           if [ -d "vendor/miden-tutorials/docs/src" ]; then
-            cp -r vendor/miden-tutorials/docs/src/ docs/miden-tutorials/
-            echo "Synced miden-tutorials docs"
+            mkdir -p docs/builder/tutorials
+            cp -r vendor/miden-tutorials/docs/src/* docs/builder/tutorials/
+            echo "Synced miden-tutorials → docs/builder/tutorials"
+          fi
+
+          if [ -d "vendor/miden-client/docs/src" ]; then
+            mkdir -p docs/builder/client
+            cp -r vendor/miden-client/docs/src/* docs/builder/client/
+            echo "Synced miden-client → docs/builder/client"
           fi
 
           echo "Content aggregation complete. Final docs structure:"
           ls -la docs/
+          echo "Design subdirs:"
+          ls -la docs/design/ || true
+          echo "Builder subdirs:"
+          ls -la docs/builder/ || true
 
       - name: Cut version snapshot
         run: |
@@ -167,15 +203,19 @@ jobs:
           echo "Creating Docusaurus version: $VERSION"
           npm run docusaurus -- docs:version "$VERSION"
 
-      - name: Clean up (delete vendor and docs files)
+      # CRITICAL: Clean up docs/ to maintain canonical-source architecture
+      # docs/ must only contain authored content (builder/, design/ landing pages)
+      # All ingested content lives in versioned_docs/ after versioning
+      - name: Clean up (delete vendor and ingested docs)
         run: |
           rm -rf vendor
-          rm -rf docs/miden-base
-          rm -rf docs/miden-node
-          rm -rf docs/miden-client
-          rm -rf docs/miden-tutorials
-          rm -rf docs/miden-vm
-          rm -rf docs/compiler
+          # Clean v0.4 nested paths
+          rm -rf docs/design/miden-base
+          rm -rf docs/design/miden-vm
+          rm -rf docs/design/miden-node
+          rm -rf docs/design/compiler
+          rm -rf docs/builder/tutorials
+          rm -rf docs/builder/client
 
       - name: Commit snapshots
         run: |

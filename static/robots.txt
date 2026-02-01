@@ -1,0 +1,8 @@
+# Miden Documentation - robots.txt
+# https://docs.miden.xyz
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://docs.miden.xyz/sitemap.xml

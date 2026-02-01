@@ -1,4 +1,6 @@
 ---
+slug: /
+displayed_sidebar: builderSidebar
 sidebar_position: 1
 ---
 

@@ -207,7 +207,7 @@ The wildcard import brings in all Miden note script functionality. The `counter_
 
 Unlike account contracts, note scripts don't define a struct. They are purely functional code that gets executed when a note is consumed. The script defines **what happens** when the note is processed, not a persistent data structure.
 
-Learn more about [note scripts in the Miden documentation](http://docs.miden.xyz/miden-base/note/).
+Learn more about [note scripts in the Miden documentation](/miden-base/note/).
 
 #### The Note Script Function
 
