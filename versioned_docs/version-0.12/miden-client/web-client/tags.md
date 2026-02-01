@@ -124,4 +124,5 @@ For more detailed information about tag functionality, refer to the following AP
 - [NoteTag](https://github.com/0xMiden/miden-client/blob/main/docs/typedoc/web-client/classes/NoteTag.md) - Class for working with note tags
 - [AccountId](https://github.com/0xMiden/miden-client/blob/main/docs/typedoc/web-client/classes/AccountId.md) - Class for working with account IDs
 
-For a complete list of available classes and utilities, see the [SDK API Reference](https://github.com/0xMiden/miden-client/docs/typedoc/web-client/README.md). 
+For a complete list of available classes and utilities, see the [SDK API Reference](https://github.com/0xMiden/miden-client/blob/main/docs/typedoc/web-client/README.md). 
+
