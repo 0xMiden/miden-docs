@@ -131,7 +131,7 @@ For more detailed information about note functionality, refer to the following A
 - [ConsumableNoteRecord](https://github.com/0xMiden/miden-client/blob/main/docs/typedoc/web-client/classes/ConsumableNoteRecord.md) - Class representing consumable notes
 - [NoteScript](https://github.com/0xMiden/miden-client/blob/main/docs/typedoc/web-client/classes/NoteScript.md) - Class for working with note scripts
 
-For a complete list of available classes and utilities, see the [SDK API Reference](https://github.com/0xMiden/miden-client/docs/typedoc/web-client/README.md).
+For a complete list of available classes and utilities, see the [SDK API Reference](https://github.com/0xMiden/miden-client/blob/main/docs/typedoc/web-client/README.md).
 
 ### Available Note Filter Types
 
@@ -159,3 +159,4 @@ const noteIds = [noteId1, noteId2];
 const listFilter = new NoteFilter(NoteFilterTypes.List, noteIds);
 const specificNotes = await webClient.getInputNotes(listFilter);
 ``` 
+
