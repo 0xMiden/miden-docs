@@ -267,6 +267,75 @@ The reversal doesn't matter as long as you're **consistent**. Always construct a
 
 ---
 
+## Felt Arithmetic Underflow/Overflow
+
+### Problem
+
+Miden uses field element (Felt) arithmetic, which operates in a prime field with modulus `p = 2^64 - 2^32 + 1`. This means arithmetic is **modular** and will silently wrap around instead of causing an error.
+
+```rust
+// DANGEROUS: This does NOT error on underflow!
+let balance = Felt::new(100);
+let withdrawal = Felt::new(500);
+let new_balance = balance - withdrawal;  // Silently wraps to a huge positive number!
+```
+
+When you subtract a larger value from a smaller one, the result wraps around to a large positive number (approximately `2^64`). This is NOT an error in the Miden VM - the transaction will succeed with an incorrect balance.
+
+### Why This Happens
+
+The Miden VM performs all Felt arithmetic as modular operations within the prime field. There is no automatic overflow or underflow detection at the VM level. The Rust compiler's default overflow mode is `Unchecked`, meaning it compiles directly to raw VM arithmetic operations.
+
+### Solution
+
+**Always validate before subtraction:**
+
+```rust
+// CORRECT: Check balance before subtracting
+let current_balance: Felt = self.balances.get(&key);
+let withdraw_amount = withdraw_asset.inner[0];
+
+// Validate that balance is sufficient
+assert!(
+    current_balance.as_u64() >= withdraw_amount.as_u64(),
+    "Withdrawal amount exceeds available balance"
+);
+
+// Only subtract after validation
+let new_balance = current_balance - withdraw_amount;
+```
+
+### Example from Bank Contract
+
+```rust title="contracts/bank-account/src/lib.rs"
+pub fn withdraw(&mut self, depositor: AccountId, withdraw_asset: Asset, /* ... */) {
+    let withdraw_amount = withdraw_asset.inner[0];
+
+    // Get current balance and validate sufficient funds exist.
+    // This check is critical: Felt arithmetic is modular, so subtracting
+    // more than the balance would silently wrap to a large positive number.
+    let current_balance: Felt = self.balances.get(&key);
+    assert!(
+        current_balance.as_u64() >= withdraw_amount.as_u64(),
+        "Withdrawal amount exceeds available balance"
+    );
+
+    let new_balance = current_balance - withdraw_amount;
+    self.balances.set(key, new_balance);
+}
+```
+
+:::danger Critical Security Issue
+Failure to validate before subtraction can lead to:
+- Users withdrawing more than their balance
+- Balance values becoming astronomically large
+- Complete loss of funds in the contract
+
+**Always check bounds before Felt subtraction operations.**
+:::
+
+---
+
 ## Wallet Component Requirement
 
 ### Problem
@@ -429,6 +498,7 @@ let execution_hint = NoteExecutionHint::none();
 | Stack overflow | "16 elements" error | Reduce locals, split functions |
 | Too many args | "4 words" error | Group into Words, use inputs |
 | Array reversal | Wrong data order | Be consistent with construction |
+| Felt underflow | Balance wraps to huge number | Validate before subtraction |
 | Missing wallet | Asset operation fails | Add `BasicWallet` component |
 | Key mismatch | Zero balances | Use helper function for keys |
 | Note type | Wrong note visibility | Use 1 (Public) or 2 (Private) |

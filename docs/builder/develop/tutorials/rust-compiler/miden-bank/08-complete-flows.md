@@ -267,6 +267,8 @@ let executed_tx = tx_context.execute().await?;
 │              │                                                      │
 │              ▼                                                      │
 │  3. WITHDRAW METHOD RUNS                                           │
+│     - require_initialized() ✓                                      │
+│     - Check balance >= withdraw_amount ✓                           │
 │     - balances[User] -= 500                                        │
 │     - create_p2id_note()                                           │
 │              │                                                      │
