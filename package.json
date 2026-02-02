@@ -12,7 +12,9 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "create-llm-file": "npx repomix",
+    "postinstall": "npm run create-llm-file"
   },
   "dependencies": {
     "@cmfcmf/docusaurus-search-local": "^2.0.0",
@@ -27,7 +29,8 @@
     "react-dom": "^19.0.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
-    "yaml": "^2.8.1"
+    "yaml": "^2.8.1",
+    "repomix": "^0.3.1"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.8.1",

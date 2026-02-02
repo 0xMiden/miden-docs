@@ -6,324 +6,509 @@ description: "Walk through end-to-end deposit and withdrawal flows, understandin
 
 # Part 8: Complete Flows
 
-In this final section, we'll walk through the complete deposit and withdrawal flows, seeing how all the concepts from previous sections work together.
+In this final section, we'll bring everything together and walk through the complete deposit and withdrawal flows, verifying that all the components work as a unified banking system.
 
-## What You'll Learn
+## What You'll Build in This Part
 
-- Complete deposit flow from note creation to balance update
-- Complete withdraw flow including P2ID note creation
-- Transaction lifecycle in Miden
-- Running and verifying the flows
+By the end of this section, you will have:
+
+- Understood the complete deposit flow from note creation to balance update
+- Understood the complete withdraw flow including P2ID note creation
+- **Verified the entire system works** with an end-to-end MockChain test
+- Completed the Miden Bank tutorial! 🎉
+
+## Building on Parts 0-7
+
+You've built all the pieces. Now let's see them work together:
+
+```text
+┌────────────────────────────────────────────────────────────────┐
+│                 COMPLETE BANK SYSTEM                           │
+├────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   Components Built:                                             │
+│   ┌─────────────────────────────────────────────────────────┐  │
+│   │ bank-account    │ Storage + deposit() + withdraw()       │  │
+│   ├─────────────────┼───────────────────────────────────────┤  │
+│   │ deposit-note    │ Note script → bank_account::deposit()  │  │
+│   ├─────────────────┼───────────────────────────────────────┤  │
+│   │ withdraw-note   │ Note script → bank_account::withdraw() │  │
+│   ├─────────────────┼───────────────────────────────────────┤  │
+│   │ init-tx-script  │ Transaction script → initialize()      │  │
+│   └─────────────────┴───────────────────────────────────────┘  │
+│                                                                 │
+│   Storage Layout:                                               │
+│   ┌─────────────────────────────────────────────────────────┐  │
+│   │ Slot 0: initialized │ Word: [1, 0, 0, 0] when ready     │  │
+│   │ Slot 1: balances    │ Map: user_key → [balance, 0, 0, 0]│  │
+│   └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└────────────────────────────────────────────────────────────────┘
+```
 
 ## The Complete Deposit Flow
 
-### Step 1: Setup
-
-Create the bank account with proper storage:
-
-```rust title="integration/tests/deposit_test.rs"
-// Create the bank account with storage slots
-let bank_cfg = AccountCreationConfig {
-    storage_slots: vec![
-        // Slot 0: initialized flag (Value, starts as 0)
-        miden_client::account::StorageSlot::Value(Word::default()),
-        // Slot 1: balances map (StorageMap)
-        miden_client::account::StorageSlot::Map(StorageMap::with_entries([])?),
-    ],
-    ..Default::default()
-};
-
-let mut bank_account =
-    create_testing_account_from_package(bank_package.clone(), bank_cfg).await?;
-```
-
-### Step 2: Initialize the Bank
-
-Use a transaction script to initialize:
-
-```rust
-// Build and execute the initialization transaction
-let init_program = init_tx_script_package.unwrap_program();
-let init_tx_script = TransactionScript::new((*init_program).clone());
-
-let init_tx_context = mock_chain
-    .build_tx_context(bank_account.id(), &[], &[])?
-    .tx_script(init_tx_script)
-    .build()?;
-
-let executed_init = init_tx_context.execute().await?;
-bank_account.apply_delta(&executed_init.account_delta())?;
-mock_chain.add_pending_executed_transaction(&executed_init)?;
-mock_chain.prove_next_block()?;
-
-println!("Bank initialized successfully");
-```
-
-### Step 3: Create Deposit Note
-
-Create a note with assets attached:
-
-```rust
-// Create a fungible asset to deposit
-let deposit_amount: u64 = 1000;
-let fungible_asset = FungibleAsset::new(faucet.id(), deposit_amount)?;
-let note_assets = NoteAssets::new(vec![Asset::Fungible(fungible_asset)])?;
-
-// Create the deposit note
-let deposit_note = create_testing_note_from_package(
-    deposit_note_package.clone(),
-    sender.id(),  // Sender becomes the depositor
-    NoteCreationConfig {
-        assets: note_assets,
-        ..Default::default()
-    },
-)?;
-```
-
-### Step 4: Execute Deposit
-
-Bank consumes the note:
-
-```rust
-// Build transaction where bank consumes the deposit note
-let tx_context = mock_chain
-    .build_tx_context(bank_account.id(), &[deposit_note.id()], &[])?
-    .build()?;
-
-// Execute the transaction
-let executed_transaction = tx_context.execute().await?;
-
-// Apply state changes
-bank_account.apply_delta(&executed_transaction.account_delta())?;
-mock_chain.add_pending_executed_transaction(&executed_transaction)?;
-mock_chain.prove_next_block()?;
-```
-
-### Step 5: Verify Balance
-
-Check the depositor's balance was updated:
-
-```rust
-// Create the key for the depositor in the storage map
-let depositor_key = Word::from([
-    sender.id().prefix().as_felt(),
-    sender.id().suffix(),
-    faucet.id().prefix().as_felt(),
-    faucet.id().suffix(),
-]);
-
-// Get balance from storage slot 1 (balances map)
-let balance = bank_account.storage().get_map_item(1, depositor_key)?;
-
-let expected_balance = Word::from([
-    Felt::new(0),
-    Felt::new(0),
-    Felt::new(0),
-    Felt::new(deposit_amount),
-]);
-
-assert_eq!(balance, expected_balance, "Balance should equal deposited amount");
-```
-
-### Deposit Flow Diagram
+Let's trace through exactly what happens when a user deposits tokens:
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────┐
-│                        DEPOSIT FLOW                                 │
+│                        DEPOSIT FLOW                                  │
 ├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  1. CREATE NOTE                                                     │
-│     ┌──────────────────────┐                                       │
-│     │ Deposit Note         │                                       │
-│     │  sender: User        │                                       │
-│     │  assets: [1000 tok]  │                                       │
-│     │  script: deposit-note│                                       │
-│     └──────────────────────┘                                       │
-│              │                                                      │
-│              ▼                                                      │
-│  2. BANK CONSUMES NOTE                                             │
-│     ┌──────────────────────┐                                       │
-│     │ Bank Account         │                                       │
-│     │  vault += 1000 tokens│  ◄── Protocol adds assets to vault   │
-│     └──────────────────────┘                                       │
-│              │                                                      │
-│              ▼                                                      │
-│  3. NOTE SCRIPT EXECUTES                                           │
-│     depositor = get_sender() → User's AccountId                    │
-│     assets = get_assets()    → [1000 tokens]                       │
-│     bank_account::deposit(depositor, asset)                        │
-│              │                                                      │
-│              ▼                                                      │
-│  4. DEPOSIT METHOD RUNS                                            │
-│     - require_initialized() ✓                                      │
-│     - Check amount <= MAX_DEPOSIT ✓                                │
-│     - balances[User] += 1000                                       │
-│     - native_account::add_asset() (already in vault)               │
-│                                                                     │
+│                                                                      │
+│  1. USER CREATES DEPOSIT NOTE                                        │
+│     ┌──────────────────────┐                                        │
+│     │ Deposit Note         │                                        │
+│     │  sender: User        │                                        │
+│     │  assets: [1000 tok]  │                                        │
+│     │  script: deposit-note│                                        │
+│     │  target: Bank        │                                        │
+│     └──────────────────────┘                                        │
+│              │                                                       │
+│              ▼                                                       │
+│  2. BANK CONSUMES NOTE (Transaction begins)                         │
+│     ┌──────────────────────┐                                        │
+│     │ Bank Account         │                                        │
+│     │  vault += 1000 tokens│  ◀── Protocol adds assets to vault    │
+│     └──────────────────────┘                                        │
+│              │                                                       │
+│              ▼                                                       │
+│  3. NOTE SCRIPT EXECUTES                                            │
+│     depositor = active_note::get_sender() → User's AccountId        │
+│     assets = active_note::get_assets()    → [1000 tokens]           │
+│     for asset in assets:                                            │
+│         bank_account::deposit(depositor, asset)  ◀── Cross-component│
+│              │                                                       │
+│              ▼                                                       │
+│  4. DEPOSIT METHOD RUNS (in bank-account context)                   │
+│     ┌──────────────────────────────────────────┐                    │
+│     │ require_initialized()     ✓ Passes       │                    │
+│     │ amount <= MAX_DEPOSIT     ✓ 1000 <= 100k │                    │
+│     │ native_account::add_asset() ← Confirm    │                    │
+│     │ balances[User] += 1000    ← Update       │                    │
+│     └──────────────────────────────────────────┘                    │
+│              │                                                       │
+│              ▼                                                       │
+│  5. TRANSACTION COMPLETES                                           │
+│     Bank storage: balances[User] = 1000                             │
+│     Bank vault: +1000 tokens                                        │
+│                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 ## The Complete Withdraw Flow
 
-### Step 1: Create Withdraw Request Note
-
-After a deposit, create a withdrawal request:
-
-```rust
-let withdraw_amount = deposit_amount / 2;  // Withdraw half
-
-// Compute P2ID tag for the sender
-let p2id_tag = compute_p2id_tag_for_local_account(sender.id());
-let p2id_tag_felt = Felt::new(p2id_tag as u64);
-
-// Random serial number for the output note
-let serial_num = Word::from([
-    Felt::new(0x1234567890abcdef),
-    Felt::new(0xfedcba0987654321),
-    Felt::new(0xdeadbeefcafebabe),
-    Felt::new(0x0123456789abcdef),
-]);
-
-// Note inputs: asset, serial, tag, aux, note_type
-let withdraw_request_inputs = vec![
-    // Asset (amount, 0, faucet_suffix, faucet_prefix)
-    Felt::new(withdraw_amount),
-    Felt::new(0),
-    faucet.id().suffix(),
-    faucet.id().prefix().as_felt(),
-    // Serial number
-    serial_num[0], serial_num[1], serial_num[2], serial_num[3],
-    // Tag, aux, note_type
-    p2id_tag_felt,
-    Felt::new(0),  // aux
-    Felt::new(1),  // note_type = Public
-];
-
-let withdraw_request_note = create_testing_note_from_package(
-    withdraw_request_note_package.clone(),
-    sender.id(),
-    NoteCreationConfig {
-        inputs: withdraw_request_inputs,
-        ..Default::default()
-    },
-)?;
-```
-
-### Step 2: Execute Withdraw
-
-Bank consumes the request and creates output note:
-
-```rust
-// Build expected P2ID output note
-let recipient = build_p2id_recipient(sender.id(), serial_num)?;
-let p2id_output_note_asset = FungibleAsset::new(faucet.id(), withdraw_amount)?;
-let p2id_output_note_assets = NoteAssets::new(vec![p2id_output_note_asset.into()])?;
-let p2id_output_note_metadata = NoteMetadata::new(
-    bank_account.id(),
-    NoteType::Public,
-    p2id_tag,
-    NoteExecutionHint::none(),
-    Felt::new(0),  // aux
-)?;
-
-let p2id_output_note = Note::new(
-    p2id_output_note_assets,
-    p2id_output_note_metadata,
-    recipient,
-);
-
-// Execute with expected output
-let tx_context = mock_chain
-    .build_tx_context(bank_account.id(), &[withdraw_request_note.id()], &[])?
-    .extend_expected_output_notes(vec![OutputNote::Full(p2id_output_note.into())])
-    .build()?;
-
-let executed_tx = tx_context.execute().await?;
-```
-
-### Withdraw Flow Diagram
+Now let's trace the withdrawal process:
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────┐
-│                       WITHDRAW FLOW                                 │
+│                       WITHDRAW FLOW                                  │
 ├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  1. CREATE WITHDRAW REQUEST NOTE                                    │
-│     ┌──────────────────────────────┐                               │
-│     │ Withdraw Request Note        │                               │
-│     │  sender: User                │                               │
-│     │  inputs: [asset, serial,     │                               │
-│     │           tag, aux, type]    │                               │
-│     │  assets: (none)              │                               │
-│     └──────────────────────────────┘                               │
-│              │                                                      │
-│              ▼                                                      │
-│  2. BANK CONSUMES REQUEST                                          │
-│     ┌──────────────────────────────┐                               │
-│     │ Note script executes:        │                               │
-│     │  - Parse inputs              │                               │
-│     │  - Call bank::withdraw()     │                               │
-│     └──────────────────────────────┘                               │
-│              │                                                      │
-│              ▼                                                      │
-│  3. WITHDRAW METHOD RUNS                                           │
-│     - balances[User] -= 500                                        │
-│     - create_p2id_note()                                           │
-│              │                                                      │
-│              ▼                                                      │
-│  4. P2ID NOTE CREATED                                              │
-│     - Recipient::compute(serial, script_root, [user_id])           │
-│     - output_note::create(tag, aux, type, hint, recipient)         │
-│     - native_account::remove_asset(500 tokens)                     │
-│     - output_note::add_asset(500 tokens, note_idx)                 │
-│              │                                                      │
-│              ▼                                                      │
-│  5. OUTPUT NOTE READY                                              │
-│     ┌──────────────────────────────┐                               │
-│     │ P2ID Output Note             │                               │
-│     │  recipient: User (only)      │                               │
-│     │  assets: [500 tokens]        │                               │
-│     │  tag: routing to User        │                               │
-│     └──────────────────────────────┘                               │
-│              │                                                      │
-│              ▼                                                      │
-│  6. USER CONSUMES P2ID NOTE                                        │
-│     User's wallet receives 500 tokens                              │
-│                                                                     │
+│                                                                      │
+│  1. USER CREATES WITHDRAW REQUEST NOTE                              │
+│     ┌──────────────────────────────┐                                │
+│     │ Withdraw Request Note        │                                │
+│     │  sender: User                │                                │
+│     │  inputs: [serial, tag,       │                                │
+│     │           aux, note_type]    │                                │
+│     │  assets: [withdraw amount]   │                                │
+│     │  target: Bank                │                                │
+│     └──────────────────────────────┘                                │
+│              │                                                       │
+│              ▼                                                       │
+│  2. BANK CONSUMES REQUEST (Transaction begins)                      │
+│     ┌──────────────────────────────┐                                │
+│     │ Note script executes:        │                                │
+│     │  sender = get_sender()       │                                │
+│     │  inputs = get_inputs()       │                                │
+│     │  asset = Asset from inputs   │                                │
+│     │  bank_account::withdraw(...) │                                │
+│     └──────────────────────────────┘                                │
+│              │                                                       │
+│              ▼                                                       │
+│  3. WITHDRAW METHOD RUNS                                            │
+│     ┌──────────────────────────────────────────────────────┐        │
+│     │ require_initialized()                 ✓ Passes       │        │
+│     │ current_balance = get_balance(User)   → 1000         │        │
+│     │ VALIDATE: 1000 >= 400                 ✓ Passes       │  ◀ CRITICAL
+│     │ balances[User] = 1000 - 400           → 600          │        │
+│     │ create_p2id_note(...)                 → Output note  │        │
+│     └──────────────────────────────────────────────────────┘        │
+│              │                                                       │
+│              ▼                                                       │
+│  4. P2ID NOTE CREATED (inside create_p2id_note)                     │
+│     ┌──────────────────────────────────────────────────────┐        │
+│     │ script_root = p2id_note_root()        → MAST digest  │        │
+│     │ recipient = Recipient::compute(                       │        │
+│     │     serial_num, script_root,                          │        │
+│     │     [user.suffix, user.prefix, 0, 0, 0, 0, 0, 0]     │        │
+│     │ )                                                     │        │
+│     │ note_idx = output_note::create(tag, aux, ...)         │        │
+│     │ native_account::remove_asset(400 tokens)              │        │
+│     │ output_note::add_asset(400 tokens, note_idx)          │        │
+│     └──────────────────────────────────────────────────────┘        │
+│              │                                                       │
+│              ▼                                                       │
+│  5. TRANSACTION COMPLETES                                           │
+│     Bank storage: balances[User] = 600                              │
+│     Bank vault: -400 tokens                                         │
+│     Output: P2ID note with 400 tokens → User                        │
+│              │                                                       │
+│              ▼                                                       │
+│  6. USER CONSUMES P2ID NOTE (separate transaction)                  │
+│     User's wallet receives 400 tokens                               │
+│                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-## Running the Tests
+## Try It: Complete End-to-End Test
 
-Execute the complete flows:
+Let's create a comprehensive test that exercises the entire bank system:
+
+```rust title="integration/tests/part8_complete_flow_test.rs"
+use integration::helpers::{
+    build_project_in_dir, create_testing_account_from_package, create_testing_note_from_package,
+    AccountCreationConfig, NoteCreationConfig,
+};
+use miden_client::{
+    account::StorageMap,
+    note::{Note, NoteAssets, NoteExecutionHint, NoteMetadata, NoteTag, NoteType},
+    transaction::OutputNote,
+    Felt, Word,
+};
+use miden_lib::note::utils::build_p2id_recipient;
+use miden_objects::{
+    account::AccountId,
+    asset::{Asset, FungibleAsset},
+    transaction::TransactionScript,
+};
+use miden_testing::{Auth, MockChain};
+use std::{path::Path, sync::Arc};
+
+/// Compute a P2ID note tag for a local account.
+fn compute_p2id_tag_for_local_account(account_id: AccountId) -> NoteTag {
+    const LOCAL_ANY_PREFIX: u32 = 0xC000_0000;
+    const TAG_BITS: u8 = 14;
+
+    let prefix_u64 = account_id.prefix().as_u64();
+    let shifted = (prefix_u64 >> 34) as u32;
+    let mask = u32::MAX << (30 - TAG_BITS);
+    let account_bits = shifted & mask;
+    let tag_value = LOCAL_ANY_PREFIX | account_bits;
+
+    NoteTag::LocalAny(tag_value)
+}
+
+/// Complete end-to-end test of the Miden Bank
+///
+/// This test exercises:
+/// 1. Bank initialization via transaction script
+/// 2. Deposit via deposit-note
+/// 3. Withdrawal via withdraw-request-note
+/// 4. Balance verification at each step
+#[tokio::test]
+async fn test_complete_bank_flow() -> anyhow::Result<()> {
+    println!("╔══════════════════════════════════════════════════════════════╗");
+    println!("║            MIDEN BANK - COMPLETE FLOW TEST                   ║");
+    println!("╚══════════════════════════════════════════════════════════════╝");
+
+    // ═══════════════════════════════════════════════════════════════════
+    // SETUP
+    // ═══════════════════════════════════════════════════════════════════
+    println!("\n📦 Setting up test environment...");
+
+    let mut builder = MockChain::builder();
+
+    let deposit_amount: u64 = 1000;
+    let withdraw_amount: u64 = 400;
+
+    // Create a faucet to mint test assets
+    let faucet =
+        builder.add_existing_basic_faucet(Auth::BasicAuth, "TEST", deposit_amount, Some(10))?;
+
+    // Create note sender account (the depositor)
+    let sender = builder.add_existing_wallet_with_assets(
+        Auth::BasicAuth,
+        [FungibleAsset::new(faucet.id(), deposit_amount)?.into()],
+    )?;
+    println!("   ✓ Faucet and sender wallet created");
+
+    // Build all packages
+    let bank_package = Arc::new(build_project_in_dir(
+        Path::new("../contracts/bank-account"),
+        true,
+    )?);
+    let deposit_note_package = Arc::new(build_project_in_dir(
+        Path::new("../contracts/deposit-note"),
+        true,
+    )?);
+    let init_tx_script_package = Arc::new(build_project_in_dir(
+        Path::new("../contracts/init-tx-script"),
+        true,
+    )?);
+    let withdraw_request_note_package = Arc::new(build_project_in_dir(
+        Path::new("../contracts/withdraw-request-note"),
+        true,
+    )?);
+    println!("   ✓ All packages built");
+
+    // Create bank account with storage slots
+    let bank_cfg = AccountCreationConfig {
+        storage_slots: vec![
+            miden_client::account::StorageSlot::Value(Word::default()),
+            miden_client::account::StorageSlot::Map(StorageMap::with_entries([])?),
+        ],
+        ..Default::default()
+    };
+    let mut bank_account =
+        create_testing_account_from_package(bank_package.clone(), bank_cfg).await?;
+    println!("   ✓ Bank account created: {:?}", bank_account.id());
+
+    // Create deposit note with assets
+    let fungible_asset = FungibleAsset::new(faucet.id(), deposit_amount)?;
+    let note_assets = NoteAssets::new(vec![Asset::Fungible(fungible_asset)])?;
+    let deposit_note = create_testing_note_from_package(
+        deposit_note_package.clone(),
+        sender.id(),
+        NoteCreationConfig {
+            assets: note_assets,
+            ..Default::default()
+        },
+    )?;
+
+    // Craft withdraw request note with 11-Felt input layout
+    let p2id_tag = compute_p2id_tag_for_local_account(sender.id());
+    let p2id_tag_u32 = match p2id_tag {
+        NoteTag::LocalAny(v) => v,
+        _ => panic!("Expected LocalAny tag"),
+    };
+    let p2id_tag_felt = Felt::new(p2id_tag_u32 as u64);
+
+    let p2id_output_note_serial_num = Word::from([
+        Felt::new(0x1234567890abcdef),
+        Felt::new(0xfedcba0987654321),
+        Felt::new(0xdeadbeefcafebabe),
+        Felt::new(0x0123456789abcdef),
+    ]);
+
+    let aux = Felt::new(0);
+    let note_type_felt = Felt::new(1); // Public
+
+    // Note inputs: 11 Felts
+    // [0-3]: withdraw asset (amount, 0, faucet_suffix, faucet_prefix)
+    // [4-7]: serial_num
+    // [8]: tag
+    // [9]: aux
+    // [10]: note_type
+    let withdraw_request_note_inputs = vec![
+        Felt::new(withdraw_amount),
+        Felt::new(0),
+        faucet.id().suffix(),
+        faucet.id().prefix().as_felt(),
+        p2id_output_note_serial_num[0],
+        p2id_output_note_serial_num[1],
+        p2id_output_note_serial_num[2],
+        p2id_output_note_serial_num[3],
+        p2id_tag_felt,
+        aux,
+        note_type_felt,
+    ];
+
+    let withdraw_request_note = create_testing_note_from_package(
+        withdraw_request_note_package.clone(),
+        sender.id(),
+        NoteCreationConfig {
+            inputs: withdraw_request_note_inputs,
+            ..Default::default()
+        },
+    )?;
+
+    // Add to builder
+    builder.add_account(bank_account.clone())?;
+    builder.add_output_note(OutputNote::Full(deposit_note.clone().into()));
+    builder.add_output_note(OutputNote::Full(withdraw_request_note.clone().into()));
+
+    let mut mock_chain = builder.build()?;
+    println!("   ✓ MockChain built");
+
+    // ═══════════════════════════════════════════════════════════════════
+    // STEP 1: Initialize the bank
+    // ═══════════════════════════════════════════════════════════════════
+    println!("\n1️⃣  INITIALIZING BANK...");
+
+    let init_program = init_tx_script_package.unwrap_program();
+    let init_tx_script = TransactionScript::new((*init_program).clone());
+
+    let init_tx_context = mock_chain
+        .build_tx_context(bank_account.id(), &[], &[])?
+        .tx_script(init_tx_script)
+        .build()?;
+
+    let executed_init = init_tx_context.execute().await?;
+    bank_account.apply_delta(&executed_init.account_delta())?;
+    mock_chain.add_pending_executed_transaction(&executed_init)?;
+    mock_chain.prove_next_block()?;
+
+    println!("   ✓ Bank initialized (storage[0] = [1, 0, 0, 0])");
+
+    // ═══════════════════════════════════════════════════════════════════
+    // STEP 2: Deposit tokens
+    // ═══════════════════════════════════════════════════════════════════
+    println!("\n2️⃣  DEPOSITING TOKENS...");
+    println!("   Deposit amount: {} tokens", deposit_amount);
+
+    let deposit_tx_context = mock_chain
+        .build_tx_context(bank_account.id(), &[deposit_note.id()], &[])?
+        .build()?;
+
+    let executed_deposit = deposit_tx_context.execute().await?;
+    bank_account.apply_delta(&executed_deposit.account_delta())?;
+    mock_chain.add_pending_executed_transaction(&executed_deposit)?;
+    mock_chain.prove_next_block()?;
+
+    // Verify balance after deposit
+    let depositor_key = Word::from([
+        sender.id().prefix().as_felt(),
+        sender.id().suffix(),
+        faucet.id().prefix().as_felt(),
+        faucet.id().suffix(),
+    ]);
+    let balance_after_deposit = bank_account.storage().get_map_item(1, depositor_key)?;
+    println!(
+        "   ✓ Bank processed deposit, balance: {} tokens",
+        balance_after_deposit[3].as_int()
+    );
+
+    // ═══════════════════════════════════════════════════════════════════
+    // STEP 3: Withdraw tokens
+    // ═══════════════════════════════════════════════════════════════════
+    println!("\n3️⃣  WITHDRAWING TOKENS...");
+    println!("   Withdraw amount: {} tokens", withdraw_amount);
+
+    // Build expected P2ID output note
+    let recipient = build_p2id_recipient(sender.id(), p2id_output_note_serial_num)?;
+    let p2id_output_note_asset = FungibleAsset::new(faucet.id(), withdraw_amount)?;
+    let p2id_output_note_assets = NoteAssets::new(vec![p2id_output_note_asset.into()])?;
+    let p2id_output_note_metadata = NoteMetadata::new(
+        bank_account.id(),
+        NoteType::Public,
+        p2id_tag,
+        NoteExecutionHint::none(),
+        aux,
+    )?;
+    let p2id_output_note = Note::new(
+        p2id_output_note_assets,
+        p2id_output_note_metadata,
+        recipient,
+    );
+
+    let withdraw_tx_context = mock_chain
+        .build_tx_context(bank_account.id(), &[withdraw_request_note.id()], &[])?
+        .extend_expected_output_notes(vec![OutputNote::Full(p2id_output_note.into())])
+        .build()?;
+
+    let executed_withdraw = withdraw_tx_context.execute().await?;
+    bank_account.apply_delta(&executed_withdraw.account_delta())?;
+    mock_chain.add_pending_executed_transaction(&executed_withdraw)?;
+    mock_chain.prove_next_block()?;
+
+    println!("   ✓ Bank processed withdraw request");
+    println!("   ✓ P2ID output note created for sender");
+
+    // Verify final balance
+    let final_balance = bank_account.storage().get_map_item(1, depositor_key)?;
+    let final_balance_amount = final_balance[3].as_int();
+    let expected_final = deposit_amount - withdraw_amount;
+
+    println!("   ✓ Final balance verified: {} tokens", final_balance_amount);
+
+    // ═══════════════════════════════════════════════════════════════════
+    // SUMMARY
+    // ═══════════════════════════════════════════════════════════════════
+    println!("\n╔══════════════════════════════════════════════════════════════╗");
+    println!("║                      TEST SUMMARY                            ║");
+    println!("╠══════════════════════════════════════════════════════════════╣");
+    println!(
+        "║  Initial deposit:     {:>6} tokens                          ║",
+        deposit_amount
+    );
+    println!(
+        "║  Withdrawal:         -{:>6} tokens                          ║",
+        withdraw_amount
+    );
+    println!(
+        "║  Final balance:       {:>6} tokens                          ║",
+        final_balance_amount
+    );
+    println!("║                                                              ║");
+    println!("║  ✅ All operations completed successfully!                   ║");
+    println!("╚══════════════════════════════════════════════════════════════╝");
+
+    assert_eq!(
+        final_balance_amount, expected_final,
+        "Final balance should be deposit - withdraw"
+    );
+
+    Ok(())
+}
+```
+
+Run the complete test from the project root:
 
 ```bash title=">_ Terminal"
-# Run all integration tests
-cargo test -p integration -- --nocapture
-
-# Run specific tests
-cargo test -p integration deposit_test -- --nocapture
-cargo test -p integration withdraw_test -- --nocapture
-
-# Test failure cases
-cargo test -p integration deposit_exceeds_max_should_fail -- --nocapture
-cargo test -p integration deposit_without_init_should_fail -- --nocapture
+cargo test --package integration part8_complete_flow -- --nocapture
 ```
 
-Expected output:
+<details>
+<summary>Expected output</summary>
 
 ```text
-Bank initialized successfully
-Bank deposit successful
-Withdraw test passed!
-test withdraw_test ... ok
+   Compiling integration v0.1.0 (/path/to/miden-bank/integration)
+    Finished `test` profile [unoptimized + debuginfo] target(s)
+     Running tests/part8_complete_flow_test.rs
 
-test result: ok. 4 passed; 0 failed
+running 1 test
+╔══════════════════════════════════════════════════════════════╗
+║            MIDEN BANK - COMPLETE FLOW TEST                   ║
+╚══════════════════════════════════════════════════════════════╝
+
+📦 Setting up test environment...
+   ✓ Faucet and sender wallet created
+   ✓ All packages built
+   ✓ Bank account created: 0x...
+   ✓ MockChain built
+
+1️⃣  INITIALIZING BANK...
+   ✓ Bank initialized (storage[0] = [1, 0, 0, 0])
+
+2️⃣  DEPOSITING TOKENS...
+   Deposit amount: 1000 tokens
+   ✓ Bank processed deposit, balance: 1000 tokens
+
+3️⃣  WITHDRAWING TOKENS...
+   Withdraw amount: 400 tokens
+   ✓ Bank processed withdraw request
+   ✓ P2ID output note created for sender
+   ✓ Final balance verified: 600 tokens
+
+╔══════════════════════════════════════════════════════════════╗
+║                      TEST SUMMARY                            ║
+╠══════════════════════════════════════════════════════════════╣
+║  Initial deposit:       1000 tokens                          ║
+║  Withdrawal:         -   400 tokens                          ║
+║  Final balance:          600 tokens                          ║
+║                                                              ║
+║  ✅ All operations completed successfully!                   ║
+╚══════════════════════════════════════════════════════════════╝
+test test_complete_bank_flow ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored
 ```
+
+</details>
 
 ## Summary: All Components
 
-Here's how all the pieces fit together:
+Here's the complete picture of what you've built:
 
 | Component | Type | Purpose |
 |-----------|------|---------|
@@ -347,15 +532,49 @@ Here's how all the pieces fit together:
 | `output_note::create()` | Create output note |
 | `output_note::add_asset()` | Attach assets to note |
 
-## What's Next
+## Key Security Patterns
 
-Congratulations! You've built a complete banking application with the Miden Rust compiler. You now understand:
+Remember these critical patterns from this tutorial:
 
-- Account components with storage
-- Note scripts for receiving messages
-- Transaction scripts for owner operations
-- Cross-component communication
-- Asset management and output notes
+:::danger Always Validate Before Subtraction
+```rust
+// ❌ DANGEROUS: Silent underflow!
+let new_balance = current_balance - withdraw_amount;
+
+// ✅ SAFE: Validate first
+assert!(
+    current_balance.as_u64() >= withdraw_amount.as_u64(),
+    "Insufficient balance"
+);
+let new_balance = Felt::from_u64_unchecked(
+    current_balance.as_u64() - withdraw_amount.as_u64()
+);
+```
+:::
+
+:::warning Felt Comparison Operators
+Never use `<`, `>` on Felt values directly. Always convert to u64 first:
+```rust
+// ❌ BROKEN: Produces incorrect results
+if current_balance < withdraw_amount { ... }
+
+// ✅ CORRECT: Use as_u64()
+if current_balance.as_u64() < withdraw_amount.as_u64() { ... }
+```
+:::
+
+## Congratulations! 🎉
+
+You've completed the Miden Bank tutorial! You now understand:
+
+- ✅ **Account components** with storage (`Value` and `StorageMap`)
+- ✅ **Constants and constraints** for business rules
+- ✅ **Asset management** with vault operations
+- ✅ **Note scripts** for processing incoming notes
+- ✅ **Cross-component calls** via generated bindings
+- ✅ **Transaction scripts** for owner operations
+- ✅ **Output notes** for sending assets (P2ID pattern)
+- ✅ **Security patterns** for safe arithmetic
 
 ### Continue Learning
 
@@ -379,4 +598,4 @@ Explore the complete banking application:
 - [Test Helpers](https://github.com/keinberger/miden-bank/blob/main/integration/src/helpers.rs)
 :::
 
-Happy building on Miden!
+Happy building on Miden! 🚀
