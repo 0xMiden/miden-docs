@@ -95,17 +95,13 @@ Here's our complete deposit validation with constraints:
 
 ```rust title="contracts/bank-account/src/lib.rs"
 pub fn deposit(&mut self, depositor: AccountId, deposit_asset: Asset) {
-    // ========================================================================
-    // CONSTRAINT: Bank must be initialized
-    // ========================================================================
+    // Ensure the bank is initialized before accepting deposits
     self.require_initialized();
 
     // Extract the fungible amount from the asset
     let deposit_amount = deposit_asset.inner[0];
 
-    // ========================================================================
-    // CONSTRAINT: Maximum deposit amount check
-    // ========================================================================
+    // Validate deposit amount does not exceed maximum
     assert!(
         deposit_amount.as_u64() <= MAX_DEPOSIT_AMOUNT,
         "Deposit amount exceeds maximum allowed"
@@ -208,6 +204,10 @@ fn require_sufficient_balance(&self, amount: Felt) {
     );
 }
 ```
+
+:::danger Critical: Always Validate Before Subtraction
+This pattern is **mandatory** for any operation that subtracts from a balance. Miden uses field element (Felt) arithmetic, which is modular. Without this check, subtracting more than the balance would NOT cause an error - instead, the value would silently wrap around to a large positive number, effectively allowing unlimited withdrawals. See [Common Pitfalls](../pitfalls#felt-arithmetic-underflowoverflow) for more details.
+:::
 
 ### 2. State Checks
 

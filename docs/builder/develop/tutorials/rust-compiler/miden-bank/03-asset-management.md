@@ -193,6 +193,9 @@ pub fn withdraw(
     aux: Felt,
     note_type: Felt,
 ) {
+    // Ensure the bank is initialized before processing withdrawals
+    self.require_initialized();
+
     // Extract the fungible amount from the asset
     let withdraw_amount = withdraw_asset.inner[0];
 
@@ -204,8 +207,16 @@ pub fn withdraw(
         withdraw_asset.inner[2],
     ]);
 
-    // Update balance: current - withdraw_amount
+    // Get current balance and validate sufficient funds exist.
+    // This check is critical: Felt arithmetic is modular, so subtracting
+    // more than the balance would silently wrap to a large positive number.
     let current_balance: Felt = self.balances.get(&key);
+    assert!(
+        current_balance.as_u64() >= withdraw_amount.as_u64(),
+        "Withdrawal amount exceeds available balance"
+    );
+
+    // Update balance: current - withdraw_amount
     let new_balance = current_balance - withdraw_amount;
     self.balances.set(key, new_balance);
 
