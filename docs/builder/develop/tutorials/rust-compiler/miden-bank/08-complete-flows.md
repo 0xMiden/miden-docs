@@ -578,9 +578,9 @@ You've completed the Miden Bank tutorial! You now understand:
 
 ### Continue Learning
 
-- **[Testing with MockChain](../../testing)** - Deep dive into testing patterns
-- **[Debugging Guide](../../debugging)** - Troubleshoot common issues
-- **[Common Pitfalls](../../pitfalls)** - Avoid known gotchas
+- **[Testing with MockChain](../testing)** - Deep dive into testing patterns
+- **[Debugging Guide](../debugging)** - Troubleshoot common issues
+- **[Common Pitfalls](../pitfalls)** - Avoid known gotchas
 
 ### Build More
 
