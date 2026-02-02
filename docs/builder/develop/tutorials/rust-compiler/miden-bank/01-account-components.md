@@ -6,75 +6,46 @@ description: "Learn how to define account components with the #[component] attri
 
 # Part 1: Account Components and Storage
 
-In this section, you'll learn the fundamentals of building Miden account components using the Rust compiler. We'll create the Bank account structure that stores initialization state and tracks depositor balances.
+In this section, you'll learn the fundamentals of building Miden account components. We'll expand our Bank to include balance tracking with a `StorageMap`, giving us the foundation for deposits and withdrawals.
 
-## What You'll Learn
+## What You'll Build in This Part
 
-- The `#[component]` attribute and what it generates
-- `Value` storage type for single Word values
-- `StorageMap` for key-value storage
-- `#[storage(slot(N))]` attribute syntax
-- Project configuration in `Cargo.toml`
+By the end of this section, you will have:
 
-## Project Setup
+- Understood the `#[component]` attribute and what it generates
+- Added a `StorageMap` for tracking depositor balances
+- Implemented a `get_balance()` query method
+- **Verified it works** with a MockChain test
 
-First, let's look at the project structure for an account component:
+## Building on Part 0
+
+In Part 0, we created a minimal bank with just an `initialized` flag. Now we'll add balance tracking:
 
 ```text
-contracts/bank-account/
-├── Cargo.toml        # Project configuration with Miden metadata
-└── src/
-    └── lib.rs        # Component implementation
+Part 0:                          Part 1:
+┌────────────────────┐             ┌────────────────────┐
+│ Bank               │             │ Bank               │
+│ ─────────────────  │    ──►      │ ─────────────────  │
+│ slot 0: initialized│             │ slot 0: initialized│
+│                    │             │ slot 1: balances   │ ◄── NEW
+└────────────────────┘             └────────────────────┘
 ```
-
-### Cargo.toml Configuration
-
-Account components require specific metadata in `Cargo.toml`:
-
-```toml title="contracts/bank-account/Cargo.toml"
-[package]
-name = "bank-account"
-version = "0.1.0"
-edition = "2021"
-
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
-miden = { workspace = true }
-
-[package.metadata.component]
-package = "miden:bank-account"
-
-[package.metadata.miden]
-project-kind = "account"
-supported-types = ["RegularAccountImmutableCode"]
-```
-
-Key configuration options:
-
-| Field | Description |
-|-------|-------------|
-| `crate-type = ["cdylib"]` | Required for WebAssembly compilation |
-| `project-kind = "account"` | Tells the compiler this is an account component |
-| `supported-types` | Account types this component supports |
-
-:::info Supported Account Types
-`RegularAccountImmutableCode` means the account code cannot be changed after deployment. Other options include `RegularAccountMutableCode` for upgradeable accounts.
-:::
 
 ## The #[component] Attribute
 
-The `#[component]` attribute marks a struct as a Miden account component. It generates:
+The `#[component]` attribute marks a struct as a Miden account component. When you compile with `miden build`, it generates:
 
-- WIT (WebAssembly Interface Types) bindings for cross-component calls
-- MASM (Miden Assembly) code for the account logic
-- Storage slot management code
+- **WIT (WebAssembly Interface Types)** bindings for cross-component calls
+- **MASM (Miden Assembly)** code for the account logic
+- **Storage slot management** code
 
-Here's our Bank component definition:
+Let's expand our Bank component:
 
-```rust title="contracts/bank-account/src/lib.rs"
-// Do not link against libstd (i.e. anything defined in `std::`)
+## Step 1: Add the Balances Storage Map
+
+Update `contracts/bank-account/src/lib.rs`:
+
+```rust title="contracts/bank-account/src/lib.rs" {17-20}
 #![no_std]
 #![feature(alloc_error_handler)]
 
@@ -98,31 +69,11 @@ struct Bank {
 }
 ```
 
-### No-std Environment
+We've added a `StorageMap` in slot 1 that will track each depositor's balance.
 
-```rust
-#![no_std]
-```
+## Storage Types Explained
 
-Miden contracts run in a `no_std` environment, meaning they don't link against Rust's standard library. This is essential for blockchain execution where contracts need to be deterministic and lightweight.
-
-### Imports
-
-```rust
-use miden::*;
-```
-
-The `miden` crate provides all the types and macros needed for Miden development:
-
-- **`component`**: Macro for defining components
-- **`Felt`**: Miden's native field element (64-bit prime field)
-- **`Word`**: Four Felts `[Felt; 4]`
-- **`Value`**: Single-value storage type
-- **`StorageMap`**: Key-value storage type
-
-## Storage Types
-
-Miden accounts have storage slots that persist state on-chain. Each slot holds one `Word` (4 Felts = 32 bytes). The Miden Rust compiler provides two abstractions over these slots.
+Miden accounts have storage slots that persist state on-chain. Each slot holds one `Word` (4 Felts = 32 bytes). The Miden Rust compiler provides two abstractions:
 
 ### Value Storage
 
@@ -133,7 +84,7 @@ The `Value` type provides access to a single storage slot:
 initialized: Value,
 ```
 
-Use `Value` when you need to store a single `Word` of data. In our bank, we use it for a boolean flag (is the bank initialized?).
+Use `Value` when you need to store a single `Word` of data.
 
 **Reading and writing:**
 
@@ -164,7 +115,7 @@ The `StorageMap` type provides key-value storage within a slot:
 balances: StorageMap,
 ```
 
-Use `StorageMap` when you need to store multiple values indexed by keys. In our bank, we track each depositor's balance.
+Use `StorageMap` when you need to store multiple values indexed by keys.
 
 **Reading and writing:**
 
@@ -191,7 +142,7 @@ Unlike `Value::read()` which returns a `Word`, `StorageMap::get()` returns a sin
 
 ### Storage Slot Layout
 
-Storage slots are numbered starting from 0. Plan your layout carefully:
+Plan your storage layout carefully:
 
 | Slot | Type | Purpose |
 |------|------|---------|
@@ -200,20 +151,43 @@ Storage slots are numbered starting from 0. Plan your layout carefully:
 
 The `description` attribute is for documentation and debugging - it doesn't affect runtime behavior.
 
-## Component Implementation
+## Step 2: Implement Component Methods
 
-The `#[component]` attribute is also used on the `impl` block to define methods:
+Now let's add methods to our Bank. The `#[component]` attribute is also used on the `impl` block:
 
 ```rust title="contracts/bank-account/src/lib.rs"
 #[component]
 impl Bank {
+    /// Initialize the bank account, enabling deposits.
+    pub fn initialize(&mut self) {
+        // Read current value from storage
+        let current: Word = self.initialized.read();
+
+        // Check not already initialized
+        assert!(
+            current[0].as_u64() == 0,
+            "Bank already initialized"
+        );
+
+        // Set initialized flag to 1
+        let initialized_word = Word::from([felt!(1), felt!(0), felt!(0), felt!(0)]);
+        self.initialized.write(initialized_word);
+    }
+
     /// Get the balance for a depositor.
     pub fn get_balance(&self, depositor: AccountId) -> Felt {
         let key = Word::from([depositor.prefix, depositor.suffix, felt!(0), felt!(0)]);
         self.balances.get(&key)
     }
 
-    // More methods...
+    /// Check that the bank is initialized.
+    fn require_initialized(&self) {
+        let current: Word = self.initialized.read();
+        assert!(
+            current[0].as_u64() == 1,
+            "Bank not initialized - deposits not enabled"
+        );
+    }
 }
 ```
 
@@ -230,9 +204,9 @@ pub fn get_balance(&self, depositor: AccountId) -> Felt { ... }
 fn require_initialized(&self) { ... }
 ```
 
-## Building the Component
+## Step 3: Build the Component
 
-Build your account component with:
+Build your updated account component:
 
 ```bash title=">_ Terminal"
 cd contracts/bank-account
@@ -243,6 +217,188 @@ This compiles the Rust code to Miden Assembly and generates:
 
 - `target/miden/release/bank_account.masp` - The compiled package
 - `target/generated-wit/` - WIT interface files for other contracts to use
+
+## Try It: Verify Your Code
+
+Let's write a MockChain test to verify our Bank component works correctly. This test will:
+1. Create a bank account
+2. Initialize it
+3. Verify the storage was updated
+
+Create a new test file:
+
+```rust title="integration/tests/part1_account_test.rs"
+use integration::helpers::{
+    build_project_in_dir, create_testing_account_from_package, AccountCreationConfig,
+};
+use miden_client::account::{StorageMap, StorageSlot};
+use miden_client::{Felt, Word};
+use std::{path::Path, sync::Arc};
+
+#[tokio::test]
+async fn test_bank_account_storage() -> anyhow::Result<()> {
+    // =========================================================================
+    // SETUP: Build contracts and create the bank account
+    // =========================================================================
+
+    // Build the bank account contract
+    let bank_package = Arc::new(build_project_in_dir(
+        Path::new("../contracts/bank-account"),
+        true,
+    )?);
+
+    // Create the bank account with storage slots
+    let bank_cfg = AccountCreationConfig {
+        storage_slots: vec![
+            // Slot 0: initialized flag (starts as 0)
+            StorageSlot::Value(Word::default()),
+            // Slot 1: balances map (empty)
+            StorageSlot::Map(StorageMap::with_entries([])?),
+        ],
+        ..Default::default()
+    };
+
+    let bank_account =
+        create_testing_account_from_package(bank_package.clone(), bank_cfg).await?;
+
+    // =========================================================================
+    // VERIFY: Check initial storage state
+    // =========================================================================
+
+    // Verify slot 0 (initialized) starts as 0
+    let initialized_value = bank_account.storage().get_item(0)?;
+    assert_eq!(
+        initialized_value,
+        Word::default(),
+        "Initialized flag should start as 0"
+    );
+
+    println!("Bank account created successfully!");
+    println!("  Account ID: {:?}", bank_account.id());
+    println!("  Initialized flag: {:?}", initialized_value[0].as_int());
+
+    // =========================================================================
+    // VERIFY: Storage slots are correctly configured
+    // =========================================================================
+
+    // Check that we can query the balances map (should return 0 for any key)
+    let test_key = Word::from([Felt::new(1), Felt::new(2), Felt::new(0), Felt::new(0)]);
+    let balance = bank_account.storage().get_map_item(1, test_key)?;
+
+    // Balance for non-existent depositor should be all zeros
+    assert_eq!(
+        balance,
+        Word::default(),
+        "Balance for unknown depositor should be zero"
+    );
+
+    println!("  Balances map accessible: Yes");
+    println!("\nPart 1 test passed!");
+
+    Ok(())
+}
+```
+
+Run the test from the project root:
+
+```bash title=">_ Terminal"
+cargo test --package integration part1_account_test -- --nocapture
+```
+
+<details>
+<summary>Expected output</summary>
+
+```text
+   Compiling integration v0.1.0 (/path/to/miden-bank/integration)
+    Finished `test` profile [unoptimized + debuginfo] target(s)
+     Running tests/part1_account_test.rs
+
+running 1 test
+Bank account created successfully!
+  Account ID: 0x...
+  Initialized flag: 0
+  Balances map accessible: Yes
+
+Part 1 test passed!
+test test_bank_account_storage ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored
+```
+
+</details>
+
+:::tip Troubleshooting
+**"cannot find function `build_project_in_dir`"**: Make sure your `integration/src/helpers.rs` exports this function and `integration/src/lib.rs` has `pub mod helpers;`.
+
+**"StorageSlot::Map not found"**: Ensure you're using the correct imports: `use miden_client::account::StorageSlot;`
+:::
+
+## Complete Code for This Part
+
+Here's the full `lib.rs` after Part 1:
+
+<details>
+<summary>Click to expand full code</summary>
+
+```rust title="contracts/bank-account/src/lib.rs"
+#![no_std]
+#![feature(alloc_error_handler)]
+
+#[macro_use]
+extern crate alloc;
+
+use miden::*;
+
+/// Bank account component that tracks depositor balances.
+#[component]
+struct Bank {
+    /// Tracks whether the bank has been initialized (deposits enabled).
+    /// Word layout: [is_initialized (0 or 1), 0, 0, 0]
+    #[storage(slot(0), description = "initialized")]
+    initialized: Value,
+
+    /// Maps depositor AccountId -> balance (as Felt)
+    /// Key: [prefix, suffix, asset_prefix, asset_suffix]
+    #[storage(slot(1), description = "balances")]
+    balances: StorageMap,
+}
+
+#[component]
+impl Bank {
+    /// Initialize the bank account, enabling deposits.
+    pub fn initialize(&mut self) {
+        // Read current value from storage
+        let current: Word = self.initialized.read();
+
+        // Check not already initialized
+        assert!(
+            current[0].as_u64() == 0,
+            "Bank already initialized"
+        );
+
+        // Set initialized flag to 1
+        let initialized_word = Word::from([felt!(1), felt!(0), felt!(0), felt!(0)]);
+        self.initialized.write(initialized_word);
+    }
+
+    /// Get the balance for a depositor.
+    pub fn get_balance(&self, depositor: AccountId) -> Felt {
+        let key = Word::from([depositor.prefix, depositor.suffix, felt!(0), felt!(0)]);
+        self.balances.get(&key)
+    }
+
+    /// Check that the bank is initialized.
+    fn require_initialized(&self) {
+        let current: Word = self.initialized.read();
+        assert!(
+            current[0].as_u64() == 1,
+            "Bank not initialized - deposits not enabled"
+        );
+    }
+}
+```
+
+</details>
 
 ## Key Takeaways
 
@@ -258,4 +414,4 @@ See the complete bank account implementation in the [miden-bank repository](http
 
 ## Next Steps
 
-Now that you understand account components and storage, let's learn how to define business rules with [Part 2: Constants and Constraints](./constants-constraints).
+Now that you understand account components and storage, let's learn how to define business rules with [Part 2: Constants and Constraints](./02-constants-constraints).
