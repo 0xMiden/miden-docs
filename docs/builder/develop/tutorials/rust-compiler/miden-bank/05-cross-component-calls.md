@@ -6,14 +6,40 @@ description: "Learn how note scripts and transaction scripts call account compon
 
 # Part 5: Cross-Component Calls
 
-In this section, you'll learn how note scripts call methods on account components. We'll explore the generated bindings system and the dependency configuration required to enable cross-component communication.
+In this section, you'll learn how note scripts call methods on account components. We'll explore the generated bindings system and the dependency configuration that makes the deposit note work.
 
-## What You'll Learn
+## What You'll Learn in This Part
 
-- How bindings are generated and imported
-- Calling account methods from note scripts
-- Configuring dependencies in `Cargo.toml`
-- Understanding the WIT interface files
+By the end of this section, you will have:
+
+- Understood how bindings are generated and imported
+- Learned the dependency configuration in `Cargo.toml`
+- Explored the WIT interface files
+- **Verified cross-component calls work** via the deposit flow
+
+## Building on Part 4
+
+In Part 4, you wrote `bank_account::deposit(depositor, asset)` in the deposit note. But how does that call actually work? This part explains the binding system:
+
+```text
+┌────────────────────────────────────────────────────────────┐
+│                  How Bindings Work                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│   bank-account/                                            │
+│   └── src/lib.rs         miden build                       │
+│       pub fn deposit()  ─────────────▶  generated-wit/     │
+│       pub fn withdraw()                  miden_bank-account.wit
+│                                                            │
+│                              ┌───────────────────────────┐ │
+│                              ▼                           │ │
+│   deposit-note/                                          │ │
+│   └── src/lib.rs                                         │ │
+│       use crate::bindings::miden::bank_account::bank_account;
+│       bank_account::deposit(...) ◄───── calls via binding │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
 
 ## The Bindings System
 
@@ -50,12 +76,12 @@ use crate::bindings::miden::bank_account::bank_account;
 
 The import path follows this pattern:
 ```
-crate::bindings::{component-package}::{component-name}::{interface-name}
+crate::bindings::{package-prefix}::{component-name}::{interface-name}
 ```
 
 For our bank:
 - `miden` - The package prefix from `[package.metadata.component]`
-- `bank_account` - The component name (derived from package name)
+- `bank_account` - The component name (derived from package name with underscores)
 - `bank_account` - The interface name (same as component)
 
 ## Calling Account Methods
@@ -82,7 +108,7 @@ The binding automatically handles:
 
 ## Configuring Dependencies
 
-Your `Cargo.toml` needs two dependency sections:
+Your `Cargo.toml` needs **two** dependency sections:
 
 ```toml title="contracts/deposit-note/Cargo.toml"
 [package.metadata.miden.dependencies]
@@ -132,34 +158,6 @@ miden build
 
 If you build out of order, you'll see errors about missing WIT files.
 
-## Multiple Dependencies
-
-Note scripts can depend on multiple account components:
-
-```toml title="Example: Multi-dependency note"
-[package.metadata.miden.dependencies]
-"miden:bank-account" = { path = "../bank-account" }
-"miden:token-faucet" = { path = "../token-faucet" }
-
-[package.metadata.component.target.dependencies]
-"miden:bank-account" = { path = "../bank-account/target/generated-wit/" }
-"miden:token-faucet" = { path = "../token-faucet/target/generated-wit/" }
-```
-
-Import and use both:
-
-```rust
-use crate::bindings::miden::bank_account::bank_account;
-use crate::bindings::miden::token_faucet::token_faucet;
-
-#[note_script]
-fn run(_arg: Word) {
-    // Call methods on either component
-    bank_account::deposit(/* ... */);
-    token_faucet::mint(/* ... */);
-}
-```
-
 ## What Methods Are Available?
 
 Only **public methods** (`pub fn`) on the `#[component] impl` block are available through bindings:
@@ -171,6 +169,7 @@ impl Bank {
     pub fn deposit(&mut self, depositor: AccountId, deposit_asset: Asset) { ... }
     pub fn withdraw(&mut self, /* ... */) { ... }
     pub fn get_balance(&self, depositor: AccountId) -> Felt { ... }
+    pub fn initialize(&mut self) { ... }
 
     // PRIVATE: NOT available through bindings
     fn require_initialized(&self) { ... }
@@ -186,6 +185,7 @@ The WIT files describe the interface. Here's a simplified example:
 interface bank-account {
     use miden:types/types.{account-id, asset, felt, word};
 
+    initialize: func();
     deposit: func(depositor: account-id, deposit-asset: asset);
     withdraw: func(depositor: account-id, withdraw-asset: asset, ...);
     get-balance: func(depositor: account-id) -> felt;
@@ -194,7 +194,7 @@ interface bank-account {
 
 This WIT is used to generate the Rust bindings that appear in `crate::bindings`.
 
-## Calling from Transaction Scripts
+## Transaction Script Bindings (Preview)
 
 Transaction scripts use a slightly different import pattern:
 
@@ -203,12 +203,33 @@ use crate::bindings::Account;
 
 #[tx_script]
 fn run(_arg: Word, account: &mut Account) {
-    // The account parameter is already the bound component
+    // The account parameter IS the bound component
     account.initialize();
 }
 ```
 
-The `Account` binding in transaction scripts wraps the entire component, giving direct method access through the `account` parameter.
+The `Account` binding in transaction scripts wraps the entire component, giving direct method access through the `account` parameter. We'll implement this in Part 6.
+
+## Try It: Verify Bindings Work
+
+If you completed Part 4 and built both contracts, the bindings are already working! Let's verify:
+
+```bash title=">_ Terminal"
+# Check that the WIT files were generated
+ls contracts/bank-account/target/generated-wit/
+```
+
+<details>
+<summary>Expected output</summary>
+
+```text
+miden_bank-account.wit
+miden_bank-account_world.wit
+```
+
+</details>
+
+These files enable the deposit note to call `bank_account::deposit()`.
 
 ## Common Issues
 
@@ -234,13 +255,23 @@ error: no method named `deposit` found
 
 **Solution**: Ensure the method has `pub fn` visibility.
 
+### "Dependency not found" Error
+
+```
+error: dependency 'miden:bank-account' not found
+```
+
+**Cause**: One of the dependency sections is missing or has the wrong path.
+
+**Solution**: Ensure both `[package.metadata.miden.dependencies]` and `[package.metadata.component.target.dependencies]` are present with correct paths.
+
 ## Key Takeaways
 
 1. **Build accounts first** - They generate WIT files that note scripts need
 2. **Two dependency sections** - Both `miden.dependencies` and `component.target.dependencies` are required
 3. **Import path pattern** - `crate::bindings::{package}::{component}::{interface}`
 4. **Only public methods** - Private methods aren't exposed in bindings
-5. **Transaction scripts differ** - They receive the account as a parameter
+5. **Transaction scripts differ** - They receive the account as a parameter (Part 6)
 
 :::tip View Complete Source
 See the complete Cargo.toml configurations:
@@ -250,4 +281,4 @@ See the complete Cargo.toml configurations:
 
 ## Next Steps
 
-Now that you understand cross-component calls, let's learn about transaction scripts in [Part 6: Transaction Scripts](./transaction-scripts).
+Now that you understand cross-component calls, let's create the transaction script that initializes the bank in [Part 6: Transaction Scripts](./06-transaction-scripts).
