@@ -1,3 +1,15 @@
+# User Provided Header
+# Miden Documentation
+
+> Miden is a zero-knowledge rollup for Ethereum that enables private, scalable smart contracts using STARK proofs.
+
+## AI Integration
+
+- Skills: https://docs.miden.xyz/skill.md
+- Docs: https://docs.miden.xyz
+- GitHub: https://github.com/0xMiden
+
+
 # Directory Structure
 ```
 docs/
