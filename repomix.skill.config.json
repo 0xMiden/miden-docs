@@ -1,9 +1,8 @@
 {
   "output": {
-    "filePath": "static/llms.txt",
+    "filePath": "static/skill.md",
     "style": "markdown",
-    "parsableStyle": false,
-    "fileSummary": false,
+    "instructionFilePath": "repomix-skill-instruction.md",
     "directoryStructure": true,
     "removeComments": false,
     "removeEmptyLines": false,
@@ -11,7 +10,7 @@
     "topFilesLength": 5,
     "showLineNumbers": false,
     "copyToClipboard": false,
-    "headerText": "# Miden Documentation\n\n> Miden is a zero-knowledge rollup for Ethereum that enables private, scalable smart contracts using STARK proofs.\n\n## AI Integration\n\n- Skills: https://docs.miden.xyz/skill.md\n- Docs: https://docs.miden.xyz\n- GitHub: https://github.com/0xMiden\n",
+    "headerText": "",
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100
