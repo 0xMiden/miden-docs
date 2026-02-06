@@ -18,7 +18,7 @@ yourself, and give us feedback on any issues or sharp edges you encounter.
 The documentation found here should provide a good starting point for the current capabilities of
 the toolchain, however if you find something that is not covered, but is not listed as
 unimplemented or a known limitation, please let us know by reporting an issue on the compiler
-[issue tracker](https://github.com/0xpolygonmiden/compiler/issues).
+[issue tracker](https://github.com/0xMiden/compiler/issues).
 
 ## What is provided?
 
@@ -45,7 +45,7 @@ The compiler toolchain consists of the following primary components:
 - A terminal-based interactive debugger, available via `midenc debug`, which provides a UI very
   similar to `lldb` or `gdb` when using the TUI mode. You can use this to run a program, or step
   through it cycle-by-cycle. You can set various types of breakpoints; see the source code, call
-  stack, and contents of the operand stack at the current program point; as well as interatively
+  stack, and contents of the operand stack at the current program point; as well as interactively
   read memory and format it in various ways for display.
 - A Miden SDK for Rust, which provides types and bindings to functionality exported from the Miden
   standard library, as well as the Miden transaction kernel API. You can use this to access native
@@ -87,7 +87,7 @@ in the future, but for now it is expected that you implement your own optimizati
 
 ## Known bugs and limitations
 
-For the latest information on known bugs, see the [issue tracker](https://github.com/0xpolygonmiden/compiler/issues).
+For the latest information on known bugs, see the [issue tracker](https://github.com/0xMiden/compiler/issues).
 
 See Known Limitations for details on what functionality is
 missing or only partially implemented.

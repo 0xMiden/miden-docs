@@ -28,7 +28,7 @@ Then, simply install `midenc` using Cargo in one of the following ways:
     cargo make install
 
     # If you have Rust installed, but have not cloned the git repo:
-    cargo install --git https://github.com/0xpolygonmiden/compiler midenc
+    cargo install --git https://github.com/0xMiden/compiler midenc
 
 :::tip
 
@@ -124,5 +124,5 @@ We have put together two useful guides to walk through more detail on compiling 
 2. If you already have a WebAssembly module, or know how to produce one, and want to learn how to
    compile it to Miden Assembly, see [this guide](../guides/wasm_to_masm.md).
 
-You may also be interested in our [basic account project template](https://github.com/0xpolygonmiden/rust-templates/tree/main/account/template),
+You may also be interested in our [basic account project template](https://github.com/0xMiden/rust-templates/tree/main/account/template),
 as a starting point for your own Rust project.
