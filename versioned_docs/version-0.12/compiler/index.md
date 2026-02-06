@@ -45,7 +45,7 @@ The compiler toolchain consists of the following primary components:
 - A terminal-based interactive debugger, available via `midenc debug`, which provides a UI very
   similar to `lldb` or `gdb` when using the TUI mode. You can use this to run a program, or step
   through it cycle-by-cycle. You can set various types of breakpoints; see the source code, call
-  stack, and contents of the operand stack at the current program point; as well as interatively
+  stack, and contents of the operand stack at the current program point; as well as interactively
   read memory and format it in various ways for display.
 - A Miden SDK for Rust, which provides types and bindings to functionality exported from the Miden
   standard library, as well as the Miden transaction kernel API. You can use this to access native

@@ -755,4 +755,3 @@ cargo run --release --bin counter_contract_fpi
 ### Continue learning
 
 Next tutorial: [How to Use Unauthenticated Notes](unauthenticated_note_how_to.md)
-Next tutorial: [How to Use Unauthenticated Notes](unauthenticated_note_how_to.md)
