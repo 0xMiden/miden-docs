@@ -2,6 +2,11 @@
    5) BREADCRUMBS
    ========================================== */
 
+/* Remove original margin — the wrapper row controls spacing */
+.theme-doc-breadcrumbs {
+  margin-bottom: 0;
+}
+
 /* ThemeClassNames.docs.docBreadcrumbs */
 .theme-doc-breadcrumbs .breadcrumbs__link {
   line-height: 150%;
