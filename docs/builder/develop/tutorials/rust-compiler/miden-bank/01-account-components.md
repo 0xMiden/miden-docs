@@ -414,4 +414,4 @@ See the complete bank account implementation in the [miden-bank repository](http
 
 ## Next Steps
 
-Now that you understand account components and storage, let's learn how to define business rules with [Part 2: Constants and Constraints](./02-constants-constraints).
+Now that you understand account components and storage, let's learn how to define business rules with [Part 2: Constants and Constraints](./constants-constraints).

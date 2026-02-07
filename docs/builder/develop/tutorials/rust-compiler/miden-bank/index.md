@@ -32,15 +32,15 @@ This tutorial is designed for hands-on learning. Each part builds on the previou
 
 | Part | Topic | What You'll Build |
 |------|-------|-------------------|
-| **Part 0** | [Project Setup](./00-project-setup) | Create project with `miden new` |
-| **Part 1** | [Account Components](./01-account-components) | Bank struct with storage |
-| **Part 2** | [Constants & Constraints](./02-constants-constraints) | Business rules and validation |
-| **Part 3** | [Asset Management](./03-asset-management) | Deposit logic with balance tracking |
-| **Part 4** | [Note Scripts](./04-note-scripts) | Deposit note for receiving assets |
-| **Part 5** | [Cross-Component Calls](./05-cross-component-calls) | How bindings enable calls |
-| **Part 6** | [Transaction Scripts](./06-transaction-scripts) | Initialization script |
-| **Part 7** | [Output Notes](./07-output-notes) | Withdraw with P2ID output |
-| **Part 8** | [Complete Flows](./08-complete-flows) | End-to-end verification |
+| **Part 0** | [Project Setup](./project-setup) | Create project with `miden new` |
+| **Part 1** | [Account Components](./account-components) | Bank struct with storage |
+| **Part 2** | [Constants & Constraints](./constants-constraints) | Business rules and validation |
+| **Part 3** | [Asset Management](./asset-management) | Deposit logic with balance tracking |
+| **Part 4** | [Note Scripts](./note-scripts) | Deposit note for receiving assets |
+| **Part 5** | [Cross-Component Calls](./cross-component-calls) | How bindings enable calls |
+| **Part 6** | [Transaction Scripts](./transaction-scripts) | Initialization script |
+| **Part 7** | [Output Notes](./output-notes) | Withdraw with P2ID output |
+| **Part 8** | [Complete Flows](./complete-flows) | End-to-end verification |
 
 ## Tutorial Cards
 
@@ -51,7 +51,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './00-project-setup',
+        href: './project-setup',
         label: 'Part 0: Project Setup',
         description: 'Create your project with miden new and understand the workspace structure.',
       }}
@@ -61,7 +61,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './01-account-components',
+        href: './account-components',
         label: 'Part 1: Account Components',
         description: 'Learn #[component], Value storage, and StorageMap for managing state.',
       }}
@@ -74,7 +74,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './02-constants-constraints',
+        href: './constants-constraints',
         label: 'Part 2: Constants & Constraints',
         description: 'Define business rules with constants and validate with assertions.',
       }}
@@ -84,7 +84,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './03-asset-management',
+        href: './asset-management',
         label: 'Part 3: Asset Management',
         description: 'Handle fungible assets with vault operations and balance tracking.',
       }}
@@ -97,7 +97,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './04-note-scripts',
+        href: './note-scripts',
         label: 'Part 4: Note Scripts',
         description: 'Write scripts that execute when notes are consumed.',
       }}
@@ -107,7 +107,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './05-cross-component-calls',
+        href: './cross-component-calls',
         label: 'Part 5: Cross-Component Calls',
         description: 'Call account methods from note scripts via bindings.',
       }}
@@ -120,7 +120,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './06-transaction-scripts',
+        href: './transaction-scripts',
         label: 'Part 6: Transaction Scripts',
         description: 'Write scripts for account initialization and owner operations.',
       }}
@@ -130,7 +130,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './07-output-notes',
+        href: './output-notes',
         label: 'Part 7: Creating Output Notes',
         description: 'Create P2ID notes programmatically for withdrawals.',
       }}
@@ -143,7 +143,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './08-complete-flows',
+        href: './complete-flows',
         label: 'Part 8: Complete Flows',
         description: 'Walk through end-to-end deposit and withdraw operations.',
       }}
@@ -155,7 +155,7 @@ import DocCard from '@theme/DocCard';
 
 Before starting this tutorial, ensure you have:
 
-- Completed the [Quick Start guide](../../../quick-start/) (familiarity with `midenup`, `miden new`, basic tooling)
+- Completed the [Quick Start guide](../../../../quick-start/) (familiarity with `midenup`, `miden new`, basic tooling)
 - Basic understanding of Miden concepts (accounts, notes, transactions)
 - Rust programming experience
 
@@ -192,9 +192,9 @@ cd miden-bank
 
 These standalone guides complement the tutorial:
 
-- **[Testing with MockChain](../../testing)** - Learn to test your contracts
-- **[Debugging](../../debugging)** - Troubleshoot common issues
-- **[Common Pitfalls](../../pitfalls)** - Avoid known gotchas
+- **[Testing with MockChain](../testing)** - Learn to test your contracts
+- **[Debugging](../debugging)** - Troubleshoot common issues
+- **[Common Pitfalls](../pitfalls)** - Avoid known gotchas
 
 ## Getting Help
 
@@ -204,4 +204,4 @@ If you get stuck during this tutorial:
 - Join the [Build On Miden](https://t.me/BuildOnMiden) Telegram community for support
 - Review the complete code in the [miden-bank repository](https://github.com/keinberger/miden-bank)
 
-Ready to build your first Miden banking application? Let's get started with [Part 0: Project Setup](./00-project-setup)!
+Ready to build your first Miden banking application? Let's get started with [Part 0: Project Setup](./project-setup)!

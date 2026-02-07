@@ -252,7 +252,7 @@ impl Bank {
 | `inputs` | Script inputs (account ID for P2ID) |
 
 :::warning Array Ordering
-Note the order: `suffix` comes before `prefix`. This is the opposite of how `AccountId` fields are typically accessed. See [Common Pitfalls](../../pitfalls#array-ordering-rustmasm-reversal) for details.
+Note the order: `suffix` comes before `prefix`. This is the opposite of how `AccountId` fields are typically accessed. See [Common Pitfalls](../pitfalls#array-ordering-rustmasm-reversal) for details.
 :::
 
 ### Understanding output_note::create()
@@ -753,4 +753,4 @@ See the complete implementation in the [miden-bank repository](https://github.co
 
 ## Next Steps
 
-Now that you've built all the components, let's see how they work together in [Part 8: Complete Flows](./08-complete-flows).
+Now that you've built all the components, let's see how they work together in [Part 8: Complete Flows](./complete-flows).
