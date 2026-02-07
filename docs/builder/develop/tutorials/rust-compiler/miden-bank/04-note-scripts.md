@@ -517,4 +517,4 @@ See the complete note script implementations:
 
 ## Next Steps
 
-Now that you understand note scripts, let's learn how they call account methods in [Part 5: Cross-Component Calls](./05-cross-component-calls).
+Now that you understand note scripts, let's learn how they call account methods in [Part 5: Cross-Component Calls](./cross-component-calls).

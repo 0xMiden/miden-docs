@@ -474,4 +474,4 @@ See the complete transaction script implementation in the [miden-bank repository
 
 ## Next Steps
 
-Now that you understand transaction scripts, let's learn the advanced topic of creating output notes in [Part 7: Creating Output Notes](./07-output-notes).
+Now that you understand transaction scripts, let's learn the advanced topic of creating output notes in [Part 7: Creating Output Notes](./output-notes).
