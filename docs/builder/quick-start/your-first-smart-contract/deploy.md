@@ -175,7 +175,7 @@ let counter_cfg = AccountCreationConfig {
 // Convert the counter package into a deployable account
 let counter_account = create_account_from_package(
     &mut client,
-    contract_package.clone(),
+    counter_package.clone(),
     counter_cfg
 )
 .await
