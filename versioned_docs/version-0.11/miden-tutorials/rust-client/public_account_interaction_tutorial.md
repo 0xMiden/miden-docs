@@ -520,4 +520,3 @@ cargo run --release --bin counter_contract_increment
 ### Continue learning
 
 Next tutorial: [Network Transactions on Miden](network_transactions_tutorial.md)
-Next tutorial: [Network Transactions on Miden](network_transactions_tutorial.md)
