@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 150%;
+  color: var(--ifm-color-emphasis-600);
+  background: transparent;
+  border: 1px solid var(--ifm-border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+}
+
+.button:hover {
+  color: var(--ifm-color-primary);
+  border-color: color-mix(in oklab, var(--ifm-color-primary) 50%, transparent);
+  background: color-mix(in oklab, var(--ifm-color-primary) 6%, transparent);
+}
+
+.button:active {
+  background: color-mix(in oklab, var(--ifm-color-primary) 12%, transparent);
+}
+
+.button svg {
+  flex-shrink: 0;
+}
