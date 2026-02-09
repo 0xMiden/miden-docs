@@ -35,9 +35,11 @@ If you're new to the Miden Rust compiler, start with the **Miden Bank Tutorial**
   </div>
 </div>
 
-## Reference Documentation
+## Rust Smart Contract Reference
 
-These guides provide detailed reference information for Rust compiler development:
+For detailed reference documentation on the Miden Rust SDK — types, macros, storage, APIs, and more — see the **[Rust Smart Contract Reference](../../../smart-contracts/rust/)**.
+
+## Supplementary Guides
 
 | Guide | Description |
 |-------|-------------|

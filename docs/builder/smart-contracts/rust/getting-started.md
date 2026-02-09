@@ -230,4 +230,4 @@ Make sure you're building from the contract directory (not the workspace root) o
 
 - [Components](./components) — Learn how `#[component]` works in depth
 - [Type System](./types) — Understand Felt, Word, and field arithmetic
-- [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/) — Build a complete application step by step
+- [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/) — Build a complete application step by step

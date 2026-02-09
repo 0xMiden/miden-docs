@@ -315,4 +315,4 @@ Every state-changing transaction must increment the nonce to prevent replay atta
 
 - [API Reference](./api-reference) — Complete function signatures
 - [Authentication](./authentication) — Implementing auth components
-- [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/) — Apply these patterns in a full project
+- [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/) — Apply these patterns in a full project
