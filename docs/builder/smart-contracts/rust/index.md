@@ -34,41 +34,21 @@ import DocCard from '@theme/DocCard';
       item={{
         type: 'link',
         href: './overview',
-        label: 'Overview',
-        description: 'Execution model, account system, notes, and ZK proofs.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './getting-started',
-        label: 'Getting Started',
-        description: 'Install the toolchain, create a project, and build it.',
+        label: 'How It Works',
+        description: 'Execution model, accounts, notes, and the transaction lifecycle.',
       }}
     />
   </div>
 </div>
 
-## SDK
+## Accounts
 
 <div className="row">
   <div className="col col--4">
     <DocCard
       item={{
         type: 'link',
-        href: './types',
-        label: 'Types',
-        description: 'Felt, Word, Asset — field arithmetic and conversions.',
-      }}
-    />
-  </div>
-  <div className="col col--4">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './components',
+        href: './accounts/components',
         label: 'Components',
         description: 'The #[component] macro, storage, and methods.',
       }}
@@ -78,45 +58,22 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './storage',
+        href: './accounts/storage',
         label: 'Storage',
         description: 'Value slots and StorageMaps for persistent state.',
       }}
     />
   </div>
-</div>
-
-<div className="row">
   <div className="col col--4">
     <DocCard
       item={{
         type: 'link',
-        href: './custom-types',
+        href: './accounts/custom-types',
         label: 'Custom Types',
         description: 'Export structs and enums with #[export_type].',
       }}
     />
   </div>
-  <div className="col col--4">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './account-operations',
-        label: 'Account Operations',
-        description: 'Read state and mutate the vault.',
-      }}
-    />
-  </div>
-  <div className="col col--4">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './notes',
-        label: 'Notes',
-        description: 'Programmable UTXOs for asset transfers.',
-      }}
-    />
-  </div>
 </div>
 
 <div className="row">
@@ -124,7 +81,32 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './transaction-context',
+        href: './accounts/account-operations',
+        label: 'Account Operations',
+        description: 'Read state and mutate the vault.',
+      }}
+    />
+  </div>
+</div>
+
+## Transactions
+
+<div className="row">
+  <div className="col col--4">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './transactions/notes',
+        label: 'Notes',
+        description: 'Programmable UTXOs for asset transfers.',
+      }}
+    />
+  </div>
+  <div className="col col--4">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './transactions/transaction-context',
         label: 'Transaction Context',
         description: 'Block queries, expiration, and #[tx_script].',
       }}
@@ -134,17 +116,20 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './authentication',
+        href: './transactions/authentication',
         label: 'Authentication',
         description: 'Falcon512 signatures and replay protection.',
       }}
     />
   </div>
+</div>
+
+<div className="row">
   <div className="col col--4">
     <DocCard
       item={{
         type: 'link',
-        href: './cross-component-calls',
+        href: './transactions/cross-component-calls',
         label: 'Cross-Component Calls',
         description: 'WIT bindings and generate!() for inter-component calls.',
       }}

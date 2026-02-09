@@ -1,6 +1,6 @@
 ---
 title: "Patterns & Security"
-sidebar_position: 12
+sidebar_position: 6
 description: "Common patterns for access control, rate limiting, spending limits, and security in Miden Rust contracts."
 ---
 
@@ -211,7 +211,7 @@ When an assertion fails, proof generation fails and the transaction is rejected 
 
 ### Replay protection
 
-Always increment the nonce when modifying account state (see [Authentication](./authentication) for the full pattern):
+Always increment the nonce when modifying account state (see [Authentication](./transactions/authentication) for the full pattern):
 
 ```rust
 // The auth component should call incr_nonce()

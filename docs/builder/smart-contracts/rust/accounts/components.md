@@ -1,6 +1,6 @@
 ---
 title: "Components"
-sidebar_position: 4
+sidebar_position: 1
 description: "Define Miden account components using the #[component] macro — storage, methods, and auto-generated bindings."
 ---
 
@@ -246,7 +246,7 @@ project-kind = "account"
 supported-types = ["RegularAccountUpdatableCode"]
 ```
 
-For the full list of auto-generated methods, see the [Cheatsheet](./api-reference). To export your own types for use in public method signatures, see [Custom Types](./custom-types). For the complete account and vault query API, see [Account Operations](./account-operations).
+For the full list of auto-generated methods, see the [Cheatsheet](../api-reference). To export your own types for use in public method signatures, see [Custom Types](./custom-types). For the complete account and vault query API, see [Account Operations](./account-operations).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (top-level — `#[component]` macro)

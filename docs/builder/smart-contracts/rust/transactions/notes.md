@@ -1,6 +1,6 @@
 ---
 title: "Notes"
-sidebar_position: 8
+sidebar_position: 1
 description: "Create output notes, read input notes, and write note scripts for asset transfers."
 ---
 
@@ -368,7 +368,7 @@ project-kind = "note-script"
 "miden:basic-wallet" = { path = "../basic-wallet/target/generated-wit/" }
 ```
 
-For standalone transaction entry points that orchestrate multiple operations, see [Transaction Context](./transaction-context) and the `#[tx_script]` macro. For common note patterns like P2ID variations, see [Patterns & Security](./patterns).
+For standalone transaction entry points that orchestrate multiple operations, see [Transaction Context](./transaction-context) and the `#[tx_script]` macro. For common note patterns like P2ID variations, see [Patterns & Security](../patterns).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden::active_note`](https://docs.rs/miden/latest/miden/active_note/), [`miden::output_note`](https://docs.rs/miden/latest/miden/output_note/), [`miden::input_note`](https://docs.rs/miden/latest/miden/input_note/)

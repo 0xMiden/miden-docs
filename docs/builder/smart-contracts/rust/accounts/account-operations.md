@@ -1,6 +1,6 @@
 ---
 title: "Account Operations"
-sidebar_position: 7
+sidebar_position: 4
 description: "Query account state with active_account and mutate the vault with native_account."
 ---
 
@@ -210,7 +210,7 @@ impl ManagedWallet {
 }
 ```
 
-To move assets out of an account, create [output notes](./notes) with `output_note::add_asset`. For signature verification and nonce management, see [Authentication](./authentication). For complete function signatures, see the [Cheatsheet](./api-reference).
+To move assets out of an account, create [output notes](../transactions/notes) with `output_note::add_asset`. For signature verification and nonce management, see [Authentication](../transactions/authentication). For complete function signatures, see the [Cheatsheet](../api-reference).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden::active_account`](https://docs.rs/miden/latest/miden/active_account/), [`miden::native_account`](https://docs.rs/miden/latest/miden/native_account/)

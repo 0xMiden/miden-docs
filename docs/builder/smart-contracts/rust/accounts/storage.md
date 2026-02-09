@@ -1,12 +1,12 @@
 ---
 title: "Storage"
-sidebar_position: 5
+sidebar_position: 2
 description: "Persistent state management with Value slots and StorageMaps in Miden smart contracts."
 ---
 
 # Storage
 
-Miden accounts have persistent storage organized into up to 256 fixed-size slots. Each slot holds either a single [`Word`](./types) (via `Value`) or a key-value map (via `StorageMap`). This fixed-size design maps directly to the Merkle tree structure used by the ZK proof system — the storage root is a commitment over all 256 slots, so you pack multiple values into a single Word when you need to store more than one piece of data.
+Miden accounts have persistent storage organized into up to 256 fixed-size slots. Each slot holds either a single [`Word`](../types) (via `Value`) or a key-value map (via `StorageMap`). This fixed-size design maps directly to the Merkle tree structure used by the ZK proof system — the storage root is a commitment over all 256 slots, so you pack multiple values into a single Word when you need to store more than one piece of data.
 
 ## Storage slots
 
@@ -205,7 +205,7 @@ let initial: Word = storage::get_initial_map_item(slot_id, &key);
 
 These functions are useful for checking what values were at the start of the transaction (before any modifications).
 
-For Felt and Word conversion details, see [Types](./types). To export your own types for public APIs, see [Custom Types](./custom-types). For common storage patterns like access control and rate limiting, see [Patterns & Security](./patterns).
+For Felt and Word conversion details, see [Types](../types). To export your own types for public APIs, see [Custom Types](./custom-types). For common storage patterns like access control and rate limiting, see [Patterns & Security](../patterns).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden::storage`](https://docs.rs/miden/latest/miden/storage/)

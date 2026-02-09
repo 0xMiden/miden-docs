@@ -219,4 +219,4 @@ Valid values are `"account"`, `"note-script"`, or `"tx-script"`. Check `[package
 
 Make sure you're building from the contract directory (not the workspace root) or specify the package: `miden build -p counter-contract --release`.
 
-Once your project builds, explore [Components](./components) to understand the `#[component]` macro and [Types](./types) for Felt, Word, and field arithmetic.
+Once your project builds, explore [Components](./accounts/components) to understand the `#[component]` macro and [Types](./types) for Felt, Word, and field arithmetic.

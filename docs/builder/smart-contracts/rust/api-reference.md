@@ -1,6 +1,6 @@
 ---
 title: "Cheatsheet"
-sidebar_position: 13
+sidebar_position: 7
 description: "Quick-reference cheatsheet for every function, type, trait, and macro in the Miden Rust SDK."
 ---
 
@@ -39,7 +39,7 @@ use miden::{
 
 ---
 
-## Macros → [Components](./components), [Notes](./notes), [Transaction Context](./transaction-context), [Custom Types](./custom-types), [Cross-Component Calls](./cross-component-calls)
+## Macros → [Components](./accounts/components), [Notes](./transactions/notes), [Transaction Context](./transactions/transaction-context), [Custom Types](./accounts/custom-types), [Cross-Component Calls](./transactions/cross-component-calls)
 
 ### `#[component]`
 
@@ -191,7 +191,7 @@ Field: `inner: Word`.
 
 ---
 
-## Traits → [Storage](./storage), [Components](./components)
+## Traits → [Storage](./accounts/storage), [Components](./accounts/components)
 
 ### `ValueAccess<V>`
 
@@ -225,7 +225,7 @@ Auto-implemented on `#[component]` structs. Provides account mutations on `&mut 
 
 ---
 
-## `active_account` module → [Account Operations](./account-operations)
+## `active_account` module → [Account Operations](./accounts/account-operations)
 
 Read-only account state queries.
 
@@ -249,7 +249,7 @@ Read-only account state queries.
 
 ---
 
-## `native_account` module → [Account Operations](./account-operations)
+## `native_account` module → [Account Operations](./accounts/account-operations)
 
 Account state mutations (write operations).
 
@@ -263,7 +263,7 @@ Account state mutations (write operations).
 
 ---
 
-## `storage` module → [Storage](./storage)
+## `storage` module → [Storage](./accounts/storage)
 
 Direct storage access (lower-level than `Value`/`StorageMap` traits).
 
@@ -278,7 +278,7 @@ Direct storage access (lower-level than `Value`/`StorageMap` traits).
 
 ---
 
-## `active_note` module → [Notes](./notes)
+## `active_note` module → [Notes](./transactions/notes)
 
 Access the currently executing note's data.
 
@@ -295,7 +295,7 @@ Access the currently executing note's data.
 
 ---
 
-## `output_note` module → [Notes](./notes)
+## `output_note` module → [Notes](./transactions/notes)
 
 Create and manage output notes.
 
@@ -313,7 +313,7 @@ Create and manage output notes.
 
 ---
 
-## `input_note` module → [Notes](./notes)
+## `input_note` module → [Notes](./transactions/notes)
 
 Access specific input notes by index.
 
@@ -330,7 +330,7 @@ Access specific input notes by index.
 
 ---
 
-## `tx` module → [Transaction Context](./transaction-context)
+## `tx` module → [Transaction Context](./transactions/transaction-context)
 
 Transaction context queries.
 
@@ -374,7 +374,7 @@ Faucet operations (for faucet account types only).
 
 ---
 
-## Cryptography → [Authentication](./authentication)
+## Cryptography → [Authentication](./transactions/authentication)
 
 ### Hash functions
 

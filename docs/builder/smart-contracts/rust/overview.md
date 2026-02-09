@@ -15,9 +15,8 @@ If you've built on Ethereum or Solana, this table maps familiar concepts to thei
 | Concept | EVM / SVM | Miden |
 |---|---|---|
 | Smart contract | Contract at an address | Account with components |
-| Contract state | Storage slots (`SSTORE`/`SLOAD`) | Up to 256 `Value` / `StorageMap` slots |
-| Token standard | ERC-20 contract | Fungible faucet account |
-| NFT | ERC-721 contract | Non-fungible faucet account |
+| Contract state | Solidity state variables | `Value` / `StorageMap` storage fields (up to 256 slots) |
+| Asset issuance | ERC-20 / ERC-721 contracts | Faucet accounts (mint/burn native assets) |
 | Transfer | `transfer()` call on token contract | Create a note (programmable UTXO) |
 | `msg.sender` | Implicit caller address | Authentication via Falcon512 signatures |
 | `revert` | On-chain failure, gas consumed | Proof cannot be generated — no on-chain trace |
@@ -81,7 +80,7 @@ impl MyWallet {
 
 Each component defines its own storage layout and public methods. The `#[component]` macro generates the necessary WIT (WebAssembly Interface Type) definitions for cross-component interoperability.
 
-See [Components](./components) for full details.
+See [Components](./accounts/components) for full details.
 
 ## Notes as UTXOs
 
@@ -99,7 +98,7 @@ Notes are similar to Bitcoin's UTXOs, but with arbitrary programmable logic. A n
 
 The most common pattern is **P2ID** (Pay to ID) — a note that can only be consumed by a specific account.
 
-See [Notes](./notes) for implementation details.
+See [Notes](./transactions/notes) for implementation details.
 
 ## Transaction flow
 
@@ -155,14 +154,14 @@ Miden supports several account types, configured in `Cargo.toml`:
 
 | Building Block | Description | Details |
 |----------------|-------------|---------|
-| [Components](./components) | Reusable code modules with storage and WIT interfaces | `#[component]` macro |
+| [Components](./accounts/components) | Reusable code modules with storage and WIT interfaces | `#[component]` macro |
 | [Type System](./types) | Felt, Word, Asset — the VM's native types | Field arithmetic |
-| [Storage](./storage) | Up to 256 slots of Value or StorageMap | Persistent state |
-| [Custom Types](./custom-types) | Exported structs/enums for public APIs | `#[export_type]` |
-| [Account Operations](./account-operations) | Read/write account state and vault | `active_account`, `native_account` |
-| [Notes](./notes) | Programmable UTXOs for asset transfers | Note scripts |
-| [Transaction Context](./transaction-context) | Block queries and transaction scripts | `tx` module, `#[tx_script]` |
-| [Authentication](./authentication) | Falcon512 signatures and replay protection | Nonce management |
-| [Cross-Component Calls](./cross-component-calls) | Inter-component communication | WIT bindings, `generate!()` |
+| [Storage](./accounts/storage) | Up to 256 slots of Value or StorageMap | Persistent state |
+| [Custom Types](./accounts/custom-types) | Exported structs/enums for public APIs | `#[export_type]` |
+| [Account Operations](./accounts/account-operations) | Read/write account state and vault | `active_account`, `native_account` |
+| [Notes](./transactions/notes) | Programmable UTXOs for asset transfers | Note scripts |
+| [Transaction Context](./transactions/transaction-context) | Block queries and transaction scripts | `tx` module, `#[tx_script]` |
+| [Authentication](./transactions/authentication) | Falcon512 signatures and replay protection | Nonce management |
+| [Cross-Component Calls](./transactions/cross-component-calls) | Inter-component communication | WIT bindings, `generate!()` |
 
 Ready to start building? Follow the [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/) for a hands-on walkthrough.
