@@ -6,7 +6,7 @@ description: "Complete reference documentation for building Miden smart contract
 
 # Rust Reference
 
-Complete reference documentation for the Miden Rust compiler SDK (v0.9.0). Use these pages as a reference while building — for a hands-on tutorial, see the [Miden Bank Tutorial](../../tutorials/rust-compiler/miden-bank/).
+Complete reference documentation for the Miden Rust compiler SDK (v0.9.0). Use these pages as a reference while building — for a hands-on tutorial, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
 
 :::tip Quick imports
 ```rust

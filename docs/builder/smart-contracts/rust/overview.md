@@ -147,4 +147,4 @@ Miden supports several account types, configured in `Cargo.toml`:
 - [Getting Started](./getting-started) — Create and build your first project
 - [Components](./components) — Learn the `#[component]` macro in depth
 - [Type System](./types) — Understand Felt, Word, and field arithmetic
-- [Miden Bank Tutorial](../../tutorials/rust-compiler/miden-bank/) — Build a complete app step by step
+- [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/) — Build a complete app step by step
