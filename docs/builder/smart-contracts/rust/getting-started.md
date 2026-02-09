@@ -6,14 +6,7 @@ description: "Install the Miden toolchain, create your first Rust smart contract
 
 # Getting Started
 
-This guide walks you through creating, building, and understanding your first Miden Rust smart contract.
-
-## What you'll learn
-
-- Installing the Miden toolchain
-- Creating a project with `miden new`
-- Understanding the project structure and `Cargo.toml` configuration
-- Building your first contract and understanding the `.masp` output
+This guide walks you through installing the Miden toolchain, creating a project with `miden new`, understanding the project structure and `Cargo.toml` configuration, and building your first contract. For a complete end-to-end walkthrough, see the [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/).
 
 ## Prerequisites
 
@@ -226,8 +219,4 @@ Valid values are `"account"`, `"note-script"`, or `"tx-script"`. Check `[package
 
 Make sure you're building from the contract directory (not the workspace root) or specify the package: `miden build -p counter-contract --release`.
 
-## Next steps
-
-- [Components](./components) — Learn how `#[component]` works in depth
-- [Type System](./types) — Understand Felt, Word, and field arithmetic
-- [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/) — Build a complete application step by step
+Once your project builds, explore [Components](./components) to understand the `#[component]` macro and [Types](./types) for Felt, Word, and field arithmetic.

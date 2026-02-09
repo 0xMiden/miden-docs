@@ -26,7 +26,7 @@ All Miden Rust contracts compile under these constraints:
 
 import DocCard from '@theme/DocCard';
 
-## Concepts
+## Basics
 
 <div className="row">
   <div className="col col--6">
@@ -35,7 +35,7 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: './overview',
         label: 'Overview',
-        description: 'Client-side execution, ZK proofs, and the account model — the big picture.',
+        description: 'Execution model, account system, notes, and ZK proofs.',
       }}
     />
   </div>
@@ -45,22 +45,22 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: './getting-started',
         label: 'Getting Started',
-        description: 'Create your first project with miden new and build it.',
+        description: 'Install the toolchain, create a project, and build it.',
       }}
     />
   </div>
 </div>
 
-## Core
+## SDK
 
 <div className="row">
   <div className="col col--4">
     <DocCard
       item={{
         type: 'link',
-        href: './components',
-        label: 'Components',
-        description: 'The #[component] macro, storage attributes, and impl blocks.',
+        href: './types',
+        label: 'Types',
+        description: 'Felt, Word, Asset — field arithmetic and conversions.',
       }}
     />
   </div>
@@ -68,9 +68,9 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './types',
-        label: 'Type System',
-        description: 'Felt, Word, Asset, AccountId — field arithmetic and type conversions.',
+        href: './components',
+        label: 'Components',
+        description: 'The #[component] macro, storage, and methods.',
       }}
     />
   </div>
@@ -80,35 +80,30 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: './storage',
         label: 'Storage',
-        description: 'Value slots, StorageMaps, and persistent state management.',
+        description: 'Value slots and StorageMaps for persistent state.',
       }}
     />
   </div>
 </div>
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './custom-types',
-        label: 'Custom Types',
-        description: 'Export structs and enums with #[export_type] for use in public APIs.',
-      }}
-    />
-  </div>
-</div>
-
-## Operations
 
 <div className="row">
   <div className="col col--4">
     <DocCard
       item={{
         type: 'link',
+        href: './custom-types',
+        label: 'Custom Types',
+        description: 'Export structs and enums with #[export_type].',
+      }}
+    />
+  </div>
+  <div className="col col--4">
+    <DocCard
+      item={{
+        type: 'link',
         href: './account-operations',
         label: 'Account Operations',
-        description: 'Read account state and mutate the vault with active_account and native_account.',
+        description: 'Read state and mutate the vault.',
       }}
     />
   </div>
@@ -118,23 +113,11 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: './notes',
         label: 'Notes',
-        description: 'Create output notes and read input notes for asset transfers.',
-      }}
-    />
-  </div>
-  <div className="col col--4">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './note-scripts',
-        label: 'Note Scripts',
-        description: 'Write note scripts with #[note] and #[note_script] macros.',
+        description: 'Programmable UTXOs for asset transfers.',
       }}
     />
   </div>
 </div>
-
-## Advanced
 
 <div className="row">
   <div className="col col--4">
@@ -143,7 +126,7 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: './transaction-context',
         label: 'Transaction Context',
-        description: 'Transaction scripts, block queries, and expiration management.',
+        description: 'Block queries, expiration, and #[tx_script].',
       }}
     />
   </div>
@@ -153,7 +136,7 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: './authentication',
         label: 'Authentication',
-        description: 'RPO-Falcon512 signatures, nonce management, and replay protection.',
+        description: 'Falcon512 signatures and replay protection.',
       }}
     />
   </div>
@@ -163,13 +146,13 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: './cross-component-calls',
         label: 'Cross-Component Calls',
-        description: 'Call methods across components using generate!() and WIT bindings.',
+        description: 'WIT bindings and generate!() for inter-component calls.',
       }}
     />
   </div>
 </div>
 
-## Reference
+## Patterns & Security
 
 <div className="row">
   <div className="col col--6">
@@ -177,18 +160,23 @@ import DocCard from '@theme/DocCard';
       item={{
         type: 'link',
         href: './patterns',
-        label: 'Patterns & Best Practices',
-        description: 'Access control, rate limiting, spending limits, and security patterns.',
+        label: 'Patterns & Security',
+        description: 'Access control, rate limiting, spending limits, and anti-patterns.',
       }}
     />
   </div>
+</div>
+
+## Quick Reference
+
+<div className="row">
   <div className="col col--6">
     <DocCard
       item={{
         type: 'link',
         href: './api-reference',
-        label: 'API Reference',
-        description: 'Every function signature, type, trait, and macro in the SDK.',
+        label: 'Cheatsheet',
+        description: 'Every function, type, trait, and macro at a glance.',
       }}
     />
   </div>

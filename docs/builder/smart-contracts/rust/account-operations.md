@@ -6,17 +6,7 @@ description: "Query account state with active_account and mutate the vault with 
 
 # Account Operations
 
-Miden provides two modules for interacting with the current account during a transaction:
-
-- **`active_account`** — Read-only queries (balance, nonce, commitments)
-- **`native_account`** — Mutations (add/remove assets, increment nonce)
-
-## What you'll learn
-
-- Querying account state with `active_account`
-- Modifying vault contents with `native_account`
-- Auto-generated methods on components
-- When proof generation fails
+Miden provides two modules for interacting with the current account during a transaction: `active_account` for read-only queries (balance, nonce, commitments) and `native_account` for mutations (add/remove assets, increment nonce). The split reflects the ZK proof model — `active_account` calls don't affect the proof's state transition, while `native_account` calls represent state changes that must be proven. The vault is the account's asset container where all fungible and non-fungible assets live.
 
 ## active_account — Read-only queries
 
@@ -220,8 +210,4 @@ impl ManagedWallet {
 }
 ```
 
-## Next steps
-
-- [Notes](./notes) — Create output notes and read input notes
-- [Authentication](./authentication) — Signature verification and nonce management
-- [API Reference](./api-reference) — Complete function signatures
+To move assets out of an account, create [output notes](./notes) with `output_note::add_asset`. For signature verification and nonce management, see [Authentication](./authentication). For complete function signatures, see the [Cheatsheet](./api-reference).

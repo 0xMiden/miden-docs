@@ -6,14 +6,7 @@ description: "Export custom structs and enums for use in public component method
 
 # Custom Types
 
-When your public component methods use custom types (structs or enums), you must annotate them with `#[export_type]` so the compiler can generate the corresponding WIT interface definitions.
-
-## What you'll learn
-
-- When and why `#[export_type]` is needed
-- Exporting structs and enums
-- Nested types and modules
-- Forward references
+When public [component](./components) methods use custom structs or enums, those types must be annotated with `#[export_type]` so the compiler can generate corresponding WIT interface definitions. Types used only internally (in private methods or local variables) don't need this annotation.
 
 ## When you need `#[export_type]`
 
@@ -227,7 +220,4 @@ supported-types = ["RegularAccountUpdatableCode"]
 | Modules | Types in submodules work — just apply `#[export_type]` to each |
 | Order | Declaration order doesn't matter — forward references are resolved |
 
-## Next steps
-
-- [Components](./components) — The `#[component]` macro that uses these types
-- [Cross-Component Calls](./cross-component-calls) — How exported types appear in WIT bindings
+Exported types appear in generated WIT bindings used by [cross-component calls](./cross-component-calls).

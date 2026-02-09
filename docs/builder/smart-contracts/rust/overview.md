@@ -6,15 +6,7 @@ description: "A high-level overview of Miden's execution model, account system, 
 
 # How Miden Smart Contracts Work
 
-This page explains the key concepts behind Miden for developers coming from Ethereum, Solana, or other blockchain platforms. Understanding these concepts will help you write better contracts and debug issues faster.
-
-## What you'll learn
-
-- Why Miden executes transactions on the client, not on-chain
-- How your Rust code becomes a zero-knowledge proof
-- The account model: components, storage, vault, and nonce
-- How notes work as UTXOs for asset transfers
-- What "proof generation fails" actually means
+Miden smart contracts execute locally on the client — only a cryptographic proof is submitted to the network. This page covers the execution model, the account system (code, storage, vault, nonce), notes as programmable UTXOs, and what it means when proof generation fails. For a hands-on walkthrough, see the [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/).
 
 ## What makes Miden different
 
@@ -90,7 +82,7 @@ Notes are similar to Bitcoin's UTXOs, but with arbitrary programmable logic. A n
 
 The most common pattern is **P2ID** (Pay to ID) — a note that can only be consumed by a specific account.
 
-See [Notes](./notes) and [Note Scripts](./note-scripts) for implementation details.
+See [Notes](./notes) for implementation details.
 
 ## Transaction flow
 
@@ -142,9 +134,18 @@ Miden supports several account types, configured in `Cargo.toml`:
 | `FungibleFaucet` | Token minting account (fungible assets) |
 | `NonFungibleFaucet` | NFT minting account (non-fungible assets) |
 
-## Next steps
+## Building blocks
 
-- [Getting Started](./getting-started) — Create and build your first project
-- [Components](./components) — Learn the `#[component]` macro in depth
-- [Type System](./types) — Understand Felt, Word, and field arithmetic
-- [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/) — Build a complete app step by step
+| Building Block | Description | Details |
+|----------------|-------------|---------|
+| [Components](./components) | Reusable code modules with storage and WIT interfaces | `#[component]` macro |
+| [Type System](./types) | Felt, Word, Asset — the VM's native types | Field arithmetic |
+| [Storage](./storage) | Up to 256 slots of Value or StorageMap | Persistent state |
+| [Custom Types](./custom-types) | Exported structs/enums for public APIs | `#[export_type]` |
+| [Account Operations](./account-operations) | Read/write account state and vault | `active_account`, `native_account` |
+| [Notes](./notes) | Programmable UTXOs for asset transfers | Note scripts |
+| [Transaction Context](./transaction-context) | Block queries and transaction scripts | `tx` module, `#[tx_script]` |
+| [Authentication](./authentication) | Falcon512 signatures and replay protection | Nonce management |
+| [Cross-Component Calls](./cross-component-calls) | Inter-component communication | WIT bindings, `generate!()` |
+
+Ready to start building? See [Getting Started](./getting-started).

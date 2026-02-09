@@ -1,19 +1,12 @@
 ---
 title: "Authentication"
-sidebar_position: 11
+sidebar_position: 10
 description: "RPO-Falcon512 signature verification, nonce management, and replay protection in Miden contracts."
 ---
 
 # Authentication
 
-Miden uses **RPO-Falcon512** digital signatures for transaction authentication. This page explains how to verify signatures, manage nonces for replay protection, and implement auth components.
-
-## What you'll learn
-
-- The Falcon512 signature scheme and how it works in Miden
-- The advice provider concept
-- Implementing an authentication component
-- Nonce management and replay protection
+Miden uses RPO-Falcon512 digital signatures for transaction authentication. Because transactions execute on the client rather than on-chain validators, the system needs a way to prove that a transaction was authorized by the account owner. Without authentication, anyone could construct a valid proof that transfers assets out of an account. The nonce prevents replay attacks — without it, a valid proof could be resubmitted to execute the same state change twice.
 
 ## How authentication works
 
@@ -168,8 +161,4 @@ let hash: [u8; 32] = sha256_hash(input_bytes);
 4. **Never expose private keys** in contract code — they exist only on the client side
 5. **Use the standard Falcon512 scheme** unless you have specific requirements
 
-## Next steps
-
-- [Cross-Component Calls](./cross-component-calls) — Call auth components from other contexts
-- [Transaction Context](./transaction-context) — Block queries and transaction scripts
-- [Patterns](./patterns) — Access control and security patterns
+Auth components are typically called via [cross-component calls](./cross-component-calls) from note scripts or [transaction scripts](./transaction-context). For access control and security patterns, see [Patterns & Security](./patterns).

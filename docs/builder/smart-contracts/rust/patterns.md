@@ -1,21 +1,16 @@
 ---
-title: "Patterns & Best Practices"
-sidebar_position: 13
+title: "Patterns & Security"
+sidebar_position: 12
 description: "Common patterns for access control, rate limiting, spending limits, and security in Miden Rust contracts."
 ---
 
-# Patterns & Best Practices
+# Patterns & Security
 
-Proven patterns for writing safe, correct Miden smart contracts.
+Proven patterns for writing safe, correct Miden smart contracts, followed by security considerations specific to the Miden execution model. Each pattern is presented problem-first: the problem is stated, then the solution is shown with code. For a hands-on tutorial applying these patterns, see the [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/).
 
-## What you'll learn
+## Common Patterns
 
-- Common contract patterns (wallet, counter, access control)
-- Security considerations
-- `#![no_std]` implications and allocator usage
-- Anti-patterns to avoid
-
-## Basic wallet
+### Basic wallet
 
 The simplest useful contract — receive and send assets:
 
@@ -41,7 +36,7 @@ impl Wallet {
 }
 ```
 
-## Counter
+### Counter
 
 Track a numeric value in storage:
 
@@ -71,7 +66,7 @@ impl Counter {
 }
 ```
 
-## Access control
+### Access control
 
 Restrict operations to the account owner:
 
@@ -109,7 +104,7 @@ impl OwnedContract {
 }
 ```
 
-## Rate limiting
+### Rate limiting
 
 Enforce cooldown periods between actions:
 
@@ -140,7 +135,7 @@ impl RateLimited {
 }
 ```
 
-## Spending limits
+### Spending limits
 
 Cap per-transaction and daily spending:
 
@@ -195,7 +190,7 @@ impl LimitedWallet {
 }
 ```
 
-## Security considerations
+## Security
 
 ### Assertions and error handling
 
@@ -216,7 +211,7 @@ When an assertion fails, proof generation fails and the transaction is rejected 
 
 ### Replay protection
 
-Always increment the nonce when modifying account state:
+Always increment the nonce when modifying account state (see [Authentication](./authentication) for the full pattern):
 
 ```rust
 // The auth component should call incr_nonce()
@@ -239,9 +234,43 @@ let elapsed = current_block - last_block;
 
 For Felt arithmetic, values wrap modulo the prime field (no overflow panic), but the result may not be what you expect if you're treating Felts as integers.
 
-## `#![no_std]` implications
+### Anti-patterns
+
+#### Don't use integer division with Felt
+
+```rust
+// WRONG — Felt division computes multiplicative inverse, not integer division
+let half = amount / felt!(2);
+
+// RIGHT — convert to u64 for integer division
+let half = Felt::from_u64_unchecked(amount.as_u64() / 2);
+```
+
+#### Don't compare Felts with `>` or `<` directly
+
+```rust
+// WRONG — Felt comparison is over field elements, not integers
+if amount > felt!(100) { ... }
+
+// RIGHT — convert to u64 for numeric comparison
+if amount.as_u64() > 100 { ... }
+```
+
+#### Don't store secrets in contract code
+
+Contract code is visible on-chain. Never embed private keys, seeds, or other secrets.
+
+#### Don't skip nonce management
+
+Every state-changing transaction must increment the nonce to prevent replay attacks.
+
+For the complete function reference, see the [Cheatsheet](./api-reference).
+
+## `#![no_std]` Environment
 
 All Miden contracts run without the standard library. This means:
+
+### Standard library alternatives
 
 | Not available | Alternative |
 |---------------|-------------|
@@ -280,39 +309,3 @@ fn my_alloc_error(_info: core::alloc::Layout) -> ! {
 ```
 
 `BumpAlloc` is a bump allocator — it grows memory but never frees it. This is fine for short-lived transaction execution.
-
-## Anti-patterns
-
-### Don't use integer division with Felt
-
-```rust
-// WRONG — Felt division computes multiplicative inverse, not integer division
-let half = amount / felt!(2);
-
-// RIGHT — convert to u64 for integer division
-let half = Felt::from_u64_unchecked(amount.as_u64() / 2);
-```
-
-### Don't compare Felts with `>` or `<` directly
-
-```rust
-// WRONG — Felt comparison is over field elements, not integers
-if amount > felt!(100) { ... }
-
-// RIGHT — convert to u64 for numeric comparison
-if amount.as_u64() > 100 { ... }
-```
-
-### Don't store secrets in contract code
-
-Contract code is visible on-chain. Never embed private keys, seeds, or other secrets.
-
-### Don't skip nonce management
-
-Every state-changing transaction must increment the nonce to prevent replay attacks.
-
-## Next steps
-
-- [API Reference](./api-reference) — Complete function signatures
-- [Authentication](./authentication) — Implementing auth components
-- [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/) — Apply these patterns in a full project

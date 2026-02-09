@@ -1,19 +1,12 @@
 ---
 title: "Transaction Context"
-sidebar_position: 10
+sidebar_position: 9
 description: "Transaction scripts, block queries, and expiration management with the tx module and #[tx_script] macro."
 ---
 
 # Transaction Context
 
-Transaction scripts run within a transaction and can orchestrate operations across accounts and notes. The `tx` module provides access to block information, note commitments, and expiration controls.
-
-## What you'll learn
-
-- The `tx` module for block and commitment queries
-- The `#[tx_script]` macro for transaction scripts
-- Expiration management
-- Time-based logic patterns
+A Miden transaction is a local operation that consumes zero or more input notes and produces state changes plus output notes for a single account. The transaction executes entirely on the client — the VM runs the code, generates a ZK proof, and only the proof is submitted to the network. The `tx` module provides access to block information, note commitments, and expiration controls. Transaction scripts (`#[tx_script]`) serve as standalone entry points that orchestrate the transaction.
 
 ## The `tx` module
 
@@ -178,8 +171,4 @@ pub fn daily_limited_action(&mut self, amount: u64) {
 | `get_expiration_block_delta` | `fn() -> Felt` | Current expiration delta |
 | `update_expiration_block_delta` | `fn(delta: Felt)` | Set expiration delta |
 
-## Next steps
-
-- [Authentication](./authentication) — Signature verification using transaction context
-- [Patterns](./patterns) — More time-based and security patterns
-- [API Reference](./api-reference) — Complete function signatures
+For signature verification using the transaction context, see [Authentication](./authentication). For more time-based and security patterns, see [Patterns & Security](./patterns). For the complete function table, see the [Cheatsheet](./api-reference).

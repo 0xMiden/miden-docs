@@ -6,16 +6,7 @@ description: "Define Miden account components using the #[component] macro — s
 
 # Components
 
-Components are the building blocks of Miden accounts. Each component defines storage layout, public methods, and generates the WIT interface needed for cross-component interoperability.
-
-## What you'll learn
-
-- How the `#[component]` macro works
-- Defining storage with `#[storage]` attributes
-- Read vs write methods (`&self` vs `&mut self`)
-- Auto-generated methods
-- The `bindings::export!()` pattern
-- Multiple components in one project
+Components are the building blocks of Miden accounts. Each component defines a [storage](./storage) layout, exposes public methods through a WIT interface, and can be composed with other components on the same account — for example, a wallet component + an auth component + custom logic. This modularity lets you reuse a wallet component across many accounts and test or upgrade components independently.
 
 ## The `#[component]` macro
 
@@ -255,8 +246,4 @@ project-kind = "account"
 supported-types = ["RegularAccountUpdatableCode"]
 ```
 
-## Next steps
-
-- [Storage](./storage) — Deep dive into Value and StorageMap operations
-- [Custom Types](./custom-types) — Export your own types for public method signatures
-- [Account Operations](./account-operations) — Full API for account and vault queries
+For the full list of auto-generated methods, see the [Cheatsheet](./api-reference). To export your own types for use in public method signatures, see [Custom Types](./custom-types). For the complete account and vault query API, see [Account Operations](./account-operations).

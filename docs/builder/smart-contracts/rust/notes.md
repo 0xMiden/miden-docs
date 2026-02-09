@@ -1,19 +1,12 @@
 ---
 title: "Notes"
 sidebar_position: 8
-description: "Create output notes for asset transfers and read input notes during consumption."
+description: "Create output notes, read input notes, and write note scripts for asset transfers."
 ---
 
 # Notes
 
-Notes are Miden's mechanism for transferring assets between accounts. They work like programmable UTXOs — each note carries assets and a script that determines who can consume it and what happens when they do.
-
-## What you'll learn
-
-- Creating output notes with `output_note`
-- Reading input note data with `active_note` and `input_note`
-- The P2ID (Pay to ID) pattern
-- Note lifecycle and asset flow
+Notes are Miden's mechanism for transferring assets between accounts. They work like programmable UTXOs — each note carries assets and a script that determines who can consume it and what happens when they do. Assets can't transfer directly between accounts; they must move through notes, which ensures privacy (the network doesn't see account-to-account links) and enables programmable conditions on transfers.
 
 ## Note lifecycle
 
@@ -173,11 +166,113 @@ let script_root: Word = input_note::get_script_root(note_idx);
 let serial_num: Word = input_note::get_serial_number(note_idx);
 ```
 
+## Note scripts
+
+When a note is consumed, its script executes to determine what happens to the assets. The script defines the consumption rules — who can consume the note and what state changes occur. You write note scripts using the `#[note]` and `#[note_script]` macros.
+
+### The `#[note]` pattern
+
+A note script consists of a struct (holding note inputs) and an impl block with a `#[note_script]` method:
+
+```rust
+use miden::{AccountId, Word, active_note, note};
+
+#[note]
+struct P2idNote {
+    target_account_id: AccountId,
+}
+
+#[note]
+impl P2idNote {
+    #[note_script]
+    pub fn run(self, _arg: Word, account: &mut Account) {
+        // Script logic here
+    }
+}
+```
+
+The `#[note]` macro:
+1. Generates the WIT note-script interface
+2. Deserializes note inputs into struct fields
+3. Exports the `run` function as the note's entry point
+
+### Struct fields as note inputs
+
+Fields on the `#[note]` struct are populated from the note's input data when the note is consumed:
+
+```rust
+#[note]
+struct MyNote {
+    target_account_id: AccountId,  // Deserialized from note inputs
+}
+```
+
+The compiler maps struct fields to note inputs based on their order and type. Supported field types include `AccountId`, `Felt`, `Word`, and other SDK types.
+
+If you don't need inputs, use a unit struct:
+
+```rust
+#[note]
+struct CounterNote;
+```
+
+### `#[note_script]` method requirements
+
+The `#[note_script]` method has specific signature constraints:
+
+| Constraint | Details |
+|------------|---------|
+| Receiver | `self` (by value only — not `&self` or `&mut self`) |
+| Return type | `()` |
+| Required arg | One `Word` argument (the note script argument) |
+| Optional arg | `&Account` or `&mut Account` (the consuming account) |
+| Generics | Not allowed |
+| Async | Not allowed |
+
+### Parameter ordering
+
+The `Word` and `&mut Account` parameters can appear in either order:
+
+```rust
+// Both are valid:
+pub fn run(self, _arg: Word, account: &mut Account) { ... }
+pub fn run(self, account: &mut Account, _arg: Word) { ... }
+```
+
+### With account access
+
+When you include `&mut Account` (or `&Account`), the note script can call methods on the consuming account's components:
+
+```rust
+#[note_script]
+pub fn run(self, _arg: Word, account: &mut Account) {
+    let assets = active_note::get_assets();
+    for asset in assets {
+        account.receive_asset(asset);  // Cross-component call
+    }
+}
+```
+
+The `Account` type comes from WIT bindings of the account component — see [Cross-Component Calls](./cross-component-calls).
+
+### Without account access
+
+If the note script doesn't need to interact with the account:
+
+```rust
+#[note_script]
+pub fn run(self, _arg: Word) {
+    // Can still read note data via active_note
+    let assets = active_note::get_assets();
+    // But cannot call account methods
+}
+```
+
 ## Example: P2ID (Pay to ID)
 
 The most common pattern — a note that can only be consumed by a specific account:
 
-```rust title="src/lib.rs"
+```rust title="p2id-note/src/lib.rs"
 #![no_std]
 #![feature(alloc_error_handler)]
 
@@ -194,11 +289,9 @@ struct P2idNote {
 impl P2idNote {
     #[note_script]
     pub fn run(self, _arg: Word, account: &mut Account) {
-        // Verify the consuming account matches the target
         let current_account = account.get_id();
         assert_eq!(current_account, self.target_account_id);
 
-        // Transfer all assets to the consuming account
         let assets = active_note::get_assets();
         for asset in assets {
             account.receive_asset(asset);
@@ -214,10 +307,65 @@ Key points:
 - `account.receive_asset()` calls the wallet component's method via cross-component calls
 - If `assert_eq!` fails, proof generation fails and the note cannot be consumed
 
-See [Note Scripts](./note-scripts) for full details on the `#[note]` and `#[note_script]` macros.
+## Example: Counter note (cross-component calls)
 
-## Next steps
+A note that calls methods on the consuming account's component:
 
-- [Note Scripts](./note-scripts) — Write note scripts with `#[note]` and `#[note_script]`
-- [Cross-Component Calls](./cross-component-calls) — How `account.receive_asset()` works
-- [Transaction Context](./transaction-context) — Transaction scripts and block queries
+```rust title="counter-note/src/lib.rs"
+#![no_std]
+#![feature(alloc_error_handler)]
+
+use miden::*;
+
+use crate::bindings::miden::counter_contract::counter_contract;
+
+#[note]
+struct CounterNote;
+
+#[note]
+impl CounterNote {
+    #[note_script]
+    pub fn run(self, _arg: Word) {
+        let initial_value = counter_contract::get_count();
+        counter_contract::increment_count();
+        let expected_value = initial_value + Felt::from_u32(1);
+        let final_value = counter_contract::get_count();
+        assert_eq(final_value, expected_value);
+    }
+}
+```
+
+This note doesn't take `&mut Account` — instead it calls the counter contract's methods directly through generated bindings. See [Cross-Component Calls](./cross-component-calls).
+
+## Cargo.toml for note scripts
+
+Note scripts require `project-kind = "note-script"` and must declare dependencies on any account components they interact with:
+
+```toml
+[package]
+name = "p2id"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+miden = { path = "../../sdk/sdk" }
+
+[package.metadata.component]
+package = "miden:p2id"
+
+[package.metadata.miden]
+project-kind = "note-script"
+
+# Miden dependencies — account components this note calls
+[package.metadata.miden.dependencies]
+"miden:basic-wallet" = { path = "../basic-wallet" }
+
+# WIT dependencies — generated interfaces for cross-component calls
+[package.metadata.component.target.dependencies]
+"miden:basic-wallet" = { path = "../basic-wallet/target/generated-wit/" }
+```
+
+For standalone transaction entry points that orchestrate multiple operations, see [Transaction Context](./transaction-context) and the `#[tx_script]` macro. For common note patterns like P2ID variations, see [Patterns & Security](./patterns).

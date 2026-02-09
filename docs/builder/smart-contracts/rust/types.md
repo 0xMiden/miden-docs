@@ -6,14 +6,7 @@ description: "Felt field arithmetic, Word layout, Asset encoding, and type conve
 
 # Type System
 
-Miden's type system is built around **field elements** — not regular integers. Understanding field arithmetic is essential for writing correct contracts.
-
-## What you'll learn
-
-- How `Felt` values work (modular arithmetic over the Goldilocks prime field)
-- `Word` layout and indexing
-- Asset encoding for fungible and non-fungible assets
-- Type conversions between Felt, Word, u64, and other types
+Miden's type system is built around field elements rather than standard integers. All computation inside the Miden VM is modular arithmetic over the Goldilocks prime field ($p = 2^{64} - 2^{32} + 1$), so overflow and division behave differently from standard integers. `Felt` is the native numeric type, `Word` is a tuple of four Felts used for [storage](./storage) and hashing, and `Asset` encodes fungible and non-fungible assets as Words.
 
 ## Felt — Field elements
 
@@ -275,8 +268,4 @@ assert_eq!(current.suffix, expected.suffix);
 | `Word` | `Digest` | `Digest::from_word(w)` |
 | `Digest` | `Word` | `let w: Word = d.into()` |
 
-## Next steps
-
-- [Components](./components) — Use these types in component definitions
-- [Storage](./storage) — Store and retrieve Words from persistent storage
-- [Custom Types](./custom-types) — Define your own types for public APIs
+Use these types in [component definitions](./components), store and retrieve Words from [persistent storage](./storage), or define your own types for public APIs with [`#[export_type]`](./custom-types).
