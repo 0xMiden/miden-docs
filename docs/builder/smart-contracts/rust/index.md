@@ -34,7 +34,7 @@ import DocCard from '@theme/DocCard';
       item={{
         type: 'link',
         href: './overview',
-        label: 'How Miden Works',
+        label: 'Overview',
         description: 'Client-side execution, ZK proofs, and the account model — the big picture.',
       }}
     />

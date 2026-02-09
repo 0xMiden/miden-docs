@@ -1,5 +1,5 @@
 ---
-title: "How Miden Smart Contracts Work"
+title: "Overview"
 sidebar_position: 1
 description: "A high-level overview of Miden's execution model, account system, and how Rust code becomes zero-knowledge proofs."
 ---
