@@ -269,3 +269,7 @@ assert_eq!(current.suffix, expected.suffix);
 | `Digest` | `Word` | `let w: Word = d.into()` |
 
 Use these types in [component definitions](./components), store and retrieve Words from [persistent storage](./storage), or define your own types for public APIs with [`#[export_type]`](./custom-types).
+
+:::info API Reference
+Full API docs on docs.rs: [`Felt`](https://docs.rs/miden/latest/miden/struct.Felt.html), [`Word`](https://docs.rs/miden/latest/miden/struct.Word.html), [`Asset`](https://docs.rs/miden/latest/miden/struct.Asset.html)
+:::

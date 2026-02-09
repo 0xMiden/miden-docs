@@ -221,3 +221,7 @@ supported-types = ["RegularAccountUpdatableCode"]
 | Order | Declaration order doesn't matter — forward references are resolved |
 
 Exported types appear in generated WIT bindings used by [cross-component calls](./cross-component-calls).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`#[export_type]` macro)
+:::

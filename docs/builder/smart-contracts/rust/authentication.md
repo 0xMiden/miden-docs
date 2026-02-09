@@ -162,3 +162,7 @@ let hash: [u8; 32] = sha256_hash(input_bytes);
 5. **Use the standard Falcon512 scheme** unless you have specific requirements
 
 Auth components are typically called via [cross-component calls](./cross-component-calls) from note scripts or [transaction scripts](./transaction-context). For access control and security patterns, see [Patterns & Security](./patterns).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`rpo_falcon512_verify`)
+:::

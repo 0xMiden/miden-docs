@@ -1,12 +1,29 @@
 ---
-title: "Overview"
+title: "How It Works"
 sidebar_position: 1
-description: "A high-level overview of Miden's execution model, account system, and how Rust code becomes zero-knowledge proofs."
+description: "Miden's execution model, account structure, note system, and transaction lifecycle — how Rust code becomes zero-knowledge proofs."
 ---
 
 # How Miden Smart Contracts Work
 
-Miden smart contracts execute locally on the client — only a cryptographic proof is submitted to the network. This page covers the execution model, the account system (code, storage, vault, nonce), notes as programmable UTXOs, and what it means when proof generation fails. For a hands-on walkthrough, see the [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/).
+Miden is a ZK rollup where transactions execute on the client and only a cryptographic proof is submitted to the network. Every entity — wallets, contracts, faucets — is an account with code, storage, a vault, and a nonce. Assets move between accounts through notes, which act as programmable UTXOs. This page describes the execution model, account structure, note system, and transaction lifecycle. For a hands-on walkthrough, see the [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/).
+
+## Coming from EVM or SVM?
+
+If you've built on Ethereum or Solana, this table maps familiar concepts to their Miden equivalents:
+
+| Concept | EVM / SVM | Miden |
+|---|---|---|
+| Smart contract | Contract at an address | Account with components |
+| Contract state | Storage slots (`SSTORE`/`SLOAD`) | Up to 256 `Value` / `StorageMap` slots |
+| Token standard | ERC-20 contract | Fungible faucet account |
+| NFT | ERC-721 contract | Non-fungible faucet account |
+| Transfer | `transfer()` call on token contract | Create a note (programmable UTXO) |
+| `msg.sender` | Implicit caller address | Authentication via Falcon512 signatures |
+| `revert` | On-chain failure, gas consumed | Proof cannot be generated — no on-chain trace |
+| Execution | Every node re-executes | Client executes locally, submits ZK proof |
+| Privacy | All state/inputs public | Network sees only the proof + state commitments |
+| Composability | Synchronous contract calls | Cross-component calls (same account) + notes (cross-account) |
 
 ## What makes Miden different
 
@@ -148,4 +165,4 @@ Miden supports several account types, configured in `Cargo.toml`:
 | [Authentication](./authentication) | Falcon512 signatures and replay protection | Nonce management |
 | [Cross-Component Calls](./cross-component-calls) | Inter-component communication | WIT bindings, `generate!()` |
 
-Ready to start building? See [Getting Started](./getting-started).
+Ready to start building? Follow the [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/) for a hands-on walkthrough.

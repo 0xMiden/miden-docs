@@ -172,3 +172,7 @@ pub fn daily_limited_action(&mut self, amount: u64) {
 | `update_expiration_block_delta` | `fn(delta: Felt)` | Set expiration delta |
 
 For signature verification using the transaction context, see [Authentication](./authentication). For more time-based and security patterns, see [Patterns & Security](./patterns). For the complete function table, see the [Cheatsheet](./api-reference).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden::tx`](https://docs.rs/miden/latest/miden/tx/)
+:::

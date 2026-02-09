@@ -206,3 +206,7 @@ let initial: Word = storage::get_initial_map_item(slot_id, &key);
 These functions are useful for checking what values were at the start of the transaction (before any modifications).
 
 For Felt and Word conversion details, see [Types](./types). To export your own types for public APIs, see [Custom Types](./custom-types). For common storage patterns like access control and rate limiting, see [Patterns & Security](./patterns).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden::storage`](https://docs.rs/miden/latest/miden/storage/)
+:::

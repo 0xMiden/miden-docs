@@ -369,3 +369,7 @@ project-kind = "note-script"
 ```
 
 For standalone transaction entry points that orchestrate multiple operations, see [Transaction Context](./transaction-context) and the `#[tx_script]` macro. For common note patterns like P2ID variations, see [Patterns & Security](./patterns).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden::active_note`](https://docs.rs/miden/latest/miden/active_note/), [`miden::output_note`](https://docs.rs/miden/latest/miden/output_note/), [`miden::input_note`](https://docs.rs/miden/latest/miden/input_note/)
+:::

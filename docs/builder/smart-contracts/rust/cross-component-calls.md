@@ -202,3 +202,7 @@ impl CounterNote {
 | Direct module imports | Calling specific functions from a known component interface |
 
 For the complete list of macros and bindings functions, see the [Cheatsheet](./api-reference).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`generate!()` macro)
+:::
