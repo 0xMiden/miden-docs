@@ -66,7 +66,11 @@ use integration::helpers::{
     AccountCreationConfig, NoteCreationConfig,
 };
 
-use miden_client::{account::StorageMap, transaction::OutputNote, Felt, Word};
+use miden_client::{
+    account::{StorageMap, StorageSlot, StorageSlotName},
+    transaction::OutputNote,
+    Felt, Word,
+};
 use miden_testing::{Auth, MockChain};
 use std::{path::Path, sync::Arc};
 
@@ -91,10 +95,17 @@ async fn counter_test() -> anyhow::Result<()> {
     // Create the counter account with initial storage and no-auth auth component
     let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
     let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
+
+    // The slot name is constructed as
+    // `miden::component::[to_underscore(Cargo.toml:package.metadata.component.package)]::[field_name]`
+    let counter_storage_slot =
+        StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
+    let storage_slots = vec![StorageSlot::with_map(
+        counter_storage_slot.clone(),
+        StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
+    )];
     let counter_cfg = AccountCreationConfig {
-        storage_slots: vec![miden_client::account::StorageSlot::Map(
-            StorageMap::with_entries([(count_storage_key, initial_count)])?,
-        )],
+        storage_slots,
         ..Default::default()
     };
 
@@ -111,7 +122,7 @@ async fn counter_test() -> anyhow::Result<()> {
 
     // add counter account and note to mockchain
     builder.add_account(counter_account.clone())?;
-    builder.add_output_note(OutputNote::Full(counter_note.clone().into()));
+    builder.add_output_note(OutputNote::Full(counter_note.clone()));
 
     // Build the mock chain
     let mut mock_chain = builder.build()?;
@@ -120,15 +131,11 @@ async fn counter_test() -> anyhow::Result<()> {
         .build_tx_context(counter_account.id(), &[counter_note.id()], &[])?
         .build()?;
 
-    println!("before executing tx");
-
     // Execute the transaction
     let executed_transaction = tx_context.execute().await?;
 
-    println!("after executing tx");
-
     // Apply the account delta to the counter account
-    counter_account.apply_delta(&executed_transaction.account_delta())?;
+    counter_account.apply_delta(executed_transaction.account_delta())?;
 
     // Add the executed transaction to the mockchain
     mock_chain.add_pending_executed_transaction(&executed_transaction)?;
@@ -137,7 +144,8 @@ async fn counter_test() -> anyhow::Result<()> {
     // Get the count from the updated counter account
     let count = counter_account
         .storage()
-        .get_map_item(0, count_storage_key)?;
+        .get_map_item(&counter_storage_slot, count_storage_key)
+        .expect("Failed to get counter value from storage slot");
 
     // Assert that the count value is equal to 1 after executing the transaction
     assert_eq!(
@@ -195,10 +203,15 @@ let note_package = Arc::new(build_project_in_dir(
 // Create the counter account with initial storage and no-auth auth component
 let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
 let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
+
+let counter_storage_slot =
+    StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
+let storage_slots = vec![StorageSlot::with_map(
+    counter_storage_slot.clone(),
+    StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
+)];
 let counter_cfg = AccountCreationConfig {
-    storage_slots: vec![miden_client::account::StorageSlot::Map(
-        StorageMap::with_entries([(count_storage_key, initial_count)])?,
-    )],
+    storage_slots,
     ..Default::default()
 };
 
@@ -222,7 +235,7 @@ let counter_note = create_testing_note_from_package(
 
 ```rust
 builder.add_account(counter_account.clone())?;
-builder.add_output_note(OutputNote::Full(counter_note.clone().into()));
+builder.add_output_note(OutputNote::Full(counter_note.clone()));
 let mut mock_chain = builder.build()?;
 ```
 
@@ -235,7 +248,7 @@ let mut mock_chain = builder.build()?;
 ### 5. Creating and Executing the Transaction
 
 ```rust
-let tx_context = mock_chain.
+let tx_context = mock_chain
     .build_tx_context(counter_account.id(), &[counter_note.id()], &[])?
     .build()?;
 
@@ -251,7 +264,7 @@ let executed_transaction = tx_context.execute().await?;
 
 ```rust
 // Apply the account delta to the counter account
-counter_account.apply_delta(&executed_transaction.account_delta())?;
+counter_account.apply_delta(executed_transaction.account_delta())?;
 
 // Add the executed transaction to the mockchain
 mock_chain.add_pending_executed_transaction(&executed_transaction)?;
@@ -260,7 +273,8 @@ mock_chain.prove_next_block()?;
 // Get the count from the updated counter account
 let count = counter_account
     .storage()
-    .get_map_item(0, count_storage_key)?;
+    .get_map_item(&counter_storage_slot, count_storage_key)
+    .expect("Failed to get counter value from storage slot");
 
 // Assert that the count value is equal to 1 after executing the transaction
 assert_eq!(

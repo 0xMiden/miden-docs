@@ -164,11 +164,16 @@ Once we have the compiled packages, we convert them into deployable accounts and
 let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
 let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
 
+// The slot name is constructed as:
+// `miden::component::[to_underscore(Cargo.toml:package.metadata.component.package)]::[field_name]`
+let counter_storage_slot =
+    StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
+let storage_slots = vec![StorageSlot::with_map(
+    counter_storage_slot.clone(),
+    StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
+)];
 let counter_cfg = AccountCreationConfig {
-    storage_slots: vec![miden_client::account::StorageSlot::Map(
-        StorageMap::with_entries([(count_storage_key, initial_count)])
-            .context("Failed to create storage map with initial counter value")?
-    )],
+    storage_slots,
     ..Default::default()
 };
 
@@ -188,9 +193,9 @@ The `create_account_from_package()` function:
 - Combines it with the provided configuration (storage, settings, etc.)
 - Creates a deployable Miden account that can be used in transactions
 
-**Important**: Accounts that use storage must have their storage slots specified when instantiating the account. This is why we define the storage configuration with:
+**Important**: Accounts that use storage must have their storage slots specified when instantiating the account. In v0.13, storage slots are identified by name rather than index. The slot name follows the pattern `miden::component::<package_name>::<field_name>`. We define the storage configuration with:
 
-- Storage slot 0 containing a `StorageMap`
+- A named `StorageMap` slot (`miden::component::miden_counter_account::count_map`)
 - The counter key `[0, 0, 0, 1]` with initial value `[0, 0, 0, 0]` (representing count = 0)
 
 This pre-initialization ensures the account's storage is properly configured before deployment.
@@ -229,7 +234,7 @@ This demonstrates the complete workflow: Rust source code → compiled packages 
 
 ```rust
 let consume_note_request = TransactionRequestBuilder::new()
-    .unauthenticated_input_notes([(counter_note.clone(), None)])
+    .input_notes([(counter_note.clone(), None)])
     .build()
     .context("Failed to build consume note transaction request")?;
 
