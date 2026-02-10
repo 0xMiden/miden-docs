@@ -172,12 +172,11 @@ example={{
 rust: {
 code: `use miden_client::{
     account::{
-        component::{AuthRpoFalcon512, BasicWallet},
+        component::BasicWallet,
         AccountBuilder, AccountStorageMode, AccountType,
     },
-    auth::AuthSecretKey,
+    auth::{AuthFalcon512Rpo, AuthSecretKey},
     builder::ClientBuilder,
-    crypto::rpo_falcon512::SecretKey,
     keystore::FilesystemKeyStore,
     rpc::{Endpoint, GrpcClient},
 };
@@ -186,7 +185,7 @@ use rand::RngCore;
 use std::sync::Arc;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> anyhow::Result<()> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -194,8 +193,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
-        FilesystemKeyStore::new(keystore_path).unwrap().into();
+    let keystore =
+        Arc::new(FilesystemKeyStore::new(keystore_path).unwrap());
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
 
@@ -205,7 +204,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = ClientBuilder::new()
         .rpc(rpc_client)
         .sqlite_store(store_path)
-        .authenticator(keystore.clone().into())
+        .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -215,13 +214,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut init_seed = [0_u8; 32];
     client.rng().fill_bytes(&mut init_seed);
 
-    let key_pair = SecretKey::with_rng(client.rng());
+    let key_pair = AuthSecretKey::new_falcon512_rpo();
 
     let builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(
-            key_pair.public_key().to_commitment().into(),
+        .with_auth_component(AuthFalcon512Rpo::new(
+            key_pair.public_key().to_commitment(),
         ))
         .with_component(BasicWallet);
 
@@ -229,7 +228,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     client.add_account(&account, false).await?;
 
-    keystore.add_key(&AuthSecretKey::RpoFalcon512(key_pair))?;
+    keystore.add_key(&key_pair)?;
 
     println!("Account ID: {}", account.id());
     println!("No assets in Vault: {:?}", account.vault().is_empty());
@@ -238,7 +237,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ` },
   typescript: {
-    code:`import { WebClient, AccountStorageMode } from "@demox-labs/miden-sdk";
+    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -253,7 +252,8 @@ export async function demo() {
     // Create new wallet account
     const account = await client.newWallet(
         AccountStorageMode.public(), // Public: account state is visible onchain
-        true // Mutable: account code can be upgraded later
+        true, // Mutable: account code can be upgraded later
+        AuthScheme.AuthRpoFalcon512 // Authentication scheme
     );
 
     console.log("Account ID:", account.id().toString());
@@ -288,13 +288,12 @@ example={{
 rust: {
 code: `use miden_client::{
     account::{
-        component::{AuthRpoFalcon512, BasicFungibleFaucet},
+        component::BasicFungibleFaucet,
         AccountBuilder, AccountStorageMode, AccountType,
     },
     asset::TokenSymbol,
-    auth::AuthSecretKey,
+    auth::{AuthFalcon512Rpo, AuthSecretKey},
     builder::ClientBuilder,
-    crypto::rpo_falcon512::SecretKey,
     keystore::FilesystemKeyStore,
     rpc::{Endpoint, GrpcClient},
     Felt,
@@ -304,7 +303,7 @@ use rand::RngCore;
 use std::sync::Arc;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> anyhow::Result<()> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -312,8 +311,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
-        FilesystemKeyStore::new(keystore_path).unwrap().into();
+    let keystore =
+        Arc::new(FilesystemKeyStore::new(keystore_path).unwrap());
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
 
@@ -323,7 +322,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = ClientBuilder::new()
         .rpc(rpc_client)
         .sqlite_store(store_path)
-        .authenticator(keystore.clone().into())
+        .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -340,21 +339,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let max_supply = Felt::new(1_000_000);
 
     // Generate key pair
-    let key_pair = SecretKey::with_rng(client.rng());
+    let key_pair = AuthSecretKey::new_falcon512_rpo();
 
     // Build the account
     let builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(
-            key_pair.public_key().to_commitment().into(),
+        .with_auth_component(AuthFalcon512Rpo::new(
+            key_pair.public_key().to_commitment(),
         ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
     let faucet_account = builder.build()?;
 
     client.add_account(&faucet_account, false).await?;
-    keystore.add_key(&AuthSecretKey::RpoFalcon512(key_pair))?;
+    keystore.add_key(&key_pair)?;
 
     println!("Faucet account ID: {}", faucet_account.id());
 
@@ -362,7 +361,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 `},
   typescript: {
-    code:`import { WebClient, AccountStorageMode } from "@demox-labs/miden-sdk";
+    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -383,7 +382,8 @@ export async function demo() {
         false,
         symbol,
         decimals,
-        initialSupply
+        initialSupply,
+        AuthScheme.AuthRpoFalcon512 // Authentication scheme
     );
 
     console.log("Faucet account ID:", faucet.id().toString());
@@ -418,7 +418,7 @@ Faucet account ID: 0xde0ba31282f7522046d3d4af40722b
 
 - **BasicWallet**: Provides asset management functionality
 - **BasicFungibleFaucet**: Enables token minting capabilities
-- **AuthRpoFalcon512**: Handles cryptographic authentication
+- **AuthFalcon512Rpo**: Handles cryptographic authentication
 
 Now that you understand how to create accounts and faucets, you're ready to learn about Miden's unique transaction model. Continue to [Notes & Transactions](./notes) to explore how assets move between accounts using notes.
 
