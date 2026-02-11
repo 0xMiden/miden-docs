@@ -77,7 +77,7 @@ The `#[tx_script]` macro:
 
 ```toml
 [package.metadata.miden]
-project-kind = "tx-script"
+project-kind = "transaction-script"
 ```
 
 ## Time-based patterns

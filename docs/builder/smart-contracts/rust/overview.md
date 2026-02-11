@@ -15,7 +15,7 @@ If you've built on Ethereum or Solana, this table maps familiar concepts to thei
 | Concept | EVM / SVM | Miden |
 |---|---|---|
 | Smart contract | Contract at an address | Account with components |
-| Contract state | Solidity state variables | `Value` / `StorageMap` storage fields (up to 256 slots) |
+| Contract state | Solidity state variables | `Value` / `StorageMap` storage fields (up to 255 slots) |
 | Asset issuance | ERC-20 / ERC-721 contracts | Faucet accounts (mint/burn native assets) |
 | Transfer | `transfer()` call on token contract | Create a note (programmable UTXO) |
 | `msg.sender` | Implicit caller address | Authentication via Falcon512 signatures |
@@ -58,7 +58,7 @@ An account has four parts:
 | Part | Description |
 |------|-------------|
 | **Code** | One or more components that define the account's behavior |
-| **Storage** | Persistent state — up to 256 slots of `Value` or `StorageMap` |
+| **Storage** | Persistent state — up to 255 slots of `Value` or `StorageMap` |
 | **Vault** | The assets (fungible and non-fungible) the account holds |
 | **Nonce** | A counter that increments with every state change (replay protection) |
 
@@ -156,7 +156,7 @@ Miden supports several account types, configured in `Cargo.toml`:
 |----------------|-------------|---------|
 | [Components](./accounts/components) | Reusable code modules with storage and WIT interfaces | `#[component]` macro |
 | [Type System](./types) | Felt, Word, Asset — the VM's native types | Field arithmetic |
-| [Storage](./accounts/storage) | Up to 256 slots of Value or StorageMap | Persistent state |
+| [Storage](./accounts/storage) | Up to 255 slots of Value or StorageMap | Persistent state |
 | [Custom Types](./accounts/custom-types) | Exported structs/enums for public APIs | `#[export_type]` |
 | [Account Operations](./accounts/account-operations) | Read/write account state and vault | `active_account`, `native_account` |
 | [Notes](./transactions/notes) | Programmable UTXOs for asset transfers | Note scripts |

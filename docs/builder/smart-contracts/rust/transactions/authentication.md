@@ -12,7 +12,7 @@ Miden uses RPO-Falcon512 digital signatures for transaction authentication. Beca
 
 In Miden, authentication follows this flow:
 
-1. **Key setup**: Store the public key hash in a known storage slot (typically slot 0)
+1. **Key setup**: Store the public key hash in a dedicated storage field (e.g., `pub_key`)
 2. **Transaction signing**: The client signs the transaction summary with the private key
 3. **Verification**: The auth component verifies the signature against the stored public key
 4. **Nonce increment**: The nonce is incremented to prevent replay attacks
@@ -80,8 +80,8 @@ use miden::intrinsics::advice::emit_falcon_sig_to_stack;
 
 #[component]
 struct AuthComponent {
-    /// Slot 0: RPO256 hash of the Falcon512 public key
-    #[storage(slot(0), description = "auth::rpo_falcon512::pub_key")]
+    /// RPO256 hash of the Falcon512 public key
+    #[storage(description = "auth::rpo_falcon512::pub_key")]
     pub_key: Value,
 }
 
@@ -110,7 +110,7 @@ impl AuthComponent {
 
 ### Key points
 
-1. **Public key storage**: The RPO256 hash of the public key is stored in slot 0 (convention for auth components)
+1. **Public key storage**: Store the RPO256 hash of the public key in a dedicated storage field (slot IDs are derived from the field name)
 2. **Message construction**: Hash the delta commitment (state changes) with the new nonce
 3. **Signature request**: `emit_falcon_sig_to_stack` asks the host to provide the signature
 4. **Verification**: `rpo_falcon512_verify` checks the signature. If invalid, proof generation fails
@@ -157,7 +157,7 @@ let hash: [u8; 32] = sha256_hash(input_bytes);
 
 1. **Always increment nonce** on state-changing transactions to prevent replay attacks
 2. **Hash the complete transaction summary** — include the delta commitment, nonce, and any relevant context
-3. **Store public keys in slot 0** (convention) with the description `"auth::rpo_falcon512::pub_key"`
+3. **Store public keys in a dedicated storage field** (e.g., `pub_key`) with the description `"auth::rpo_falcon512::pub_key"`
 4. **Never expose private keys** in contract code — they exist only on the client side
 5. **Use the standard Falcon512 scheme** unless you have specific requirements
 

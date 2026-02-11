@@ -6,24 +6,23 @@ description: "Persistent state management with Value slots and StorageMaps in Mi
 
 # Storage
 
-Miden accounts have persistent storage organized into up to 256 fixed-size slots. Each slot holds either a single [`Word`](../types) (via `Value`) or a key-value map (via `StorageMap`). This fixed-size design maps directly to the Merkle tree structure used by the ZK proof system — the storage root is a commitment over all 256 slots, so you pack multiple values into a single Word when you need to store more than one piece of data.
+Miden accounts have persistent storage organized into up to 255 name-addressable slots. Each slot holds either a single [`Word`](../types) (via `Value`) or a key-value map (via `StorageMap`). Slots are identified by `StorageSlotId` values derived from slot names, which in turn are derived from the component package name and the field name. Renaming a field changes the slot ID and is a breaking change for stored data.
 
 ## Storage slots
 
-An account can have up to **256 storage slots** (indices 0–255). Each slot is declared as a field on your component struct:
+An account can have up to **255 storage slots**. Each slot is declared as a field on your component struct:
 
 ```rust
 #[component]
 struct MyContract {
-    #[storage(slot(0), description = "configuration")]
+    #[storage(description = "configuration")]
     config: Value,
 
-    #[storage(slot(1), description = "user balances")]
+    #[storage(description = "user balances")]
     balances: StorageMap,
 }
 ```
-
-If you omit `slot(N)`, slots are assigned sequentially starting from 0.
+Slot IDs are derived from the component package name and the field name. Ordering does not matter, and `slot(N)` is not supported.
 
 ## Value — Single-slot storage
 
@@ -106,14 +105,14 @@ pub trait StorageMapAccess<K, V> {
 ### Reading from a map
 
 ```rust
-// Get returns a Felt (the first element of the stored Word)
+// Get returns a Felt (the last element of the stored Word)
 pub fn get_balance(&self, account_id: AccountId) -> Felt {
     let key = Word::from([account_id.prefix, account_id.suffix, felt!(0), felt!(0)]);
     self.balances.get(&key)
 }
 ```
 
-When you call `get()` with a `Felt` return type, it returns the first element of the stored `Word`. For the full `Word`, specify the return type:
+When you call `get()` with a `Felt` return type, it returns the last element of the stored `Word` (index 3). For the full `Word`, specify the return type:
 
 ```rust
 // Get the full Word value
@@ -151,26 +150,26 @@ Plan your storage layout before building. Document what each slot and each Felt 
 ```rust
 #[component]
 struct TokenVault {
-    /// Slot 0: Configuration
+    /// Config slot:
     /// [0] = max_supply (u64)
     /// [1] = is_paused (0 or 1)
     /// [2] = decimals
     /// [3] = unused
-    #[storage(slot(0), description = "vault configuration")]
+    #[storage(description = "vault configuration")]
     config: Value,
 
-    /// Slot 1: State tracking
+    /// State slot:
     /// [0] = total_supply (u64)
     /// [1] = total_holders (u64)
     /// [2] = last_mint_block
     /// [3] = unused
-    #[storage(slot(1), description = "vault state")]
+    #[storage(description = "vault state")]
     state: Value,
 
-    /// Slot 2: Balance map
+    /// Balance map slot:
     /// Key: [account_prefix, account_suffix, 0, 0]
     /// Value: [balance, last_activity_block, 0, 0]
-    #[storage(slot(2), description = "user balances")]
+    #[storage(description = "user balances")]
     balances: StorageMap,
 }
 ```
@@ -179,7 +178,7 @@ struct TokenVault {
 
 - **Use comments** to document the layout of each Felt within a Word
 - **Group related data** into the same slot to minimize storage operations
-- **Reserve slot 0** for configuration or authentication keys (convention)
+- **Reserve a dedicated config slot** (e.g., `config`) for configuration or auth keys (convention)
 - **Use StorageMap** when you need dynamic keys (per-user balances, per-item data)
 - **Use Value** for global state that has a fixed structure
 

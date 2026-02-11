@@ -75,7 +75,7 @@ use miden::{component, felt, active_account, Value, ValueAccess, Word, AccountId
 
 #[component]
 struct OwnedContract {
-    #[storage(slot(0), description = "owner account id")]
+    #[storage(description = "owner account id")]
     owner: Value,
 }
 
@@ -115,7 +115,7 @@ const COOLDOWN_BLOCKS: u64 = 100;
 
 #[component]
 struct RateLimited {
-    #[storage(slot(0), description = "last action block")]
+    #[storage(description = "last action block")]
     last_action: Value,
 }
 
@@ -146,10 +146,10 @@ const BLOCKS_PER_DAY: u64 = 28800;
 
 #[component]
 struct LimitedWallet {
-    #[storage(slot(0), description = "limits: [max_per_tx, daily_max, 0, 0]")]
+    #[storage(description = "limits: [max_per_tx, daily_max, 0, 0]")]
     limits: Value,
 
-    #[storage(slot(1), description = "state: [daily_spent, last_reset, 0, 0]")]
+    #[storage(description = "state: [daily_spent, last_reset, 0, 0]")]
     state: Value,
 }
 

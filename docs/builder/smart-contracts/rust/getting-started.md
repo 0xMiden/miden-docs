@@ -100,7 +100,7 @@ supported-types = ["RegularAccountUpdatableCode"]
 |-------|----------|-------------|
 | `crate-type = ["cdylib"]` | Yes | Required for WebAssembly compilation |
 | `[package.metadata.miden]` | Yes | Miden compiler configuration |
-| `project-kind` | Yes | `"account"`, `"note-script"`, or `"tx-script"` |
+| `project-kind` | Yes | `"account"`, `"note-script"`, or `"transaction-script"` |
 | `supported-types` | Account only | Which account types this component supports |
 | `[package.metadata.component]` | Yes | WIT component package name |
 | `[package.metadata.miden.dependencies]` | For cross-component | References to other Miden packages |
@@ -111,7 +111,7 @@ supported-types = ["RegularAccountUpdatableCode"]
 |------|-------------|---------|
 | `"account"` | Account component with storage and methods | Wallets, contracts |
 | `"note-script"` | Note script that executes when a note is consumed | P2ID, custom transfers |
-| `"tx-script"` | Transaction script that runs in a transaction context | Initialization scripts |
+| `"transaction-script"` | Transaction script that runs in a transaction context | Initialization scripts |
 
 ## Your first contract
 
@@ -213,7 +213,7 @@ Ensure your `Cargo.toml` has `crate-type = ["cdylib"]` under `[lib]`.
 
 ### `error: unknown project-kind`
 
-Valid values are `"account"`, `"note-script"`, or `"tx-script"`. Check `[package.metadata.miden]`.
+Valid values are `"account"`, `"note-script"`, or `"transaction-script"`. Check `[package.metadata.miden]`.
 
 ### Build succeeds but `.masp` not generated
 

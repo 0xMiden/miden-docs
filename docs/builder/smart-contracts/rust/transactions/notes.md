@@ -35,7 +35,7 @@ let note_idx: NoteIdx = output_note::create(tag, note_type, recipient);
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `tag` | `Tag` | Routing/filtering tag for the note |
-| `note_type` | `NoteType` | Visibility: public, private, or encrypted |
+| `note_type` | `NoteType` | Visibility: public or private |
 | `recipient` | `Recipient` | Hash identifying who can consume the note |
 
 Returns a `NoteIdx` used to reference this note in subsequent operations.
@@ -69,15 +69,18 @@ let metadata: Word = output_note::get_metadata(note_idx);
 Notes can carry additional data as attachments:
 
 ```rust
-// Set an attachment with raw data
-output_note::set_attachment(note_idx, attachment_scheme, payload_data);
+// Set an attachment with an explicit kind (None/Word/Array) and Word payload
+output_note::set_attachment(note_idx, attachment_scheme, attachment_kind, attachment_word);
 
-// Set a Word-sized attachment
+// Set a Word-sized attachment (convenience)
 output_note::set_word_attachment(note_idx, attachment_scheme, word_data);
 
-// Set an array-sized attachment
-output_note::set_array_attachment(note_idx, attachment_scheme, word_data);
+// Set an array-sized attachment (commitment to advice map values)
+output_note::set_array_attachment(note_idx, attachment_scheme, commitment_word);
 ```
+
+`set_array_attachment` stores a commitment to array data. The advice map must contain the
+corresponding elements committed to by `commitment_word`.
 
 ### Computing a Recipient
 

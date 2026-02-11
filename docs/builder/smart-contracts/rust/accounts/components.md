@@ -41,7 +41,7 @@ impl CounterContract {
 The macro generates:
 
 1. **WIT interface definition** describing the component's public API
-2. **Storage metadata** mapping field names to slot indices
+2. **Storage metadata** mapping slot names to slot IDs (derived from the component package + field name)
 3. **Export bindings** for the Miden runtime
 
 ## Struct definition
@@ -71,13 +71,15 @@ field_name: Value,
 field_name: StorageMap,
 ```
 
-The `description` is required and becomes part of the generated metadata. Slots are assigned sequentially starting from 0 unless explicitly specified with `slot(N)`:
+The `description` is optional but recommended and becomes part of the generated metadata. Slot IDs are derived from the component package name (from `[package.metadata.component]`) and the field name, so **renaming a field changes the slot ID**. Ordering does not matter, and `slot(N)` is not supported.
+
+Use `#[storage(description = "...")]` on each storage field:
 
 ```rust
-#[storage(slot(0), description = "initialized flag")]
+#[storage(description = "initialized flag")]
 initialized: Value,
 
-#[storage(slot(1), description = "balances map")]
+#[storage(description = "balances map")]
 balances: StorageMap,
 ```
 
@@ -157,7 +159,7 @@ Public methods can use these types in their signatures:
 
 The `#[component]` macro automatically provides methods on `self` through the `NativeAccount` and `ActiveAccount` traits.
 
-### Always available (via `NativeAccount` trait on `&mut self`)
+### Always available (via `NativeAccount` trait; mutating methods require `&mut self`)
 
 ```rust
 // Add an asset to the account vault
@@ -169,10 +171,10 @@ self.remove_asset(asset: Asset) -> Asset
 // Increment the account nonce (replay protection)
 self.incr_nonce() -> Felt
 
-// Compute commitment of account state changes
+// Compute commitment of account state changes (read-only)
 self.compute_delta_commitment() -> Word
 
-// Check if a procedure was called during this transaction
+// Check if a procedure was called during this transaction (read-only)
 self.was_procedure_called(proc_root: Word) -> bool
 ```
 

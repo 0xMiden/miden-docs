@@ -177,7 +177,6 @@ Field: `inner: Word`.
 |--------|-----------|-------------|
 | `new` | `fn(felts: [Felt; 4]) -> Self` | Create from array |
 | `from_word` | `const fn(word: Word) -> Self` | Create from Word |
-| `merge` | `fn(digests: [Digest; 2]) -> Digest` | RPO 2-to-1 hash |
 
 ### Other types
 
@@ -186,7 +185,6 @@ Field: `inner: Word`.
 | `NoteIdx` | `Felt` | Output note index |
 | `Tag` | `Felt` | Note routing tag |
 | `NoteType` | `Felt` | Note visibility |
-| `Nonce` | `Felt` | Account nonce |
 | `StorageSlotId` | `prefix: Felt, suffix: Felt` | Storage slot identifier |
 
 ---
@@ -307,9 +305,9 @@ Create and manage output notes.
 | `get_assets` | `fn(note_idx: NoteIdx) -> Vec<Asset>` | All assets on note |
 | `get_recipient` | `fn(note_idx: NoteIdx) -> Recipient` | Note recipient |
 | `get_metadata` | `fn(note_idx: NoteIdx) -> Word` | Note metadata |
-| `set_attachment` | `fn(note_idx: NoteIdx, scheme: Felt, data: &[Felt])` | Set raw attachment |
+| `set_attachment` | `fn(note_idx: NoteIdx, scheme: Felt, kind: Felt, data: Word)` | Set attachment with explicit kind |
 | `set_word_attachment` | `fn(note_idx: NoteIdx, scheme: Felt, data: Word)` | Set Word attachment |
-| `set_array_attachment` | `fn(note_idx: NoteIdx, scheme: Felt, data: Word)` | Set array attachment |
+| `set_array_attachment` | `fn(note_idx: NoteIdx, scheme: Felt, data: Word)` | Set array attachment (commitment) |
 
 ---
 
@@ -379,13 +377,13 @@ Faucet operations (for faucet account types only).
 ### Hash functions
 
 ```rust
-use miden::{hash_words, crypto::hashes::{blake3_hash, sha256_hash}};
+use miden::{hash_words, intrinsics::crypto::merge, crypto::hashes::{blake3_hash, sha256_hash}};
 ```
 
 | Function | Signature | Description |
 |----------|-----------|-------------|
 | `hash_words` | `fn(words: &[Word]) -> Digest` | RPO256 hash of Words |
-| `Digest::merge` | `fn(digests: [Digest; 2]) -> Digest` | RPO 2-to-1 merge |
+| `intrinsics::crypto::merge` | `fn(digests: [Digest; 2]) -> Digest` | RPO 2-to-1 merge |
 | `blake3_hash` | `fn(input: [u8; 32]) -> [u8; 32]` | BLAKE3 hash |
 | `blake3_merge` | `fn(input: [u8; 64]) -> [u8; 32]` | BLAKE3 2-to-1 hash |
 | `sha256_hash` | `fn(input: [u8; 32]) -> [u8; 32]` | SHA256 hash |

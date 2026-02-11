@@ -98,7 +98,7 @@ let new_nonce: Felt = native_account::incr_nonce();
 ```
 
 :::warning
-The nonce must be incremented for any transaction that modifies account state. Without it, the same transaction could be replayed. The `#[component]` macro handles this automatically for most cases.
+The nonce must be incremented for any transaction that modifies account state. Without it, the same transaction could be replayed.
 :::
 
 ### Transaction tracking
@@ -139,8 +139,8 @@ impl MyAccount {
 | `add_asset` | `fn add_asset(&mut self, asset: Asset) -> Asset` |
 | `remove_asset` | `fn remove_asset(&mut self, asset: Asset) -> Asset` |
 | `incr_nonce` | `fn incr_nonce(&mut self) -> Felt` |
-| `compute_delta_commitment` | `fn compute_delta_commitment(&mut self) -> Word` |
-| `was_procedure_called` | `fn was_procedure_called(&mut self, proc_root: Word) -> bool` |
+| `compute_delta_commitment` | `fn compute_delta_commitment(&self) -> Word` |
+| `was_procedure_called` | `fn was_procedure_called(&self, proc_root: Word) -> bool` |
 
 ### ActiveAccount methods (on `&self`)
 

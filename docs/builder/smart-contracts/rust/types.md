@@ -246,11 +246,10 @@ assert_eq!(current.suffix, expected.suffix);
 |------|-----------|-------------|
 | `NoteIdx` | `{ inner: Felt }` | Index of an output note in the current transaction |
 | `Tag` | `{ inner: Felt }` | Note tag for filtering/routing |
-| `NoteType` | `{ inner: Felt }` | Note visibility (public, private, encrypted) |
-| `Nonce` | `{ inner: Felt }` | Account nonce value |
+| `NoteType` | `{ inner: Felt }` | Note visibility (public or private) |
 | `Recipient` | `{ inner: Word }` | Computed note recipient (hash of serial number + script + inputs) |
 | `Digest` | `{ inner: Word }` | Cryptographic hash output (RPO256) |
-| `StorageSlotId` | `{ prefix: Felt, suffix: Felt }` | Identifies a storage slot |
+| `StorageSlotId` | `{ suffix: Felt, prefix: Felt }` | Identifies a storage slot |
 
 ## Type conversion table
 
@@ -260,8 +259,8 @@ assert_eq!(current.suffix, expected.suffix);
 | `u64` | `Felt` | `Felt::from_u64_unchecked(n)` or `Felt::new(n)?` |
 | literal | `Felt` | `felt!(n)` |
 | `Felt` | `u64` | `f.as_u64()` |
-| `Felt` | `Word` | `Word::from(f)` — fills position 0, rest zeroed |
-| `Word` | `Felt` | `let f: Felt = w.into()` — extracts position 0 |
+| `Felt` | `Word` | `Word::from(f)` — fills position 3, rest zeroed |
+| `Word` | `Felt` | `let f: Felt = w.into()` — extracts position 3 |
 | `[Felt; 4]` | `Word` | `Word::from(arr)` |
 | `Word` | `[Felt; 4]` | `let arr: [Felt; 4] = w.into()` |
 | `(Felt, Felt, Felt, Felt)` | `Word` | `Word::from(tuple)` |
