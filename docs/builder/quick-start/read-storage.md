@@ -32,7 +32,7 @@ To run the code examples in this guide, you'll need to set up a development envi
 
 ## Reading from a Public Smart Contract
 
-Let's interact with a counter contract deployed on the Miden testnet. This contract maintains a simple counter value in its storage at storage slot `0`.
+Let's interact with a counter contract deployed on the Miden testnet. This contract maintains a simple counter value in a named storage map slot.
 
 ### Reading the Count of a Counter contract
 
@@ -42,16 +42,17 @@ rustFilename="integration/src/bin/read-count.rs"
 example={{
 rust: {
 code: `use miden_client::{
-    account::AccountId,
+    account::{Account, AccountId, StorageSlotName},
     builder::ClientBuilder,
     keystore::FilesystemKeyStore,
     rpc::{Endpoint, GrpcClient},
+    Felt, Word,
 };
 use miden_client_sqlite_store::ClientBuilderSqliteExt;
 use std::sync::Arc;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> anyhow::Result<()> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -59,8 +60,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
-        FilesystemKeyStore::new(keystore_path).unwrap().into();
+    let keystore =
+        Arc::new(FilesystemKeyStore::new(keystore_path).unwrap());
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
 
@@ -70,7 +71,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = ClientBuilder::new()
         .rpc(rpc_client)
         .sqlite_store(store_path)
-        .authenticator(keystore.clone().into())
+        .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -85,26 +86,28 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     client.import_account_by_id(counter_account_id).await?;
 
-    let counter_account = client
+    let counter_account: Account = client
         .get_account(counter_account_id)
         .await?
-        .ok_or_else(|| anyhow::anyhow!("Account not found"))?;
+        .ok_or_else(|| anyhow::anyhow!("Account not found"))?
+        .try_into()?;
 
-    println!(
-        "Count: {:?}",
-        counter_account
-            .account()
-            .storage()
-            .slots()
-            .first()
-            .ok_or_else(|| anyhow::anyhow!("No storage slots found"))?
-    );
+    // Read the count from the counter account's named storage map slot
+    let slot_name = StorageSlotName::new(
+        "miden::component::miden_counter_account::count_map"
+    )?;
+    let count_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
+    let count = counter_account
+        .storage()
+        .get_map_item(&slot_name, count_key)?;
+
+    println!("Count: {:?}", count);
 
     Ok(())
 }
 ` },
   typescript: {
-    code:`import { WebClient, AccountId } from "@demox-labs/miden-sdk";
+    code:`import { WebClient, AccountId, Word } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -119,21 +122,17 @@ export async function demo() {
     const accountId = AccountId.fromHex("0xe59d8cd3c9ff2a0055da0b83ed6432");
 
     // Import the account into the client's database
-    let account = await client.getAccount(accountId);
-    if (account === undefined) {
-        account = await client.getAccount(accountId);
-    }
-
-    // Define counter account instance
+    await client.importAccountById(accountId);
     const counter = await client.getAccount(accountId);
 
-    // Get the count from the counter account by querying the first
-    // storage slot.
-    const count = counter?.storage().getItem(0);
+    // Get the count from the counter account by querying its storage map
+    // using the named storage slot and counter key.
+    const slotName = "miden::component::miden_counter_account::count_map";
+    const counterKey = new Word(BigUint64Array.from([0n, 0n, 0n, 1n]));
+    const count = counter?.storage().getMapItem(slotName, counterKey);
 
-    // Convert the 4th value of the WORD Storage value to a number.
-    // NOTE: The WORD Storage value is an array of 4 values, each of which is a 64-bit unsigned integer.
-    // NOTE: The 4th value is the u64 number of the counter.
+    // The count value is a WORD (array of 4 u64 values).
+    // The 4th value is the counter number.
     console.log("Count:", Number(count?.toU64s()[3]));
 }
 `
@@ -160,7 +159,7 @@ rustFilename="integration/src/bin/token-balance.rs"
 example={{
 rust: {
 code: `use miden_client::{
-    account::AccountId,
+    account::{Account, AccountId},
     builder::ClientBuilder,
     keystore::FilesystemKeyStore,
     rpc::{Endpoint, GrpcClient},
@@ -169,7 +168,7 @@ use miden_client_sqlite_store::ClientBuilderSqliteExt;
 use std::sync::Arc;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> anyhow::Result<()> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -177,8 +176,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
-        FilesystemKeyStore::new(keystore_path).unwrap().into();
+    let keystore =
+        Arc::new(FilesystemKeyStore::new(keystore_path).unwrap());
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
 
@@ -188,7 +187,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = ClientBuilder::new()
         .rpc(rpc_client)
         .sqlite_store(store_path)
-        .authenticator(keystore.clone().into())
+        .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -204,13 +203,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     client.import_account_by_id(alice_account_id).await?;
 
-    let alice_account = client
+    let alice_account: Account = client
         .get_account(alice_account_id)
         .await?
-        .ok_or_else(|| anyhow::anyhow!("Account not found"))?;
+        .ok_or_else(|| anyhow::anyhow!("Account not found"))?
+        .try_into()?;
 
     let balance = alice_account
-        .account()
         .vault()
         .get_balance(faucet_account_id)?;
 
@@ -220,7 +219,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 `},
   typescript: {
-    code:`import { WebClient, AccountId } from "@demox-labs/miden-sdk";
+    code:`import { WebClient, AccountId } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -236,11 +235,8 @@ export async function demo() {
     const faucetId = AccountId.fromHex("0x9796be9c72f137206676f7821a9968");
 
     // Import the account into the client's database
-    let aliceAccount = await client.getAccount(aliceId);
-    if (aliceAccount === undefined) {
-        await client.importAccountById(aliceId);
-        aliceAccount = await client.getAccount(aliceId);
-    }
+    await client.importAccountById(aliceId);
+    const aliceAccount = await client.getAccount(aliceId);
 
     const balance = aliceAccount?.vault().getBalance(faucetId);
     console.log("Alice's TEST token balance:", Number(balance));

@@ -82,17 +82,16 @@ example={{
 rust: {
 code: `use miden_client::{
     account::{
-        component::{AuthRpoFalcon512, BasicFungibleFaucet, BasicWallet},
-        AccountBuilder, AccountId, AccountStorageMode, AccountType,
+        component::{BasicFungibleFaucet, BasicWallet},
+        AccountBuilder, AccountStorageMode, AccountType,
     },
     asset::{FungibleAsset, TokenSymbol},
-    auth::AuthSecretKey,
+    auth::{AuthFalcon512Rpo, AuthSecretKey},
     builder::ClientBuilder,
-    crypto::rpo_falcon512::SecretKey,
     keystore::FilesystemKeyStore,
-    note::{create_p2id_note, NoteType},
+    note::NoteType,
     rpc::{Endpoint, GrpcClient},
-    transaction::{OutputNote, TransactionRequestBuilder},
+    transaction::TransactionRequestBuilder,
     Felt,
 };
 use miden_client_sqlite_store::ClientBuilderSqliteExt;
@@ -100,7 +99,7 @@ use rand::RngCore;
 use std::sync::Arc;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> anyhow::Result<()> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -108,8 +107,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
-        FilesystemKeyStore::new(keystore_path).unwrap().into();
+    let keystore =
+        Arc::new(FilesystemKeyStore::new(keystore_path).unwrap());
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
 
@@ -119,7 +118,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = ClientBuilder::new()
         .rpc(rpc_client)
         .sqlite_store(store_path)
-        .authenticator(keystore.clone().into())
+        .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -140,15 +139,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let max_supply = Felt::new(1_000_000);
 
     // Generate key pair
-    let alice_key_pair = SecretKey::with_rng(client.rng());
-    let faucet_key_pair = SecretKey::with_rng(client.rng());
+    let alice_key_pair = AuthSecretKey::new_falcon512_rpo();
+    let faucet_key_pair = AuthSecretKey::new_falcon512_rpo();
 
     // Build the account
     let account_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(
-            alice_key_pair.public_key().to_commitment().into(),
+        .with_auth_component(AuthFalcon512Rpo::new(
+            alice_key_pair.public_key().to_commitment(),
         ))
         .with_component(BasicWallet);
 
@@ -156,8 +155,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let faucet_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(
-            faucet_key_pair.public_key().to_commitment().into(),
+        .with_auth_component(AuthFalcon512Rpo::new(
+            faucet_key_pair.public_key().to_commitment(),
         ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
@@ -172,8 +171,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     client.add_account(&faucet_account, false).await?;
 
     // Add keys to keystore
-    keystore.add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))?;
-    keystore.add_key(&AuthSecretKey::RpoFalcon512(faucet_key_pair))?;
+    keystore.add_key(&alice_key_pair)?;
+    keystore.add_key(&faucet_key_pair)?;
 
     let amount: u64 = 1000;
     let fungible_asset = FungibleAsset::new(faucet_account.id(), amount)?;
@@ -207,7 +206,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     WebClient,
     AccountStorageMode,
     NoteType,
-} from "@demox-labs/miden-sdk";
+    AuthScheme,
+} from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -220,7 +220,11 @@ export async function demo() {
     await client.syncState();
 
     // Creating Alice's account
-    const alice = await client.newWallet(AccountStorageMode.public(), true);
+    const alice = await client.newWallet(
+        AccountStorageMode.public(),
+        true,
+        AuthScheme.AuthRpoFalcon512
+    );
     console.log("Alice's account ID:", alice.id().toString());
 
     // Creating a faucet account
@@ -232,7 +236,8 @@ export async function demo() {
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
-        initialSupply // Initial supply of tokens
+        initialSupply, // Initial supply of tokens
+        AuthScheme.AuthRpoFalcon512 // Authentication scheme
     );
     console.log("Faucet account ID:", faucet.id().toString());
 
@@ -296,17 +301,16 @@ example={{
 rust: {
 code: `use miden_client::{
     account::{
-        component::{AuthRpoFalcon512, BasicFungibleFaucet, BasicWallet},
-        AccountBuilder, AccountStorageMode, AccountType,
+        component::{BasicFungibleFaucet, BasicWallet},
+        Account, AccountBuilder, AccountStorageMode, AccountType,
     },
     asset::{FungibleAsset, TokenSymbol},
-    auth::AuthSecretKey,
+    auth::{AuthFalcon512Rpo, AuthSecretKey},
     builder::ClientBuilder,
-    crypto::rpo_falcon512::SecretKey,
     keystore::FilesystemKeyStore,
-    note::{NoteType},
+    note::NoteType,
     rpc::{Endpoint, GrpcClient},
-    transaction::{TransactionRequestBuilder},
+    transaction::TransactionRequestBuilder,
     Felt,
 };
 use miden_client_sqlite_store::ClientBuilderSqliteExt;
@@ -315,7 +319,7 @@ use std::sync::Arc;
 use tokio::time::Duration;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> anyhow::Result<()> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -323,8 +327,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
-        FilesystemKeyStore::new(keystore_path).unwrap().into();
+    let keystore =
+        Arc::new(FilesystemKeyStore::new(keystore_path).unwrap());
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
 
@@ -334,7 +338,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = ClientBuilder::new()
         .rpc(rpc_client)
         .sqlite_store(store_path)
-        .authenticator(keystore.clone().into())
+        .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -355,15 +359,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let max_supply = Felt::new(1_000_000);
 
     // Generate key pair
-    let alice_key_pair = SecretKey::with_rng(client.rng());
-    let faucet_key_pair = SecretKey::with_rng(client.rng());
+    let alice_key_pair = AuthSecretKey::new_falcon512_rpo();
+    let faucet_key_pair = AuthSecretKey::new_falcon512_rpo();
 
     // Build the account
     let account_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(
-            alice_key_pair.public_key().to_commitment().into(),
+        .with_auth_component(AuthFalcon512Rpo::new(
+            alice_key_pair.public_key().to_commitment(),
         ))
         .with_component(BasicWallet);
 
@@ -371,8 +375,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let faucet_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(
-            faucet_key_pair.public_key().to_commitment().into(),
+        .with_auth_component(AuthFalcon512Rpo::new(
+            faucet_key_pair.public_key().to_commitment(),
         ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
@@ -387,8 +391,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     client.add_account(&faucet_account, false).await?;
 
     // Add keys to keystore
-    keystore.add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))?;
-    keystore.add_key(&AuthSecretKey::RpoFalcon512(faucet_key_pair))?;
+    keystore.add_key(&alice_key_pair)?;
+    keystore.add_key(&faucet_key_pair)?;
 
     let amount: u64 = 1000;
     let fungible_asset = FungibleAsset::new(faucet_account.id(), amount)?;
@@ -425,18 +429,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let consumable_notes = client
             .get_consumable_notes(Some(alice_account.id()))
             .await?;
-        let note_ids = consumable_notes
-            .iter()
-            .map(|(note, _)| note.id())
-            .collect::<Vec<_>>();
 
-        if note_ids.len() == 0 {
+        if consumable_notes.is_empty() {
             println!("Waiting for P2ID note to be comitted...");
             tokio::time::sleep(Duration::from_secs(2)).await;
             continue;
         }
 
-        let consume_tx_request = TransactionRequestBuilder::new().build_consume_notes(note_ids)?;
+        let notes: Vec<miden_client::note::Note> = consumable_notes
+            .into_iter()
+            .map(|(record, _)| record.try_into().expect("Failed to convert to Note"))
+            .collect();
+
+        let consume_tx_request = TransactionRequestBuilder::new().build_consume_notes(notes)?;
 
         // Create transaction and submit it to consume notes
         let consume_tx_id = client
@@ -450,11 +455,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         client.sync_state().await?;
 
-        let alice_account_record = client
+        let alice_account: Account = client
             .get_account(alice_account.id())
             .await?
-            .ok_or_else(|| anyhow::anyhow!("Account not found"))?;
-        let alice_account = alice_account_record.account().clone();
+            .ok_or_else(|| anyhow::anyhow!("Account not found"))?
+            .try_into()?;
         let vault = alice_account.vault();
         println!(
             "Alice's TEST token balance: {:?}",
@@ -472,8 +477,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     WebClient,
     AccountStorageMode,
     NoteType,
+    AuthScheme,
     ConsumableNoteRecord,
-} from "@demox-labs/miden-sdk";
+} from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -486,7 +492,11 @@ export async function demo() {
     await client.syncState();
 
     // Creating Alice's account
-    const alice = await client.newWallet(AccountStorageMode.public(), true);
+    const alice = await client.newWallet(
+        AccountStorageMode.public(),
+        true,
+        AuthScheme.AuthRpoFalcon512
+    );
     console.log("Alice's account ID:", alice.id().toString());
 
     // Creating a faucet account
@@ -498,7 +508,8 @@ export async function demo() {
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
-        initialSupply // Initial supply of tokens
+        initialSupply, // Initial supply of tokens
+        AuthScheme.AuthRpoFalcon512 // Authentication scheme
     );
     console.log("Faucet account ID:", faucet.id().toString());
 
@@ -530,13 +541,13 @@ export async function demo() {
         await new Promise((resolve) => setTimeout(resolve, 3000));
     }
 
-    const noteIds = consumableNotes.map((note) =>
-        note.inputNoteRecord().id().toString()
+    const notes = consumableNotes.map((note) =>
+        note.inputNoteRecord().toNote()
     );
 
     // Create transaction request to consume notes
     // NOTE: This transaction will consume the notes and add the fungible asset to Alice's vault
-    const consumeTxRequest = client.newConsumeTransactionRequest(noteIds);
+    const consumeTxRequest = client.newConsumeTransactionRequest(notes);
     const consumeTxId = await client.submitNewTransaction(
         alice.id(),
         consumeTxRequest
@@ -596,15 +607,14 @@ example={{
 rust: {
 code: `use miden_client::{
     account::{
-        component::{AuthRpoFalcon512, BasicFungibleFaucet, BasicWallet},
-        AccountBuilder, AccountId, AccountStorageMode, AccountType,
+        component::{BasicFungibleFaucet, BasicWallet},
+        Account, AccountBuilder, AccountId, AccountStorageMode, AccountType,
     },
     asset::{FungibleAsset, TokenSymbol},
-    auth::AuthSecretKey,
+    auth::{AuthFalcon512Rpo, AuthSecretKey},
     builder::ClientBuilder,
-    crypto::rpo_falcon512::SecretKey,
     keystore::FilesystemKeyStore,
-    note::{create_p2id_note, NoteType},
+    note::{create_p2id_note, NoteAttachment, NoteType},
     rpc::{Endpoint, GrpcClient},
     transaction::{OutputNote, TransactionRequestBuilder},
     Felt,
@@ -615,7 +625,7 @@ use std::sync::Arc;
 use tokio::time::Duration;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> anyhow::Result<()> {
     // Initialize RPC connection
     let endpoint = Endpoint::testnet();
     let timeout_ms = 10_000;
@@ -623,8 +633,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Initialize keystore
     let keystore_path = std::path::PathBuf::from("./keystore");
-    let keystore: FilesystemKeyStore<rand::prelude::StdRng> =
-        FilesystemKeyStore::new(keystore_path).unwrap().into();
+    let keystore =
+        Arc::new(FilesystemKeyStore::new(keystore_path).unwrap());
 
     let store_path = std::path::PathBuf::from("./store.sqlite3");
 
@@ -634,7 +644,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = ClientBuilder::new()
         .rpc(rpc_client)
         .sqlite_store(store_path)
-        .authenticator(keystore.clone().into())
+        .authenticator(keystore.clone())
         .in_debug_mode(true.into())
         .build()
         .await?;
@@ -655,15 +665,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let max_supply = Felt::new(1_000_000);
 
     // Generate key pair
-    let alice_key_pair = SecretKey::with_rng(client.rng());
-    let faucet_key_pair = SecretKey::with_rng(client.rng());
+    let alice_key_pair = AuthSecretKey::new_falcon512_rpo();
+    let faucet_key_pair = AuthSecretKey::new_falcon512_rpo();
 
     // Build the account
     let account_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(
-            alice_key_pair.public_key().to_commitment().into(),
+        .with_auth_component(AuthFalcon512Rpo::new(
+            alice_key_pair.public_key().to_commitment(),
         ))
         .with_component(BasicWallet);
 
@@ -671,8 +681,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let faucet_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthRpoFalcon512::new(
-            faucet_key_pair.public_key().to_commitment().into(),
+        .with_auth_component(AuthFalcon512Rpo::new(
+            faucet_key_pair.public_key().to_commitment(),
         ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
@@ -687,8 +697,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     client.add_account(&faucet_account, false).await?;
 
     // Add keys to keystore
-    keystore.add_key(&AuthSecretKey::RpoFalcon512(alice_key_pair))?;
-    keystore.add_key(&AuthSecretKey::RpoFalcon512(faucet_key_pair))?;
+    keystore.add_key(&alice_key_pair)?;
+    keystore.add_key(&faucet_key_pair)?;
 
     let amount: u64 = 1000;
     let fungible_asset = FungibleAsset::new(faucet_account.id(), amount)?;
@@ -725,18 +735,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let consumable_notes = client
             .get_consumable_notes(Some(alice_account.id()))
             .await?;
-        let note_ids = consumable_notes
-            .iter()
-            .map(|(note, _)| note.id())
-            .collect::<Vec<_>>();
 
-        if note_ids.len() == 0 {
+        if consumable_notes.is_empty() {
             println!("Waiting for P2ID note to be comitted...");
             tokio::time::sleep(Duration::from_secs(2)).await;
             continue;
         }
 
-        let consume_tx_request = TransactionRequestBuilder::new().build_consume_notes(note_ids)?;
+        let notes: Vec<miden_client::note::Note> = consumable_notes
+            .into_iter()
+            .map(|(record, _)| record.try_into().expect("Failed to convert to Note"))
+            .collect();
+
+        let consume_tx_request = TransactionRequestBuilder::new().build_consume_notes(notes)?;
 
         // Create transaction and submit it to consume notes
         let consume_tx_id = client
@@ -750,11 +761,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         client.sync_state().await?;
 
-        let alice_account_record = client
+        let alice_account: Account = client
             .get_account(alice_account.id())
             .await?
-            .ok_or_else(|| anyhow::anyhow!("Account not found"))?;
-        let alice_account = alice_account_record.account().clone();
+            .ok_or_else(|| anyhow::anyhow!("Account not found"))?
+            .try_into()?;
         let vault = alice_account.vault();
         println!(
             "Alice's TEST token balance: {:?}",
@@ -777,7 +788,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         bob_account_id,
         vec![fungible_asset_to_send.into()],
         NoteType::Public,
-        Felt::new(0),
+        NoteAttachment::default(),
         client.rng(),
     )?;
 
@@ -807,7 +818,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     NoteType,
     ConsumableNoteRecord,
     AccountId,
-} from "@demox-labs/miden-sdk";
+    AuthScheme,
+} from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -820,7 +832,11 @@ export async function demo() {
     await client.syncState();
 
     // Creating Alice's account
-    const alice = await client.newWallet(AccountStorageMode.public(), true);
+    const alice = await client.newWallet(
+        AccountStorageMode.public(),
+        true,
+        AuthScheme.AuthRpoFalcon512
+    );
     console.log("Alice's account ID:", alice.id().toString());
 
     // Creating a faucet account
@@ -832,7 +848,8 @@ export async function demo() {
         false, // Mutable: account code cannot be upgraded later
         symbol, // Symbol of the token
         decimals, // Number of decimals
-        initialSupply // Initial supply of tokens
+        initialSupply, // Initial supply of tokens
+        AuthScheme.AuthRpoFalcon512 // Authentication scheme
     );
     console.log("Faucet account ID:", faucet.id().toString());
 
@@ -864,13 +881,13 @@ export async function demo() {
         await new Promise((resolve) => setTimeout(resolve, 3000));
     }
 
-    const noteIds = consumableNotes.map((note) =>
-        note.inputNoteRecord().id().toString()
+    const notes = consumableNotes.map((note) =>
+        note.inputNoteRecord().toNote()
     );
 
     // Create transaction request to consume notes
     // NOTE: This transaction will consume the notes and add the fungible asset to Alice's vault
-    const consumeTxRequest = client.newConsumeTransactionRequest(noteIds);
+    const consumeTxRequest = client.newConsumeTransactionRequest(notes);
     const consumeTxId = await client.submitNewTransaction(
         alice.id(),
         consumeTxRequest
