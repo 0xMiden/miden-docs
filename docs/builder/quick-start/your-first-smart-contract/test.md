@@ -235,7 +235,7 @@ let mut mock_chain = builder.build()?;
 ### 5. Creating and Executing the Transaction
 
 ```rust
-let tx_context = mock_chain.
+let tx_context = mock_chain
     .build_tx_context(counter_account.id(), &[counter_note.id()], &[])?
     .build()?;
 
