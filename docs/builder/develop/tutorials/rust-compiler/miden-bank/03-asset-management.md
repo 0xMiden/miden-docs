@@ -182,7 +182,6 @@ pub fn withdraw(
     withdraw_asset: Asset,
     serial_num: Word,
     tag: Felt,
-    aux: Felt,
     note_type: Felt,
 ) {
     // ========================================================================
@@ -219,7 +218,7 @@ pub fn withdraw(
 
     // Create a P2ID note to send the requested asset back to the depositor
     // We'll implement create_p2id_note() in Part 7
-    self.create_p2id_note(serial_num, &withdraw_asset, depositor, tag, aux, note_type);
+    self.create_p2id_note(serial_num, &withdraw_asset, depositor, tag, note_type);
 }
 ```
 
@@ -234,7 +233,6 @@ fn create_p2id_note(
     _asset: &Asset,
     _recipient_id: AccountId,
     _tag: Felt,
-    _aux: Felt,
     _note_type: Felt,
 ) {
     // Placeholder - implemented in Part 7: Output Notes
@@ -261,12 +259,11 @@ use integration::helpers::{
     build_project_in_dir, create_testing_account_from_package,
     create_testing_note_from_package, AccountCreationConfig, NoteCreationConfig,
 };
-use miden_client::account::{StorageMap, StorageSlot};
+use miden_client::account::{StorageMap, StorageSlot, StorageSlotName};
+use miden_client::asset::{Asset, FungibleAsset};
 use miden_client::note::NoteAssets;
-use miden_client::transaction::OutputNote;
+use miden_client::transaction::{OutputNote, TransactionScript};
 use miden_client::{Felt, Word};
-use miden_objects::asset::{Asset, FungibleAsset};
-use miden_objects::transaction::TransactionScript;
 use miden_testing::{Auth, MockChain};
 use std::{path::Path, sync::Arc};
 
@@ -278,10 +275,10 @@ async fn test_deposit_updates_balance() -> anyhow::Result<()> {
     let mut builder = MockChain::builder();
 
     // Create a faucet for test tokens
-    let faucet = builder.add_new_faucet(Auth::NoAuth, "TEST", 10_000_000)?;
+    let faucet = builder.add_existing_basic_faucet(Auth::BasicAuth, "TEST", 10_000_000, Some(10))?;
 
     // Create sender wallet with tokens
-    let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
+    let sender = builder.add_existing_wallet_with_assets(Auth::BasicAuth, [FungibleAsset::new(faucet.id(), 1000)?.into()])?;
 
     // Build contracts
     let bank_package = Arc::new(build_project_in_dir(
@@ -300,10 +297,20 @@ async fn test_deposit_updates_balance() -> anyhow::Result<()> {
     )?);
 
     // Create the bank account with storage slots
+    let initialized_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::initialized")
+            .expect("Valid slot name");
+    let balances_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::balances")
+            .expect("Valid slot name");
+
     let bank_cfg = AccountCreationConfig {
         storage_slots: vec![
-            StorageSlot::Value(Word::default()),  // Slot 0: initialized = 0
-            StorageSlot::Map(StorageMap::with_entries([])?),  // Slot 1: balances
+            StorageSlot::with_value(initialized_slot.clone(), Word::default()),
+            StorageSlot::with_map(
+                balances_slot.clone(),
+                StorageMap::with_entries([]).expect("Empty storage map"),
+            ),
         ],
         ..Default::default()
     };
@@ -313,6 +320,25 @@ async fn test_deposit_updates_balance() -> anyhow::Result<()> {
 
     // Add to mock chain
     builder.add_account(bank_account.clone())?;
+
+    // =========================================================================
+    // STEP 2: Create deposit note before building the mock chain
+    // =========================================================================
+    let deposit_amount: u64 = 1000;
+    let fungible_asset = FungibleAsset::new(faucet.id(), deposit_amount)?;
+    let note_assets = NoteAssets::new(vec![Asset::Fungible(fungible_asset)])?;
+
+    let deposit_note = create_testing_note_from_package(
+        deposit_note_package.clone(),
+        sender.id(),
+        NoteCreationConfig {
+            assets: note_assets,
+            ..Default::default()
+        },
+    )?;
+
+    // Add note to builder before building
+    builder.add_output_note(OutputNote::Full(deposit_note.clone()));
 
     let mut mock_chain = builder.build()?;
 
@@ -333,7 +359,7 @@ async fn test_deposit_updates_balance() -> anyhow::Result<()> {
     mock_chain.prove_next_block()?;
 
     // Verify initialization
-    let initialized = bank_account.storage().get_item(0)?;
+    let initialized = bank_account.storage().get_item(&initialized_slot)?;
     assert_eq!(
         initialized[0].as_int(),
         1,
@@ -342,23 +368,8 @@ async fn test_deposit_updates_balance() -> anyhow::Result<()> {
     println!("Bank initialized successfully!");
 
     // =========================================================================
-    // STEP 2: Create and execute deposit
+    // STEP 2: Execute deposit
     // =========================================================================
-    let deposit_amount: u64 = 1000;
-    let fungible_asset = FungibleAsset::new(faucet.id(), deposit_amount)?;
-    let note_assets = NoteAssets::new(vec![Asset::Fungible(fungible_asset)])?;
-
-    let deposit_note = create_testing_note_from_package(
-        deposit_note_package.clone(),
-        sender.id(),
-        NoteCreationConfig {
-            assets: note_assets,
-            ..Default::default()
-        },
-    )?;
-
-    // Add note to mock chain
-    mock_chain.add_note(OutputNote::Full(deposit_note.clone().into()))?;
 
     // Execute deposit transaction
     let tx_context = mock_chain
@@ -382,7 +393,7 @@ async fn test_deposit_updates_balance() -> anyhow::Result<()> {
         faucet.id().suffix(),
     ]);
 
-    let balance = bank_account.storage().get_map_item(1, depositor_key)?;
+    let balance = bank_account.storage().get_map_item(&balances_slot, depositor_key)?;
 
     // Balance is stored as a single Felt in the last position of the Word
     let balance_value = balance[3].as_int();
@@ -418,7 +429,7 @@ miden build
 If you have the note scripts ready, run the full test from the project root:
 
 ```bash title=">_ Terminal"
-cargo test --package integration part3_deposit -- --nocapture
+cargo test --package integration test_deposit_updates_balance -- --nocapture
 ```
 
 <details>
@@ -453,7 +464,7 @@ DEPOSIT FLOW:
 
 WITHDRAW FLOW:
 ┌────────────┐   P2ID note      ┌───────────┐
-│ Bank Vault │ ──────────────────▶ Depositor │
+│ Bank Vault │ ──────────────────▶ Depositor│
 │  - Balance │   (with asset)   │  Wallet   │
 └────────────┘                  └───────────┘
 ```
@@ -480,10 +491,10 @@ const MAX_DEPOSIT_AMOUNT: u64 = 1_000_000;
 /// Bank account component that tracks depositor balances.
 #[component]
 struct Bank {
-    #[storage(slot(0), description = "initialized")]
+    #[storage(description = "initialized")]
     initialized: Value,
 
-    #[storage(slot(1), description = "balances")]
+    #[storage(description = "balances")]
     balances: StorageMap,
 }
 
@@ -548,7 +559,6 @@ impl Bank {
         withdraw_asset: Asset,
         serial_num: Word,
         tag: Felt,
-        aux: Felt,
         note_type: Felt,
     ) {
         self.require_initialized();
@@ -572,7 +582,7 @@ impl Bank {
         let new_balance = current_balance - withdraw_amount;
         self.balances.set(key, new_balance);
 
-        self.create_p2id_note(serial_num, &withdraw_asset, depositor, tag, aux, note_type);
+        self.create_p2id_note(serial_num, &withdraw_asset, depositor, tag, note_type);
     }
 
     /// Create a P2ID note - placeholder for Part 7.
@@ -582,7 +592,6 @@ impl Bank {
         _asset: &Asset,
         _recipient_id: AccountId,
         _tag: Felt,
-        _aux: Felt,
         _note_type: Felt,
     ) {
         todo!("P2ID note creation - see Part 7")

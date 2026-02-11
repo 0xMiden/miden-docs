@@ -34,7 +34,15 @@ miden --version
 <summary>Expected output</summary>
 
 ```text
-miden-cli 0.8.x
+The Miden toolchain porcelain:
+
+Environment:
+- cargo version: cargo 1.93.0 (083ac5135 2025-12-15).
+
+Midenup:
+- midenup + miden version: 0.1.0.
+- active toolchain version: 0.20.3.
+- ...
 ```
 
 </details>
@@ -90,7 +98,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-miden = { workspace = true }
+miden = { version = "0.10" }
 
 [package.metadata.component]
 package = "miden:bank-account"
@@ -132,12 +140,12 @@ use miden::*;
 struct Bank {
     /// Tracks whether the bank has been initialized (deposits enabled).
     /// Word layout: [is_initialized (0 or 1), 0, 0, 0]
-    #[storage(slot(0), description = "initialized")]
+    #[storage(description = "initialized")]
     initialized: Value,
 
     /// Maps depositor AccountId -> balance (as Felt).
     /// We'll use this to track user balances in Part 1.
-    #[storage(slot(1), description = "balances")]
+    #[storage(description = "balances")]
     balances: StorageMap,
 }
 
@@ -185,17 +193,23 @@ Update the root `Cargo.toml` to reflect our renamed contract:
 
 ```toml title="Cargo.toml"
 [workspace]
+members = [
+    "integration"
+]
+exclude = [
+    "contracts/",
+]
 resolver = "2"
 
-members = [
-    "contracts/bank-account",
-    "contracts/increment-note",  # We'll replace this later
-    "integration",
-]
+[workspace.package]
+edition = "2021"
 
 [workspace.dependencies]
-miden = { version = "0.8" }
 ```
+
+:::info Contracts Are Excluded
+In v0.13, contracts are excluded from the Cargo workspace and built independently by `cargo miden`. Each contract specifies its own `miden` dependency directly. Only the `integration` crate remains a workspace member.
+:::
 
 ## Step 5: Build and Verify
 
@@ -231,7 +245,7 @@ Let's create a simple test to verify the bank account can be created. Create a n
 use integration::helpers::{
     build_project_in_dir, create_testing_account_from_package, AccountCreationConfig,
 };
-use miden_client::account::{StorageMap, StorageSlot};
+use miden_client::account::{StorageMap, StorageSlot, StorageSlotName};
 use miden_client::Word;
 use std::{path::Path, sync::Arc};
 
@@ -243,13 +257,21 @@ async fn test_bank_account_builds_and_loads() -> anyhow::Result<()> {
         true,
     )?);
 
-    // Create the bank account with initial storage
-    // Slot 0: initialized flag (Value, starts as [0, 0, 0, 0])
-    // Slot 1: balances map (StorageMap, starts empty)
+    // Create named storage slots matching the contract's storage layout
+    let initialized_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::initialized")
+            .expect("Valid slot name");
+    let balances_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::balances")
+            .expect("Valid slot name");
+
     let bank_cfg = AccountCreationConfig {
         storage_slots: vec![
-            StorageSlot::Value(Word::default()),
-            StorageSlot::Map(StorageMap::with_entries([])?),
+            StorageSlot::with_value(initialized_slot, Word::default()),
+            StorageSlot::with_map(
+                balances_slot,
+                StorageMap::with_entries([]).expect("Empty storage map"),
+            ),
         ],
         ..Default::default()
     };
@@ -268,7 +290,7 @@ async fn test_bank_account_builds_and_loads() -> anyhow::Result<()> {
 Run the test from the project root:
 
 ```bash title=">_ Terminal"
-cargo test --package integration part0_setup_test -- --nocapture
+cargo test --package integration test_bank_account_builds_and_loads -- --nocapture
 ```
 
 <details>
@@ -317,7 +339,7 @@ Your bank can be created, but doesn't do anything useful yet. In the next parts,
 
 1. **`miden new`** creates a complete project workspace with contracts and integration folders
 2. **Account components** are defined with `#[component]` on a struct
-3. **Storage slots** are declared with `#[storage(slot(N))]` attributes
+3. **Storage slots** are declared with `#[storage(description = "...")]` attributes (the compiler auto-assigns slot numbers)
 4. **`miden build`** compiles Rust to Miden Assembly (.masp package)
 5. **Tests verify** that your code works before moving on
 

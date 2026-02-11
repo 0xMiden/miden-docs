@@ -241,7 +241,7 @@ Let's write a test to verify our constraints work correctly. This test verifies 
 use integration::helpers::{
     build_project_in_dir, create_testing_account_from_package, AccountCreationConfig,
 };
-use miden_client::account::{StorageMap, StorageSlot};
+use miden_client::account::{StorageMap, StorageSlot, StorageSlotName};
 use miden_client::Word;
 use std::{path::Path, sync::Arc};
 
@@ -254,11 +254,22 @@ async fn test_constraints_are_defined() -> anyhow::Result<()> {
         true,
     )?);
 
+    // Create named storage slots
+    let initialized_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::initialized")
+            .expect("Valid slot name");
+    let balances_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::balances")
+            .expect("Valid slot name");
+
     // Create an uninitialized bank account
     let bank_cfg = AccountCreationConfig {
         storage_slots: vec![
-            StorageSlot::Value(Word::default()),  // initialized = 0
-            StorageSlot::Map(StorageMap::with_entries([])?),
+            StorageSlot::with_value(initialized_slot.clone(), Word::default()),
+            StorageSlot::with_map(
+                balances_slot,
+                StorageMap::with_entries([]).expect("Empty storage map"),
+            ),
         ],
         ..Default::default()
     };
@@ -267,7 +278,7 @@ async fn test_constraints_are_defined() -> anyhow::Result<()> {
         create_testing_account_from_package(bank_package.clone(), bank_cfg).await?;
 
     // Verify the bank starts uninitialized
-    let initialized = bank_account.storage().get_item(0)?;
+    let initialized = bank_account.storage().get_item(&initialized_slot)?;
     assert_eq!(
         initialized[0].as_int(),
         0,
@@ -287,7 +298,7 @@ async fn test_constraints_are_defined() -> anyhow::Result<()> {
 Run the test from the project root:
 
 ```bash title=">_ Terminal"
-cargo test --package integration part2_constraints -- --nocapture
+cargo test --package integration test_constraints_are_defined -- --nocapture
 ```
 
 <details>
@@ -372,10 +383,10 @@ const MAX_DEPOSIT_AMOUNT: u64 = 1_000_000;
 /// Bank account component that tracks depositor balances.
 #[component]
 struct Bank {
-    #[storage(slot(0), description = "initialized")]
+    #[storage(description = "initialized")]
     initialized: Value,
 
-    #[storage(slot(1), description = "balances")]
+    #[storage(description = "balances")]
     balances: StorageMap,
 }
 

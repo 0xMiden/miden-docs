@@ -23,12 +23,12 @@ In Part 0, we created a minimal bank with just an `initialized` flag. Now we'll 
 
 ```text
 Part 0:                          Part 1:
-┌────────────────────┐             ┌────────────────────┐
-│ Bank               │             │ Bank               │
-│ ─────────────────  │    ──►      │ ─────────────────  │
-│ slot 0: initialized│             │ slot 0: initialized│
-│                    │             │ slot 1: balances   │ ◄── NEW
-└────────────────────┘             └────────────────────┘
+┌────────────────────┐             ┌──────────────────────────┐
+│ Bank               │             │ Bank                     │
+│ ─────────────────  │    ──►      │ ──────────────────────── │
+│ initialized (Value)│             │ initialized (Value)      │
+│                    │             │ balances (StorageMap)    │ ◄── NEW
+└────────────────────┘             └──────────────────────────┘
 ```
 
 ## The #[component] Attribute
@@ -59,17 +59,17 @@ use miden::*;
 struct Bank {
     /// Tracks whether the bank has been initialized (deposits enabled).
     /// Word layout: [is_initialized (0 or 1), 0, 0, 0]
-    #[storage(slot(0), description = "initialized")]
+    #[storage(description = "initialized")]
     initialized: Value,
 
     /// Maps depositor AccountId -> balance (as Felt)
     /// Key: [prefix, suffix, asset_prefix, asset_suffix]
-    #[storage(slot(1), description = "balances")]
+    #[storage(description = "balances")]
     balances: StorageMap,
 }
 ```
 
-We've added a `StorageMap` in slot 1 that will track each depositor's balance.
+We've added a `StorageMap` that will track each depositor's balance. The compiler auto-assigns slot numbers based on field order.
 
 ## Storage Types Explained
 
@@ -80,7 +80,7 @@ Miden accounts have storage slots that persist state on-chain. Each slot holds o
 The `Value` type provides access to a single storage slot:
 
 ```rust
-#[storage(slot(0), description = "initialized")]
+#[storage(description = "initialized")]
 initialized: Value,
 ```
 
@@ -111,7 +111,7 @@ The `.read()` method requires a type annotation: `let current: Word = self.initi
 The `StorageMap` type provides key-value storage within a slot:
 
 ```rust
-#[storage(slot(1), description = "balances")]
+#[storage(description = "balances")]
 balances: StorageMap,
 ```
 
@@ -140,16 +140,16 @@ self.balances.set(key, new_balance);
 Unlike `Value::read()` which returns a `Word`, `StorageMap::get()` returns a single `Felt`. This is an important distinction.
 :::
 
-### Storage Slot Layout
+### Storage Layout
 
 Plan your storage layout carefully:
 
-| Slot | Type | Purpose |
+| Name | Type | Purpose |
 |------|------|---------|
-| 0 | `Value` | Initialization flag |
-| 1 | `StorageMap` | Depositor balances |
+| `initialized` | `Value` | Initialization flag |
+| `balances` | `StorageMap` | Depositor balances |
 
-The `description` attribute is for documentation and debugging - it doesn't affect runtime behavior.
+The `description` attribute generates named slot identifiers (e.g., `miden::component::miden_bank_account::initialized`) used in tests to reference specific slots. The compiler auto-assigns slot numbers based on field order.
 
 ## Step 2: Implement Component Methods
 
@@ -231,7 +231,7 @@ Create a new test file:
 use integration::helpers::{
     build_project_in_dir, create_testing_account_from_package, AccountCreationConfig,
 };
-use miden_client::account::{StorageMap, StorageSlot};
+use miden_client::account::{StorageMap, StorageSlot, StorageSlotName};
 use miden_client::{Felt, Word};
 use std::{path::Path, sync::Arc};
 
@@ -247,13 +247,22 @@ async fn test_bank_account_storage() -> anyhow::Result<()> {
         true,
     )?);
 
-    // Create the bank account with storage slots
+    // Create named storage slots matching the contract's storage layout
+    // The naming convention is: miden::component::{package_name_underscored}::{field_name}
+    let initialized_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::initialized")
+            .expect("Valid slot name");
+    let balances_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::balances")
+            .expect("Valid slot name");
+
     let bank_cfg = AccountCreationConfig {
         storage_slots: vec![
-            // Slot 0: initialized flag (starts as 0)
-            StorageSlot::Value(Word::default()),
-            // Slot 1: balances map (empty)
-            StorageSlot::Map(StorageMap::with_entries([])?),
+            StorageSlot::with_value(initialized_slot.clone(), Word::default()),
+            StorageSlot::with_map(
+                balances_slot.clone(),
+                StorageMap::with_entries([]).expect("Empty storage map"),
+            ),
         ],
         ..Default::default()
     };
@@ -265,8 +274,8 @@ async fn test_bank_account_storage() -> anyhow::Result<()> {
     // VERIFY: Check initial storage state
     // =========================================================================
 
-    // Verify slot 0 (initialized) starts as 0
-    let initialized_value = bank_account.storage().get_item(0)?;
+    // Verify initialized flag starts as 0
+    let initialized_value = bank_account.storage().get_item(&initialized_slot)?;
     assert_eq!(
         initialized_value,
         Word::default(),
@@ -283,7 +292,7 @@ async fn test_bank_account_storage() -> anyhow::Result<()> {
 
     // Check that we can query the balances map (should return 0 for any key)
     let test_key = Word::from([Felt::new(1), Felt::new(2), Felt::new(0), Felt::new(0)]);
-    let balance = bank_account.storage().get_map_item(1, test_key)?;
+    let balance = bank_account.storage().get_map_item(&balances_slot, test_key)?;
 
     // Balance for non-existent depositor should be all zeros
     assert_eq!(
@@ -302,7 +311,7 @@ async fn test_bank_account_storage() -> anyhow::Result<()> {
 Run the test from the project root:
 
 ```bash title=">_ Terminal"
-cargo test --package integration part1_account_test -- --nocapture
+cargo test --package integration test_bank_account_storage -- --nocapture
 ```
 
 <details>
@@ -330,7 +339,7 @@ test result: ok. 1 passed; 0 failed; 0 ignored
 :::tip Troubleshooting
 **"cannot find function `build_project_in_dir`"**: Make sure your `integration/src/helpers.rs` exports this function and `integration/src/lib.rs` has `pub mod helpers;`.
 
-**"StorageSlot::Map not found"**: Ensure you're using the correct imports: `use miden_client::account::StorageSlot;`
+**"StorageSlot not found"**: Ensure you're using the correct imports: `use miden_client::account::{StorageSlot, StorageSlotName};`
 :::
 
 ## Complete Code for This Part
@@ -354,12 +363,12 @@ use miden::*;
 struct Bank {
     /// Tracks whether the bank has been initialized (deposits enabled).
     /// Word layout: [is_initialized (0 or 1), 0, 0, 0]
-    #[storage(slot(0), description = "initialized")]
+    #[storage(description = "initialized")]
     initialized: Value,
 
     /// Maps depositor AccountId -> balance (as Felt)
     /// Key: [prefix, suffix, asset_prefix, asset_suffix]
-    #[storage(slot(1), description = "balances")]
+    #[storage(description = "balances")]
     balances: StorageMap,
 }
 
@@ -405,7 +414,7 @@ impl Bank {
 1. **`#[component]`** marks structs and impl blocks as Miden account components
 2. **`Value`** stores a single Word, read with `.read()`, write with `.write()`
 3. **`StorageMap`** stores key-value pairs, access with `.get()` and `.set()`
-4. **Storage slots** are numbered from 0, each holds 4 Felts (32 bytes)
+4. **Storage slots** are identified by name (auto-assigned by compiler), each holds 4 Felts (32 bytes)
 5. **Public methods** are callable by other contracts via generated bindings
 
 :::tip View Complete Source

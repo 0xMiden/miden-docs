@@ -89,14 +89,20 @@ For our bank:
 Once imported, call the account methods directly:
 
 ```rust title="contracts/deposit-note/src/lib.rs"
-#[note_script]
-fn run(_arg: Word) {
-    let depositor = active_note::get_sender();
-    let assets = active_note::get_assets();
+#[note]
+struct DepositNote;
 
-    for asset in assets {
-        // Call the bank account's deposit method
-        bank_account::deposit(depositor, asset);
+#[note]
+impl DepositNote {
+    #[note_script]
+    fn run(self, _arg: Word) {
+        let depositor = active_note::get_sender();
+        let assets = active_note::get_assets();
+
+        for asset in assets {
+            // Call the bank account's deposit method
+            bank_account::deposit(depositor, asset);
+        }
     }
 }
 ```

@@ -13,7 +13,7 @@ In this section, you'll learn how to write note scripts - code that executes whe
 By the end of this section, you will have:
 
 - Created the `deposit-note` contract
-- Understood the `#[note_script]` attribute
+- Understood the `#[note]` struct+impl pattern and `#[note_script]` method attribute
 - Used `active_note` APIs to access sender and assets
 - Built the note script and its dependencies
 - **Verified it works** with a complete deposit flow test
@@ -44,8 +44,8 @@ Part 3:                          Part 4:
 |---------|------------------|-------------|
 | Purpose | Persistent account logic | One-time execution when consumed |
 | Storage | Has persistent storage | No storage (reads from note data) |
-| Attribute | `#[component]` | `#[note_script]` |
-| Entry point | Methods on struct | `fn run(_arg: Word)` |
+| Attribute | `#[component]` | `#[note]` struct + `#[note_script]` method |
+| Entry point | Methods on struct | `fn run(self, _arg: Word)` |
 | Invocation | Called by other contracts | Executes when note is consumed |
 
 Note scripts are like "messages" that carry code along with data and assets.
@@ -77,7 +77,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-miden = { workspace = true }
+miden = { version = "0.10" }
 
 [package.metadata.component]
 package = "miden:deposit-note"
@@ -105,9 +105,6 @@ Create the note script implementation:
 #![no_std]
 #![feature(alloc_error_handler)]
 
-#[macro_use]
-extern crate alloc;
-
 use miden::*;
 
 // Import the bank account's generated bindings
@@ -117,38 +114,36 @@ use crate::bindings::miden::bank_account::bank_account;
 ///
 /// When consumed by the Bank account, this note transfers all its assets
 /// to the bank and credits the depositor (note sender) with the deposited amount.
-///
-/// # Execution Flow
-/// 1. User creates note with tokens attached
-/// 2. Bank account consumes the note
-/// 3. This script executes:
-///    - Gets the sender (depositor) from note metadata
-///    - Gets the assets attached to the note
-///    - Calls bank_account::deposit() for each asset
-#[note_script]
-fn run(_arg: Word) {
-    // The depositor is whoever created/sent this note
-    let depositor = active_note::get_sender();
+#[note]
+struct DepositNote;
 
-    // Get all assets attached to this note
-    let assets = active_note::get_assets();
+#[note]
+impl DepositNote {
+    #[note_script]
+    fn run(self, _arg: Word) {
+        // The depositor is whoever created/sent this note
+        let depositor = active_note::get_sender();
 
-    // Deposit each asset into the bank
-    for asset in assets {
-        bank_account::deposit(depositor, asset);
+        // Get all assets attached to this note
+        let assets = active_note::get_assets();
+
+        // Deposit each asset into the bank
+        for asset in assets {
+            bank_account::deposit(depositor, asset);
+        }
     }
 }
 ```
 
-### The #[note_script] Attribute
+### The #[note] and #[note_script] Attributes
 
-The `#[note_script]` attribute marks the entry point for a note script. The function signature is always:
+The `#[note]` attribute is applied to both a unit struct and its `impl` block to define a note script. Within the `impl` block, the `#[note_script]` attribute marks the entry point method. The function signature is always:
 
 ```rust
-fn run(_arg: Word)
+fn run(self, _arg: Word)
 ```
 
-The `_arg` parameter can pass additional data, but we don't use it in the deposit note.
+The method takes `self` as its first parameter. The `_arg` parameter can pass additional data, but we don't use it in the deposit note.
 
 ## Note Context APIs
 
@@ -190,16 +185,18 @@ Update the root `Cargo.toml` to include the new contract:
 
 ```toml title="Cargo.toml" {5}
 [workspace]
+members = [
+    "integration"
+]
+exclude = [
+    "contracts/",
+]
 resolver = "2"
 
-members = [
-    "contracts/bank-account",
-    "contracts/deposit-note",
-    "integration",
-]
+[workspace.package]
+edition = "2021"
 
 [workspace.dependencies]
-miden = { version = "0.8" }
 ```
 
 ## Step 5: Build the Note Script
@@ -269,12 +266,11 @@ use integration::helpers::{
     build_project_in_dir, create_testing_account_from_package,
     create_testing_note_from_package, AccountCreationConfig, NoteCreationConfig,
 };
-use miden_client::account::{StorageMap, StorageSlot};
+use miden_client::account::{StorageMap, StorageSlot, StorageSlotName};
 use miden_client::note::NoteAssets;
-use miden_client::transaction::OutputNote;
+use miden_client::transaction::{OutputNote, TransactionScript};
+use miden_client::asset::{Asset, FungibleAsset};
 use miden_client::{Felt, Word};
-use miden_objects::asset::{Asset, FungibleAsset};
-use miden_objects::transaction::TransactionScript;
 use miden_testing::{Auth, MockChain};
 use std::{path::Path, sync::Arc};
 
@@ -286,10 +282,10 @@ async fn test_deposit_note_credits_depositor() -> anyhow::Result<()> {
     let mut builder = MockChain::builder();
 
     // Create a faucet for test tokens
-    let faucet = builder.add_new_faucet(Auth::NoAuth, "TEST", 10_000_000)?;
+    let faucet = builder.add_existing_basic_faucet(Auth::BasicAuth, "TEST", 10_000_000, Some(10))?;
 
     // Create sender (depositor) wallet
-    let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
+    let sender = builder.add_existing_wallet_with_assets(Auth::BasicAuth, [FungibleAsset::new(faucet.id(), 1000)?.into()])?;
 
     // Build all contracts
     let bank_package = Arc::new(build_project_in_dir(
@@ -308,10 +304,20 @@ async fn test_deposit_note_credits_depositor() -> anyhow::Result<()> {
     )?);
 
     // Create bank account
+    let initialized_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::initialized")
+            .expect("Valid slot name");
+    let balances_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::balances")
+            .expect("Valid slot name");
+
     let bank_cfg = AccountCreationConfig {
         storage_slots: vec![
-            StorageSlot::Value(Word::default()),
-            StorageSlot::Map(StorageMap::with_entries([])?),
+            StorageSlot::with_value(initialized_slot, Word::default()),
+            StorageSlot::with_map(
+                balances_slot.clone(),
+                StorageMap::with_entries([]).expect("Empty storage map"),
+            ),
         ],
         ..Default::default()
     };
@@ -320,6 +326,22 @@ async fn test_deposit_note_credits_depositor() -> anyhow::Result<()> {
         create_testing_account_from_package(bank_package.clone(), bank_cfg).await?;
 
     builder.add_account(bank_account.clone())?;
+
+    // Create the deposit note and add it before building the chain
+    let deposit_amount: u64 = 1000;
+    let fungible_asset = FungibleAsset::new(faucet.id(), deposit_amount)?;
+    let note_assets = NoteAssets::new(vec![Asset::Fungible(fungible_asset)])?;
+
+    let deposit_note = create_testing_note_from_package(
+        deposit_note_package.clone(),
+        sender.id(),  // Sender is the depositor
+        NoteCreationConfig {
+            assets: note_assets,
+            ..Default::default()
+        },
+    )?;
+
+    builder.add_output_note(OutputNote::Full(deposit_note.clone()));
     let mut mock_chain = builder.build()?;
 
     // =========================================================================
@@ -341,23 +363,8 @@ async fn test_deposit_note_credits_depositor() -> anyhow::Result<()> {
     println!("Step 1: Bank initialized");
 
     // =========================================================================
-    // STEP 2: Create and execute deposit
+    // STEP 2: Execute deposit
     // =========================================================================
-    let deposit_amount: u64 = 1000;
-    let fungible_asset = FungibleAsset::new(faucet.id(), deposit_amount)?;
-    let note_assets = NoteAssets::new(vec![Asset::Fungible(fungible_asset)])?;
-
-    let deposit_note = create_testing_note_from_package(
-        deposit_note_package.clone(),
-        sender.id(),  // Sender is the depositor
-        NoteCreationConfig {
-            assets: note_assets,
-            ..Default::default()
-        },
-    )?;
-
-    mock_chain.add_note(OutputNote::Full(deposit_note.clone().into()))?;
-
     let tx_context = mock_chain
         .build_tx_context(bank_account.id(), &[deposit_note.id()], &[])?
         .build()?;
@@ -379,7 +386,7 @@ async fn test_deposit_note_credits_depositor() -> anyhow::Result<()> {
         faucet.id().suffix(),
     ]);
 
-    let balance = bank_account.storage().get_map_item(1, depositor_key)?;
+    let balance = bank_account.storage().get_map_item(&balances_slot, depositor_key)?;
     let balance_value = balance[3].as_int();
 
     println!("Step 3: Verified balance = {}", balance_value);
@@ -407,7 +414,7 @@ For now, verify that your deposit-note builds successfully.
 Run the test from the project root (after creating init-tx-script in Part 6):
 
 ```bash title=">_ Terminal"
-cargo test --package integration part4_deposit -- --nocapture
+cargo test --package integration test_deposit_note_credits_depositor -- --nocapture
 ```
 
 <details>
@@ -438,31 +445,35 @@ For withdrawals, we'll use note inputs to pass parameters. Here's a preview of t
 ```rust title="contracts/withdraw-request-note/src/lib.rs (preview)"
 /// Withdraw Request Note Script
 ///
-/// # Note Inputs (11 Felts)
+/// # Note Inputs (10 Felts)
 /// [0-3]: withdraw asset (amount, 0, faucet_suffix, faucet_prefix)
 /// [4-7]: serial_num (random/unique per note)
 /// [8]: tag (P2ID note tag for routing)
-/// [9]: aux (auxiliary data)
-/// [10]: note_type (1 = Public, 2 = Private)
-#[note_script]
-fn run(_arg: Word) {
-    let depositor = active_note::get_sender();
-    let inputs = active_note::get_inputs();
+/// [9]: note_type (1 = Public, 2 = Private)
+#[note]
+struct WithdrawRequestNote;
 
-    // Parse parameters from inputs
-    let withdraw_asset = Asset::new(Word::from([
-        inputs[0], inputs[1], inputs[2], inputs[3]
-    ]));
+#[note]
+impl WithdrawRequestNote {
+    #[note_script]
+    fn run(self, _arg: Word) {
+        let depositor = active_note::get_sender();
+        let inputs = active_note::get_inputs();
 
-    let serial_num = Word::from([
-        inputs[4], inputs[5], inputs[6], inputs[7]
-    ]);
+        // Parse parameters from inputs
+        let withdraw_asset = Asset::new(Word::from([
+            inputs[0], inputs[1], inputs[2], inputs[3]
+        ]));
 
-    let tag = inputs[8];
-    let aux = inputs[9];
-    let note_type = inputs[10];
+        let serial_num = Word::from([
+            inputs[4], inputs[5], inputs[6], inputs[7]
+        ]);
 
-    bank_account::withdraw(depositor, withdraw_asset, serial_num, tag, aux, note_type);
+        let tag = inputs[8];
+        let note_type = inputs[9];
+
+        bank_account::withdraw(depositor, withdraw_asset, serial_num, tag, note_type);
+    }
 }
 ```
 
@@ -479,21 +490,24 @@ Note inputs are limited. Keep your input layout compact. See [Common Pitfalls](.
 #![no_std]
 #![feature(alloc_error_handler)]
 
-#[macro_use]
-extern crate alloc;
-
 use miden::*;
 
 use crate::bindings::miden::bank_account::bank_account;
 
 /// Deposit Note Script
-#[note_script]
-fn run(_arg: Word) {
-    let depositor = active_note::get_sender();
-    let assets = active_note::get_assets();
+#[note]
+struct DepositNote;
 
-    for asset in assets {
-        bank_account::deposit(depositor, asset);
+#[note]
+impl DepositNote {
+    #[note_script]
+    fn run(self, _arg: Word) {
+        let depositor = active_note::get_sender();
+        let assets = active_note::get_assets();
+
+        for asset in assets {
+            bank_account::deposit(depositor, asset);
+        }
     }
 }
 ```
@@ -502,7 +516,7 @@ fn run(_arg: Word) {
 
 ## Key Takeaways
 
-1. **`#[note_script]`** marks the entry point function `fn run(_arg: Word)`
+1. **`#[note]`** marks the struct and impl block, with **`#[note_script]`** on the entry point method `fn run(self, _arg: Word)`
 2. **`active_note::get_sender()`** returns who created the note
 3. **`active_note::get_assets()`** returns assets attached to the note
 4. **`active_note::get_inputs()`** returns parameterized data
