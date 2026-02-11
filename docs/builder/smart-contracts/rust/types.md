@@ -1,10 +1,10 @@
 ---
-title: "Type System"
+title: "Types"
 sidebar_position: 3
 description: "Felt field arithmetic, Word layout, Asset encoding, and type conversions in the Miden Rust SDK."
 ---
 
-# Type System
+# Types
 
 Miden's type system is built around field elements rather than standard integers. All computation inside the Miden VM is modular arithmetic over the Goldilocks prime field ($p = 2^{64} - 2^{32} + 1$), so overflow and division behave differently from standard integers. `Felt` is the native numeric type, `Word` is a tuple of four Felts used for [storage](./accounts/storage) and hashing, and `Asset` encodes fungible and non-fungible assets as Words.
 

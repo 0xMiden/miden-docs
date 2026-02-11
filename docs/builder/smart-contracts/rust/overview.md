@@ -155,7 +155,7 @@ Miden supports several account types, configured in `Cargo.toml`:
 | Building Block | Description | Details |
 |----------------|-------------|---------|
 | [Components](./accounts/components) | Reusable code modules with storage and WIT interfaces | `#[component]` macro |
-| [Type System](./types) | Felt, Word, Asset — the VM's native types | Field arithmetic |
+| [Types](./types) | Felt, Word, Asset — the VM's native types | Field arithmetic |
 | [Storage](./accounts/storage) | Up to 255 slots of Value or StorageMap | Persistent state |
 | [Custom Types](./accounts/custom-types) | Exported structs/enums for public APIs | `#[export_type]` |
 | [Account Operations](./accounts/account-operations) | Read/write account state and vault | `active_account`, `native_account` |

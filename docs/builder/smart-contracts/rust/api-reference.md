@@ -108,7 +108,7 @@ bindings::export!(MyNote);
 
 ---
 
-## Types → [Type System](./types)
+## Types → [Types](./types)
 
 ### `Felt`
 
