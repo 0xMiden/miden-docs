@@ -62,6 +62,7 @@ Let's examine the counter account contract that comes with the project template.
 ```rust title="contracts/counter-account/src/lib.rs"
 // Do not link against libstd (i.e. anything defined in `std::`)
 #![no_std]
+#![feature(alloc_error_handler)]
 
 // However, we could still use some standard library types while
 // remaining no-std compatible, if we uncommented the following lines:
@@ -74,7 +75,7 @@ use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
 #[component]
 struct CounterContract {
     /// Storage map holding the counter value.
-    #[storage(slot(0), description = "counter contract storage map")]
+    #[storage(description = "counter contract storage map")]
     count_map: StorageMap,
 }
 
@@ -83,15 +84,15 @@ impl CounterContract {
     /// Returns the current counter value stored in the contract's storage map.
     pub fn get_count(&self) -> Felt {
         // Define a fixed key for the counter value within the map
-        let key = Word::from([felt!(0), felt!(0), felt!(0), felt!(1)]);
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
         // Read the value associated with the key from the storage map
         self.count_map.get(&key)
     }
 
     /// Increments the counter value stored in the contract's storage map by one.
-    pub fn increment_count(&self) -> Felt {
+    pub fn increment_count(&mut self) -> Felt {
         // Define the same fixed key
-        let key = Word::from([felt!(0), felt!(0), felt!(0), felt!(1)]);
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
         // Read the current value
         let current_value: Felt = self.count_map.get(&key);
         // Increment the value by one
@@ -132,12 +133,12 @@ These imports provide:
 #[component]
 struct CounterContract {
     /// Storage map holding the counter value.
-    #[storage(slot(0), description = "counter contract storage map")]
+    #[storage(description = "counter contract storage map")]
     count_map: StorageMap,
 }
 ```
 
-The `#[component]` attribute marks this as a Miden component. The `count_map` field is a `StorageMap` that will be stored in storage slot 0 of the account.
+The `#[component]` attribute marks this as a Miden component. The `count_map` field is a `StorageMap` stored in a named storage slot of the account. In v0.13, storage slots are identified by name rather than explicit index numbers — the slot name is derived automatically from the component's package name and field name (e.g., `miden::component::miden_counter_account::count_map`).
 
 **Important**: Storage slots in Miden hold `Word` values, which are composed of four field elements (`Felt`). Each `Felt` is a 64-bit unsigned integer (u64). The `StorageMap` provides a key-value interface within a single storage slot, allowing you to store multiple key-value pairs within the four-element word structure.
 
@@ -154,10 +155,10 @@ The `CounterContract` implementation defines the external interface that other c
 #### Storage Key Strategy
 
 ```rust
-let key = Word::from([felt!(0), felt!(0), felt!(0), felt!(1)]);
+let key = Word::from_u64_unchecked(0, 0, 0, 1);
 ```
 
-Both functions use the same fixed key `[0, 0, 0, 1]` to store and retrieve the counter value within the storage map. This demonstrates a simple but effective storage pattern.
+Both functions use the same fixed key `[0, 0, 0, 1]` to store and retrieve the counter value within the storage map. The `Word::from_u64_unchecked` constructor creates a `Word` from four `u64` values. This demonstrates a simple but effective storage pattern.
 
 ## Understanding the Increment Note Script
 
@@ -166,6 +167,7 @@ Now let's examine the increment note script at `contracts/increment-note/src/lib
 ```rust title="contracts/increment-note/src/lib.rs"
 // Do not link against libstd (i.e. anything defined in `std::`)
 #![no_std]
+#![feature(alloc_error_handler)]
 
 // However, we could still use some standard library types while
 // remaining no-std compatible, if we uncommented the following lines:
@@ -177,13 +179,19 @@ use miden::*;
 
 use crate::bindings::miden::counter_account::counter_account;
 
-#[note_script]
-fn run(_arg: Word) {
-    let initial_value = counter_account::get_count();
-    counter_account::increment_count();
-    let expected_value = initial_value + Felt::from_u32(1);
-    let final_value = counter_account::get_count();
-    assert_eq(final_value, expected_value);
+#[note]
+struct IncrementNote;
+
+#[note]
+impl IncrementNote {
+    #[note_script]
+    fn run(self, _arg: Word) {
+        let initial_value = counter_account::get_count();
+        counter_account::increment_count();
+        let expected_value = initial_value + Felt::from_u32(1);
+        let final_value = counter_account::get_count();
+        assert_eq(final_value, expected_value);
+    }
 }
 ```
 
@@ -203,9 +211,22 @@ use crate::bindings::miden::counter_account::counter_account;
 
 The wildcard import brings in all Miden note script functionality. The `counter_account` binding imports the interface functions from the counter contract, allowing the note script to call them.
 
-#### No Struct Definition
+#### Note Script Structure
 
-Unlike account contracts, note scripts don't define a struct. They are purely functional code that gets executed when a note is consumed. The script defines **what happens** when the note is processed, not a persistent data structure.
+Note scripts use a struct-based pattern. The `#[note]` attribute on both the struct and `impl` block marks this as a Miden note script component:
+
+```rust
+#[note]
+struct IncrementNote;
+
+#[note]
+impl IncrementNote {
+    #[note_script]
+    fn run(self, _arg: Word) { ... }
+}
+```
+
+The struct definition (`IncrementNote`) provides a named type for the note script. Unlike account contracts, note scripts don't store persistent data — the struct serves as the entry point container.
 
 Learn more about [note scripts in the Miden documentation](/miden-base/note/).
 
@@ -213,7 +234,7 @@ Learn more about [note scripts in the Miden documentation](/miden-base/note/).
 
 ```rust
 #[note_script]
-fn run(_arg: Word) {
+fn run(self, _arg: Word) {
     let initial_value = counter_account::get_count();
     counter_account::increment_count();
     let expected_value = initial_value + Felt::from_u32(1);
@@ -222,7 +243,7 @@ fn run(_arg: Word) {
 }
 ```
 
-The `#[note_script]` attribute marks this function as the entry point for note execution. The function:
+The `#[note_script]` attribute marks this method as the entry point for note execution. The `self` parameter is required for methods in the `impl` block. The function:
 
 1. **Gets the initial counter value** using the imported `counter_account::get_count()` function
 2. **Calls increment_count()** to increment the counter on the target account

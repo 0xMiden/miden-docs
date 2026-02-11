@@ -1,6 +1,6 @@
 ---
 sidebar_position: 0
-title: Quick Start V2
+title: Quick Start
 description: Get started with Miden by installing Miden tools using the `midenup` toolchain, creating your first wallet, performing basic operations, and building your first smart contract!
 ---
 
