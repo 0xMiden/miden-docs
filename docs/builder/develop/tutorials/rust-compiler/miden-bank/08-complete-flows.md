@@ -39,8 +39,8 @@ You've built all the pieces. Now let's see them work together:
 │                                                                 │
 │   Storage Layout:                                               │
 │   ┌─────────────────────────────────────────────────────────┐  │
-│   │ Slot 0: initialized │ Word: [1, 0, 0, 0] when ready     │  │
-│   │ Slot 1: balances    │ Map: user_key → [balance, 0, 0, 0]│  │
+│   │ initialized (Value)      │ Word: [1, 0, 0, 0] when ready│  │
+│   │ balances (StorageMap)    │ Map: user_key → [balance, 0, 0, 0]│  │
 │   └─────────────────────────────────────────────────────────┘  │
 │                                                                 │
 └────────────────────────────────────────────────────────────────┘
@@ -109,7 +109,7 @@ Now let's trace the withdrawal process:
 │     │ Withdraw Request Note        │                                │
 │     │  sender: User                │                                │
 │     │  inputs: [serial, tag,       │                                │
-│     │           aux, note_type]    │                                │
+│     │           note_type]         │                                │
 │     │  assets: [withdraw amount]   │                                │
 │     │  target: Bank                │                                │
 │     └──────────────────────────────┘                                │
@@ -140,9 +140,10 @@ Now let's trace the withdrawal process:
 │     │ script_root = p2id_note_root()        → MAST digest  │        │
 │     │ recipient = Recipient::compute(                       │        │
 │     │     serial_num, script_root,                          │        │
-│     │     [user.suffix, user.prefix, 0, 0, 0, 0, 0, 0]     │        │
+│     │     [user.suffix, user.prefix]                        │        │
 │     │ )                                                     │        │
-│     │ note_idx = output_note::create(tag, aux, ...)         │        │
+│     │ note_idx = output_note::create(tag, note_type,        │        │
+│     │     recipient)                                        │        │
 │     │ native_account::remove_asset(400 tokens)              │        │
 │     │ output_note::add_asset(400 tokens, note_idx)          │        │
 │     └──────────────────────────────────────────────────────┘        │
@@ -170,33 +171,14 @@ use integration::helpers::{
     AccountCreationConfig, NoteCreationConfig,
 };
 use miden_client::{
-    account::StorageMap,
-    note::{Note, NoteAssets, NoteExecutionHint, NoteMetadata, NoteTag, NoteType},
-    transaction::OutputNote,
-    Felt, Word,
-};
-use miden_lib::note::utils::build_p2id_recipient;
-use miden_objects::{
-    account::AccountId,
+    account::{StorageMap, StorageSlot, StorageSlotName},
     asset::{Asset, FungibleAsset},
-    transaction::TransactionScript,
+    note::{build_p2id_recipient, Note, NoteAssets, NoteMetadata, NoteTag, NoteType},
+    transaction::{OutputNote, TransactionScript},
+    Felt, Word,
 };
 use miden_testing::{Auth, MockChain};
 use std::{path::Path, sync::Arc};
-
-/// Compute a P2ID note tag for a local account.
-fn compute_p2id_tag_for_local_account(account_id: AccountId) -> NoteTag {
-    const LOCAL_ANY_PREFIX: u32 = 0xC000_0000;
-    const TAG_BITS: u8 = 14;
-
-    let prefix_u64 = account_id.prefix().as_u64();
-    let shifted = (prefix_u64 >> 34) as u32;
-    let mask = u32::MAX << (30 - TAG_BITS);
-    let account_bits = shifted & mask;
-    let tag_value = LOCAL_ANY_PREFIX | account_bits;
-
-    NoteTag::LocalAny(tag_value)
-}
 
 /// Complete end-to-end test of the Miden Bank
 ///
@@ -251,11 +233,22 @@ async fn test_complete_bank_flow() -> anyhow::Result<()> {
     )?);
     println!("   ✓ All packages built");
 
+    // Create named storage slots
+    let initialized_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::initialized")
+            .expect("Valid slot name");
+    let balances_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::balances")
+            .expect("Valid slot name");
+
     // Create bank account with storage slots
     let bank_cfg = AccountCreationConfig {
         storage_slots: vec![
-            miden_client::account::StorageSlot::Value(Word::default()),
-            miden_client::account::StorageSlot::Map(StorageMap::with_entries([])?),
+            StorageSlot::with_value(initialized_slot, Word::default()),
+            StorageSlot::with_map(
+                balances_slot.clone(),
+                StorageMap::with_entries([]).expect("Empty storage map"),
+            ),
         ],
         ..Default::default()
     };
@@ -275,13 +268,9 @@ async fn test_complete_bank_flow() -> anyhow::Result<()> {
         },
     )?;
 
-    // Craft withdraw request note with 11-Felt input layout
-    let p2id_tag = compute_p2id_tag_for_local_account(sender.id());
-    let p2id_tag_u32 = match p2id_tag {
-        NoteTag::LocalAny(v) => v,
-        _ => panic!("Expected LocalAny tag"),
-    };
-    let p2id_tag_felt = Felt::new(p2id_tag_u32 as u64);
+    // Craft withdraw request note with 10-Felt input layout
+    let p2id_tag = NoteTag::with_account_target(sender.id());
+    let p2id_tag_felt = Felt::new(p2id_tag.as_u32() as u64);
 
     let p2id_output_note_serial_num = Word::from([
         Felt::new(0x1234567890abcdef),
@@ -290,15 +279,13 @@ async fn test_complete_bank_flow() -> anyhow::Result<()> {
         Felt::new(0x0123456789abcdef),
     ]);
 
-    let aux = Felt::new(0);
     let note_type_felt = Felt::new(1); // Public
 
-    // Note inputs: 11 Felts
+    // Note inputs: 10 Felts
     // [0-3]: withdraw asset (amount, 0, faucet_suffix, faucet_prefix)
     // [4-7]: serial_num
     // [8]: tag
-    // [9]: aux
-    // [10]: note_type
+    // [9]: note_type
     let withdraw_request_note_inputs = vec![
         Felt::new(withdraw_amount),
         Felt::new(0),
@@ -309,7 +296,6 @@ async fn test_complete_bank_flow() -> anyhow::Result<()> {
         p2id_output_note_serial_num[2],
         p2id_output_note_serial_num[3],
         p2id_tag_felt,
-        aux,
         note_type_felt,
     ];
 
@@ -324,8 +310,8 @@ async fn test_complete_bank_flow() -> anyhow::Result<()> {
 
     // Add to builder
     builder.add_account(bank_account.clone())?;
-    builder.add_output_note(OutputNote::Full(deposit_note.clone().into()));
-    builder.add_output_note(OutputNote::Full(withdraw_request_note.clone().into()));
+    builder.add_output_note(OutputNote::Full(deposit_note.clone()));
+    builder.add_output_note(OutputNote::Full(withdraw_request_note.clone()));
 
     let mut mock_chain = builder.build()?;
     println!("   ✓ MockChain built");
@@ -372,7 +358,7 @@ async fn test_complete_bank_flow() -> anyhow::Result<()> {
         faucet.id().prefix().as_felt(),
         faucet.id().suffix(),
     ]);
-    let balance_after_deposit = bank_account.storage().get_map_item(1, depositor_key)?;
+    let balance_after_deposit = bank_account.storage().get_map_item(&balances_slot, depositor_key)?;
     println!(
         "   ✓ Bank processed deposit, balance: {} tokens",
         balance_after_deposit[3].as_int()
@@ -392,9 +378,7 @@ async fn test_complete_bank_flow() -> anyhow::Result<()> {
         bank_account.id(),
         NoteType::Public,
         p2id_tag,
-        NoteExecutionHint::none(),
-        aux,
-    )?;
+    );
     let p2id_output_note = Note::new(
         p2id_output_note_assets,
         p2id_output_note_metadata,
@@ -403,7 +387,7 @@ async fn test_complete_bank_flow() -> anyhow::Result<()> {
 
     let withdraw_tx_context = mock_chain
         .build_tx_context(bank_account.id(), &[withdraw_request_note.id()], &[])?
-        .extend_expected_output_notes(vec![OutputNote::Full(p2id_output_note.into())])
+        .extend_expected_output_notes(vec![OutputNote::Full(p2id_output_note)])
         .build()?;
 
     let executed_withdraw = withdraw_tx_context.execute().await?;
@@ -415,7 +399,7 @@ async fn test_complete_bank_flow() -> anyhow::Result<()> {
     println!("   ✓ P2ID output note created for sender");
 
     // Verify final balance
-    let final_balance = bank_account.storage().get_map_item(1, depositor_key)?;
+    let final_balance = bank_account.storage().get_map_item(&balances_slot, depositor_key)?;
     let final_balance_amount = final_balance[3].as_int();
     let expected_final = deposit_amount - withdraw_amount;
 
@@ -455,7 +439,7 @@ async fn test_complete_bank_flow() -> anyhow::Result<()> {
 Run the complete test from the project root:
 
 ```bash title=">_ Terminal"
-cargo test --package integration part8_complete_flow -- --nocapture
+cargo test --package integration test_complete_bank_flow -- --nocapture
 ```
 
 <details>
@@ -519,8 +503,8 @@ Here's the complete picture of what you've built:
 
 | Storage Slot | Type | Content |
 |--------------|------|---------|
-| 0 | `Value` | Initialization flag |
-| 1 | `StorageMap` | Depositor balances |
+| `initialized` | `Value` | Initialization flag |
+| `balances` | `StorageMap` | Depositor balances |
 
 | API | Purpose |
 |-----|---------|

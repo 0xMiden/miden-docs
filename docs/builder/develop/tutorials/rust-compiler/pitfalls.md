@@ -150,9 +150,7 @@ fn process(
     asset: Asset,            // 1 Word
     serial_num: Word,        // 1 Word
     tag: Felt,               // 1 Felt
-    aux: Felt,               // 1 Felt
     note_type: Felt,         // 1 Felt
-    execution_hint: Felt,    // 1 Felt
     extra_data: Word,        // 1 Word - EXCEEDS LIMIT!
 ) {
     // ...
@@ -161,21 +159,19 @@ fn process(
 
 ### Solution
 
-**1. Group related values into Words:**
+**1. Make sure to only pass 4 Words to functions:**
 
 ```rust
-// CORRECT: Combine into Word structures
+// CORRECT: Only pass 4 Words
 fn process(
     &mut self,
     depositor: AccountId,    // ~1 Word
     asset: Asset,            // 1 Word
     serial_num: Word,        // 1 Word
-    params: Word,            // [tag, aux, note_type, hint] - 1 Word
+    params: Word,            // [tag, note_type, 0, 0] - 1 Word
 ) {
     let tag = params[0];
-    let aux = params[1];
-    let note_type = params[2];
-    let hint = params[3];
+    let note_type = params[1];
     // ...
 }
 ```
@@ -185,13 +181,19 @@ fn process(
 For note scripts, pass complex data via `active_note::get_inputs()`:
 
 ```rust
-#[note_script]
-fn run(_arg: Word) {
-    let inputs = active_note::get_inputs();
-    // Inputs can hold many Felts without function argument limits
-    let param1 = inputs[0];
-    let param2 = inputs[1];
-    // ... access up to the full input capacity
+#[note]
+struct MyNote;
+
+#[note]
+impl MyNote {
+    #[note_script]
+    fn run(self, _arg: Word) {
+        let inputs = active_note::get_inputs();
+        // Inputs can hold many Felts without function argument limits
+        let param1 = inputs[0];
+        let param2 = inputs[1];
+        // ... access up to the full input capacity
+    }
 }
 ```
 
@@ -453,40 +455,20 @@ Use the hardcoded P2ID script root:
 
 ```rust title="contracts/bank-account/src/lib.rs"
 /// Get the P2ID note script root digest.
-/// This is a constant from miden-base that identifies the P2ID script.
-fn p2id_note_root() -> Word {
-    Word::from([
-        Felt::new(0xdcc1ed119ad861e7),
-        Felt::new(0xc2ac8f631bd97fcc),
-        Felt::new(0x53116c659dca41b),
-        Felt::new(0x8c36d1e96bdd684e),
-    ])
+/// This is a constant from miden-standards that identifies the P2ID script.
+fn p2id_note_root() -> Digest {
+    Digest::from_word(Word::new([
+        Felt::from_u64_unchecked(13362761878458161062),
+        Felt::from_u64_unchecked(15090726097241769395),
+        Felt::from_u64_unchecked(444910447169617901),
+        Felt::from_u64_unchecked(3558201871398422326),
+    ]))
 }
 ```
 
 :::info Where This Comes From
-This digest is computed from the P2ID note script in `miden-base`. If the P2ID script changes in a future version, this value will need to be updated.
+This digest is computed from the P2ID note script in miden-standards. If the P2ID script changes in a future version, this value will need to be updated.
 :::
-
----
-
-## Execution Hint Hardcoding
-
-### Problem
-
-When creating output notes, you might try to parameterize the `execution_hint`, but it's actually hardcoded in miden-base.
-
-### Solution
-
-Always use `NoteExecutionHint::none()` for output notes created in contracts:
-
-```rust
-// The execution hint is fixed in the P2ID note creation logic
-let execution_hint = NoteExecutionHint::none();
-
-// In miden-base, this is defined as:
-// 16777216 (or NoteExecutionHint::none() in the API)
-```
 
 ---
 

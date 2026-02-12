@@ -174,7 +174,7 @@ This tutorial covers the following Miden Rust compiler features:
 | Constants             | Define compile-time business rules                         | 2 |
 | Assertions            | Validate conditions and handle errors                      | 2 |
 | Asset Handling        | Add and remove assets from account vaults                  | 3 |
-| `#[note_script]`      | Scripts that execute when notes are consumed               | 4 |
+| `#[note]` + `#[note_script]` | Note struct/impl pattern for scripts consumed by accounts | 4 |
 | Cross-Component Calls | Call account methods from note scripts                     | 5 |
 | `#[tx_script]`        | Transaction scripts for account operations                 | 6 |
 | Output Notes          | Create notes programmatically                              | 7 |

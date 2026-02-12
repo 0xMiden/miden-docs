@@ -79,7 +79,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-miden = { workspace = true }
+miden = { version = "0.10" }
 
 [package.metadata.component]
 package = "miden:init-tx-script"
@@ -102,19 +102,20 @@ Key configuration:
 
 Update your root `Cargo.toml` to include the new project:
 
-```toml title="Cargo.toml" {5}
+```toml title="Cargo.toml"
 [workspace]
+members = [
+    "integration"
+]
+exclude = [
+    "contracts/",
+]
 resolver = "2"
 
-members = [
-    "contracts/bank-account",
-    "contracts/deposit-note",
-    "contracts/init-tx-script",  # Add this line
-    "integration",
-]
+[workspace.package]
+edition = "2021"
 
 [workspace.dependencies]
-miden = { version = "0.8" }
 ```
 
 ## Step 4: Implement the Transaction Script
@@ -284,9 +285,9 @@ Create a test file:
 use integration::helpers::{
     build_project_in_dir, create_testing_account_from_package, AccountCreationConfig,
 };
-use miden_client::account::{StorageMap, StorageSlot};
+use miden_client::account::{StorageMap, StorageSlot, StorageSlotName};
 use miden_client::Word;
-use miden_objects::transaction::TransactionScript;
+use miden_client::transaction::TransactionScript;
 use miden_testing::MockChain;
 use std::{path::Path, sync::Arc};
 
@@ -306,11 +307,21 @@ async fn test_init_tx_script_enables_deposits() -> anyhow::Result<()> {
         true,
     )?);
 
-    // Create uninitialized bank account
+    // Create uninitialized bank account with named storage slots
+    let initialized_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::initialized")
+            .expect("Valid slot name");
+    let balances_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::balances")
+            .expect("Valid slot name");
+
     let bank_cfg = AccountCreationConfig {
         storage_slots: vec![
-            StorageSlot::Value(Word::default()),  // Slot 0: initialized = 0
-            StorageSlot::Map(StorageMap::with_entries([])?),  // Slot 1: balances
+            StorageSlot::with_value(initialized_slot.clone(), Word::default()),
+            StorageSlot::with_map(
+                balances_slot,
+                StorageMap::with_entries([]).expect("Empty storage map"),
+            ),
         ],
         ..Default::default()
     };
@@ -319,7 +330,7 @@ async fn test_init_tx_script_enables_deposits() -> anyhow::Result<()> {
         create_testing_account_from_package(bank_package.clone(), bank_cfg).await?;
 
     // Verify bank is NOT initialized
-    let initial_storage = bank_account.storage().get_item(0)?;
+    let initial_storage = bank_account.storage().get_item(&initialized_slot)?;
     assert_eq!(
         initial_storage[0].as_int(),
         0,
@@ -348,7 +359,7 @@ async fn test_init_tx_script_enables_deposits() -> anyhow::Result<()> {
     mock_chain.prove_next_block()?;
 
     // Verify bank IS now initialized
-    let final_storage = bank_account.storage().get_item(0)?;
+    let final_storage = bank_account.storage().get_item(&initialized_slot)?;
     assert_eq!(
         final_storage[0].as_int(),
         1,
@@ -365,7 +376,7 @@ async fn test_init_tx_script_enables_deposits() -> anyhow::Result<()> {
 Run the test from the project root:
 
 ```bash title=">_ Terminal"
-cargo test --package integration part6_tx_script -- --nocapture
+cargo test --package integration test_init_tx_script_enables_deposits -- --nocapture
 ```
 
 <details>
@@ -443,7 +454,7 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-miden = { workspace = true }
+miden = { version = "0.10" }
 
 [package.metadata.component]
 package = "miden:init-tx-script"
