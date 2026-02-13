@@ -147,7 +147,7 @@ jobs:
 
           # Clean directories that will be re-synced (v0.4 nested paths)
           rm -rf docs/design/miden-base docs/design/miden-vm docs/design/miden-node docs/design/compiler
-          rm -rf docs/builder/client
+          rm -rf docs/builder/tools/client
           # Note: docs/builder/develop/tutorials is NOT fully cleaned to preserve local tutorials (e.g. miden-bank)
 
           # Design docs → docs/design/*
@@ -184,9 +184,9 @@ jobs:
           fi
 
           if [ -d "vendor/miden-client/docs/external/src" ]; then
-            mkdir -p docs/builder/client
-            cp -r vendor/miden-client/docs/external/src/* docs/builder/client/
-            echo "Synced miden-client → docs/builder/client"
+            mkdir -p docs/builder/tools/client
+            cp -r vendor/miden-client/docs/external/src/* docs/builder/tools/client/
+            echo "Synced miden-client → docs/builder/tools/client"
           fi
 
           echo "Content aggregation complete. Final docs structure:"
