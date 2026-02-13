@@ -42,7 +42,37 @@ Replace index-based storage access with `StorageSlotName` identifiers.
 + account.storage_mut().set_slot(&slot_name, new_value)?;
 ```
 
-### MASM Updates
+### MASM
+
+In MASM, use the `word("...")` syntax to define named storage slot constants. The `word()` function hashes the slot name to produce a `Word`, and you extract the slot ID using `[0..2]` slice notation:
+
+```diff title="src/contract.masm"
+- # Before (v0.12): index-based storage access
+- use.miden::account
+- const.MY_SLOT=0
+- push.MY_SLOT
+- exec.account::get_item
+
++ # After (v0.13): name-based storage access
++ use miden::protocol::active_account
++ const MY_SLOT = word("my_project::my_component::my_slot")
++ push.MY_SLOT[0..2]
++ exec.active_account::get_item
++ # => [VALUE]
+```
+
+Writing to storage follows the same pattern:
+
+```masm title="src/contract.masm"
+use miden::protocol::native_account
+
+const MY_SLOT = word("my_project::my_component::my_slot")
+
+# Set a value in the slot
+push.MY_SLOT[0..2]
+exec.native_account::set_item
+# => [OLD_VALUE]
+```
 
 The `set_map_item` procedure now takes slot IDs and returns only old values:
 
@@ -52,13 +82,15 @@ The `set_map_item` procedure now takes slot IDs and returns only old values:
 - # Returns: [OLD_MAP_ROOT, OLD_VALUE, ...]
 
 + # After
-+ exec.account::set_map_item
++ exec.native_account::set_map_item
 + # Returns: [OLD_VALUE, ...]
 ```
 
 :::info Good to know
 The return value change means you may need to update stack manipulation after calling `set_map_item`.
 :::
+
+For details on the `word("...")` syntax, see the [MASM Changes](06-masm-changes.md#named-storage-slots) migration page. For the full list of storage procedures, see the [Protocol Library Reference](../../design/miden-base/protocol_library.md).
 
 ---
 

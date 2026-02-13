@@ -80,6 +80,37 @@ sed -i 's/use\./use /g' *.masm
 
 ---
 
+## Named Storage Slots
+
+:::warning Breaking Change
+Storage access is now name-based, not index-based. Use `word("...")` to derive slot IDs from names.
+:::
+
+In v0.13, account storage slots are identified by name rather than numeric index. In MASM, the `word("...")` syntax computes a deterministic slot ID from a slot name string:
+
+```diff title="src/contract.masm"
+- # Before (v0.12): index-based storage access
+- const.BALANCE_SLOT=0
+- push.BALANCE_SLOT
+- exec.account::get_item
+
++ # After (v0.13): name-based storage access
++ use miden::protocol::active_account
++ const BALANCE_SLOT = word("my_project::my_component::balance")
++ push.BALANCE_SLOT[0..2]
++ exec.active_account::get_item
+```
+
+Key changes:
+- Define slot constants using `word("slot_name")` instead of integer indices
+- The `word()` function hashes the name string to produce a `Word` (4 field elements)
+- Use `[0..2]` slice notation to extract the slot ID (first 2 elements) for kernel procedures like `get_item` and `set_item`
+- Slot names should follow the `project::component::slot` naming convention to avoid collisions
+
+For more details on storage slot naming conventions, see [Account Storage](../../design/miden-base/account/storage.md). For the full list of storage procedures, see the [Protocol Library Reference](../../design/miden-base/protocol_library.md).
+
+---
+
 ## Cryptography Updates
 
 ### Falcon Signature Rename
@@ -136,18 +167,18 @@ end
 
 After:
 ```masm title="src/contract.masm (after)"
-use miden::account
-use miden::core::crypto::hashes::rpo
+use miden::protocol::active_account
+use miden::core::crypto::hashes::rpo256
 
-const BALANCE_SLOT=0
+const BALANCE_SLOT = word("my_project::my_component::balance")
 
 export get_balance
-    push.BALANCE_SLOT
-    exec.account::get_item
+    push.BALANCE_SLOT[0..2]
+    exec.active_account::get_item
 end
 
 export transfer
-    exec.rpo::hash_words
+    exec.rpo256::hash_words
     # ... rest of procedure
 end
 ```
@@ -162,9 +193,11 @@ end
 4. Replace `use.` with `use ` (space instead of dot)
 5. Replace `export.<path>` re-exports with `pub use <path>`
 6. Update `std::` namespace to `miden::core::`
-7. Rename `RpoFalcon512` to `Falcon512Rpo`
-8. Update ECDSA procedure paths
-9. Rename `hash_memory_words` to `hash_words`
+7. Replace numeric storage slot constants with `word("...")` named slots
+8. Update `get_item`/`set_item` calls to use `[0..2]` slice for slot IDs
+9. Rename `RpoFalcon512` to `Falcon512Rpo`
+10. Update ECDSA procedure paths
+11. Rename `hash_memory_words` to `hash_words`
 
 ---
 
@@ -176,3 +209,4 @@ end
 | `module 'std' not found` | Namespace changed | Use `miden::core::` |
 | `procedure 'auth_tx_rpo_falcon512' not found` | Renamed | Use `auth_tx_falcon512_rpo` |
 | `procedure 'hash_memory_words' not found` | Renamed | Use `hash_words` |
+| `get_item` returns unexpected values | Using integer index instead of slot ID | Use `word("...")` and `[0..2]` slice |

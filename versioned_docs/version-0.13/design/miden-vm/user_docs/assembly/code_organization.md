@@ -270,6 +270,23 @@ begin
 end
 ```
 
+#### Word constants from strings
+
+A word constant can also be derived from a string using the `word("...")` syntax. This computes a deterministic `Word` by hashing the provided string with Blake3 and mapping the result to four field elements:
+
+```
+const MY_IDENTIFIER = word("my_project::my_module::my_name")
+
+begin
+    push.MY_IDENTIFIER       # pushes all 4 elements of the derived word
+    push.MY_IDENTIFIER[0..2] # pushes only the first 2 elements (slice notation)
+end
+```
+
+The `word("...")` constructor can be combined with [slice notation](#constant-slices) just like array-based word constants. This is commonly used for named storage slot IDs in Miden account programs.
+
+Similarly, the `event("...")` syntax derives a single field element from a string, for use with `emit` instructions.
+
 ### Types
 
 Miden Assembly supports types for the purpose of specifying the _type signature_ of a procedure. This is used by other tooling in the Miden toolchain to bind against procedures written in Miden Assembly from higher-level languages, e.g. Rust. The type system is low-level and structural, but some conveniences are provided in Miden Assembly to improve ergonomics and aid in the construction of future static analyses.
