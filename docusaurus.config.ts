@@ -182,7 +182,7 @@ const config: Config = {
       src: "https://scripts.simpleanalyticscdn.com/latest.js",
       async: true,
       defer: true,
-      "data-hostname": "miden.xyz",
+      "data-hostname": "docs.miden.xyz",
     },
   ],
 
