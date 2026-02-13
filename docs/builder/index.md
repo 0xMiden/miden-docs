@@ -60,12 +60,25 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
+        href: './smart-contracts/rust',
+        label: 'Rust Smart Contracts',
+        description: 'Reference documentation for building Miden smart contracts in Rust.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
         href: './develop',
         label: 'Tutorials',
         description: 'Step-by-step guides for building applications on Miden.',
       }}
     />
   </div>
+</div>
+
+<div className="row">
   <div className="col col--6">
     <DocCard
       item={{
@@ -76,9 +89,6 @@ import DocCard from '@theme/DocCard';
       }}
     />
   </div>
-</div>
-
-<div className="row">
   <div className="col col--6">
     <DocCard
       item={{

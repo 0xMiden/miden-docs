@@ -16,11 +16,11 @@ Replace numeric indices with `StorageSlotName`:
 
 ```rust title="src/account.rs"
 // Before
-let value = account.storage().get_slot(0)?;
+let value = account.storage().get_item(0)?;
 
 // After
-let slot_name = StorageSlotName::new("my_slot")?;
-let value = account.storage().get_slot(&slot_name)?;
+let slot_name = StorageSlotName::new("my_component::my_slot")?;
+let value = account.storage().get_item(&slot_name)?;
 ```
 
 ---
@@ -33,26 +33,27 @@ Replace index-based storage access with `StorageSlotName` identifiers.
 
 ```diff title="src/account.rs"
 - // Before: access by numeric index
-- let value = account.storage().get_slot(0)?;
-- account.storage_mut().set_slot(0, new_value)?;
+- let value = account.storage().get_item(0)?;
+- let _old_value = account.storage_mut().set_item(0, new_value)?;
 
 + // After: access by name
-+ let slot_name = StorageSlotName::new("my_slot")?;
-+ let value = account.storage().get_slot(&slot_name)?;
-+ account.storage_mut().set_slot(&slot_name, new_value)?;
++ let slot_name = StorageSlotName::new("my_component::my_slot")?;
++ let value = account.storage().get_item(&slot_name)?;
++ let _old_value = account.storage_mut().set_item(&slot_name, new_value)?;
 ```
 
 ### MASM Updates
 
-The `set_map_item` procedure now takes slot IDs and returns only old values:
+The `native_account::set_map_item` procedure now takes slot IDs and returns only old values:
 
 ```diff title="src/contract.masm"
 - # Before
-- exec.account::set_map_item
+- exec.native_account::set_map_item
 - # Returns: [OLD_MAP_ROOT, OLD_VALUE, ...]
 
 + # After
-+ exec.account::set_map_item
++ # Inputs: [slot_id_prefix, slot_id_suffix, KEY, NEW_VALUE]
++ exec.native_account::set_map_item
 + # Returns: [OLD_VALUE, ...]
 ```
 
@@ -80,16 +81,13 @@ Remove RNG generics from `FilesystemKeyStore`:
 
 Web component compilation now requires `AccountComponentCode` from `CodeBuilder`:
 
-```diff title="src/component.rs"
+```diff title="src/component.ts"
 - // Before
-- let component = AccountComponent::compile(source)?;
+- const component = AccountComponent.compile(accountCode, builder, [slot]);
 
 + // After
-+ use miden_protocol::code::CodeBuilder;
-+ let code = CodeBuilder::new()
-+     .with_source(source)
-+     .build()?;
-+ let component = AccountComponent::new(code)?;
++ const componentCode = builder.compileAccountComponentCode(accountCode);
++ const component = AccountComponent.compile(componentCode, [slot]);
 ```
 
 ---
@@ -102,11 +100,22 @@ Replace `AccountComponentTemplate` with metadata-driven `StorageSchema`:
 - use miden_lib::AccountComponentTemplate;
 - let template = AccountComponentTemplate::new(slots)?;
 
-+ use miden_standards::StorageSchema;
-+ let schema = StorageSchema::builder()
-+     .add_slot("balance", StorageSlotType::Value)
-+     .add_slot("metadata", StorageSlotType::Map)
-+     .build()?;
++ use miden_protocol::account::component::{SchemaTypeId, StorageSchema, StorageSlotSchema};
++ use miden_protocol::account::StorageSlotName;
++ let schema = StorageSchema::new([
++     (
++         StorageSlotName::new("my_component::balance")?,
++         StorageSlotSchema::value("balance", SchemaTypeId::native_word()),
++     ),
++     (
++         StorageSlotName::new("my_component::metadata")?,
++         StorageSlotSchema::map(
++             "metadata",
++             SchemaTypeId::native_word(),
++             SchemaTypeId::native_word(),
++         ),
++     ),
++ ])?;
 ```
 
 ---
@@ -116,11 +125,11 @@ Replace `AccountComponentTemplate` with metadata-driven `StorageSchema`:
 Use `AccountProcedureRoot` instead of `AccountProcedureInfo`:
 
 ```diff title="src/procedure.rs"
-- use miden_objects::accounts::AccountProcedureInfo;
+- use miden_objects::account::AccountProcedureInfo;
 - let info = AccountProcedureInfo::new(digest, storage_offset)?;
 
-+ use miden_protocol::accounts::AccountProcedureRoot;
-+ let root = AccountProcedureRoot::new(digest)?;
++ use miden_protocol::account::AccountProcedureRoot;
++ let root = AccountProcedureRoot::from_raw(digest);
 ```
 
 ---
@@ -141,6 +150,6 @@ Use `AccountProcedureRoot` instead of `AccountProcedureInfo`:
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| `no method named 'get_slot' taking u32` | API changed to names | Use `StorageSlotName` |
+| `expected &StorageSlotName, found u8` | API changed to names | Use `StorageSlotName` |
 | `FilesystemKeyStore expects 0 type parameters` | RNG generic removed | Remove type parameter |
 | `AccountComponentTemplate not found` | Renamed | Use `StorageSchema` |
