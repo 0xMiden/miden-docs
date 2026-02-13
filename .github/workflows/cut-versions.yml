@@ -4,7 +4,7 @@
 #
 # v0.4 Information Architecture:
 #   - Design docs (miden-base, miden-vm, compiler, miden-node) → docs/design/
-#   - Builder docs (miden-tutorials, miden-client) → docs/builder/
+#   - Builder docs (miden-tutorials, miden-client) → docs/builder/develop/tutorials/, docs/builder/tools/client/
 #
 # Workflow responsibilities:
 #   1. Check out external repos at pinned refs
@@ -34,8 +34,9 @@ on:
       compiler_ref: { required: false }
       miden_tutorials_ref: { required: false }
 
-  # Optional: auto-run when manifest changes (enable after you trust the flow)
+  # Auto-run when manifest changes on a branch (NOT main — prevents re-triggering on merge)
   push:
+    branches-ignore: [main]
     paths:
       - ".release/release-manifest.yml"
 
@@ -150,7 +151,8 @@ jobs:
 
           # Clean directories that will be re-synced (v0.4 nested paths)
           rm -rf docs/design/miden-base docs/design/miden-vm docs/design/miden-node docs/design/compiler
-          rm -rf docs/builder/tutorials docs/builder/client
+          rm -rf docs/builder/tools/client
+          # Note: docs/builder/develop/tutorials is NOT fully cleaned to preserve local tutorials (e.g. miden-bank)
 
           # Design docs → docs/design/*
           if [ -d "vendor/miden-base/docs/src" ]; then
@@ -178,16 +180,17 @@ jobs:
           fi
 
           # Builder docs → docs/builder/*
+          # Sync miden-tutorials into develop/tutorials (local tutorials are preserved)
           if [ -d "vendor/miden-tutorials/docs/src" ]; then
-            mkdir -p docs/builder/tutorials
-            cp -r vendor/miden-tutorials/docs/src/* docs/builder/tutorials/
-            echo "Synced miden-tutorials → docs/builder/tutorials"
+            mkdir -p docs/builder/develop/tutorials
+            cp -r vendor/miden-tutorials/docs/src/* docs/builder/develop/tutorials/
+            echo "Synced miden-tutorials → docs/builder/develop/tutorials"
           fi
 
-          if [ -d "vendor/miden-client/docs/src" ]; then
-            mkdir -p docs/builder/client
-            cp -r vendor/miden-client/docs/src/* docs/builder/client/
-            echo "Synced miden-client → docs/builder/client"
+          if [ -d "vendor/miden-client/docs/external/src" ]; then
+            mkdir -p docs/builder/tools/client
+            cp -r vendor/miden-client/docs/external/src/* docs/builder/tools/client/
+            echo "Synced miden-client → docs/builder/tools/client"
           fi
 
           echo "Content aggregation complete. Final docs structure:"
@@ -196,6 +199,8 @@ jobs:
           ls -la docs/design/ || true
           echo "Builder subdirs:"
           ls -la docs/builder/ || true
+          echo "Tutorials subdirs:"
+          ls -la docs/builder/develop/tutorials/ || true
 
       - name: Cut version snapshot
         run: |
@@ -214,8 +219,8 @@ jobs:
           rm -rf docs/design/miden-vm
           rm -rf docs/design/miden-node
           rm -rf docs/design/compiler
-          rm -rf docs/builder/tutorials
-          rm -rf docs/builder/client
+          rm -rf docs/builder/tools/client
+          # Note: tutorials live in docs/builder/develop/tutorials/ (authored content, not cleaned)
 
       - name: Commit snapshots
         run: |
