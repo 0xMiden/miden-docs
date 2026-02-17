@@ -66,6 +66,10 @@ x += felt!(1);          // x is now felt!(6)
 x *= felt!(2);          // x is now felt!(12)
 ```
 
+:::note For business logic, use u64
+Felt arithmetic is modular — there are no overflow panics and no underflow protection. For computing amounts, balances, counters, or any value where overflow/underflow behavior matters, convert to `u64` first, perform the arithmetic, then convert back with `Felt::from_u64_unchecked()`.
+:::
+
 ### Comparison and conversion
 
 ```rust
@@ -83,6 +87,19 @@ if f.as_u64() > 100 { /* ... */ }
 // Check parity
 if f.is_odd() { /* ... */ }
 ```
+
+:::tip Integer arithmetic on Felt values
+Converting `Felt` to `u64` with `.as_u64()` gives you standard Rust integer arithmetic — with overflow and underflow protection from Rust's debug-mode checks and `saturating_*` / `checked_*` methods. For business logic involving amounts, limits, or counters, prefer `u64` arithmetic:
+
+```rust
+// Convert, compute in u64, convert back
+let a: u64 = felt_a.as_u64();
+let b: u64 = felt_b.as_u64();
+let sum = a.saturating_add(b); // safe addition
+let diff = a.saturating_sub(b); // no underflow
+let result = Felt::from_u64_unchecked(sum);
+```
+:::
 
 ### Advanced operations
 

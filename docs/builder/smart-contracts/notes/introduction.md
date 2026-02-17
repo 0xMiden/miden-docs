@@ -1,12 +1,14 @@
 ---
 title: "What are Notes?"
 sidebar_position: 0
-description: "Miden's programmable UTXOs — create, consume, and script notes for asset transfers between accounts."
+description: "Miden's cross-account communication mechanism — programmable UTXOs that carry assets, execute scripts, and trigger logic on consuming accounts."
 ---
 
 # What are Notes?
 
-Notes are Miden's mechanism for transferring assets between accounts. Like UTXOs, notes are created and consumed atomically (not partially spent). Unlike Bitcoin's UTXOs, each Miden note carries an arbitrary executable script — written in Rust — that runs when the note is consumed, enabling programmable conditions far beyond simple locking scripts.
+Notes are Miden's primary mechanism for cross-account communication — they carry assets, execute programmable logic, and trigger state changes on the consuming account. Like UTXOs, notes are created and consumed atomically. Unlike Bitcoin's UTXOs, each Miden note carries an arbitrary executable script — written in Rust — that runs when the note is consumed, enabling programmable conditions far beyond simple locking scripts.
+
+While asset transfers are the most common use of notes, notes are how accounts communicate with one another in general: a note can trigger a counter increment, initiate a swap, delegate an operation, or carry arbitrary data to be acted on by the recipient's logic.
 
 Assets never transfer directly between accounts. Instead, they always move through notes. This indirection is what makes Miden private: the network sees notes being created and consumed, but it can't link sender and recipient accounts because those operations happen in separate transactions.
 
@@ -46,7 +48,7 @@ Transaction 1 (Sender)                Transaction 2 (Recipient)
 
 **Transaction 1**: The sender's account creates an output note, attaches assets to it, and the note is published (either on-chain or kept private).
 
-**Transaction 2**: The recipient discovers the note, consumes it in their own transaction, the note script runs and verifies the consumer is authorized, and assets transfer into the recipient's vault. A **nullifier** is recorded to prevent the same note from being consumed again.
+**Transaction 2**: The recipient discovers the note, consumes it in their own transaction, the note script runs and verifies the consumer is authorized, and assets transfer into the recipient's vault. A **nullifier** is recorded to prevent the same note from being consumed again (see [note design](/design/miden-base/note)).
 
 This separation is what enables privacy and parallelism — the two transactions are independent and unlinkable from the network's perspective.
 

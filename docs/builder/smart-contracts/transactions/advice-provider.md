@@ -8,6 +8,39 @@ description: "Reading and writing the advice map, loading preimages, and request
 
 The advice provider is a mechanism for supplying non-deterministic auxiliary data to the VM during proof generation. It backs an **advice map** (a key-value store of `Word → Vec<Felt>`) and an **advice stack** that host-provided data can be pushed onto. Common uses include passing structured data into transaction scripts, providing Falcon signatures for authentication, and seeding note scripts with external inputs.
 
+## Trust model and data integrity
+
+The advice provider is supplied by the **host** (the Miden client or node) — not by on-chain consensus. This means the VM cannot blindly trust that the host provided correct data. Two patterns address this:
+
+### Commitment-verified loading (safe)
+
+`adv_load_preimage` is integrity-safe by construction. The VM verifies that the loaded data hashes to the provided `commitment` before returning it. If the host tampers with the data, the hash won't match and proof generation fails:
+
+```rust
+// The VM will abort if hash(loaded_data) != commitment
+let data = adv_load_preimage(num_words, commitment);
+// `data` is guaranteed to match `commitment`
+```
+
+Use this pattern when the commitment is known ahead of time (e.g., stored in a note input or passed as a script argument).
+
+### Unverified stack push (caller must verify)
+
+`adv_push_mapvaln` pushes data onto the advice stack **without verification**. The caller is responsible for checking integrity if the data is security-sensitive:
+
+```rust
+let num_felts = adv_push_mapvaln(key);
+// Data is now on the stack — but not verified
+// If integrity matters, hash the result and compare to a known commitment:
+let data = adv_load_preimage(num_words, key); // Use this instead for verified loading
+```
+
+For signatures, `emit_falcon_sig_to_stack` pushes a Falcon512 signature that is subsequently verified by `rpo_falcon512_verify` — the verification step is what makes it safe.
+
+:::warning
+Never use `adv_push_mapvaln` for security-sensitive data without a subsequent integrity check. The host can supply any value it wants. Use `adv_load_preimage` (commitment-verified) or verify the loaded data yourself using `hash_words`.
+:::
+
 ## Reading from the advice map
 
 ### `adv_push_mapvaln`
