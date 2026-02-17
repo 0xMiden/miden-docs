@@ -6,77 +6,143 @@ description: "Read the active note's data and access input notes by index during
 
 # Reading Notes
 
-Miden provides two modules for reading note data during transactions: `active_note` for the currently executing note, and `input_note` for querying specific input notes by index.
+Miden provides two modules for reading note data, each for a different execution context:
 
-## Reading the active note
+- **`active_note`** — used inside **note scripts**. Reads data from the note currently being executed (the note whose `#[note_script]` is running).
+- **`input_note`** — used inside **transaction scripts** and **account code**. Reads data from any input note by index, useful when a transaction consumes multiple notes and needs to inspect them.
 
-When a note script executes, it can access the current note's data via `active_note`:
+## `active_note` — the executing note
+
+When a note script runs, `active_note` provides access to the current note's inputs, assets, and metadata:
 
 ```rust
 use miden::active_note;
 ```
 
-### Get note inputs
+### Inputs
 
-Note inputs are custom `Felt` values set by the note creator:
+Note inputs are custom `Felt` values set by the note creator. Use these to pass parameters to the note script (e.g., a target account ID, an expiration block height):
 
 ```rust
 let inputs: Vec<Felt> = active_note::get_inputs();
 ```
 
-### Get note assets
+### Assets
 
 ```rust
 let assets: Vec<Asset> = active_note::get_assets();
 ```
 
-### Get note metadata
+### Identity and metadata
 
 ```rust
-// Who sent this note
 let sender: AccountId = active_note::get_sender();
-
-// The note's recipient hash
 let recipient: Recipient = active_note::get_recipient();
-
-// The note's script root
 let script_root: Word = active_note::get_script_root();
-
-// The note's serial number
 let serial_num: Word = active_note::get_serial_number();
-
-// Raw metadata word
-let metadata: Word = active_note::get_metadata();
 ```
 
-### Transfer all assets to the consuming account
+### Note metadata
 
-A convenience function that adds all note assets to the consuming account:
+`get_metadata()` returns a `NoteMetadata` struct containing the note's attachment and header:
 
 ```rust
-active_note::add_assets_to_account();
+let metadata: NoteMetadata = active_note::get_metadata();
 ```
 
-## Reading input notes by index
+`NoteMetadata` has two fields:
 
-For transaction scripts that need to inspect specific input notes:
+```rust
+pub struct NoteMetadata {
+    pub attachment: Word,  // auxiliary data attached to the note
+    pub header: Word,      // metadata header (sender, tag, etc.)
+}
+```
+
+## `input_note` — querying notes by index
+
+Inside transaction scripts or account code, use `input_note` to read data from any input note being consumed in the current transaction. Each function takes a `NoteIdx` identifying which note to query:
 
 ```rust
 use miden::input_note;
+```
 
-// Get assets info for a specific input note
-let info = input_note::get_assets_info(note_idx);
+### Assets
 
-// Get all assets from a specific input note
+```rust
+let info: InputNoteAssetsInfo = input_note::get_assets_info(note_idx);
 let assets: Vec<Asset> = input_note::get_assets(note_idx);
+```
 
-// Get sender, recipient, metadata, inputs, script root, serial number
+`InputNoteAssetsInfo` contains `commitment: Word` and `num_assets: Felt`.
+
+### Identity and metadata
+
+```rust
 let sender: AccountId = input_note::get_sender(note_idx);
 let recipient: Recipient = input_note::get_recipient(note_idx);
-let metadata: Word = input_note::get_metadata(note_idx);
-let inputs_info = input_note::get_inputs_info(note_idx);
 let script_root: Word = input_note::get_script_root(note_idx);
 let serial_num: Word = input_note::get_serial_number(note_idx);
+```
+
+### Inputs
+
+```rust
+let inputs_info: InputNoteInputsInfo = input_note::get_inputs_info(note_idx);
+```
+
+`InputNoteInputsInfo` contains `commitment: Word` and `num_inputs: Felt`.
+
+### Note metadata
+
+Returns the same `NoteMetadata` struct as `active_note`:
+
+```rust
+let metadata: NoteMetadata = input_note::get_metadata(note_idx);
+```
+
+## Examples
+
+### Reading inputs in a note script
+
+A note script that reads the target account ID from inputs and verifies the consumer:
+
+```rust
+use miden::{AccountId, Word, active_note};
+
+#[note]
+struct P2idNote {
+    target_account_id: AccountId,
+}
+
+#[note]
+impl P2idNote {
+    #[note_script]
+    pub fn run(self, _arg: Word, account: &mut Account) {
+        assert_eq!(account.get_id(), self.target_account_id);
+
+        let assets = active_note::get_assets();
+        for asset in assets {
+            account.receive_asset(asset);
+        }
+    }
+}
+```
+
+### Reading input notes in a transaction script
+
+A transaction script that reads data from a consumed input note:
+
+```rust
+use miden::*;
+
+#[tx_script]
+pub fn run() {
+    // Query the first input note (index 0)
+    let idx = NoteIdx { inner: felt!(0) };
+    let assets = input_note::get_assets(idx);
+    let sender = input_note::get_sender(idx);
+}
 ```
 
 :::info API Reference

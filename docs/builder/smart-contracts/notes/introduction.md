@@ -6,7 +6,7 @@ description: "Miden's programmable UTXOs — create, consume, and script notes f
 
 # What are Notes?
 
-Notes are Miden's mechanism for transferring assets between accounts. They work like programmable UTXOs — each note is a sealed container that carries assets and a script determining who can consume it and what happens when they do.
+Notes are Miden's mechanism for transferring assets between accounts. Like UTXOs, notes are created and consumed atomically (not partially spent). Unlike Bitcoin's UTXOs, each Miden note carries an arbitrary executable script — written in Rust — that runs when the note is consumed, enabling programmable conditions far beyond simple locking scripts.
 
 Assets never transfer directly between accounts. Instead, they always move through notes. This indirection is what makes Miden private: the network sees notes being created and consumed, but it can't link sender and recipient accounts because those operations happen in separate transactions.
 
@@ -21,13 +21,13 @@ Every note has four parts:
 | **Inputs** | Custom data the script can read at consumption time (e.g., a target account ID, an expiration block) |
 | **Metadata** | Sender ID, note tag (for discovery routing), and auxiliary data |
 
-The **recipient** is a cryptographic hash that encodes who can consume the note:
+The **recipient** is a cryptographic hash that encodes who can consume the note. When creating notes programmatically (via [`output_note::create`](./output-notes#create-a-note)), you compute a `Recipient` from the note's serial number, script hash, and inputs:
 
 ```
 recipient = hash(hash(hash(serial_num, [0;4]), script_root), inputs_commitment)
 ```
 
-Only someone who knows the serial number, script, and inputs can construct a matching proof to consume the note.
+Only someone who knows these values can construct a valid consumption proof. See [Computing a Recipient](./output-notes#computing-a-recipient) for the SDK API.
 
 ## The two-transaction model
 
@@ -61,17 +61,7 @@ Notes come in two visibility modes:
 
 Private notes provide stronger privacy guarantees — the network can't even see what assets a note carries — but they require the sender and recipient to have a communication channel outside the protocol.
 
-## Common note patterns
-
-The most common patterns are built into the `miden-standards` crate:
-
-| Pattern | Description |
-|---------|-------------|
-| **P2ID** | Pay to ID — only a specific account can consume the note |
-| **P2IDE** | Pay to ID with expiration — adds a timelock and reclaim window |
-| **SWAP** | Atomic exchange — the consumer provides a requested asset and receives the offered asset |
-
-You can also write fully custom note scripts for arbitrary consumption logic.
+Miden provides built-in note patterns (P2ID, P2IDE, SWAP) for common transfer scenarios — see [Note Types](./note-types.md). You can also write fully custom note scripts for arbitrary consumption logic.
 
 ## How notes differ from EVM transfers
 
@@ -83,9 +73,3 @@ You can also write fully custom note scripts for arbitrary consumption logic.
 | **Failure** | Revert on-chain, gas consumed | Proof can't be generated — no on-chain trace |
 | **Parallelism** | Transfers contend for contract state | Notes are independent — unlimited parallel creation |
 
-## In this section
-
-- [**Note scripts**](./note-scripts.md) — write custom consumption logic with the `#[note]` and `#[note_script]` macros
-- [**Note types**](./note-types.md) — built-in patterns: P2ID, P2IDE, SWAP
-- [**Reading notes**](./reading-notes.md) — access note data via `active_note` and `input_note` modules
-- [**Output notes**](./output-notes.md) — create notes and attach assets with `output_note`

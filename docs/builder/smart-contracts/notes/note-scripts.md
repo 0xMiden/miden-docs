@@ -8,14 +8,6 @@ description: "Write note scripts using #[note] and #[note_script] macros to defi
 
 Note scripts define the logic that executes when a note is consumed. They determine **who** can consume a note and **what happens** to its assets.
 
-## What you'll learn
-
-- The `#[note]` struct + impl pattern
-- `#[note_script]` method requirements and signature flexibility
-- Accessing note inputs via struct fields
-- Cross-component calls from note scripts
-- Complete examples from the compiler
-
 ## The `#[note]` pattern
 
 A note script consists of a struct (holding note inputs) and an impl block with a `#[note_script]` method:
@@ -118,10 +110,11 @@ pub fn run(self, _arg: Word) {
 
 A note that calls methods on the consuming account's component:
 
-```rust title="counter-note/src/lib.rs"
-#![no_std]
-#![feature(alloc_error_handler)]
+:::note
+All note script crates require `#![no_std]` and `#![feature(alloc_error_handler)]` at the crate root. These are omitted from examples for brevity.
+:::
 
+```rust title="counter-note/src/lib.rs"
 use miden::*;
 
 use crate::bindings::miden::counter_contract::counter_contract;
@@ -161,7 +154,7 @@ project-kind = "note-script"
 "miden:basic-wallet" = { path = "../basic-wallet/target/generated-wit/" }
 ```
 
-## Next steps
+## Related
 
-- [Cross-Component Calls](../transactions/cross-component-calls) — How `bindings::Account` and `counter_contract::` calls work
-- [Transaction Context](../transactions/transaction-context) — Transaction scripts with `#[tx_script]`
+- [Cross-Component Calls](../transactions/cross-component-calls) — how `bindings::Account` and `counter_contract::` calls work
+- [Transaction Context](../transactions/transaction-context) — transaction scripts with `#[tx_script]`

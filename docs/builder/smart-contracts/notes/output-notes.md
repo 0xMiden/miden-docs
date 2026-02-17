@@ -6,7 +6,7 @@ description: "Create output notes, attach assets, set attachments, and compute r
 
 # Output Notes
 
-Use the `output_note` module to create notes and attach assets:
+The `output_note` module creates notes from inside account component code and transaction scripts. Use it to send assets to other accounts by creating notes that carry assets and a recipient hash.
 
 ```rust
 use miden::{output_note, Asset, NoteIdx, Tag, NoteType, Recipient};
@@ -20,11 +20,11 @@ let note_idx: NoteIdx = output_note::create(tag, note_type, recipient);
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `tag` | `Tag` | Routing/filtering tag for the note |
-| `note_type` | `NoteType` | Visibility: public or private |
-| `recipient` | `Recipient` | Hash identifying who can consume the note |
+| `tag` | `Tag` | Routing/filtering tag — used by the network for note discovery and delivery |
+| `note_type` | `NoteType` | Visibility: `NoteType::Public` (stored on-chain) or `NoteType::Private` (only commitment on-chain) |
+| `recipient` | `Recipient` | Cryptographic hash identifying who can consume the note (see [Computing a Recipient](#computing-a-recipient)) |
 
-Returns a `NoteIdx` used to reference this note in subsequent operations.
+Returns a `NoteIdx` used to reference this note in subsequent operations within the same transaction.
 
 ## Add assets to a note
 
@@ -32,57 +32,87 @@ Returns a `NoteIdx` used to reference this note in subsequent operations.
 output_note::add_asset(asset, note_idx);
 ```
 
-You can add multiple assets to the same note by calling `add_asset` multiple times with the same `note_idx`.
+Call `add_asset` multiple times with the same `note_idx` to attach several assets to one note. A note can carry both fungible and non-fungible assets.
 
 ## Query output note state
 
 ```rust
-// Get assets info (commitment and count)
+// Asset commitment and count
 let info: OutputNoteAssetsInfo = output_note::get_assets_info(note_idx);
 
-// Get all assets on the note
+// All assets on the note
 let assets: Vec<Asset> = output_note::get_assets(note_idx);
 
-// Get the recipient
+// The recipient hash
 let recipient: Recipient = output_note::get_recipient(note_idx);
-
-// Get note metadata
-let metadata: Word = output_note::get_metadata(note_idx);
 ```
 
-## Set note attachments
+`OutputNoteAssetsInfo` contains `commitment: Word` and `num_assets: Felt`.
 
-Notes can carry additional data as attachments:
+### Note metadata
+
+Returns a `NoteMetadata` struct (not a raw `Word`):
 
 ```rust
-// Set an attachment with an explicit kind (None/Word/Array) and Word payload
+let metadata: NoteMetadata = output_note::get_metadata(note_idx);
+```
+
+See [Reading Notes — Note metadata](./reading-notes#note-metadata) for the `NoteMetadata` struct definition.
+
+## Note attachments
+
+Notes can carry auxiliary data as attachments. The attachment API uses `Felt`-typed discriminants to select the scheme and kind:
+
+```rust
+// Full form — specify scheme, kind, and payload
 output_note::set_attachment(note_idx, attachment_scheme, attachment_kind, attachment_word);
 
-// Set a Word-sized attachment (convenience)
+// Word attachment — a single Word of inline data
 output_note::set_word_attachment(note_idx, attachment_scheme, word_data);
 
-// Set an array-sized attachment (commitment to advice map values)
+// Array attachment — a commitment to data stored in the advice map
 output_note::set_array_attachment(note_idx, attachment_scheme, commitment_word);
 ```
 
-`set_array_attachment` stores a commitment to array data. The advice map must contain the
-corresponding elements committed to by `commitment_word`.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `attachment_scheme` | `Felt` | Identifies the encoding/interpretation scheme for the attachment data |
+| `attachment_kind` | `Felt` | Discriminant for the attachment variant (None, Word, or Array) |
+| `attachment_word` | `Word` | The attachment payload — either inline data or a commitment |
+
+**Word attachments** store data directly in the note. **Array attachments** store a commitment (hash) to larger data that lives in the advice map — the consumer must have access to the corresponding advice map entries to read the full data.
 
 ## Computing a Recipient
 
-The `Recipient` is a hash that encodes who can consume a note:
+When creating notes programmatically, you need a `Recipient` to pass to `output_note::create`. The `Recipient` is a hash that encodes the note script and inputs, ensuring only someone who knows these values can consume the note.
 
 ```rust
 use miden::{Recipient, Digest};
 
 let recipient = Recipient::compute(
-    serial_num,       // Word: unique serial number
+    serial_num,       // Word: unique serial number for this note
     script_digest,    // Digest: hash of the note script
     inputs,           // Vec<Felt>: note inputs (e.g., target account ID)
 );
 ```
 
 The computation is: `hash(hash(hash(serial_num, [0;4]), script_root), inputs_commitment)`.
+
+## Example: creating and funding a note
+
+A complete flow for creating a note inside an account component:
+
+```rust
+use miden::{output_note, Asset, Tag, NoteType, Recipient, Digest};
+
+pub fn send_assets(recipient: Recipient, asset: Asset, tag: Tag) {
+    // 1. Create the note
+    let note_idx = output_note::create(tag, NoteType::Public, recipient);
+
+    // 2. Attach assets
+    output_note::add_asset(asset, note_idx);
+}
+```
 
 :::info API Reference
 Full API docs on docs.rs: [`miden::output_note`](https://docs.rs/miden/latest/miden/output_note/)
