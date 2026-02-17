@@ -372,7 +372,7 @@ Faucet operations (for faucet account types only).
 
 ---
 
-## Cryptography → [Authentication](./transactions/authentication)
+## Cryptography → [Cryptography](./accounts/cryptography)
 
 ### Hash functions
 

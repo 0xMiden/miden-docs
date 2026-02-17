@@ -161,7 +161,7 @@ Miden supports several account types, configured in `Cargo.toml`:
 | [Account Operations](./accounts/account-operations) | Read/write account state and vault | `active_account`, `native_account` |
 | [Notes](./notes/) | Programmable UTXOs for asset transfers | Note scripts |
 | [Transaction Context](./transactions/transaction-context) | Block queries and transaction scripts | `tx` module, `#[tx_script]` |
-| [Authentication](./transactions/authentication) | Falcon512 signatures and replay protection | Nonce management |
+| [Authentication](./accounts/authentication) | Falcon512 signatures and replay protection | Nonce management |
 | [Cross-Component Calls](./cross-component-calls) | Inter-component communication | WIT bindings, `generate!()` |
 
 Ready to start building? Follow the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/) for a hands-on walkthrough.

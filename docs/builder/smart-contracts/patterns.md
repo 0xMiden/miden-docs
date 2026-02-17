@@ -211,7 +211,7 @@ When an assertion fails, proof generation fails and the transaction is rejected 
 
 ### Replay protection
 
-Always increment the nonce when modifying account state (see [Authentication](./transactions/authentication) for the full pattern):
+Always increment the nonce when modifying account state (see [Authentication](./accounts/authentication) for the full pattern):
 
 ```rust
 // The auth component should call incr_nonce()

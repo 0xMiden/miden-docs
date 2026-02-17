@@ -116,7 +116,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './transactions/authentication',
+        href: './accounts/authentication',
         label: 'Authentication',
         description: 'Falcon512 signatures and replay protection.',
       }}
