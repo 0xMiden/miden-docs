@@ -16,6 +16,24 @@ All note script crates require `#![no_std]` and `#![feature(alloc_error_handler)
 
 The most common pattern — a note that can only be consumed by a specific account. The note script checks that the consuming account's ID matches the target, then transfers all assets.
 
+### When to use
+
+Use P2ID for standard asset transfers where only the intended recipient should be able to consume the note. This is the most common note type.
+
+### How it works
+
+1. Creator creates a P2ID note containing the assets and the target account ID as a note input
+2. Consumer's transaction processes the note — the script verifies the consuming account's ID matches the target
+3. If the IDs match, all assets transfer to the consuming account; otherwise proof generation fails
+
+### Note inputs
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `target_account_id` | `AccountId` | The account allowed to consume this note |
+
+### Implementation
+
 ```rust title="p2id-note/src/lib.rs"
 use miden::{AccountId, Word, active_note, note};
 
@@ -41,12 +59,12 @@ impl P2idNote {
 }
 ```
 
-Key points:
-
 - `self.target_account_id` is populated from note inputs (the `#[note]` macro handles this)
 - `account: &mut Account` is the consuming account — its type comes from WIT bindings
 - `account.receive_asset()` calls the wallet component's method via [cross-component calls](../transactions/cross-component-calls)
 - If `assert_eq!` fails, proof generation fails and the note cannot be consumed
+
+### Cargo.toml
 
 ```toml title="p2id-note/Cargo.toml"
 [package]
@@ -78,6 +96,17 @@ project-kind = "note-script"
 
 P2IDE extends P2ID with a timelock and a reclaim window. The note can't be consumed before `timelock_height`, and if the target hasn't consumed it by `reclaim_height`, the creator can reclaim the assets.
 
+### When to use
+
+Use P2IDE when the sender wants the option to reclaim assets if the recipient doesn't consume the note within a time window.
+
+### How it works
+
+1. Creator creates a P2IDE note with the target account ID, a timelock height, and a reclaim height as note inputs
+2. **Target consumes after `timelock_height`** — assets transfer to the target account
+3. **Creator reclaims after `reclaim_height`** — assets return to the creator
+4. **Before timelock or between timelock and reclaim by a non-target** — any consumption attempt fails (proof generation fails)
+
 ### Note inputs
 
 | Input | Type | Description |
@@ -87,11 +116,7 @@ P2IDE extends P2ID with a timelock and a reclaim window. The note can't be consu
 | `timelock_height` | `Felt` | Block height before which the note can't be consumed |
 | `reclaim_height` | `Felt` | Block height after which the creator can reclaim |
 
-### Outcomes
-
-1. **Target consumes after `timelock_height`** — assets transfer to the target account
-2. **Creator reclaims after `reclaim_height`** — assets return to the creator
-3. **Between timelock and reclaim** — any consumption attempt fails (proof generation fails for any consumer, including the creator)
+### Implementation
 
 ```rust title="p2ide-note/src/lib.rs"
 use miden::*;
@@ -154,6 +179,8 @@ impl P2ideNote {
 }
 ```
 
+### Cargo.toml
+
 ```toml title="p2ide-note/Cargo.toml"
 [package]
 name = "p2ide"
@@ -183,6 +210,10 @@ project-kind = "note-script"
 
 SWAP enables atomic asset exchange. The creator offers one asset; any consumer who provides the requested asset in return can consume the note. The swap is atomic — both sides happen in a single transaction or neither does.
 
+### When to use
+
+Use SWAP for trustless atomic exchanges where two parties trade assets without intermediaries.
+
 ### How it works
 
 1. Creator creates a SWAP note containing the offered asset and metadata describing the requested asset + payback recipient
@@ -194,7 +225,7 @@ SWAP enables atomic asset exchange. The creator offers one asset; any consumer w
 SWAP notes use `SwapNote` from the `miden-standards` crate. The note script itself is written in MASM and compiled into the standards library. You don't write the script in Rust — you use the builder to create SWAP notes in client code.
 :::
 
-### `SwapNote::create`
+### Implementation
 
 ```rust
 SwapNote::create(
