@@ -39,7 +39,7 @@ use miden::{
 
 ---
 
-## Macros → [Components](./accounts/components), [Notes](./transactions/notes), [Transaction Context](./transactions/transaction-context), [Custom Types](./accounts/custom-types), [Cross-Component Calls](./transactions/cross-component-calls)
+## Macros → [Components](./accounts/components), [Notes](./notes/note-scripts), [Transaction Context](./transactions/transaction-context), [Custom Types](./accounts/custom-types), [Cross-Component Calls](./transactions/cross-component-calls)
 
 ### `#[component]`
 
@@ -276,7 +276,7 @@ Direct storage access (lower-level than `Value`/`StorageMap` traits).
 
 ---
 
-## `active_note` module → [Notes](./transactions/notes)
+## `active_note` module → [Notes](./notes/reading-notes)
 
 Access the currently executing note's data.
 
@@ -293,7 +293,7 @@ Access the currently executing note's data.
 
 ---
 
-## `output_note` module → [Notes](./transactions/notes)
+## `output_note` module → [Notes](./notes/output-notes)
 
 Create and manage output notes.
 
@@ -311,7 +311,7 @@ Create and manage output notes.
 
 ---
 
-## `input_note` module → [Notes](./transactions/notes)
+## `input_note` module → [Notes](./notes/reading-notes)
 
 Access specific input notes by index.
 

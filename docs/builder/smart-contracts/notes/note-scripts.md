@@ -1,6 +1,6 @@
 ---
 title: "Note Scripts"
-sidebar_position: 9
+sidebar_position: 1
 description: "Write note scripts using #[note] and #[note_script] macros to define logic that executes when notes are consumed."
 ---
 
@@ -99,7 +99,7 @@ pub fn run(self, _arg: Word, account: &mut Account) {
 }
 ```
 
-The `Account` type comes from WIT bindings of the account component — see [Cross-Component Calls](./cross-component-calls).
+The `Account` type comes from WIT bindings of the account component — see [Cross-Component Calls](../transactions/cross-component-calls).
 
 ### Without account access
 
@@ -112,64 +112,6 @@ pub fn run(self, _arg: Word) {
     let assets = active_note::get_assets();
     // But cannot call account methods
 }
-```
-
-## Example: P2ID (Pay to ID)
-
-A note that can only be consumed by a specific account, transferring all assets:
-
-```rust title="p2id-note/src/lib.rs"
-#![no_std]
-#![feature(alloc_error_handler)]
-
-use miden::{AccountId, Word, active_note, note};
-
-use crate::bindings::Account;
-
-#[note]
-struct P2idNote {
-    target_account_id: AccountId,
-}
-
-#[note]
-impl P2idNote {
-    #[note_script]
-    pub fn run(self, _arg: Word, account: &mut Account) {
-        let current_account = account.get_id();
-        assert_eq!(current_account, self.target_account_id);
-
-        let assets = active_note::get_assets();
-        for asset in assets {
-            account.receive_asset(asset);
-        }
-    }
-}
-```
-
-```toml title="p2id-note/Cargo.toml"
-[package]
-name = "p2id"
-version = "0.1.0"
-edition = "2024"
-
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
-miden = { path = "../../sdk/sdk" }
-
-[package.metadata.component]
-package = "miden:p2id"
-
-[package.metadata.miden]
-project-kind = "note-script"
-
-# Declare the account component this note interacts with
-[package.metadata.miden.dependencies]
-"miden:basic-wallet" = { path = "../basic-wallet" }
-
-[package.metadata.component.target.dependencies]
-"miden:basic-wallet" = { path = "../basic-wallet/target/generated-wit/" }
 ```
 
 ## Example: Counter note (cross-component calls)
@@ -200,7 +142,7 @@ impl CounterNote {
 }
 ```
 
-This note doesn't take `&mut Account` — instead it calls the counter contract's methods directly through generated bindings. See [Cross-Component Calls](./cross-component-calls).
+This note doesn't take `&mut Account` — instead it calls the counter contract's methods directly through generated bindings. See [Cross-Component Calls](../transactions/cross-component-calls).
 
 ## Cargo.toml for note scripts
 
@@ -221,6 +163,5 @@ project-kind = "note-script"
 
 ## Next steps
 
-- [Cross-Component Calls](./cross-component-calls) — How `bindings::Account` and `counter_contract::` calls work
-- [Notes](./notes) — Creating output notes and the `output_note` API
-- [Transaction Context](./transaction-context) — Transaction scripts with `#[tx_script]`
+- [Cross-Component Calls](../transactions/cross-component-calls) — How `bindings::Account` and `counter_contract::` calls work
+- [Transaction Context](../transactions/transaction-context) — Transaction scripts with `#[tx_script]`

@@ -96,7 +96,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './transactions/notes',
+        href: './notes',
         label: 'Notes',
         description: 'Programmable UTXOs for asset transfers.',
       }}

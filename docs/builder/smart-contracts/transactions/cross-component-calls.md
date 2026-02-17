@@ -6,7 +6,7 @@ description: "Call methods across components using generate!(), WIT bindings, an
 
 # Cross-Component Calls
 
-Miden [components](../accounts/components) communicate through WIT (WebAssembly Interface Types) bindings. Since accounts can have multiple components (e.g., wallet + auth + custom logic), those components need to call each other's methods. [Note scripts](./notes) also need to call methods on the consuming account's components to transfer assets. WIT provides the interface contract between caller and callee.
+Miden [components](../accounts/components) communicate through WIT (WebAssembly Interface Types) bindings. Since accounts can have multiple components (e.g., wallet + auth + custom logic), those components need to call each other's methods. [Note scripts](../notes/note-scripts) also need to call methods on the consuming account's components to transfer assets. WIT provides the interface contract between caller and callee.
 
 ## How it works
 
