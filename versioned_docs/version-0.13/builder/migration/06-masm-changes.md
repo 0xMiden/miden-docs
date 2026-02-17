@@ -134,13 +134,31 @@ ECDSA procedures moved to new namespace:
 + exec.ecdsa_k256_keccak::verify
 ```
 
-### RPO Hash Helpers
+### RPO Hash Renames
 
-Hash helper procedures renamed:
+The RPO module was renamed from `rpo` to `rpo256`, and several procedures were renamed to standardize naming across all hash modules:
 
 ```diff title="src/hash.masm"
+- use.std::crypto::hashes::rpo
++ use miden::core::crypto::hashes::rpo256
+
+- exec.rpo::hash_memory
++ exec.rpo256::hash_elements
+
 - exec.rpo::hash_memory_words
-+ exec.rpo::hash_words
++ exec.rpo256::hash_words
+
+- exec.rpo::hash_memory_double_words
++ exec.rpo256::hash_double_words
+
+- exec.rpo::hash_memory_with_state
++ exec.rpo256::hash_elements_with_state
+
+- exec.rpo::hash_1to1
++ exec.rpo256::hash
+
+- exec.rpo::hash_2to1
++ exec.rpo256::merge
 ```
 
 ---
@@ -197,7 +215,9 @@ end
 8. Update `get_item`/`set_item` calls to use `[0..2]` slice for slot IDs
 9. Rename `RpoFalcon512` to `Falcon512Rpo`
 10. Update ECDSA procedure paths
-11. Rename `hash_memory_words` to `hash_words`
+11. Rename RPO module `rpo` to `rpo256`
+12. Rename `hash_memory` to `hash_elements`, `hash_memory_words` to `hash_words`, `hash_memory_double_words` to `hash_double_words`, `hash_memory_with_state` to `hash_elements_with_state`
+13. Rename `hash_1to1` to `hash`, `hash_2to1` to `merge`
 
 ---
 
@@ -208,5 +228,9 @@ end
 | `unexpected token '.'` | Old syntax | Use space: `const X` not `const.X` |
 | `module 'std' not found` | Namespace changed | Use `miden::core::` |
 | `procedure 'auth_tx_rpo_falcon512' not found` | Renamed | Use `auth_tx_falcon512_rpo` |
-| `procedure 'hash_memory_words' not found` | Renamed | Use `hash_words` |
+| `procedure 'hash_memory' not found` | Renamed | Use `hash_elements` (module `rpo256`) |
+| `procedure 'hash_memory_words' not found` | Renamed | Use `hash_words` (module `rpo256`) |
+| `procedure 'hash_1to1' not found` | Renamed | Use `hash` (module `rpo256`) |
+| `procedure 'hash_2to1' not found` | Renamed | Use `merge` (module `rpo256`) |
+| `module 'rpo' not found` | Renamed | Use `rpo256` |
 | `get_item` returns unexpected values | Using integer index instead of slot ID | Use `word("...")` and `[0..2]` slice |
