@@ -1,12 +1,12 @@
 ---
 title: "Cross-Component Calls"
-sidebar_position: 4
+sidebar_position: 5.5
 description: "Call methods across components using generate!(), WIT bindings, and Miden dependencies."
 ---
 
 # Cross-Component Calls
 
-Miden [components](../accounts/components) communicate through WIT (WebAssembly Interface Types) bindings. Since accounts can have multiple components (e.g., wallet + auth + custom logic), those components need to call each other's methods. [Note scripts](../notes/note-scripts) also need to call methods on the consuming account's components to transfer assets. WIT provides the interface contract between caller and callee.
+Miden [components](./accounts/components) communicate through WIT (WebAssembly Interface Types) bindings. Since accounts can have multiple components (e.g., wallet + auth + custom logic), those components need to call each other's methods. [Note scripts](./notes/note-scripts) also need to call methods on the consuming account's components to transfer assets. WIT provides the interface contract between caller and callee.
 
 ## How it works
 
@@ -201,7 +201,7 @@ impl CounterNote {
 | `generate!()` + `Guest` trait | Note needs to call multiple components or needs full control |
 | Direct module imports | Calling specific functions from a known component interface |
 
-For the complete list of macros and bindings functions, see the [Cheatsheet](../api-reference).
+For the complete list of macros and bindings functions, see the [Cheatsheet](./api-reference).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`generate!()` macro)

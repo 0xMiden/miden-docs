@@ -39,7 +39,7 @@ use miden::{
 
 ---
 
-## Macros → [Components](./accounts/components), [Notes](./notes/note-scripts), [Transaction Context](./transactions/transaction-context), [Custom Types](./accounts/custom-types), [Cross-Component Calls](./transactions/cross-component-calls)
+## Macros → [Components](./accounts/components), [Notes](./notes/note-scripts), [Transaction Context](./transactions/transaction-context), [Custom Types](./accounts/custom-types), [Cross-Component Calls](./cross-component-calls)
 
 ### `#[component]`
 

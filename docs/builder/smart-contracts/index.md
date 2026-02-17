@@ -129,7 +129,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './transactions/cross-component-calls',
+        href: './cross-component-calls',
         label: 'Cross-Component Calls',
         description: 'WIT bindings and generate!() for inter-component calls.',
       }}

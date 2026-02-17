@@ -85,4 +85,4 @@ This is fundamentally different from Ethereum's `revert`, where the failed trans
 
 - [**Transaction context**](./transaction-context.md) — the `tx` module, block queries, and the `#[tx_script]` macro
 - [**Authentication**](./authentication.md) — how Falcon512 signatures authorize transactions and why nonces prevent replay
-- [**Cross-component calls**](./cross-component-calls.md) — invoking procedures across components using WIT bindings
+- [**Cross-component calls**](../cross-component-calls.md) — invoking procedures across components using WIT bindings

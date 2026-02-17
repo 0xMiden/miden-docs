@@ -91,7 +91,7 @@ pub fn run(self, _arg: Word, account: &mut Account) {
 }
 ```
 
-The `Account` type comes from WIT bindings of the account component — see [Cross-Component Calls](../transactions/cross-component-calls).
+The `Account` type comes from WIT bindings of the account component — see [Cross-Component Calls](../cross-component-calls).
 
 ### Without account access
 
@@ -135,7 +135,7 @@ impl CounterNote {
 }
 ```
 
-This note doesn't take `&mut Account` — instead it calls the counter contract's methods directly through generated bindings. See [Cross-Component Calls](../transactions/cross-component-calls).
+This note doesn't take `&mut Account` — instead it calls the counter contract's methods directly through generated bindings. See [Cross-Component Calls](../cross-component-calls).
 
 ## Cargo.toml for note scripts
 
@@ -156,5 +156,5 @@ project-kind = "note-script"
 
 ## Related
 
-- [Cross-Component Calls](../transactions/cross-component-calls) — how `bindings::Account` and `counter_contract::` calls work
+- [Cross-Component Calls](../cross-component-calls) — how `bindings::Account` and `counter_contract::` calls work
 - [Transaction Context](../transactions/transaction-context) — transaction scripts with `#[tx_script]`

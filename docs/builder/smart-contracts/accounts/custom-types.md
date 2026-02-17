@@ -220,7 +220,7 @@ supported-types = ["RegularAccountUpdatableCode"]
 | Modules | Types in submodules work — just apply `#[export_type]` to each |
 | Order | Declaration order doesn't matter — forward references are resolved |
 
-Exported types appear in generated WIT bindings used by [cross-component calls](../transactions/cross-component-calls).
+Exported types appear in generated WIT bindings used by [cross-component calls](../cross-component-calls).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`#[export_type]` macro)

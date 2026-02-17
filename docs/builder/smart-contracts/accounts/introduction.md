@@ -39,7 +39,7 @@ impl MyWallet {
 }
 ```
 
-An account can have multiple components. For example, a DeFi account might combine a wallet component (for holding assets), an auth component (for signature verification), and custom application logic — all in a single account. Components communicate with each other through [cross-component calls](../transactions/cross-component-calls.md) using WIT (WebAssembly Interface Types) bindings.
+An account can have multiple components. For example, a DeFi account might combine a wallet component (for holding assets), an auth component (for signature verification), and custom application logic — all in a single account. Components communicate with each other through [cross-component calls](../cross-component-calls.md) using WIT (WebAssembly Interface Types) bindings.
 
 ## Account types
 
