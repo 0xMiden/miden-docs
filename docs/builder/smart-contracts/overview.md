@@ -14,11 +14,11 @@ If you've built on Ethereum or Solana, this table maps familiar concepts to thei
 
 | Concept | EVM / SVM | Miden |
 |---|---|---|
-| Smart contract | Contract at an address | Account with components |
+| Smart contract | Contract at an address | Account component |
 | Contract state | Solidity state variables | `Value` / `StorageMap` storage fields (up to 255 slots) |
 | Asset issuance | ERC-20 / ERC-721 contracts | Faucet accounts (mint/burn native assets) |
 | Transfer | `transfer()` call on token contract | Create a note (programmable UTXO) |
-| `msg.sender` | Implicit caller address | Authentication via Falcon512 signatures |
+| `msg.sender` | Implicit caller address | `active_note::get_sender()` — note sender field identifies the caller |
 | `revert` | On-chain failure, gas consumed | Proof cannot be generated — no on-chain trace |
 | Execution | Every node re-executes | Client executes locally, submits ZK proof |
 | Privacy | All state/inputs public | Network sees only the proof + state commitments |
