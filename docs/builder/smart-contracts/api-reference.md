@@ -10,7 +10,7 @@ description: "Quick-reference cheatsheet for every function, type, trait, and ma
 This is a quick-reference cheatsheet. For full API documentation with examples, see [`miden` on docs.rs](https://docs.rs/miden/latest/miden/).
 :::
 
-Quick-reference for the Miden Rust SDK — every function signature, type, trait, and macro at a glance. Each section links to the detailed page for full explanations and examples. The SDK exposes the Miden transaction kernel's host functions — all execution happens locally on the client during proof generation, not on-chain. For runnable examples, see the [compiler examples directory](https://github.com/0xMiden/compiler/tree/main/examples).
+Quick-reference for the Miden Rust SDK — every function signature, type, trait, and macro at a glance. Each section links to the detailed page for full explanations and examples. The SDK exposes the Miden transaction kernel's host functions — all execution happens locally on the client during proof generation, not on-chain. For runnable examples, see the [compiler examples directory](https://github.com/0xMiden/compiler/tree/next/examples).
 
 ## Core imports
 

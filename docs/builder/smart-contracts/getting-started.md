@@ -1,6 +1,6 @@
 ---
 title: "Toolchain & Project Structure"
-sidebar_position: 2
+sidebar_position: 6.5
 description: "The Miden toolchain, project layout, Cargo.toml configuration, and how Rust source becomes a deployable .masp file."
 ---
 

@@ -73,22 +73,6 @@ field_name: StorageMap,
 
 The `description` is optional and becomes part of the generated metadata. Slot IDs are derived from the component package name (from `[package.metadata.component]`) and the field name, so **renaming a field changes the slot ID**. Ordering does not matter, and `slot(N)` is not supported.
 
-### Components without storage
-
-Components don't need storage fields:
-
-```rust
-#[component]
-struct MyAccount;
-
-#[component]
-impl MyAccount {
-    pub fn receive_asset(&mut self, asset: Asset) {
-        self.add_asset(asset);
-    }
-}
-```
-
 ## Impl block — methods
 
 ### Read methods (`&self`)
