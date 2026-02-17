@@ -24,6 +24,8 @@ let note_idx: NoteIdx = output_note::create(tag, note_type, recipient);
 | `note_type` | `NoteType` | Visibility: `NoteType::Public` (stored on-chain) or `NoteType::Private` (only commitment on-chain) |
 | `recipient` | `Recipient` | Cryptographic hash identifying who can consume the note (see [Computing a Recipient](#computing-a-recipient)) |
 
+To construct a tag targeting a specific account, use `NoteTag::with_account_target(account_id)` from `miden_protocol::note`.
+
 Returns a `NoteIdx` used to reference this note in subsequent operations within the same transaction.
 
 ## Add assets to a note
@@ -96,7 +98,7 @@ let recipient = Recipient::compute(
 );
 ```
 
-The computation is: `hash(hash(hash(serial_num, [0;4]), script_root), inputs_commitment)`.
+The computation is: `hash(hash(hash(serial_num, [0;4]), script_root), inputs_commitment)`. `script_digest` and `script_root` refer to the same value — the hash of the note script program. The formula uses `script_root`; the Rust parameter is named `script_digest`.
 
 ## Example: creating and funding a note
 

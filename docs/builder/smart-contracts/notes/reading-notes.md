@@ -91,6 +91,10 @@ let serial_num: Word = input_note::get_serial_number(note_idx);
 let inputs_info: InputNoteInputsInfo = input_note::get_inputs_info(note_idx);
 ```
 
+:::note
+Unlike `active_note::get_inputs()` which returns the full `Vec<Felt>` of input values, `input_note` only exposes the inputs commitment and count — not the actual values. The transaction kernel only has commitments for input notes that are not currently executing. To read actual input values, use `active_note::get_inputs()` inside the note script itself.
+:::
+
 `InputNoteInputsInfo` contains `commitment: Word` and `num_inputs: Felt`.
 
 ### Note metadata
@@ -108,7 +112,7 @@ let metadata: NoteMetadata = input_note::get_metadata(note_idx);
 A note script that reads the target account ID from inputs and verifies the consumer:
 
 ```rust
-use miden::{AccountId, Word, active_note};
+use miden::{AccountId, Word, active_note, note};
 
 #[note]
 struct P2idNote {
