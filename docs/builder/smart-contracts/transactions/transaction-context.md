@@ -1,10 +1,10 @@
 ---
-title: "Transaction Context"
+title: "The tx Module"
 sidebar_position: 2
-description: "Transaction scripts, block queries, and expiration management with the tx module and #[tx_script] macro."
+description: "Block queries, note commitments, and expiration management with the tx module."
 ---
 
-# Transaction Context
+# The tx Module
 
 A Miden transaction is a local operation that consumes zero or more input notes and produces state changes plus output notes for a single account. The transaction executes entirely on the client — the VM runs the code, generates a ZK proof, and only the proof is submitted to the network. The `tx` module provides access to block information, note commitments, and expiration controls. Transaction scripts (`#[tx_script]`) serve as standalone entry points that orchestrate the transaction.
 
@@ -73,7 +73,7 @@ Transaction scripts use the `#[tx_script]` macro to define a top-level entry poi
 | `get_expiration_block_delta` | `fn() -> Felt` | Current expiration delta |
 | `update_expiration_block_delta` | `fn(delta: Felt)` | Set expiration delta |
 
-For signature verification using the transaction context, see [Authentication](../accounts/authentication). For more time-based and security patterns, see [Patterns & Security](../patterns). For the complete function table, see the [Cheatsheet](../api-reference).
+For signature verification using the transaction context, see [Authentication](../accounts/authentication). For time-based patterns using `tx::get_block_number()`, see [Patterns & Security — Rate limiting](../patterns#rate-limiting). For the complete function table, see the [Cheatsheet](../api-reference).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden::tx`](https://docs.rs/miden/latest/miden/tx/)

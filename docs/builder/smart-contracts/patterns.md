@@ -108,7 +108,7 @@ impl OwnedContract {
 }
 ```
 
-### Rate limiting
+### Rate limiting {#rate-limiting}
 
 Enforce cooldown periods between actions:
 

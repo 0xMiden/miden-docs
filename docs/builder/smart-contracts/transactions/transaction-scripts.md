@@ -6,7 +6,7 @@ description: "Write transaction scripts with #[tx_script] to orchestrate multi-n
 
 # Transaction Scripts
 
-A transaction script is a top-level function that runs once per transaction, after all note scripts have executed. It can call account methods via [cross-component calls](../cross-component-calls) and create output notes. This is distinct from note scripts (which run per-note) and account components (which run when called by scripts).
+A transaction script is a top-level function that runs once per transaction, after all note scripts have executed. Use it to orchestrate logic that spans multiple consumed notes — moving assets from the account vault into output notes, calling account methods via [cross-component calls](../cross-component-calls), or running anything that must happen after all note scripts finish.
 
 ## `#[tx_script]` signature
 
@@ -93,12 +93,9 @@ fn run(arg: Word, account: &mut Account) {
 This script uses the advice map to pass structured input data. The caller encodes the note parameters (tag, note_type, recipient, asset) as a preimage and passes the commitment hash as the `arg` Word.
 :::
 
-## When to use transaction scripts
-
-- Orchestrating multi-note transactions (creating multiple output notes in one tx)
-- Moving assets out of an account into notes
-- Running logic that spans multiple notes consumed in the same transaction
-- Anything that must happen after all note scripts have run
+:::tip
+`adv_push_mapvaln` and `adv_load_preimage` are part of the advice provider — the mechanism for supplying auxiliary data to a transaction. See [Advice Provider](./advice-provider) for the full function reference.
+:::
 
 ## Related
 
