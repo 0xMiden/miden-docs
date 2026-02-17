@@ -8,7 +8,7 @@ description: "Miden's execution model, account structure, note system, and trans
 
 Miden is a ZK rollup where transactions execute on the client and only a cryptographic proof is submitted to the network. Every entity — wallets, contracts, faucets — is an account with code, storage, a vault, and a nonce. Assets move between accounts through notes, which act as programmable UTXOs. This page describes the execution model, account structure, note system, and transaction lifecycle. For a hands-on walkthrough, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
 
-## Coming from EVM or SVM?
+<!-- ## Coming from EVM or SVM?
 
 If you've built on Ethereum or Solana, this table maps familiar concepts to their Miden equivalents:
 
@@ -22,7 +22,7 @@ If you've built on Ethereum or Solana, this table maps familiar concepts to thei
 | `revert` | On-chain failure, gas consumed | Proof cannot be generated — no on-chain trace |
 | Execution | Every node re-executes | Client executes locally, submits ZK proof |
 | Privacy | All state/inputs public | Network sees only the proof + state commitments |
-| Composability | Synchronous contract calls | Cross-component calls (same account) + notes (cross-account) |
+| Composability | Synchronous contract calls | Cross-component calls (same account) + notes (cross-account) | -->
 
 ## What makes Miden different
 
