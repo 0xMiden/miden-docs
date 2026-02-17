@@ -1,6 +1,6 @@
 ---
 title: "Types"
-sidebar_position: 3
+sidebar_position: 5.6
 description: "Felt field arithmetic, Word layout, Asset encoding, and type conversions in the Miden Rust SDK."
 ---
 
@@ -124,8 +124,8 @@ let w = Word::from([felt!(1), felt!(2), felt!(3), felt!(4)]);
 // From 4 u64 values (unchecked)
 let w = Word::from_u64_unchecked(1, 2, 3, 4);
 
-// From a single Felt (placed in position [0], rest zeroed)
-let w = Word::from(felt!(42));  // [felt!(42), felt!(0), felt!(0), felt!(0)]
+// From a single Felt (placed in position [3], positions [0]–[2] zeroed)
+let w = Word::from(felt!(42));  // [felt!(0), felt!(0), felt!(0), felt!(42)]
 
 // From a tuple
 let w = Word::from((felt!(1), felt!(2), felt!(3), felt!(4)));

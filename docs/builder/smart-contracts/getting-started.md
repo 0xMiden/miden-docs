@@ -1,78 +1,65 @@
 ---
-title: "Getting Started"
+title: "Toolchain & Project Structure"
 sidebar_position: 2
-description: "Install the Miden toolchain, create your first Rust smart contract project, and build it."
+description: "The Miden toolchain, project layout, Cargo.toml configuration, and how Rust source becomes a deployable .masp file."
 ---
 
-# Getting Started
+# Toolchain & Project Structure
 
-This guide walks you through installing the Miden toolchain, creating a project with `miden new`, understanding the project structure and `Cargo.toml` configuration, and building your first contract. For a complete end-to-end walkthrough, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
+Miden contracts are written in Rust and compiled to WebAssembly, then translated to Miden Assembly (MASM) by the Miden compiler. The toolchain manages this pipeline. This page explains what the tools are, how a project is organized, and what each piece of configuration controls. For a hands-on walkthrough, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
 
-## Prerequisites
+## The Miden toolchain
 
-- [Rust toolchain](https://rustup.rs/) installed
-- Basic familiarity with Rust programming
+The Miden toolchain consists of two main tools:
 
-## Install the Miden toolchain
+| Tool | Purpose |
+|------|---------|
+| `midenup` | Toolchain manager — installs and updates Miden tools (similar to `rustup`) |
+| `cargo-miden` | Cargo subcommand that compiles Rust contracts to `.masp` files |
 
-Install `midenup`, the Miden toolchain manager:
+`midenup` is installed via a shell script and manages versioned Miden toolchain components, including the correct Rust nightly and Wasm targets required by `cargo-miden`. This ensures your contracts are always compiled with a compatible toolchain.
+
+### Installing the toolchain
 
 ```bash title=">_ Terminal"
 curl -L https://raw.githubusercontent.com/0xMiden/midenup/main/install.sh | bash
-```
-
-Then install the Miden tools:
-
-```bash title=">_ Terminal"
 midenup install
 ```
 
-Verify the installation:
+`midenup install` downloads `cargo-miden`, the Miden CLI, and the required Rust toolchain components. After installation, `miden --version` confirms the toolchain is ready.
 
-```bash title=">_ Terminal"
-miden --version
-```
+## Project layout
 
-This installs `cargo-miden` (the compiler), the Miden CLI, and required toolchain components.
-
-## Create a new project
-
-```bash title=">_ Terminal"
-miden new my-project
-cd my-project
-```
-
-This generates a workspace with the following structure:
+A Miden project created with `miden new` is a Cargo workspace with a conventional structure:
 
 ```text
 my-project/
 ├── contracts/
-│   ├── counter-account/        # Example account component
+│   ├── counter-account/        # Account component
 │   │   ├── src/lib.rs
 │   │   └── Cargo.toml
-│   └── increment-note/         # Example note script
+│   └── increment-note/         # Note script
 │       ├── src/lib.rs
 │       └── Cargo.toml
-├── integration/                 # Tests and deployment scripts
+├── integration/                # Tests and deployment scripts
 │   ├── src/
 │   │   ├── bin/
 │   │   ├── lib.rs
 │   │   └── helpers.rs
 │   └── tests/
-├── Cargo.toml                   # Workspace root
-└── rust-toolchain.toml          # Pinned Rust toolchain
+├── Cargo.toml                  # Workspace root
+└── rust-toolchain.toml         # Pinned Rust toolchain
 ```
 
-### Project layout
+| Directory | What lives here |
+|-----------|----------------|
+| `contracts/` | Smart contract source — account components, note scripts, transaction scripts. Each contract is its own crate with its own `Cargo.toml`. |
+| `integration/` | Tests, deployment scripts, and helpers for interacting with the Miden network or a local mock. |
+| `rust-toolchain.toml` | Pins the Rust toolchain version. The Miden compiler requires specific Rust and Wasm target versions. |
 
-| Directory | Purpose |
-|-----------|---------|
-| `contracts/` | Smart contract source code — account components, note scripts, tx scripts |
-| `integration/` | Tests, deployment scripts, and on-chain interaction helpers |
+## `Cargo.toml` configuration
 
-## Understanding `Cargo.toml`
-
-Each contract has its own `Cargo.toml` with Miden-specific configuration:
+Each contract crate has Miden-specific configuration under `[package.metadata.miden]`:
 
 ```toml title="contracts/counter-account/Cargo.toml"
 [package]
@@ -84,7 +71,7 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-miden = { path = "../../sdk/sdk" }
+miden = "0.10"
 
 [package.metadata.component]
 package = "miden:counter-contract"
@@ -94,129 +81,106 @@ project-kind = "account"
 supported-types = ["RegularAccountUpdatableCode"]
 ```
 
-### Key configuration fields
+### Key fields
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `crate-type = ["cdylib"]` | Yes | Required for WebAssembly compilation |
-| `[package.metadata.miden]` | Yes | Miden compiler configuration |
-| `project-kind` | Yes | `"account"`, `"note-script"`, or `"transaction-script"` |
+| Field | Required | What it controls |
+|-------|----------|-----------------|
+| `crate-type = ["cdylib"]` | Yes | Tells Cargo to produce a dynamic library — required for WebAssembly compilation |
+| `[package.metadata.miden]` | Yes | Miden compiler configuration block |
+| `project-kind` | Yes | What kind of contract this is (see below) |
 | `supported-types` | Account only | Which account types this component supports |
-| `[package.metadata.component]` | Yes | WIT component package name |
-| `[package.metadata.miden.dependencies]` | For cross-component | References to other Miden packages |
+| `[package.metadata.component]` | Yes | WIT component package name — used for cross-component interoperability |
+| `[package.metadata.miden.dependencies]` | Cross-component only | References to other Miden packages this component calls |
 
 ### Project kinds
 
-| Kind | Description | Example |
-|------|-------------|---------|
-| `"account"` | Account component with storage and methods | Wallets, contracts |
-| `"note-script"` | Note script that executes when a note is consumed | P2ID, custom transfers |
-| `"transaction-script"` | Transaction script that runs in a transaction context | Initialization scripts |
+| Kind | Description |
+|------|-------------|
+| `"account"` | An account component — has storage slots, exposes public methods, and is attached to an account on deployment |
+| `"note-script"` | Code that executes when a note is consumed by a recipient |
+| `"transaction-script"` | Code that runs in a transaction context, used for initialization or scripted interactions |
 
-## Your first contract
+## What a contract looks like
 
-Here's the `basic-wallet` example from the compiler — a minimal account component:
+Miden contracts are `#![no_std]` Rust libraries. Here's the `counter-account` component that `miden new` generates:
 
-```rust title="src/lib.rs"
+```rust title="contracts/counter-account/src/lib.rs"
 #![no_std]
 #![feature(alloc_error_handler)]
 
-use miden::{component, native_account, output_note, Asset, NoteIdx};
+use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
 
 #[component]
-struct MyAccount;
+struct CounterContract {
+    #[storage(description = "counter contract storage map")]
+    count_map: StorageMap,
+}
 
 #[component]
-impl MyAccount {
-    /// Adds an asset to the account vault.
-    pub fn receive_asset(&mut self, asset: Asset) {
-        self.add_asset(asset);
+impl CounterContract {
+    pub fn get_count(&self) -> Felt {
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
+        self.count_map.get(&key)
     }
 
-    /// Moves an asset from the account vault to an output note.
-    pub fn move_asset_to_note(&mut self, asset: Asset, note_idx: NoteIdx) {
-        let asset = self.remove_asset(asset);
-        output_note::add_asset(asset, note_idx);
+    pub fn increment_count(&mut self) -> Felt {
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
+        let current_value: Felt = self.count_map.get(&key);
+        let new_value = current_value + felt!(1);
+        self.count_map.set(key, new_value);
+        new_value
     }
 }
 ```
 
-Key points:
+- **`#![no_std]`** — Miden contracts run inside the Miden VM, which has no OS or standard library
+- **`#[component]`** — Applied to both the struct and `impl` block; generates WIT bindings and storage scaffolding
+- **`StorageMap`** — A persistent key-value store annotated with `#[storage]`
+- **`&self` vs `&mut self`** — Read-only methods take `&self`, write methods take `&mut self`
 
-- **`#![no_std]`**: Required — Miden contracts run without the standard library
-- **`#[component]`**: Applied to both the struct and impl block
-- **`&mut self`**: Marks methods that modify state (write operations)
-- **`self.add_asset()` / `self.remove_asset()`**: Auto-generated methods on components without explicit storage fields
-
-## Build your project
-
-```bash title=">_ Terminal"
-cd contracts/counter-account
-miden build --release
-```
-
-<details>
-<summary>Expected output</summary>
-
-```text
-   Compiling counter-contract v0.1.0
-    Finished `release` profile [optimized] target(s)
-Creating Miden package target/miden/release/counter_contract.masp
-```
-
-</details>
-
-### What's in a `.masp` file?
-
-A `.masp` (Miden Assembly Package) file contains:
-
-- Compiled Miden Assembly (MASM) code
-- WIT interface definitions for component interoperability
-- Storage layout metadata
-- Account type configuration
-
-This is what you deploy to the Miden network. The MASM code is what the Miden VM executes to generate zero-knowledge proofs.
-
-## Common `#![no_std]` setup
-
-Most contracts need these attributes at the top of `lib.rs`:
+Most contracts also need `extern crate alloc` and a bump allocator if they use heap types (`Vec`, `String`, etc.):
 
 ```rust
-// Required: no standard library
-#![no_std]
-// Required: custom alloc error handler
-#![feature(alloc_error_handler)]
-
-// Optional: if you need heap allocation (Vec, String, etc.)
 extern crate alloc;
 use alloc::vec::Vec;
-```
 
-If you need heap allocation, add a global allocator:
-
-```rust
 #[global_allocator]
 static ALLOC: miden::BumpAlloc = miden::BumpAlloc::new();
 ```
 
-See [Patterns](./patterns) for more on `BumpAlloc` and `#![no_std]` implications.
+## The build output: `.masp` files
+
+Running `miden build --release` from a contract directory produces a `.masp` file (Miden Assembly Package):
+
+```text
+target/miden/release/counter_contract.masp
+```
+
+A `.masp` file contains:
+
+- **Compiled MASM** — The Miden Assembly the VM executes at transaction time
+- **WIT interface definitions** — For cross-component interoperability
+- **Storage layout metadata** — How the component's storage slots are organized
+- **Account type configuration** — Which account types this component supports
+
+This is the artifact that gets deployed to the Miden network. The Miden VM executes the MASM code and produces a zero-knowledge proof; the network verifies the proof without ever seeing the original Rust source.
+
+## Common `#![no_std]` patterns
+
+| Pattern | When to use |
+|---------|-------------|
+| `extern crate alloc;` | When you need `Vec`, `String`, `Box`, or other heap types |
+| `#[global_allocator] static ALLOC: miden::BumpAlloc` | Required alongside `extern crate alloc` — the VM has no default allocator |
+| `use alloc::vec::Vec;` | Heap-allocated collections |
+| `#![feature(alloc_error_handler)]` | Required when using a custom allocator |
 
 ## Troubleshooting
 
-### `error: requires #![no_std]`
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `requires #![no_std]` | Missing `no_std` attribute | Add `#![no_std]` to the top of `lib.rs` |
+| `crate-type must be cdylib` | Wrong crate type | Set `crate-type = ["cdylib"]` in `[lib]` |
+| `unknown project-kind` | Typo in project kind | Valid values: `"account"`, `"note-script"`, `"transaction-script"` |
+| `.masp` not generated after successful build | Built from workspace root without specifying package | Run from the contract directory, or use `miden build -p counter-contract --release` |
 
-Add `#![no_std]` to the top of your `lib.rs`. Miden contracts cannot use the standard library.
-
-### `error: crate-type must be cdylib`
-
-Ensure your `Cargo.toml` has `crate-type = ["cdylib"]` under `[lib]`.
-
-### `error: unknown project-kind`
-
-Valid values are `"account"`, `"note-script"`, or `"transaction-script"`. Check `[package.metadata.miden]`.
-
-### Build succeeds but `.masp` not generated
-
-Make sure you're building from the contract directory (not the workspace root) or specify the package: `miden build -p counter-contract --release`.
-
-Once your project builds, explore [Components](./accounts/components) to understand the `#[component]` macro and [Types](./types) for Felt, Word, and field arithmetic.
+Once you understand the project structure, explore [Components](./accounts/components) for the full `#[component]` API and [Types](./types) for Felt, Word, and field arithmetic.

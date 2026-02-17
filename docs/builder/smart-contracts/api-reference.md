@@ -288,8 +288,7 @@ Access the currently executing note's data.
 | `get_recipient` | `fn() -> Recipient` | Note recipient hash |
 | `get_script_root` | `fn() -> Word` | Note script root |
 | `get_serial_number` | `fn() -> Word` | Note serial number |
-| `get_metadata` | `fn() -> Word` | Note metadata |
-| `add_assets_to_account` | `fn()` | Transfer all assets to consuming account |
+| `get_metadata` | `fn() -> NoteMetadata` | Note metadata (attachment + header) |
 
 ---
 
@@ -304,7 +303,7 @@ Create and manage output notes.
 | `get_assets_info` | `fn(note_idx: NoteIdx) -> OutputNoteAssetsInfo` | Assets commitment and count |
 | `get_assets` | `fn(note_idx: NoteIdx) -> Vec<Asset>` | All assets on note |
 | `get_recipient` | `fn(note_idx: NoteIdx) -> Recipient` | Note recipient |
-| `get_metadata` | `fn(note_idx: NoteIdx) -> Word` | Note metadata |
+| `get_metadata` | `fn(note_idx: NoteIdx) -> NoteMetadata` | Note metadata (attachment + header) |
 | `set_attachment` | `fn(note_idx: NoteIdx, scheme: Felt, kind: Felt, data: Word)` | Set attachment with explicit kind |
 | `set_word_attachment` | `fn(note_idx: NoteIdx, scheme: Felt, data: Word)` | Set Word attachment |
 | `set_array_attachment` | `fn(note_idx: NoteIdx, scheme: Felt, data: Word)` | Set array attachment (commitment) |
@@ -320,7 +319,7 @@ Access specific input notes by index.
 | `get_assets_info` | `fn(note_idx: NoteIdx) -> InputNoteAssetsInfo` | Assets commitment and count |
 | `get_assets` | `fn(note_idx: NoteIdx) -> Vec<Asset>` | All assets on note |
 | `get_recipient` | `fn(note_idx: NoteIdx) -> Recipient` | Note recipient |
-| `get_metadata` | `fn(note_idx: NoteIdx) -> Word` | Note metadata |
+| `get_metadata` | `fn(note_idx: NoteIdx) -> NoteMetadata` | Note metadata (attachment + header) |
 | `get_sender` | `fn(note_idx: NoteIdx) -> AccountId` | Note sender |
 | `get_inputs_info` | `fn(note_idx: NoteIdx) -> InputNoteInputsInfo` | Inputs commitment and count |
 | `get_script_root` | `fn(note_idx: NoteIdx) -> Word` | Note script root |
@@ -377,7 +376,8 @@ Faucet operations (for faucet account types only).
 ### Hash functions
 
 ```rust
-use miden::{hash_words, intrinsics::crypto::merge, crypto::hashes::{blake3_hash, sha256_hash}};
+use miden::{hash_words, blake3_hash, sha256_hash};
+use miden::intrinsics::advice::adv_push_mapvaln;
 ```
 
 | Function | Signature | Description |

@@ -25,13 +25,19 @@ The simplest way to make cross-component calls from note scripts is through the 
 
 ```rust
 use crate::bindings::Account;
+use miden::{active_note, Asset};
+
+#[note]
+struct P2idNote;
 
 #[note]
 impl P2idNote {
     #[note_script]
     pub fn run(self, _arg: Word, account: &mut Account) {
-        // account.receive_asset() calls the wallet component's method
-        account.receive_asset(asset);
+        // Iterate over the note's assets and transfer each to the account
+        for asset in active_note::get_assets() {
+            account.receive_asset(asset);
+        }
     }
 }
 ```

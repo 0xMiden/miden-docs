@@ -1,10 +1,10 @@
 ---
-title: "How It Works"
+title: "What is a Miden Smart Contract"
 sidebar_position: 1
 description: "Miden's execution model, account structure, note system, and transaction lifecycle — how Rust code becomes zero-knowledge proofs."
 ---
 
-# How Miden Smart Contracts Work
+# What is a Miden Smart Contract
 
 Miden is a ZK rollup where transactions execute on the client and only a cryptographic proof is submitted to the network. Every entity — wallets, contracts, faucets — is an account with code, storage, a vault, and a nonce. Assets move between accounts through notes, which act as programmable UTXOs. This page describes the execution model, account structure, note system, and transaction lifecycle. For a hands-on walkthrough, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
 
@@ -155,13 +155,13 @@ Miden supports several account types, configured in `Cargo.toml`:
 | Building Block | Description | Details |
 |----------------|-------------|---------|
 | [Components](./accounts/components) | Reusable code modules with storage and WIT interfaces | `#[component]` macro |
-| [Types](./types) | Felt, Word, Asset — the VM's native types | Field arithmetic |
 | [Storage](./accounts/storage) | Up to 255 slots of Value or StorageMap | Persistent state |
 | [Custom Types](./accounts/custom-types) | Exported structs/enums for public APIs | `#[export_type]` |
 | [Account Operations](./accounts/account-operations) | Read/write account state and vault | `active_account`, `native_account` |
 | [Notes](./notes/) | Programmable UTXOs for asset transfers | Note scripts |
-| [Transaction Context](./transactions/transaction-context) | Block queries and transaction scripts | `tx` module, `#[tx_script]` |
+| [The tx Module](./transactions/transaction-context) | Block queries and expiration management | `tx` module, `#[tx_script]` |
 | [Authentication](./accounts/authentication) | Falcon512 signatures and replay protection | Nonce management |
 | [Cross-Component Calls](./cross-component-calls) | Inter-component communication | WIT bindings, `generate!()` |
+| [Types](./types) | Felt, Word, Asset — the VM's native types | Field arithmetic |
 
 Ready to start building? Follow the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/) for a hands-on walkthrough.

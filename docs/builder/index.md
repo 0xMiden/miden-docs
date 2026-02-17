@@ -61,7 +61,7 @@ import DocCard from '@theme/DocCard';
       item={{
         type: 'link',
         href: './smart-contracts',
-        label: 'Rust Smart Contracts',
+        label: 'Miden Smart Contracts',
         description: 'Reference documentation for building Miden smart contracts in Rust.',
       }}
     />
