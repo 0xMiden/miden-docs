@@ -93,7 +93,7 @@ const config: Config = {
           const redirects: string[] = [];
 
           // Builder section: redirect old root-level paths to new /builder/ paths
-          if (existingPath === "/builder/") {
+          if (existingPath === "/builder" || existingPath === "/builder/") {
             redirects.push("/intro");
           }
           if (existingPath.startsWith("/builder/quick-start")) {
@@ -182,7 +182,7 @@ const config: Config = {
       src: "https://scripts.simpleanalyticscdn.com/latest.js",
       async: true,
       defer: true,
-      "data-hostname": "miden.xyz",
+      "data-hostname": "docs.miden.xyz",
     },
   ],
 

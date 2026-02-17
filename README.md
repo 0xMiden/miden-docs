@@ -152,7 +152,11 @@ refs:
 
 #### 2. Run the Version Cut Workflow
 
-Trigger `.github/workflows/cut-versions.yml` (manually or via push to manifest):
+> **Important:** Run this workflow on a **branch** (not `main`). The workflow commits the snapshot
+> to the current branch, allowing you to review changes in a PR before merging to `main`.
+> The workflow is configured to NOT run automatically when changes are pushed to `main`.
+
+Trigger `.github/workflows/cut-versions.yml` on a branch (manually via `workflow_dispatch`, or by pushing the updated manifest to the branch):
 
 The workflow executes these steps:
 1. **Checkout external repos** at pinned refs
@@ -178,7 +182,7 @@ The `.github/workflows/deploy-docs.yml` workflow:
 1. Checks out this repository and all external source repos
 2. Ingests external docs into v0.4 IA structure:
    - Design docs → `docs/design/miden-base/`, `miden-vm/`, `compiler/`, `miden-node/`
-   - Builder docs → `docs/builder/tutorials/`, `docs/builder/client/`
+   - Builder docs → `docs/builder/develop/tutorials/`, `docs/builder/tools/client/`
 3. Runs `npm run build` to generate the static site
 4. Deploys to GitHub Pages at `docs.miden.xyz`
 
