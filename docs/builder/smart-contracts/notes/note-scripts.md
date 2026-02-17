@@ -95,14 +95,13 @@ The `Account` type comes from WIT bindings of the account component — see [Cro
 
 ### Without account access
 
-If the note script doesn't need to interact with the account:
+Use this pattern for **trigger or command notes** that carry no assets and only execute logic (e.g., calling a counter contract). If your note transfers assets, include `&mut Account`.
 
 ```rust
 #[note_script]
 pub fn run(self, _arg: Word) {
-    // Can still read note data via active_note
-    let assets = active_note::get_assets();
-    // But cannot call account methods
+    // For logic-only notes that carry no assets.
+    // Cannot call account methods — see the counter note example below.
 }
 ```
 
@@ -130,7 +129,7 @@ impl CounterNote {
         counter_contract::increment_count();
         let expected_value = initial_value + Felt::from_u32(1);
         let final_value = counter_contract::get_count();
-        assert_eq(final_value, expected_value);
+        assert_eq!(final_value, expected_value);
     }
 }
 ```
