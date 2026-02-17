@@ -200,54 +200,6 @@ self.compute_storage_commitment() -> Word
 // ... and more (see API Reference)
 ```
 
-## Complete example
-
-Here's the `basic-wallet` example from the compiler:
-
-```rust title="src/lib.rs"
-#![no_std]
-#![feature(alloc_error_handler)]
-
-use miden::{component, native_account, output_note, Asset, NoteIdx};
-
-#[component]
-struct MyAccount;
-
-#[component]
-impl MyAccount {
-    /// Adds an asset to the account.
-    pub fn receive_asset(&mut self, asset: Asset) {
-        self.add_asset(asset);
-    }
-
-    /// Moves an asset from the account to a note.
-    pub fn move_asset_to_note(&mut self, asset: Asset, note_idx: NoteIdx) {
-        let asset = self.remove_asset(asset);
-        output_note::add_asset(asset, note_idx);
-    }
-}
-```
-
-```toml title="Cargo.toml"
-[package]
-name = "basic_wallet"
-version = "0.1.0"
-edition = "2024"
-
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
-miden = { path = "../../sdk/sdk" }
-
-[package.metadata.component]
-package = "miden:basic-wallet"
-
-[package.metadata.miden]
-project-kind = "account"
-supported-types = ["RegularAccountUpdatableCode"]
-```
-
 For the full list of auto-generated methods, see the [Cheatsheet](../api-reference). To export your own types for use in public method signatures, see [Custom Types](./custom-types). For the complete account and vault query API, see [Account Operations](./account-operations).
 
 :::info API Reference

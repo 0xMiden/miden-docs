@@ -8,7 +8,7 @@ description: "Query account state with active_account and mutate the vault with 
 
 Miden provides two modules for interacting with the current account during a transaction: `active_account` for read-only queries (balance, nonce, commitments) and `native_account` for mutations (add/remove assets, increment nonce). The split reflects the ZK proof model — `active_account` calls don't affect the proof's state transition, while `native_account` calls represent state changes that must be proven. The vault is the account's asset container where all fungible and non-fungible assets live.
 
-## active_account — Read-only queries
+## `active_account` — Read-only queries
 
 These functions query the current account's state without modifying it. They're available in both `&self` and `&mut self` methods.
 
@@ -127,7 +127,7 @@ impl MyAccount {
     pub fn check_balance(&self, faucet_id: AccountId) -> Felt {
         // These are equivalent:
         self.get_balance(faucet_id)          // via ActiveAccount trait
-        // active_account::get_balance(faucet_id)  // direct module call
+        active_account::get_balance(faucet_id)  // direct module call
     }
 }
 ```

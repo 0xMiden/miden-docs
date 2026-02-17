@@ -68,6 +68,10 @@ impl Counter {
 
 ### Access control
 
+:::note
+Auth components authenticate state changes using cryptographic signatures (see [Authentication](./accounts/authentication)). For Solidity-style ownership and role-based access control — especially on network accounts — you'll need to implement this pattern explicitly, as shown below.
+:::
+
 Restrict operations to the account owner:
 
 ```rust
