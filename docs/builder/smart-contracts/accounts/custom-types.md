@@ -175,15 +175,15 @@ struct MyAccount;
 impl MyAccount {
     pub fn test_custom_types(&self, a: StructA, asset: Asset) -> StructB {
         StructB {
-            bar: a.foo.inner.0,
-            baz: a.foo.inner.1,
+            bar: a.foo[0],
+            baz: a.foo[1],
         }
     }
 
     pub fn test_custom_types2(&self, a: StructA, asset: Asset) -> my_types::StructC {
         my_types::StructC {
-            inner1: a.foo.inner.0,
-            inner2: a.foo.inner.1,
+            inner1: a.foo[0],
+            inner2: a.foo[1],
         }
     }
 }

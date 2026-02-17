@@ -73,7 +73,7 @@ let exists: bool = active_account::has_procedure(proc_root);
 
 ## native_account — Mutations
 
-These functions modify account state. They're only available in `&mut self` methods.
+`add_asset`, `remove_asset`, and `incr_nonce` require `&mut self` and modify account state. `compute_delta_commitment` and `was_procedure_called` take `&self` — they are read-only queries on the native account.
 
 ```rust
 use miden::native_account;

@@ -58,5 +58,5 @@ let hash: [u8; 32] = sha256_hash(input_bytes);
 
 ## Related
 
-- [Authentication](./authentication) — auth component pattern, nonce management, and security best practices
+- [Authentication](./authentication) — auth component pattern and nonce management
 - [Advice Provider](../transactions/advice-provider) — supplying auxiliary data during proof generation
