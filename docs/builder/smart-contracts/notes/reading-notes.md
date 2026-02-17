@@ -141,7 +141,7 @@ A transaction script that reads data from a consumed input note:
 use miden::*;
 
 #[tx_script]
-pub fn run() {
+pub fn run(arg: Word) {
     // Query the first input note (index 0)
     let idx = NoteIdx { inner: felt!(0) };
     let assets = input_note::get_assets(idx);

@@ -22,7 +22,7 @@ fn run(arg: Word) { ... }
 
 | Constraint | Details |
 |------------|---------|
-| Function name | Any valid Rust identifier |
+| Function name | Must be `run` (enforced by the macro) |
 | Return type | `()` |
 | Required arg | One `Word` (the script argument, passed by the transaction executor) |
 | Optional arg | `&Account` or `&mut Account` |

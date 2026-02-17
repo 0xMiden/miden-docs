@@ -80,9 +80,3 @@ This is fundamentally different from Ethereum's `revert`, where the failed trans
 | **Failure** | On-chain revert, gas consumed, visible trace | Proof can't be generated — no on-chain trace, no cost |
 | **Parallelism** | Transactions touching same state must serialize | Single-account scope enables parallel execution |
 | **Authentication** | `msg.sender` set by protocol | Falcon512 signatures verified inside the transaction |
-
-## In this section
-
-- [**Transaction context**](./transaction-context.md) — the `tx` module, block queries, and the `#[tx_script]` macro
-- [**Authentication**](../accounts/authentication) — how Falcon512 signatures authorize transactions and why nonces prevent replay
-- [**Cross-component calls**](../cross-component-calls.md) — invoking procedures across components using WIT bindings
