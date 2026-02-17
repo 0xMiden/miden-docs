@@ -55,30 +55,9 @@ tx::update_expiration_block_delta(felt!(100));
 
 The expiration delta determines how many blocks after creation the transaction remains valid. If the transaction isn't included within this window, it expires.
 
-## The `#[tx_script]` macro
+## Transaction scripts
 
-Transaction scripts are standalone functions that run in a transaction context. They can call account methods and process notes.
-
-```rust
-use miden::tx_script;
-
-#[tx_script]
-fn initialize_bank(arg: Word) {
-    // Transaction script logic
-}
-```
-
-The `#[tx_script]` macro:
-- Exports the function via the `miden:base/transaction-script@1.0.0` WIT interface
-- The function receives a `Word` argument
-- Returns `()`
-
-### Cargo.toml for transaction scripts
-
-```toml
-[package.metadata.miden]
-project-kind = "transaction-script"
-```
+Transaction scripts use the `#[tx_script]` macro to define a top-level entry point for the transaction. See [Transaction Scripts](./transaction-scripts) for the full `#[tx_script]` API and examples.
 
 ## Time-based patterns
 

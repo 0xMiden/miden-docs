@@ -1,6 +1,6 @@
 ---
 title: "Authentication"
-sidebar_position: 3
+sidebar_position: 4
 description: "RPO-Falcon512 signature verification, nonce management, and replay protection in Miden contracts."
 ---
 
@@ -45,27 +45,7 @@ The actual signature data is loaded onto the advice stack by the host. The `rpo_
 
 ## The advice provider
 
-The advice provider is a mechanism for supplying auxiliary data during proof generation. For authentication:
-
-### Requesting a signature
-
-```rust
-use miden::intrinsics::advice::emit_falcon_sig_to_stack;
-
-// Request the host to push a Falcon signature onto the advice stack
-emit_falcon_sig_to_stack(msg, pub_key);
-```
-
-This emits an `AUTH_REQUEST_EVENT` that tells the host: "I need a Falcon512 signature for this message with this public key." The host (client) provides the signature from the advice provider.
-
-### Inserting data into the advice map
-
-```rust
-use miden::intrinsics::advice::adv_insert;
-
-// Insert data into the advice map for later retrieval
-adv_insert(key, &word_slice);
-```
+The advice provider supplies auxiliary data during proof generation — see [Advice Provider](./advice-provider) for the full API.
 
 ## Implementing an auth component
 
