@@ -98,7 +98,7 @@ Notes are similar to Bitcoin's UTXOs, but with arbitrary programmable logic. A n
 
 The most common pattern is **P2ID** (Pay to ID) — a note that can only be consumed by a specific account.
 
-See [Notes](./notes) for implementation details.
+See [Notes](./notes/) for implementation details.
 
 ## Transaction flow
 
@@ -159,7 +159,7 @@ Miden supports several account types, configured in `Cargo.toml`:
 | [Storage](./accounts/storage) | Up to 255 slots of Value or StorageMap | Persistent state |
 | [Custom Types](./accounts/custom-types) | Exported structs/enums for public APIs | `#[export_type]` |
 | [Account Operations](./accounts/account-operations) | Read/write account state and vault | `active_account`, `native_account` |
-| [Notes](./notes) | Programmable UTXOs for asset transfers | Note scripts |
+| [Notes](./notes/) | Programmable UTXOs for asset transfers | Note scripts |
 | [Transaction Context](./transactions/transaction-context) | Block queries and transaction scripts | `tx` module, `#[tx_script]` |
 | [Authentication](./transactions/authentication) | Falcon512 signatures and replay protection | Nonce management |
 | [Cross-Component Calls](./transactions/cross-component-calls) | Inter-component communication | WIT bindings, `generate!()` |
