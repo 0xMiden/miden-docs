@@ -37,7 +37,7 @@ pub trait ValueAccess<V> {
 }
 ```
 
-`Value` implements `ValueAccess<V>` for any `V` that converts to/from `Word`. In practice, you'll mostly use `V = Word`:
+`Value` implements `ValueAccess<V>` for any `V` that converts to/from `Word`. Most usage is `V = Word`:
 
 ### Reading
 
@@ -143,9 +143,9 @@ pub fn read_data(&self, key: Word) -> Word {
 }
 ```
 
-## Storage layout planning
+## Storage layout conventions
 
-Plan your storage layout before building. Document what each slot and each Felt within a Word represents:
+Each slot and each Felt within a Word can be documented with inline comments on the struct:
 
 ```rust
 #[component]
@@ -174,17 +174,9 @@ struct TokenVault {
 }
 ```
 
-### Guidelines
-
-- **Use comments** to document the layout of each Felt within a Word
-- **Group related data** into the same slot to minimize storage operations
-- **Reserve a dedicated config slot** (e.g., `config`) for configuration or auth keys (convention)
-- **Use StorageMap** when you need dynamic keys (per-user balances, per-item data)
-- **Use Value** for global state that has a fixed structure
-
 ## Low-level storage access
 
-If you need direct storage access outside the component traits, use the bindings:
+Direct storage access outside the component traits uses the bindings:
 
 ```rust
 use miden::storage;
@@ -202,7 +194,7 @@ let initial: Word = storage::get_initial_item(slot_id);
 let initial: Word = storage::get_initial_map_item(slot_id, &key);
 ```
 
-These functions are useful for checking what values were at the start of the transaction (before any modifications).
+These functions return values from before any modifications in the current transaction.
 
 For Felt and Word conversion details, see [Types](../types). To export your own types for public APIs, see [Custom Types](./custom-types). For common storage patterns like access control and rate limiting, see [Patterns & Security](../patterns).
 

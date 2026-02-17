@@ -8,7 +8,7 @@ description: "Export custom structs and enums for use in public component method
 
 When public [component](./components) methods use custom structs or enums, those types must be annotated with `#[export_type]` so the compiler can generate corresponding WIT interface definitions. Types used only internally (in private methods or local variables) don't need this annotation.
 
-## When you need `#[export_type]`
+## `#[export_type]` requirement
 
 Any custom type that appears in a **public method signature** must be annotated with `#[export_type]`:
 
@@ -65,7 +65,7 @@ impl MyAccount {
 
 ## Exporting enums
 
-Enums work the same way — annotate with `#[export_type]`:
+Enums use the same annotation:
 
 ```rust
 use miden::{export_type, Felt};
@@ -199,7 +199,7 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-miden = { path = "../../../../sdk/sdk" }
+miden = "0.10"
 
 [package.metadata.component]
 package = "miden:component-macros-account"
