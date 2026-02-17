@@ -8,10 +8,6 @@ description: "Built-in note types: P2ID, P2IDE (with expiration), and SWAP (atom
 
 Miden provides built-in note patterns for common asset transfer scenarios. These are protocol primitives you can use directly or extend for custom behavior.
 
-:::note
-All note script crates require `#![no_std]` and `#![feature(alloc_error_handler)]` at the crate root. These are omitted from code examples below for brevity.
-:::
-
 ## P2ID (Pay to ID)
 
 The most common pattern — a note that can only be consumed by a specific account. The note script checks that the consuming account's ID matches the target, then transfers all assets.
@@ -19,6 +15,10 @@ The most common pattern — a note that can only be consumed by a specific accou
 ### When to use
 
 Use P2ID for standard asset transfers where only the intended recipient should be able to consume the note. This is the most common note type.
+
+:::info
+P2ID notes use `create_p2id_note` from the `miden-standards` crate. The script is pre-compiled MASM — use the builder API to create P2ID notes in client code.
+:::
 
 ### How it works
 
@@ -32,65 +32,27 @@ Use P2ID for standard asset transfers where only the intended recipient should b
 |-------|------|-------------|
 | `target_account_id` | `AccountId` | The account allowed to consume this note |
 
-### Implementation
+### Builder API
 
-```rust title="p2id-note/src/lib.rs"
-use miden::{AccountId, Word, active_note, note};
-
-use crate::bindings::Account;
-
-#[note]
-struct P2idNote {
-    target_account_id: AccountId,
-}
-
-#[note]
-impl P2idNote {
-    #[note_script]
-    pub fn run(self, _arg: Word, account: &mut Account) {
-        let current_account = account.get_id();
-        assert_eq!(current_account, self.target_account_id);
-
-        let assets = active_note::get_assets();
-        for asset in assets {
-            account.receive_asset(asset);
-        }
-    }
-}
+```rust
+create_p2id_note(
+    sender,       // AccountId: who sends the note
+    target,       // AccountId: the only account that can consume this note
+    assets,       // Vec<Asset>: assets to attach
+    note_type,    // NoteType: Public or Private
+    attachment,   // NoteAttachment: auxiliary data
+    rng,          // &mut impl FeltRng
+) -> Result<Note, NoteError>
 ```
 
-- `self.target_account_id` is populated from note inputs (the `#[note]` macro handles this)
-- `account: &mut Account` is the consuming account — its type comes from WIT bindings
-- `account.receive_asset()` calls the wallet component's method via [cross-component calls](../transactions/cross-component-calls)
-- If `assert_eq!` fails, proof generation fails and the note cannot be consumed
-
-### Cargo.toml
-
-```toml title="p2id-note/Cargo.toml"
-[package]
-name = "p2id"
-version = "0.1.0"
-edition = "2024"
-
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
-miden = "0.10"
-
-[package.metadata.component]
-package = "miden:p2id"
-
-[package.metadata.miden]
-project-kind = "note-script"
-
-# Declare the account component this note interacts with
-[package.metadata.miden.dependencies]
-"miden:basic-wallet" = { path = "../basic-wallet" }
-
-[package.metadata.component.target.dependencies]
-"miden:basic-wallet" = { path = "../basic-wallet/target/generated-wit/" }
-```
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `sender` | `AccountId` | Account sending the note |
+| `target` | `AccountId` | The only account that can consume this note |
+| `assets` | `Vec<Asset>` | Assets to attach to the note |
+| `note_type` | `NoteType` | `Public` or `Private` |
+| `attachment` | `NoteAttachment` | Auxiliary data for the note |
+| `rng` | `&mut impl FeltRng` | Random number generator |
 
 ## P2IDE (Pay to ID with Expiration)
 
@@ -99,6 +61,10 @@ P2IDE extends P2ID with a timelock and a reclaim window. The note can't be consu
 ### When to use
 
 Use P2IDE when the sender wants the option to reclaim assets if the recipient doesn't consume the note within a time window.
+
+:::info
+P2IDE notes use `create_p2ide_note` from the `miden-standards` crate. The script is pre-compiled MASM — use the builder API to create P2IDE notes in client code.
+:::
 
 ### How it works
 
@@ -116,95 +82,31 @@ Use P2IDE when the sender wants the option to reclaim assets if the recipient do
 | `timelock_height` | `Felt` | Block height before which the note can't be consumed |
 | `reclaim_height` | `Felt` | Block height after which the creator can reclaim |
 
-### Implementation
+### Builder API
 
-```rust title="p2ide-note/src/lib.rs"
-use miden::*;
-
-use crate::bindings::Account;
-
-fn consume_assets(account: &mut Account) {
-    let assets = active_note::get_assets();
-    for asset in assets {
-        account.receive_asset(asset);
-    }
-}
-
-fn reclaim_assets(account: &mut Account, consuming_account: AccountId) {
-    let creator_account = active_note::get_sender();
-
-    if consuming_account == creator_account {
-        consume_assets(account);
-    } else {
-        panic!();
-    }
-}
-
-#[note]
-struct P2ideNote;
-
-#[note]
-impl P2ideNote {
-    #[note_script]
-    pub fn run(self, _arg: Word, account: &mut Account) {
-        let inputs = active_note::get_inputs();
-
-        // make sure the number of inputs is 4
-        assert_eq((inputs.len() as u32).into(), felt!(4));
-
-        let target_account_id_prefix = inputs[0];
-        let target_account_id_suffix = inputs[1];
-
-        let timelock_height = inputs[2];
-        let reclaim_height = inputs[3];
-
-        // get block number
-        let block_number = tx::get_block_number();
-        assert!(block_number >= timelock_height);
-
-        // get consuming account id
-        let consuming_account_id = account.get_id();
-
-        // target account id
-        let target_account_id = AccountId::new(target_account_id_prefix, target_account_id_suffix);
-
-        let is_target = target_account_id == consuming_account_id;
-        if is_target {
-            consume_assets(account);
-        } else {
-            assert!(reclaim_height >= block_number);
-            reclaim_assets(account, consuming_account_id);
-        }
-    }
-}
+```rust
+create_p2ide_note(
+    sender,           // AccountId: who sends the note
+    target,           // AccountId: the only account that can consume this note
+    assets,           // Vec<Asset>: assets to attach
+    reclaim_height,   // Option<BlockNumber>: None = no reclaim window
+    timelock_height,  // Option<BlockNumber>: None = no timelock
+    note_type,        // NoteType: Public or Private
+    attachment,       // NoteAttachment: auxiliary data
+    rng,              // &mut impl FeltRng
+) -> Result<Note, NoteError>
 ```
 
-### Cargo.toml
-
-```toml title="p2ide-note/Cargo.toml"
-[package]
-name = "p2ide"
-version = "0.1.0"
-edition = "2024"
-
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
-miden = "0.10"
-
-[package.metadata.component]
-package = "miden:p2ide"
-
-[package.metadata.miden]
-project-kind = "note-script"
-
-[package.metadata.miden.dependencies]
-"miden:basic-wallet" = { path = "../basic-wallet" }
-
-[package.metadata.component.target.dependencies]
-"miden:basic-wallet" = { path = "../basic-wallet/target/generated-wit/" }
-```
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `sender` | `AccountId` | Account sending the note |
+| `target` | `AccountId` | The only account that can consume this note |
+| `assets` | `Vec<Asset>` | Assets to attach to the note |
+| `reclaim_height` | `Option<BlockNumber>` | Block height after which sender can reclaim; `None` = no reclaim |
+| `timelock_height` | `Option<BlockNumber>` | Block height before which note can't be consumed; `None` = no timelock |
+| `note_type` | `NoteType` | `Public` or `Private` |
+| `attachment` | `NoteAttachment` | Auxiliary data for the note |
+| `rng` | `&mut impl FeltRng` | Random number generator |
 
 ## SWAP (Atomic Exchange)
 
@@ -214,6 +116,10 @@ SWAP enables atomic asset exchange. The creator offers one asset; any consumer w
 
 Use SWAP for trustless atomic exchanges where two parties trade assets without intermediaries.
 
+:::info
+SWAP notes use `create_swap_note` from the `miden-standards` crate. The script is pre-compiled MASM — use the builder API to create SWAP notes in client code.
+:::
+
 ### How it works
 
 1. Creator creates a SWAP note containing the offered asset and metadata describing the requested asset + payback recipient
@@ -221,24 +127,31 @@ Use SWAP for trustless atomic exchanges where two parties trade assets without i
 3. Consumer receives the offered asset into their vault
 4. Both transfers happen atomically in one transaction
 
-:::info
-SWAP notes use `SwapNote` from the `miden-standards` crate. The note script itself is written in MASM and compiled into the standards library. You don't write the script in Rust — you use the builder to create SWAP notes in client code.
-:::
-
-### Implementation
+### Builder API
 
 ```rust
-SwapNote::create(
-    sender,                  // AccountId: who receives the payback
-    offered_asset,           // Asset: what the note carries
-    requested_asset,         // Asset: what the consumer must provide
-    swap_note_type,          // NoteType: public or private
-    swap_note_attachment,    // NoteAttachment: auxiliary data for the SWAP note
-    payback_note_type,       // NoteType: for the P2ID payback
-    payback_note_attachment, // NoteAttachment: auxiliary data for the payback note
-    rng,                     // &mut impl FeltRng
+create_swap_note(
+    sender,
+    offered_asset,
+    requested_asset,
+    swap_note_type,
+    swap_note_attachment,
+    payback_note_type,
+    payback_note_attachment,
+    rng,
 ) -> Result<(Note, NoteDetails), NoteError>
 ```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `sender` | `AccountId` | Account that receives the payback P2ID note |
+| `offered_asset` | `Asset` | Asset the note carries (what the consumer receives) |
+| `requested_asset` | `Asset` | Asset the consumer must provide in return |
+| `swap_note_type` | `NoteType` | `Public` or `Private` for the SWAP note |
+| `swap_note_attachment` | `NoteAttachment` | Auxiliary data for the SWAP note |
+| `payback_note_type` | `NoteType` | `Public` or `Private` for the P2ID payback note |
+| `payback_note_attachment` | `NoteAttachment` | Auxiliary data for the payback note |
+| `rng` | `&mut impl FeltRng` | Random number generator |
 
 Returns a tuple of `(Note, NoteDetails)` — the SWAP note to submit and the expected payback note details (for tracking).
 

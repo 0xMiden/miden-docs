@@ -16,12 +16,12 @@ A note script consists of a struct (holding note inputs) and an impl block with 
 use miden::{AccountId, Word, active_note, note};
 
 #[note]
-struct P2idNote {
+struct MyNote {
     target_account_id: AccountId,
 }
 
 #[note]
-impl P2idNote {
+impl MyNote {
     #[note_script]
     pub fn run(self, _arg: Word, account: &mut Account) {
         // Script logic here
