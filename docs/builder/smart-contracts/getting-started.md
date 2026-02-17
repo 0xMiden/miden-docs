@@ -6,7 +6,7 @@ description: "Install the Miden toolchain, create your first Rust smart contract
 
 # Getting Started
 
-This guide walks you through installing the Miden toolchain, creating a project with `miden new`, understanding the project structure and `Cargo.toml` configuration, and building your first contract. For a complete end-to-end walkthrough, see the [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/).
+This guide walks you through installing the Miden toolchain, creating a project with `miden new`, understanding the project structure and `Cargo.toml` configuration, and building your first contract. For a complete end-to-end walkthrough, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
 
 ## Prerequisites
 

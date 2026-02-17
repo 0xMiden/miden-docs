@@ -6,7 +6,7 @@ description: "Common patterns for access control, rate limiting, spending limits
 
 # Patterns & Security
 
-Proven patterns for writing safe, correct Miden smart contracts, followed by security considerations specific to the Miden execution model. Each pattern is presented problem-first: the problem is stated, then the solution is shown with code. For a hands-on tutorial applying these patterns, see the [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/).
+Proven patterns for writing safe, correct Miden smart contracts, followed by security considerations specific to the Miden execution model. Each pattern is presented problem-first: the problem is stated, then the solution is shown with code. For a hands-on tutorial applying these patterns, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
 
 ## Common Patterns
 

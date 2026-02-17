@@ -6,7 +6,7 @@ description: "Miden's execution model, account structure, note system, and trans
 
 # How Miden Smart Contracts Work
 
-Miden is a ZK rollup where transactions execute on the client and only a cryptographic proof is submitted to the network. Every entity — wallets, contracts, faucets — is an account with code, storage, a vault, and a nonce. Assets move between accounts through notes, which act as programmable UTXOs. This page describes the execution model, account structure, note system, and transaction lifecycle. For a hands-on walkthrough, see the [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/).
+Miden is a ZK rollup where transactions execute on the client and only a cryptographic proof is submitted to the network. Every entity — wallets, contracts, faucets — is an account with code, storage, a vault, and a nonce. Assets move between accounts through notes, which act as programmable UTXOs. This page describes the execution model, account structure, note system, and transaction lifecycle. For a hands-on walkthrough, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
 
 ## Coming from EVM or SVM?
 
@@ -164,4 +164,4 @@ Miden supports several account types, configured in `Cargo.toml`:
 | [Authentication](./transactions/authentication) | Falcon512 signatures and replay protection | Nonce management |
 | [Cross-Component Calls](./transactions/cross-component-calls) | Inter-component communication | WIT bindings, `generate!()` |
 
-Ready to start building? Follow the [Miden Bank Tutorial](../../develop/tutorials/rust-compiler/miden-bank/) for a hands-on walkthrough.
+Ready to start building? Follow the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/) for a hands-on walkthrough.
