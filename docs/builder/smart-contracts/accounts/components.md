@@ -71,9 +71,9 @@ field_name: Value,
 field_name: StorageMap,
 ```
 
-The `description` is optional but recommended and becomes part of the generated metadata. Slot IDs are derived from the component package name (from `[package.metadata.component]`) and the field name, so **renaming a field changes the slot ID**. Ordering does not matter, and `slot(N)` is not supported.
+The `description` is optional and becomes part of the generated metadata. Slot IDs are derived from the component package name (from `[package.metadata.component]`) and the field name, so **renaming a field changes the slot ID**. Ordering does not matter, and `slot(N)` is not supported.
 
-Use `#[storage(description = "...")]` on each storage field:
+Each storage field takes a `#[storage(description = "...")]` annotation:
 
 ```rust
 #[storage(description = "initialized flag")]
@@ -122,8 +122,8 @@ pub fn deposit(&mut self, asset: Asset) {
 }
 ```
 
-:::info What this means for ZK proofs
-Read methods produce proofs that don't change account state. Write methods produce proofs that include state transitions. The `&self` vs `&mut self` distinction is enforced by the compiler and determines which kernel operations are available.
+:::info ZK proof implications
+Read methods (`&self`) produce proofs that don't include state transitions. Write methods (`&mut self`) produce proofs that do. The distinction is enforced by the compiler and determines which kernel operations are available.
 :::
 
 ### Private methods

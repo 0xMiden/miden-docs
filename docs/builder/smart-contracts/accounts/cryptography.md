@@ -6,6 +6,8 @@ description: "RPO-Falcon512 signature verification and hashing primitives in Mid
 
 # Cryptography
 
+The Miden SDK exposes cryptographic primitives for signature verification and hashing. These are low-level functions used by authentication components and anywhere message digests or hash-based commitments are needed.
+
 ## RPO-Falcon512 verification
 
 The core function for signature verification:
@@ -32,7 +34,7 @@ The actual signature data is loaded onto the advice stack by the host. The `rpo_
 
 ## Hashing
 
-Use `hash_words` to create message digests for signing:
+`hash_words` creates a message digest from a slice of Words:
 
 ```rust
 use miden::hash_words;
@@ -45,7 +47,7 @@ let digest: Word = hash_words(&words).into();
 Other available hash functions:
 
 ```rust
-use miden::crypto::hashes::{blake3_hash, sha256_hash};
+use miden::{blake3_hash, sha256_hash};
 
 // BLAKE3 (32-byte input -> 32-byte output)
 let hash: [u8; 32] = blake3_hash(input_bytes);

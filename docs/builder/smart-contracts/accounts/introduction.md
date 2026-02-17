@@ -69,9 +69,3 @@ Storage mode controls privacy:
 | **Identity** | Wallets are EOAs, contracts are separate | Everything is an account — wallets are smart contracts |
 | **Failure** | `revert` consumes gas, leaves an on-chain trace | Proof cannot be generated — no on-chain trace, no cost |
 
-## In this section
-
-- [**Components**](./components.md) — reusable units of account code and storage, and the `#[component]` macro
-- [**Storage**](./storage.md) — typed slots and maps for persisting account state
-- [**Custom types**](./custom-types.md) — defining and sharing structs and enums across components with `#[export_type]`
-- [**Account operations**](./account-operations.md) — reading and mutating account state, vault, and nonce at runtime

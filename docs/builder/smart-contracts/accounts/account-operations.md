@@ -113,7 +113,7 @@ let called: bool = native_account::was_procedure_called(proc_root);
 
 ## Auto-generated methods on components
 
-When you use `#[component]`, the macro implements `ActiveAccount` and `NativeAccount` traits on your struct. This means you can call these functions as methods on `self`:
+`#[component]` implements the `ActiveAccount` and `NativeAccount` traits on the struct, exposing these functions as methods on `self`:
 
 ```rust
 #[component]
@@ -179,7 +179,7 @@ When proof generation fails:
 3. No state changes occur
 4. The client receives an error describing the failure
 
-## Example: Managed wallet
+## ManagedWallet component
 
 ```rust
 #![no_std]
