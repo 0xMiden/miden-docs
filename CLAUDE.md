@@ -36,7 +36,7 @@ npm run clear          # Clear Docusaurus cache (if builds are stale)
 - Images go in `static/img/` with descriptive names
 
 ## Gotchas
-- `versioned_docs/` and `versioned_sidebars/` are auto-generated — don't edit manually
+- `versioned_docs/` and `versioned_sidebars/` are auto-generated — don't edit manually unless you need to update the versioned_docs release contents
 - `sidebars.ts` controls navigation — update when adding/removing pages
 - Release manifest YAML drives version display — don't edit unless releasing
 - Some custom components in `src/` — check before adding new ones
