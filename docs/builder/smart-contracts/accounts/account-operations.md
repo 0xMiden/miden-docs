@@ -185,7 +185,7 @@ When proof generation fails:
 #![no_std]
 #![feature(alloc_error_handler)]
 
-use miden::{component, active_account, native_account, output_note, Asset, AccountId, NoteIdx, Felt};
+use miden::{component, output_note, Asset, AccountId, NoteIdx, Felt};
 
 #[component]
 struct ManagedWallet;

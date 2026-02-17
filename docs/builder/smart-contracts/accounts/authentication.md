@@ -44,7 +44,7 @@ impl AuthComponent {
 
         // 2. Build the message to verify (transaction summary)
         let commitment = self.compute_delta_commitment();
-        let nonce = Word::from(self.incr_nonce());
+        let nonce = Word::from(self.incr_nonce()); // Felt → [0, 0, 0, nonce_felt]
         let msg: Word = hash_words(&[commitment, nonce]).into();
 
         // 3. Request signature from advice provider

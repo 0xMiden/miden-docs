@@ -73,16 +73,6 @@ field_name: StorageMap,
 
 The `description` is optional and becomes part of the generated metadata. Slot IDs are derived from the component package name (from `[package.metadata.component]`) and the field name, so **renaming a field changes the slot ID**. Ordering does not matter, and `slot(N)` is not supported.
 
-Each storage field takes a `#[storage(description = "...")]` annotation:
-
-```rust
-#[storage(description = "initialized flag")]
-initialized: Value,
-
-#[storage(description = "balances map")]
-balances: StorageMap,
-```
-
 ### Components without storage
 
 Components don't need storage fields:
@@ -159,7 +149,7 @@ Public methods can use these types in their signatures:
 
 The `#[component]` macro automatically provides methods on `self` through the `NativeAccount` and `ActiveAccount` traits.
 
-### Always available (via `NativeAccount` trait; mutating methods require `&mut self`)
+### Always available (via `NativeAccount` trait)
 
 ```rust
 // Add an asset to the account vault

@@ -37,7 +37,7 @@ pub trait ValueAccess<V> {
 }
 ```
 
-`Value` implements `ValueAccess<V>` for any `V` that converts to/from `Word`. Most usage is `V = Word`:
+`Value` implements `ValueAccess<V>` for any `V` that converts to/from `Word`. Note that `write()` returns the **previous** slot value, not the value written. Most usage is `V = Word`:
 
 ### Reading
 
@@ -112,7 +112,7 @@ pub fn get_balance(&self, account_id: AccountId) -> Felt {
 }
 ```
 
-When you call `get()` with a `Felt` return type, it returns the last element of the stored `Word` (index 3). For the full `Word`, specify the return type:
+When you call `get()` with a `Felt` return type, it returns index 3 of the stored `Word` (via `From<Word> for Felt`). This means single-value maps should store their value at index 3. For the full `Word`, specify the return type:
 
 ```rust
 // Get the full Word value

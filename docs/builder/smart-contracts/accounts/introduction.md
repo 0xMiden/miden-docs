@@ -28,6 +28,8 @@ The network doesn't store the full account state. Instead, it stores cryptograph
 On Ethereum, a smart contract is a single monolithic unit of code deployed to an address. On Miden, accounts are composed of **components** — reusable modules that each contribute their own storage layout and exported procedures.
 
 ```rust
+use miden::{component, Asset};
+
 #[component]
 struct MyWallet;
 
