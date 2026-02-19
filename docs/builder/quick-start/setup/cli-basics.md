@@ -116,6 +116,23 @@ To make your account visible on-chain, deploy it using:
 miden client new-wallet
 ```
 
+## Mint Your First Tokens
+
+Request tokens from the public testnet faucet:
+
+```bash title=">_ Terminal"
+miden mint --target-account <ACCOUNT_ID> --amount 1000
+```
+
+This sends a mint request to the [public testnet faucet](https://faucet-api.testnet.miden.io) and automatically consumes the resulting note, depositing the tokens into your account.
+
+Display your balance:
+
+```bash title=">_ Terminal"
+miden client sync
+miden client account -s <ACCOUNT_ID>
+```
+
 ## Create a New Project
 
 **Rust workspace template**: Designed for developing, testing, and deploying Miden smart contracts using Rust
