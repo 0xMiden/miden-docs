@@ -126,7 +126,7 @@ miden mint --target-account <ACCOUNT_ID> --amount 1000
 
 This sends a mint request to the [public testnet faucet](https://faucet-api.testnet.miden.io) and automatically consumes the resulting note, depositing the tokens into your account.
 
-Verify your balance:
+Display your balance:
 
 ```bash title=">_ Terminal"
 miden client sync
