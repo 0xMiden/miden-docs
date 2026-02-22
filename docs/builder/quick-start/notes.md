@@ -579,7 +579,7 @@ Minting 1000 tokens to Alice...
 Mint transaction submitted successfully, ID: "0x7a2dbde87ea2f4d41b396d6d3f6bdb9a8d7e2a51555fa57064a1657ad70fca06"
 Waiting for note to be consumable...
 Consume transaction submitted successfully, ID: "0xa75872c498ee71cd6725aef9411d2559094cec1e1e89670dbf99c60bb8843481"
-Alice's TEST token balance: Ok(1000)
+Alice's TEST token balance: 1000
 ```
 
 </details>
@@ -816,7 +816,6 @@ async fn main() -> anyhow::Result<()> {
     WebClient,
     AccountStorageMode,
     NoteType,
-    ConsumableNoteRecord,
     AccountId,
     AuthScheme,
 } from "@miden-sdk/miden-sdk";
@@ -937,7 +936,7 @@ Minting 1000 tokens to Alice...
 Mint transaction submitted successfully, ID: 0x948a0eef754068b3126dd3261b6b54214fa5608fb13c5e5953faf59bad79c75f
 Consume transaction submitted successfully, ID: 0xc69ab84b784120abe858bb536aebda90bd2067695f11d5da93ab0b704f39ad78
 Alice's TEST token balance: 100
-Send 100 tokens to Bob note transaction ID: "0x51ac27474ade3a54adadd50db6c2b9a2ede254c5f9137f93d7a970f0bc7d66d5"
+Send transaction submitted successfully, ID: 0x51ac27474ade3a54adadd50db6c2b9a2ede254c5f9137f93d7a970f0bc7d66d5
 ```
 
 </details>
