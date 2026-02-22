@@ -269,8 +269,8 @@ export async function demo() {
 <summary>Expected output</summary>
 
 ```text
-Alice's account ID: 0x49e27aa5fa5686102fde8e81b89999
-Faucet account ID: 0x9796be9c72f137206676f7821a9968
+Alice's account ID: 0x5b2840a923dedc102ea67e0c1eba3c
+Faucet account ID: 0x29dd1dc628d2842032e751ed1b5da7
 Minting 1000 tokens to Alice...
 Mint transaction submitted successfully, ID: 0x7a2dbde87ea2f4d41b396d6d3f6bdb9a8d7e2a51555fa57064a1657ad70fca06
 ```
@@ -573,8 +573,8 @@ export async function demo() {
 <summary>Expected output</summary>
 
 ```text
-Alice's account ID: "0x49e27aa5fa5686102fde8e81b89999"
-Faucet account ID: "0x9796be9c72f137206676f7821a9968"
+Alice's account ID: "0x5b2840a923dedc102ea67e0c1eba3c"
+Faucet account ID: "0x29dd1dc628d2842032e751ed1b5da7"
 Minting 1000 tokens to Alice...
 Mint transaction submitted successfully, ID: "0x7a2dbde87ea2f4d41b396d6d3f6bdb9a8d7e2a51555fa57064a1657ad70fca06"
 Waiting for note to be consumable...
@@ -779,7 +779,7 @@ async fn main() -> anyhow::Result<()> {
     // SENDING TOKENS TO BOB
     //------------------------------------------------------------
 
-    let bob_account_id = AccountId::from_hex("0x599a54603f0cf9000000ed7a11e379")?;
+    let bob_account_id = AccountId::from_hex("0x103f8a1ad4b983104aec0412ab0b0d")?;
     let send_amount = 100;
     let fungible_asset_to_send = FungibleAsset::new(faucet_account.id(), send_amount)?;
 
@@ -905,7 +905,7 @@ export async function demo() {
     await client.syncState();
 
     // Send tokens from Alice to Bob
-    const bobAccountId = "0x599a54603f0cf9000000ed7a11e379";
+    const bobAccountId = "0x103f8a1ad4b983104aec0412ab0b0d";
     console.log("Sending 100 tokens to Bob...");
 
     // Build transaction request to send tokens from Alice to Bob

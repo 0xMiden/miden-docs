@@ -3099,8 +3099,8 @@ export async function demo() {
 <summary>Expected output</summary>
 
 ```text
-Alice's account ID: 0x49e27aa5fa5686102fde8e81b89999
-Faucet account ID: 0x9796be9c72f137206676f7821a9968
+Alice's account ID: 0x5b2840a923dedc102ea67e0c1eba3c
+Faucet account ID: 0x29dd1dc628d2842032e751ed1b5da7
 Minting 1000 tokens to Alice...
 Mint transaction submitted successfully, ID: 0x7a2dbde87ea2f4d41b396d6d3f6bdb9a8d7e2a51555fa57064a1657ad70fca06
 ```
@@ -3403,8 +3403,8 @@ export async function demo() {
 <summary>Expected output</summary>
 
 ```text
-Alice's account ID: "0x49e27aa5fa5686102fde8e81b89999"
-Faucet account ID: "0x9796be9c72f137206676f7821a9968"
+Alice's account ID: "0x5b2840a923dedc102ea67e0c1eba3c"
+Faucet account ID: "0x29dd1dc628d2842032e751ed1b5da7"
 Minting 1000 tokens to Alice...
 Mint transaction submitted successfully, ID: "0x7a2dbde87ea2f4d41b396d6d3f6bdb9a8d7e2a51555fa57064a1657ad70fca06"
 Waiting for note to be consumable...
@@ -3609,7 +3609,7 @@ async fn main() -> anyhow::Result<()> {
     // SENDING TOKENS TO BOB
     //------------------------------------------------------------
 
-    let bob_account_id = AccountId::from_hex("0x599a54603f0cf9000000ed7a11e379")?;
+    let bob_account_id = AccountId::from_hex("0x103f8a1ad4b983104aec0412ab0b0d")?;
     let send_amount = 100;
     let fungible_asset_to_send = FungibleAsset::new(faucet_account.id(), send_amount)?;
 
@@ -3735,7 +3735,7 @@ export async function demo() {
     await client.syncState();
 
     // Send tokens from Alice to Bob
-    const bobAccountId = "0x599a54603f0cf9000000ed7a11e379";
+    const bobAccountId = "0x103f8a1ad4b983104aec0412ab0b0d";
     console.log("Sending 100 tokens to Bob...");
 
     // Build transaction request to send tokens from Alice to Bob
@@ -3879,7 +3879,7 @@ async fn main() -> anyhow::Result<()> {
     // READ PUBLIC STATE OF THE COUNTER ACCOUNT
     //------------------------------------------------------------
 
-    let counter_account_id = AccountId::from_hex("0xe59d8cd3c9ff2a0055da0b83ed6432")?;
+    let counter_account_id = AccountId::from_hex("0x224a96d294e10d006aef3d4f1b0876")?;
 
     client.import_account_by_id(counter_account_id).await?;
 
@@ -3916,7 +3916,7 @@ export async function demo() {
     const client = await WebClient.createClient(nodeEndpoint);
     await client.syncState();
 
-    const accountId = AccountId.fromHex("0xe59d8cd3c9ff2a0055da0b83ed6432");
+    const accountId = AccountId.fromHex("0x224a96d294e10d006aef3d4f1b0876");
 
     // Import the account into the client's database
     await client.importAccountById(accountId);
@@ -3941,7 +3941,7 @@ export async function demo() {
 <summary>Expected output</summary>
 
 ```text
-Count: 43
+Count: 1
 ```
 
 </details>
@@ -3995,8 +3995,8 @@ async fn main() -> anyhow::Result<()> {
     // READ TOKEN BALANCE OF AN ACCOUNT
     //------------------------------------------------------------
 
-    let alice_account_id = AccountId::from_hex("0x49e27aa5fa5686102fde8e81b89999")?;
-    let faucet_account_id = AccountId::from_hex("0x9796be9c72f137206676f7821a9968")?;
+    let alice_account_id = AccountId::from_hex("0x5b2840a923dedc102ea67e0c1eba3c")?;
+    let faucet_account_id = AccountId::from_hex("0x29dd1dc628d2842032e751ed1b5da7")?;
 
     client.import_account_by_id(alice_account_id).await?;
 
@@ -4028,8 +4028,8 @@ export async function demo() {
     const client = await WebClient.createClient(nodeEndpoint);
     await client.syncState();
 
-    const aliceId = AccountId.fromHex("0x49e27aa5fa5686102fde8e81b89999");
-    const faucetId = AccountId.fromHex("0x9796be9c72f137206676f7821a9968");
+    const aliceId = AccountId.fromHex("0x5b2840a923dedc102ea67e0c1eba3c");
+    const faucetId = AccountId.fromHex("0x29dd1dc628d2842032e751ed1b5da7");
 
     // Import the account into the client's database
     await client.importAccountById(aliceId);
