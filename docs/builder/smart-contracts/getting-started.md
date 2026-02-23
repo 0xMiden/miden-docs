@@ -183,4 +183,4 @@ This is the artifact that gets deployed to the Miden network. The Miden VM execu
 | `unknown project-kind` | Typo in project kind | Valid values: `"account"`, `"note-script"`, `"transaction-script"` |
 | `.masp` not generated after successful build | Built from workspace root without specifying package | Run from the contract directory, or use `miden build -p counter-contract --release` |
 
-Once you understand the project structure, explore [Components](./accounts/components) for the full `#[component]` API and [Types](./types) for Felt, Word, and field arithmetic.
+Once you understand the project structure, explore [Components](./accounts/components) for the full `#[component]` API, [Types](./types) for Felt, Word, and field arithmetic, and the [compiler examples](https://github.com/0xMiden/compiler/tree/next/examples) for complete working projects.

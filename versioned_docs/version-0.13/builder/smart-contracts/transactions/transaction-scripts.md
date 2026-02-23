@@ -52,7 +52,7 @@ This example reads note parameters from the advice map and creates an output not
 // extern crate alloc;
 // use alloc::vec::Vec;
 
-use miden::{intrinsics::advice::adv_push_mapvaln, *};
+use miden::{intrinsics::advice::{adv_load_preimage, adv_push_mapvaln}, *};
 
 use crate::bindings::Account;
 
