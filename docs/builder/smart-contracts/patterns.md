@@ -1,6 +1,7 @@
 ---
 title: "Patterns & Security"
 sidebar_position: 6
+draft: true
 description: "Common patterns for access control, rate limiting, spending limits, and security in Miden Rust contracts."
 ---
 
