@@ -71,7 +71,7 @@ let new_nonce: Felt = native_account::incr_nonce();
 
 The nonce is automatically included in the transaction's proof. If someone tries to replay a transaction, the nonce won't match and verification will fail.
 
-Auth components are typically called via [cross-component calls](../cross-component-calls) from note scripts or [transaction scripts](../transactions/transaction-context). For access control and security patterns, see [Patterns & Security](../patterns).
+Auth components are typically called via [cross-component calls](../cross-component-calls) from note scripts or [transaction scripts](../transactions/transaction-scripts). For access control and security patterns, see [Patterns & Security](../patterns).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`rpo_falcon512_verify`)

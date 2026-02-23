@@ -68,45 +68,49 @@ impl Counter {
 
 ### Access control
 
-:::note
-Auth components authenticate state changes using cryptographic signatures (see [Authentication](./accounts/authentication)). For Solidity-style ownership and role-based access control — especially on network accounts — you'll need to implement this pattern explicitly, as shown below.
+:::warning[No msg.sender in account components]
+Unlike Solidity, account component procedures cannot check "who is calling me." In Miden:
+- **Note scripts** can check who created the note via `active_note::get_sender()`
+- **Account components** rely on authentication components (Falcon512, ECDSA) which the transaction kernel invokes automatically in the epilogue
 :::
 
-Restrict operations to the account owner:
+#### Note-based ownership check
+
+Note scripts can restrict execution to notes from a specific sender. This mirrors how the protocol-level `ownable` standard works (`miden-standards/asm/standards/access/ownable.masm`):
 
 ```rust
-use miden::{component, felt, active_account, Value, ValueAccess, Word, AccountId};
+use miden::*;
 
-#[component]
-struct OwnedContract {
-    #[storage(description = "owner account id")]
-    owner: Value,
-}
+#[note_script]
+mod owner_only_note {
+    use super::*;
 
-#[component]
-impl OwnedContract {
-    pub fn init_owner(&mut self, owner_id: AccountId) {
-        let current: Word = self.owner.read();
-        assert!(current[0] == felt!(0)); // Not already initialized
+    /// A note that only executes if created by the expected owner account.
+    #[note]
+    struct OwnerOnlyNote;
 
-        self.owner.write(Word::from([
-            owner_id.prefix, owner_id.suffix, felt!(0), felt!(0)
-        ]));
-    }
+    impl OwnerOnlyNote {
+        pub fn run(self, _arg: Word, account: &mut Account) {
+            // Get the account that created this note
+            let sender = active_note::get_sender();
 
-    fn require_owner(&self) {
-        let owner: Word = self.owner.read();
-        let caller = active_account::get_id();
-        assert!(owner[0] == caller.prefix);
-        assert!(owner[1] == caller.suffix);
-    }
+            // Compare against the expected owner
+            // In practice, load this from account storage
+            let expected_prefix = Felt::new(0x1234); // placeholder
+            let expected_suffix = Felt::new(0x5678); // placeholder
 
-    pub fn privileged_action(&mut self) {
-        self.require_owner();
-        // ... protected logic
+            assert_eq(sender.prefix, expected_prefix);
+            assert_eq(sender.suffix, expected_suffix);
+
+            // ... proceed with privileged operation
+        }
     }
 }
 ```
+
+#### Authentication components
+
+For most account-level access control, Miden uses authentication components rather than manual sender checks. The transaction kernel calls the account's `auth` procedure automatically during the transaction epilogue — if the signature is invalid, the entire transaction fails. See [Authentication](./accounts/authentication) for the full pattern.
 
 ### Rate limiting {#rate-limiting}
 

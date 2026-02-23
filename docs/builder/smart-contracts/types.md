@@ -253,8 +253,8 @@ let id = AccountId::new(prefix_felt, suffix_felt);
 
 // Use in comparisons
 let current = active_account::get_id();
-assert_eq!(current.prefix, expected.prefix);
-assert_eq!(current.suffix, expected.suffix);
+assert_eq(current.prefix, expected.prefix);
+assert_eq(current.suffix, expected.suffix);
 ```
 
 ## Other types
