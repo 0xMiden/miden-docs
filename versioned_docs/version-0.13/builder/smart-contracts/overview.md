@@ -8,22 +8,6 @@ description: "Miden's execution model, account structure, note system, and trans
 
 Miden is a ZK rollup where transactions execute on the client and only a cryptographic proof is submitted to the network. Every entity — wallets, contracts, faucets — is an account with code, storage, a vault, and a nonce. Assets move between accounts through notes, which act as programmable UTXOs. This page describes the execution model, account structure, note system, and transaction lifecycle. For a hands-on walkthrough, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
 
-<!-- ## Coming from EVM or SVM?
-
-If you've built on Ethereum or Solana, this table maps familiar concepts to their Miden equivalents:
-
-| Concept | EVM / SVM | Miden |
-|---|---|---|
-| Smart contract | Contract at an address | Account component |
-| Contract state | Solidity state variables | `Value` / `StorageMap` storage fields (up to 255 slots) |
-| Asset issuance | ERC-20 / ERC-721 contracts | Faucet accounts (mint/burn native assets) |
-| Transfer | `transfer()` call on token contract | Create a note (programmable UTXO) |
-| `msg.sender` | Implicit caller address | `active_note::get_sender()` — note sender field identifies the caller |
-| `revert` | On-chain failure, gas consumed | Proof cannot be generated — no on-chain trace |
-| Execution | Every node re-executes | Client executes locally, submits ZK proof |
-| Privacy | All state/inputs public | Network sees only the proof + state commitments |
-| Composability | Synchronous contract calls | Cross-component calls (same account) + notes (cross-account) | -->
-
 ## What makes Miden different
 
 On Ethereum, smart contracts execute on every node. On Miden, **transactions execute locally on the client** — and only a cryptographic proof is submitted to the network.

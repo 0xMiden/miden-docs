@@ -42,6 +42,8 @@ impl P2idNote {
 }
 ```
 
+The `_arg: Word` parameter is the note's first input Word, passed automatically when the note is consumed. It's unused in this example (prefixed with `_`), but note scripts can use it for recipient-specific data like expected account IDs or amounts.
+
 The `Account` type is auto-generated from the WIT bindings of the dependent component. Its methods correspond to the component's public methods.
 
 ## Using `generate!()` directly

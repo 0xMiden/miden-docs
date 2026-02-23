@@ -36,6 +36,10 @@ impl Wallet {
 }
 ```
 
+:::note
+All Miden contracts require `#![no_std]`. The remaining examples on this page omit the preamble (`#![no_std]`, `#![feature(alloc_error_handler)]`) for brevity. See [Toolchain & Project Structure](./getting-started#no_std-environment) for the full setup.
+:::
+
 ### Counter
 
 Track a numeric value in storage:
