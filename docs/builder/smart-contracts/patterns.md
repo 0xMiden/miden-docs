@@ -85,29 +85,26 @@ Note scripts can restrict execution to notes from a specific sender. This mirror
 ```rust
 use miden::*;
 
-#[note_script]
-mod owner_only_note {
-    use super::*;
+/// A note that only executes if created by the expected owner account.
+#[note]
+struct OwnerOnlyNote;
 
-    /// A note that only executes if created by the expected owner account.
-    #[note]
-    struct OwnerOnlyNote;
+#[note]
+impl OwnerOnlyNote {
+    #[note_script]
+    pub fn run(self, _arg: Word) {
+        // Get the account that created this note
+        let sender = active_note::get_sender();
 
-    impl OwnerOnlyNote {
-        pub fn run(self, _arg: Word, account: &mut Account) {
-            // Get the account that created this note
-            let sender = active_note::get_sender();
+        // Compare against the expected owner
+        // In practice, load this from account storage
+        let expected_prefix = Felt::from_u64_unchecked(0x1234); // placeholder
+        let expected_suffix = Felt::from_u64_unchecked(0x5678); // placeholder
 
-            // Compare against the expected owner
-            // In practice, load this from account storage
-            let expected_prefix = Felt::new(0x1234); // placeholder
-            let expected_suffix = Felt::new(0x5678); // placeholder
+        assert_eq(sender.prefix, expected_prefix);
+        assert_eq(sender.suffix, expected_suffix);
 
-            assert_eq(sender.prefix, expected_prefix);
-            assert_eq(sender.suffix, expected_suffix);
-
-            // ... proceed with privileged operation
-        }
+        // ... proceed with privileged operation
     }
 }
 ```
@@ -133,7 +130,7 @@ struct RateLimited {
 
 #[component]
 impl RateLimited {
-    pub fn rate_limited_action(&mut self) {
+    pub fn rate_limited_action(&mut self) -> Felt {
         let state: Word = self.last_action.read();
         let last_block = state[0].as_u64();
         let current_block = tx::get_block_number().as_u64();
@@ -143,6 +140,8 @@ impl RateLimited {
         self.last_action.write(Word::from([
             tx::get_block_number(), felt!(0), felt!(0), felt!(0),
         ]));
+
+        tx::get_block_number()
     }
 }
 ```

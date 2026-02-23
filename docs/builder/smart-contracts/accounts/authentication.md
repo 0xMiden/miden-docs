@@ -38,7 +38,7 @@ struct AuthComponent {
 impl AuthComponent {
     /// Verify the caller has the correct private key.
     /// Called during transaction execution to authenticate state changes.
-    pub fn auth(&mut self) {
+    pub fn auth(&mut self) -> Felt {
         // 1. Read the stored public key hash
         let pub_key: Word = self.pub_key.read();
 
@@ -53,6 +53,8 @@ impl AuthComponent {
         // 4. Verify the signature
         // Panics if signature is invalid -> proof generation fails
         rpo_falcon512_verify(pub_key, msg);
+
+        felt!(1)
     }
 }
 ```
