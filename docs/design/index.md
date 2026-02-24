@@ -48,7 +48,7 @@ The protocol layer defines Miden's data structures, state model, and transaction
 
 Accounts are programmable entities that hold assets and execute code:
 
-- **ID** – Unique 64-bit identifier derived from initial code and storage
+- **ID** – Unique 120-bit identifier derived from initial code and storage
 - **Code** – Immutable smart contract logic defining the account's interface
 - **Storage** – Key-value store with up to 256 slots for persistent data
 - **Vault** – Container holding fungible and non-fungible assets
