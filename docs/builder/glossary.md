@@ -2,7 +2,7 @@
 
 ## Account
 
-An account is a data structure that represents an entity (user account, smart contract) of the Miden blockchain, they are analogous to smart contracts.
+An account is a data structure that represents an entity (user account or smart contract) on the Miden blockchain. It is analogous to a smart contract.
 
 ## Account builder
 
@@ -14,7 +14,7 @@ Represents the executable code associated with an account.
 
 ## AccountComponent
 
-An AccountComponent can be described as a modular unit of code to represent the functionality of a Miden Account. Each AccountCode is composed of multiple AccountComponent's.
+An AccountComponent can be described as a modular unit of code to represent the functionality of a Miden Account. Each AccountCode is composed of multiple AccountComponents.
 
 ## AccountId
 
@@ -34,7 +34,7 @@ An Asset represents a digital resource with value that can be owned, transferred
 
 ## AssetVault
 
-The AssetVault is used for managing assets within accounts. It provides a way for storing and transfering assets associated with each account.
+The AssetVault is used for managing assets within accounts. It provides a way for storing and transferring assets associated with each account.
 
 ## Batch
 
@@ -86,4 +86,4 @@ A Prover is responsible for generating zero-knowledge proofs that attest to the 
 
 ## Word
 
-A Word is a data structure that represents the basic unit of computation and storage in Miden, it is composed or four Felt's.
+A Word is a data structure that represents the basic unit of computation and storage in Miden. It is composed of four Felts.
