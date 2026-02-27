@@ -66,8 +66,8 @@ x += felt!(1);          // x is now felt!(6)
 x *= felt!(2);          // x is now felt!(12)
 ```
 
-:::note For business logic, use u64
-Felt arithmetic is modular — there are no overflow panics and no underflow protection. For computing amounts, balances, counters, or any value where overflow/underflow behavior matters, convert to `u64` first, perform the arithmetic, then convert back with `Felt::from_u64_unchecked()`.
+:::note For business logic, prefer u64
+For computing amounts, balances, counters, or any value where overflow/underflow behavior matters, convert to `u64` first, perform the arithmetic, then convert back with `Felt::from_u64_unchecked()`.
 :::
 
 ### Comparison and conversion
@@ -252,9 +252,9 @@ use miden::AccountId;
 let id = AccountId::new(prefix_felt, suffix_felt);
 
 // Use in comparisons
-let current = active_account::get_id();
-assert_eq(current.prefix, expected.prefix);
-assert_eq(current.suffix, expected.suffix);
+let current: AccountId = self.get_id();
+assert_eq!(current.prefix, expected.prefix);
+assert_eq!(current.suffix, expected.suffix);
 ```
 
 ## Other types

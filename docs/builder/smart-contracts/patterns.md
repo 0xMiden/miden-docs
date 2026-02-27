@@ -38,7 +38,7 @@ impl Wallet {
 ```
 
 :::note
-All Miden contracts require `#![no_std]`. The remaining examples on this page omit the preamble (`#![no_std]`, `#![feature(alloc_error_handler)]`) for brevity. See [Toolchain & Project Structure](./getting-started#no_std-environment) for the full setup.
+All Miden contracts require `#![no_std]`. The remaining examples on this page omit the preamble (`#![no_std]`, `#![feature(alloc_error_handler)]`) for brevity. See [Toolchain & Project Structure](./getting-started#common-no_std-patterns) for the full setup.
 :::
 
 ### Counter
@@ -46,7 +46,7 @@ All Miden contracts require `#![no_std]`. The remaining examples on this page om
 Track a numeric value in storage:
 
 ```rust
-use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
+use miden::{component, felt, Felt, StorageMap, Word};
 
 #[component]
 struct Counter {
@@ -102,8 +102,8 @@ impl OwnerOnlyNote {
         let expected_prefix = Felt::from_u64_unchecked(0x1234); // placeholder
         let expected_suffix = Felt::from_u64_unchecked(0x5678); // placeholder
 
-        assert_eq(sender.prefix, expected_prefix);
-        assert_eq(sender.suffix, expected_suffix);
+        assert_eq!(sender.prefix, expected_prefix);
+        assert_eq!(sender.suffix, expected_suffix);
 
         // ... proceed with privileged operation
     }
@@ -119,7 +119,7 @@ For most account-level access control, Miden uses authentication components rath
 Enforce cooldown periods between actions:
 
 ```rust
-use miden::{component, felt, tx, Felt, Value, ValueAccess, Word};
+use miden::{component, felt, tx, Felt, Value, Word};
 
 const COOLDOWN_BLOCKS: u64 = 100;
 
@@ -152,7 +152,7 @@ impl RateLimited {
 Cap per-transaction and daily spending:
 
 ```rust
-use miden::{component, felt, output_note, tx, Asset, Felt, NoteIdx, Value, ValueAccess, Word};
+use miden::{component, felt, output_note, tx, Asset, Felt, NoteIdx, Value, Word};
 
 const BLOCKS_PER_DAY: u64 = 28800;
 
@@ -209,14 +209,10 @@ impl LimitedWallet {
 Miden doesn't support error strings or `Result` types in contract execution. Use assertions:
 
 ```rust
-// Good — clear, simple assertions
+// Clear, simple assertions
 assert!(amount > felt!(0));
 assert!(amount.as_u64() <= 1_000_000);
-
-// Also available — SDK assertion functions
-use miden::{assert_eq, assertz};
-assert_eq(a, b);     // Fails if a != b
-assertz(flag);       // Fails if flag != 0
+assert_eq!(a, b);
 ```
 
 When an assertion fails, proof generation fails and the transaction is rejected before reaching the network.
@@ -248,25 +244,22 @@ For Felt arithmetic, values wrap modulo the prime field (no overflow panic), but
 
 ### Anti-patterns
 
-#### Don't use integer division with Felt
+#### Be careful with Felt division and comparison
+
+`Felt` uses modular field arithmetic. Division computes the multiplicative inverse (not integer division), and comparison operates over field elements:
 
 ```rust
-// WRONG — Felt division computes multiplicative inverse, not integer division
-let half = amount / felt!(2);
+// Felt division is field division — not integer division
+let half = amount / felt!(2); // NOT amount / 2
 
-// RIGHT — convert to u64 for integer division
+// For integer-style division, convert to u64
 let half = Felt::from_u64_unchecked(amount.as_u64() / 2);
-```
 
-#### Don't compare Felts with `>` or `<` directly
-
-```rust
-// WRONG — Felt comparison is over field elements, not integers
-if amount > felt!(100) { ... }
-
-// RIGHT — convert to u64 for numeric comparison
+// For integer-style comparison, convert to u64
 if amount.as_u64() > 100 { ... }
 ```
+
+See [Types — Felt](./types#felt--field-elements) for the full details on field arithmetic.
 
 #### Don't store secrets in contract code
 
@@ -276,8 +269,6 @@ Contract code is visible on-chain. Never embed private keys, seeds, or other sec
 
 Every state-changing transaction must increment the nonce to prevent replay attacks.
 
-For the complete function reference, see the [Cheatsheet](./api-reference).
-
 ## `#![no_std]` Environment
 
 All Miden contracts run without the standard library. This means:
@@ -286,38 +277,13 @@ All Miden contracts run without the standard library. This means:
 
 | Not available | Alternative |
 |---------------|-------------|
-| `std::collections::HashMap` | Use `StorageMap` for on-chain state |
+| `std::collections::HashMap` | Use `BTreeMap` from `alloc` for in-memory maps, or `StorageMap` for persistent account storage |
 | `std::string::String` | Use `alloc::string::String` with allocator |
 | `std::vec::Vec` | Use `alloc::vec::Vec` with allocator |
 | `println!()` / `eprintln!()` | Use `miden::intrinsics::debug::breakpoint()` for debugging |
 | `std::io` | Not available |
 | Error strings in `assert!()` | Use `assert!(condition)` without messages |
 
-### Using the allocator
+### Heap allocation
 
-If you need heap allocation (`Vec`, `String`, etc.), add the bump allocator:
-
-```rust
-#![no_std]
-#![feature(alloc_error_handler)]
-
-extern crate alloc;
-use alloc::vec::Vec;
-
-#[global_allocator]
-static ALLOC: miden::BumpAlloc = miden::BumpAlloc::new();
-
-#[cfg(not(test))]
-#[panic_handler]
-fn my_panic(_info: &core::panic::PanicInfo) -> ! {
-    loop {}
-}
-
-#[cfg(not(test))]
-#[alloc_error_handler]
-fn my_alloc_error(_info: core::alloc::Layout) -> ! {
-    loop {}
-}
-```
-
-`BumpAlloc` is a bump allocator — it grows memory but never frees it. This is fine for short-lived transaction execution.
+If you need heap allocation (`Vec`, `String`, etc.), the SDK provides a bump allocator. See [Toolchain & Project Structure](./getting-started#common-no_std-patterns) for setup details.

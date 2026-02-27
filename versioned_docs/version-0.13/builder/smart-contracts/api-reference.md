@@ -23,7 +23,7 @@ use miden::{
     Felt, Word, Asset, AccountId, NoteIdx, Tag, NoteType, Recipient, Digest,
 
     // Storage
-    Value, StorageMap, ValueAccess, StorageMapAccess,
+    Value, StorageMap,
 
     // Modules
     active_account, native_account, active_note, output_note, input_note, tx,
@@ -189,37 +189,9 @@ Field: `inner: Word`.
 
 ---
 
-## Traits → [Storage](./accounts/storage), [Components](./accounts/components)
+## Storage → [Storage](./accounts/storage)
 
-### `ValueAccess<V>`
-
-```rust
-pub trait ValueAccess<V> {
-    fn read(&self) -> V;
-    fn write(&mut self, value: V) -> V;  // Returns previous value
-}
-```
-
-Implemented by `Value` for any `V: Into<Word> + From<Word>`.
-
-### `StorageMapAccess<K, V>`
-
-```rust
-pub trait StorageMapAccess<K, V> {
-    fn get(&self, key: &K) -> V;
-    fn set(&mut self, key: K, value: V) -> V;  // Returns previous value
-}
-```
-
-Implemented by `StorageMap` for `K: Into<Word> + AsRef<Word>`, `V: From<Word> + Into<Word>`.
-
-### `ActiveAccount`
-
-Auto-implemented on `#[component]` structs. Provides read-only account queries on `&self`.
-
-### `NativeAccount`
-
-Auto-implemented on `#[component]` structs. Provides account mutations on `&mut self`.
+`Value` provides `read()` and `write()` methods for single-slot storage. `StorageMap` provides `get()` and `set()` for key-value storage. See [Storage](./accounts/storage) for details.
 
 ---
 
