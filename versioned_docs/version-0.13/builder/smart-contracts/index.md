@@ -6,9 +6,9 @@ description: "Reference documentation for building Miden smart contracts in Rust
 
 # Miden Smart Contracts
 
-This section is the complete reference for building smart contracts on Miden using Rust and the compiler SDK (v0.9.0). If you're new to Miden, start with the [Toolchain & Project Structure](./getting-started) guide below, or follow the hands-on [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
+This section is the complete reference for building smart contracts on Miden using Rust and the Miden SDK (v0.10). If you're new to Miden, start with the [Toolchain & Project Structure](./getting-started) guide below, or follow the hands-on [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
 
-All Miden Rust contracts compile under these constraints: `#![no_std]`, Rust 2024 edition, targeting `wasm32-unknown-unknown` → Miden Assembly → ZK proof.
+All Miden Rust contracts compile under these constraints: `#![no_std]`, Rust 2024 edition.
 
 import DocCard from '@theme/DocCard';
 
@@ -79,7 +79,7 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: './cross-component-calls',
         label: 'Cross-Component Calls',
-        description: 'WIT bindings and generate!() for inter-component calls.',
+        description: 'Calling methods across account components and from note scripts.',
       }}
     />
   </div>
