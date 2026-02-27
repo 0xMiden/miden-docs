@@ -138,7 +138,7 @@ jobs:
 
       # ============================================================
       # v0.4 IA: Aggregate into nested structure
-      #   - Design docs (miden-base, miden-vm, compiler, miden-node) → docs/design/
+      #   - Core Concepts docs (miden-base, miden-vm, compiler, miden-node) → docs/core-concepts/
       #   - Builder docs (miden-tutorials, miden-client) → docs/builder/
       # ============================================================
       - name: Aggregate docs into single docs tree
@@ -146,33 +146,33 @@ jobs:
           echo "Aggregating vendor docs into v0.4 IA structure..."
 
           # Clean directories that will be re-synced (v0.4 nested paths)
-          rm -rf docs/design/miden-base docs/design/miden-vm docs/design/miden-node docs/design/compiler
+          rm -rf docs/core-concepts/miden-base docs/core-concepts/miden-vm docs/core-concepts/miden-node docs/core-concepts/compiler
           rm -rf docs/builder/tools/client
           # Note: docs/builder/develop/tutorials is NOT fully cleaned to preserve local tutorials (e.g. miden-bank)
 
-          # Design docs → docs/design/*
+          # Core Concepts docs → docs/core-concepts/*
           if [ -d "vendor/miden-base/docs/src" ]; then
-            mkdir -p docs/design/miden-base
-            cp -r vendor/miden-base/docs/src/* docs/design/miden-base/
-            echo "Synced miden-base → docs/design/miden-base"
+            mkdir -p docs/core-concepts/miden-base
+            cp -r vendor/miden-base/docs/src/* docs/core-concepts/miden-base/
+            echo "Synced miden-base → docs/core-concepts/miden-base"
           fi
 
           if [ -d "vendor/miden-vm/docs/src" ]; then
-            mkdir -p docs/design/miden-vm
-            cp -r vendor/miden-vm/docs/src/* docs/design/miden-vm/
-            echo "Synced miden-vm → docs/design/miden-vm"
+            mkdir -p docs/core-concepts/miden-vm
+            cp -r vendor/miden-vm/docs/src/* docs/core-concepts/miden-vm/
+            echo "Synced miden-vm → docs/core-concepts/miden-vm"
           fi
 
           if [ -d "vendor/miden-node/docs/external/src" ]; then
-            mkdir -p docs/design/miden-node
-            cp -r vendor/miden-node/docs/external/src/* docs/design/miden-node/
-            echo "Synced miden-node → docs/design/miden-node"
+            mkdir -p docs/core-concepts/miden-node
+            cp -r vendor/miden-node/docs/external/src/* docs/core-concepts/miden-node/
+            echo "Synced miden-node → docs/core-concepts/miden-node"
           fi
 
           if [ -d "vendor/compiler/docs/external/src" ]; then
-            mkdir -p docs/design/compiler
-            cp -r vendor/compiler/docs/external/src/* docs/design/compiler/
-            echo "Synced compiler → docs/design/compiler"
+            mkdir -p docs/core-concepts/compiler
+            cp -r vendor/compiler/docs/external/src/* docs/core-concepts/compiler/
+            echo "Synced compiler → docs/core-concepts/compiler"
           fi
 
           # Builder docs → docs/builder/*
@@ -191,8 +191,8 @@ jobs:
 
           echo "Content aggregation complete. Final docs structure:"
           ls -la docs/
-          echo "Design subdirs:"
-          ls -la docs/design/ || true
+          echo "Core Concepts subdirs:"
+          ls -la docs/core-concepts/ || true
           echo "Builder subdirs:"
           ls -la docs/builder/ || true
           echo "Tutorials subdirs:"

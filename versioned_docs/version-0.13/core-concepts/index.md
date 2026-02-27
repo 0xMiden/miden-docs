@@ -5,18 +5,18 @@ sidebar_position: 0
 
 <!--
 ARCHITECTURE NOTE:
-This landing page is the ONLY Design content in docs/.
-Full Design documentation (Protocol, VM, Compiler, Node) lives in versioned_docs/
+This landing page is the ONLY Core Concepts content in docs/.
+Full Core Concepts documentation (Protocol, VM, Compiler, Node) lives in versioned_docs/
 and is populated by ingestion from external source repositories.
 DO NOT add protocol documentation files here.
 -->
 
-# Miden Design
+# Miden Core Concepts
 
 This section provides a comprehensive technical reference for the Miden architecture, covering the protocol design, virtual machine, compiler toolchain, and node infrastructure.
 
 :::info Version Note
-Full Design documentation is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete documentation.
+Full Core Concepts documentation is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete documentation.
 :::
 
 ## Architecture Overview

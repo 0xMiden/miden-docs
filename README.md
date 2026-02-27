@@ -23,7 +23,7 @@ flowchart TD
             BuilderRef["builder/reference/"]
             BuilderFAQ["builder/faq.md"]
             BuilderGlossary["builder/glossary.md"]
-            DesignLanding["design/index.md"]
+            DesignLanding["core-concepts/index.md"]
             Intro["intro.md"]
         end
 
@@ -88,7 +88,7 @@ flowchart TD
 | Category | Location | Source | Example |
 |----------|----------|--------|---------|
 | **Authored** | `docs/builder/` | Written in this repo | `docs/builder/quick-start/`, `docs/builder/faq.md` |
-| **Ingested (live)** | `docs/design/`, `docs/builder/` | External repos @ next | `docs/design/miden-base/`, `docs/builder/tutorials/` |
+| **Ingested (live)** | `docs/core-concepts/`, `docs/builder/` | External repos @ next | `docs/core-concepts/miden-base/`, `docs/builder/tutorials/` |
 | **Ingested (versioned)** | `versioned_docs/` | External repos @ release tags | `versioned_docs/version-0.12/miden-base/` |
 | **Snapshots** | `versioned_docs/` | Frozen via `docs:version` | All versioned content |
 
@@ -181,7 +181,7 @@ Deployment is **automatic** on push to `main`.
 The `.github/workflows/deploy-docs.yml` workflow:
 1. Checks out this repository and all external source repos
 2. Ingests external docs into v0.4 IA structure:
-   - Design docs → `docs/design/miden-base/`, `miden-vm/`, `compiler/`, `miden-node/`
+   - Core Concepts docs → `docs/core-concepts/miden-base/`, `miden-vm/`, `compiler/`, `miden-node/`
    - Builder docs → `docs/builder/develop/tutorials/`, `docs/builder/tools/client/`
 3. Runs `npm run build` to generate the static site
 4. Deploys to GitHub Pages at `docs.miden.xyz`
@@ -209,7 +209,7 @@ The build uses:
 ### ❌ DON'T
 
 - **Never** manually copy external content into `docs/` (use CI/CD ingestion)
-- **Never** create root-level `docs/miden-base/`, `docs/miden-vm/`, etc. (use nested paths in `docs/design/`)
+- **Never** create root-level `docs/miden-base/`, `docs/miden-vm/`, etc. (use nested paths in `docs/core-concepts/`)
 - **Never** edit `versioned_docs/` directly (snapshots are immutable)
 - **Never** create a root-level `docs/quick-start/` (Quick Start lives in `docs/builder/`)
 
