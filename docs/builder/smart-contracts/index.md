@@ -112,9 +112,9 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './api-reference',
-        label: 'Cheatsheet',
-        description: 'Every function, type, trait, and macro at a glance.',
+        href: 'https://docs.rs/miden/latest/miden/',
+        label: 'API Reference (docs.rs)',
+        description: 'Complete API documentation for the miden crate.',
       }}
     />
   </div>

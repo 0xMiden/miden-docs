@@ -148,15 +148,9 @@ emit_falcon_sig_to_stack(msg, pub_key);
 | `msg` | `Word` | RPO256 hash of the message to sign |
 | `pub_key` | `Word` | RPO256 hash of the signer's public key |
 
-## Function reference
-
-| Function | Module | Signature | Description |
-|----------|--------|-----------|-------------|
-| `adv_push_mapvaln` | `miden::intrinsics::advice` | `(key: Word) -> Felt` | Push advice-map value onto the advice stack |
-| `adv_load_preimage` | `miden::stdlib::mem` | `(num_words: Felt, commitment: Word) -> Vec<Felt>` | Load a preimage matching a commitment |
-| `adv_insert` | `miden::intrinsics::advice` | `(key: Word, values: &[Word])` | Insert words into the advice map |
-| `adv_insert_mem` | `miden::intrinsics::advice` | `(key: Word, start_addr: u32, end_addr: u32)` | Insert a memory range into the advice map |
-| `emit_falcon_sig_to_stack` | `miden::intrinsics::advice` | `(msg: Word, pub_key: Word)` | Request a Falcon512 signature from the host |
+:::info API Reference
+Full API docs on docs.rs: [`miden::intrinsics::advice`](https://docs.rs/miden/latest/miden/intrinsics/advice/)
+:::
 
 ## Related
 

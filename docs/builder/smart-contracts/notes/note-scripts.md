@@ -76,7 +76,7 @@ pub fn run(self, account: &mut Account, _arg: Word) { ... }
 
 ### With account access
 
-When you include `&mut Account` (or `&Account`), the note script can call methods on the consuming account's components:
+When you include `&mut Account` (or `&Account`), the note script can call methods on the account's components:
 
 ```rust
 #[note_script]
@@ -104,7 +104,7 @@ pub fn run(self, _arg: Word) {
 
 ## Example: Counter note (cross-component calls)
 
-A note that calls methods on the consuming account's component:
+A note that calls methods on the account's component:
 
 :::note
 All note script crates require `#![no_std]` and `#![feature(alloc_error_handler)]` at the crate root. These are omitted from examples for brevity.
