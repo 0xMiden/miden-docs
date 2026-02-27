@@ -26,18 +26,7 @@ Slot IDs are derived from the component package name and the field name. Orderin
 
 ## Value — Single-slot storage
 
-A `Value` stores a single `Word` (4 Felts) at a fixed slot.
-
-### The `ValueAccess` trait
-
-```rust
-pub trait ValueAccess<V> {
-    fn read(&self) -> V;
-    fn write(&mut self, value: V) -> V;
-}
-```
-
-`Value` implements `ValueAccess<V>` for any `V` that converts to/from `Word`. Note that `write()` returns the **previous** slot value, not the value written. Most usage is `V = Word`:
+A `Value` stores a single `Word` (4 Felts) at a fixed slot. It provides `read()` and `write()` methods. Note that `write()` returns the **previous** slot value, not the value written.
 
 ### Reading
 
@@ -89,18 +78,7 @@ pub fn get_max_per_tx(&self) -> u64 {
 
 ## StorageMap — Key-value storage
 
-A `StorageMap` stores key-value pairs where both keys and values are `Word`-sized.
-
-### The `StorageMapAccess` trait
-
-```rust
-pub trait StorageMapAccess<K, V> {
-    fn get(&self, key: &K) -> V;
-    fn set(&mut self, key: K, value: V) -> V;
-}
-```
-
-`StorageMap` implements `StorageMapAccess<K, V>` for types that convert to/from `Word`.
+A `StorageMap` stores key-value pairs where both keys and values are `Word`-sized. It provides `get()` and `set()` methods.
 
 ### Reading from a map
 
