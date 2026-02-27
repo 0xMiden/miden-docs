@@ -228,7 +228,7 @@ impl IncrementNote {
 
 The struct definition (`IncrementNote`) provides a named type for the note script. Unlike account contracts, note scripts don't store persistent data — the struct serves as the entry point container.
 
-Learn more about [note scripts in the Miden documentation](/miden-base/note/).
+Learn more about [note scripts in the Miden documentation](/core-concepts/miden-base/note/).
 
 #### The Note Script Function
 

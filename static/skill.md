@@ -88,6 +88,37 @@ docs/
       index.md
       notes.md
       read-storage.md
+    smart-contracts/
+      accounts/
+        _category_.json
+        account-operations.md
+        authentication.md
+        components.md
+        cryptography.md
+        custom-types.md
+        introduction.md
+        storage.md
+      notes/
+        _category_.json
+        introduction.md
+        note-scripts.md
+        note-types.md
+        output-notes.md
+        reading-notes.md
+      transactions/
+        _category_.json
+        advice-provider.md
+        introduction.md
+        transaction-context.md
+        transaction-scripts.md
+      _category_.json
+      api-reference.md
+      cross-component-calls.md
+      getting-started.md
+      index.md
+      overview.md
+      patterns.md
+      types.md
     tools/
       _category_.json
       index.md
@@ -95,7 +126,7 @@ docs/
     faq.md
     glossary.md
     index.md
-  design/
+  core-concepts/
     _category_.json
     index.md
 ```
@@ -140,6 +171,1445 @@ docs/
   "label": "Develop on Miden",
   "position": 4
 }
+````
+
+## File: docs/builder/develop/index.md
+````markdown
+---
+title: Develop on Miden
+sidebar_position: 4
+---
+
+<!--
+ARCHITECTURE NOTE:
+Tutorials content is canonical in versioned_docs/version-X.Y/miden-tutorials/.
+This landing page exists only for the "current/next" version.
+Full tutorial content is available by selecting a released version.
+-->
+
+# Develop on Miden
+
+:::info Version Note
+Full tutorials and examples are available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete tutorial documentation.
+:::
+
+## Overview
+
+Basic tutorials and examples of how to build applications on Miden.
+
+The goal is to make getting up to speed with building on Miden as quick and simple as possible.
+
+All tutorials are accompanied by code examples in Rust and TypeScript, which can be found in the [Miden Tutorials](https://github.com/0xMiden/miden-tutorials) repository.
+````
+
+## File: docs/builder/quick-start/setup/_category_.json
+````json
+{
+  "label": "Set Up",
+  "position": 1
+}
+````
+
+## File: docs/builder/quick-start/setup/installation.md
+````markdown
+---
+sidebar_position: 1
+title: Installation
+description: Get started with Miden development by installing Miden tools using the `midenup` toolchain.
+---
+
+This guide walks you through installing the Miden development tools using the `midenup` toolchain manager.
+
+## Prerequisites
+
+### Install Rust
+
+Miden development requires Rust. Install it using rustup:
+
+```bash title=">_ Terminal"
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+```
+
+Reload your PATH environment variable:
+
+```bash title=">_ Terminal"
+. "$HOME/.cargo/env"
+```
+
+Verify the installation:
+
+```bash title=">_ Terminal"
+rustc --version
+```
+
+<details>
+<summary>Expected output</summary>
+
+```text
+rustc 1.92.0-nightly (fa3155a64 2025-09-30)
+```
+
+</details>
+
+### Install Node.js & Yarn
+
+For TypeScript development with the Miden Web Client, you'll need Node.js and Yarn.
+
+**Install Node.js:**
+
+```bash title=">_ Terminal"
+# Install Node.js using the official installer or package manager
+# For macOS with Homebrew:
+brew install node
+
+# For Ubuntu/Debian:
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# For Windows, download from nodejs.org
+```
+
+**Install Yarn:**
+
+```bash title=">_ Terminal"
+# Install Yarn globally via npm
+npm install -g yarn
+```
+
+**Verify installations:**
+
+```bash title=">_ Terminal"
+node --version && yarn --version
+```
+
+<details>
+<summary>Expected output</summary>
+
+```text
+v20.11.0
+1.22.19
+```
+
+</details>
+
+### Install Miden CLI
+
+**Install midenup**
+
+The Miden toolchain installer makes it easy to manage Miden components:
+
+```bash title=">_ Terminal"
+cargo install midenup
+```
+
+:::info
+Until published to crates.io, install using: `cargo install --git https://github.com/0xMiden/midenup.git`
+:::
+
+**Initialize midenup**
+
+```bash title=">_ Terminal"
+midenup init
+```
+
+This creates the `$MIDENUP_HOME` directory and sets up symlinks for the `miden` command.
+
+**Configure PATH**
+
+Add the midenup bin directory to your PATH. First, check your current `$MIDENUP_HOME`:
+
+```bash title=">_ Terminal"
+midenup show home
+```
+
+Then add it to your shell configuration:
+
+**For Zsh (macOS default):**
+
+```bash title="~/.zshrc"
+export PATH="/Users/$(whoami)/Library/Application Support/midenup/bin:$PATH"
+source ~/.zshrc
+```
+
+**For Bash:**
+
+```bash title="~/.bashrc"
+export PATH="$XDG_DATA_DIR/midenup/bin:$PATH"
+source ~/.bashrc
+```
+
+**Install Miden Toolchain**
+
+Install the latest stable Miden components:
+
+```bash title=">_ Terminal"
+midenup install stable
+```
+
+### Verify Installation
+
+Check that everything is working correctly:
+
+```bash title=">_ Terminal"
+midenup show active-toolchain
+```
+
+<details>
+<summary>Expected output</summary>
+
+```text
+stable
+```
+
+</details>
+
+```bash title=">_ Terminal"
+which miden
+```
+
+<details>
+<summary>Expected output</summary>
+
+```text
+/Users/<USERNAME>/Library/Application Support/midenup/bin/miden
+```
+
+</details>
+
+Test by creating a new project:
+
+```bash title=">_ Terminal"
+miden new my-test-project
+```
+
+If successful, you'll see a new directory with Miden project files.
+
+### Troubleshooting
+
+**"miden: command not found"**
+
+This means the PATH isn't configured correctly. Verify midenup's bin directory is in your PATH:
+
+```bash title=">_ Terminal"
+echo $PATH | grep midenup
+```
+
+If missing, re-add the export command to your shell configuration and reload it.
+
+---
+````
+
+## File: docs/builder/quick-start/your-first-smart-contract/_category_.json
+````json
+{
+  "label": "Your First Smart Contract",
+  "position": 5
+}
+````
+
+## File: docs/builder/quick-start/your-first-smart-contract/index.md
+````markdown
+---
+sidebar_position: 1
+title: Your First Smart Contract
+description: Learn to build, test, and deploy smart contracts on Miden using Rust.
+---
+
+# Your First Smart Contract
+
+Welcome to the **Your First Smart Contract** guide! This tutorial will walk you through building, testing, and deploying your first Miden smart contract using Rust.
+
+## What You'll Learn
+
+By the end of this tutorial, you will have:
+
+- **Set up a Miden project** with the proper workspace structure
+- **Written and understood** a counter smart contract and increment note
+- **Deployed your contract** to the Miden testnet using integration scripts
+- **Mastered the fundamentals** of Miden's account-based smart contract model
+
+This guide focuses on practical, hands-on learning. You'll work with real code and deploy to a live network, giving you everything needed to start building on Miden.
+
+## What We'll Build
+
+You'll create a **counter contract system** consisting of:
+
+- **Counter Account**: A smart contract that stores and manages a counter value in its storage
+- **Increment Note**: A note script that increments the counter when executed
+- **Integration Scripts**: Deployment and interaction scripts for managing the contract lifecycle
+
+The counter example is designed to teach core Miden concepts through a simple, understandable use case that you can extend for your own projects.
+
+## Prerequisites
+
+Before starting this guide, ensure you have completed the [Installation](../setup/installation) tutorial and have:
+
+- **Rust toolchain** installed and configured
+- **midenup toolchain** installed with Miden CLI tools
+
+:::tip Prerequisites Required
+You need those development tools installed for this guide. If you haven't set up your environment yet, please complete the [installation](../setup/installation) guide first.
+:::
+
+## No Prior Experience Required
+
+This tutorial is designed for developers new to Miden. You don't need prior experience with:
+
+- Miden's account model or note-based transactions
+- Smart contract development on Miden
+- The specifics of Rust development for blockchain
+
+We'll explain these concepts as we encounter them in the tutorial.
+
+## Getting Help
+
+If you get stuck during this tutorial:
+
+- Check the rest of the Miden Docs for detailed technical references
+- Join the [Build On Miden](https://t.me/BuildOnMiden) Telegram community for support
+- Review the code examples in your project's `contracts` and `integration/` folder
+
+## Guide Structure
+
+This tutorial is divided into focused sections:
+
+1. **[Create Your Project](./create)** - Set up your workspace and understand the counter contract code
+2. **[Deploy Your Contract](./deploy)** - Learn the integration folder and deploy to testnet
+3. **[Test Your Contract](./test)** - Learn how to effectively test your contracts
+
+Each section builds on the previous one, so we recommend following them in order.
+
+Ready to build your first Miden smart contract? Let's get started!
+````
+
+## File: docs/builder/quick-start/_category_.json
+````json
+{
+  "label": "Quick Start",
+  "position": 1,
+  "link": {
+    "type": "doc",
+    "id": "builder/quick-start/index"
+  }
+}
+````
+
+## File: docs/builder/tools/_category_.json
+````json
+{
+  "label": "Tools",
+  "position": 5
+}
+````
+
+## File: docs/builder/tools/index.md
+````markdown
+---
+title: Tools
+sidebar_position: 1
+---
+
+<!--
+ARCHITECTURE NOTE:
+Client documentation is canonical in versioned_docs/version-X.Y/miden-client/.
+This landing page exists only for the "current/next" version.
+Full client docs are available by selecting a released version.
+-->
+
+# Tools
+
+:::info Version Note
+Full client documentation (Rust Client, Web Client, CLI reference) is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete client documentation.
+:::
+
+## Miden Client
+
+The Miden client has three main components:
+
+1. **Miden client library** - A Rust library for integrating with the Miden rollup
+2. **Miden client CLI** - Command-line interface for interacting with the network
+3. **Miden web client** - Browser-based interface for managing accounts and transactions
+
+## Additional Tools
+
+- **Playground** - Interactive environment for testing Miden assembly
+- **Explorer** - Block explorer for the Miden network
+````
+
+## File: docs/builder/faq.md
+````markdown
+# FAQ
+
+## How is privacy implemented in Miden?
+
+Miden leverages zero-knowledge proofs and client side execution and proving to provide security and privacy.
+
+## Does Miden support encrypted notes?
+
+At the moment, Miden does not have support for encrypted notes but it is a planned feature.
+
+## Why does Miden have delegated proving?
+
+Miden leverages delegated proving for a few technical and practical reasons:
+
+1. **Computational:** Generating zero-knowledge proofs is a computationally intensive work. The proving process requires significant processing power and memory, making it impractical for some end-user devices (like smartphones) to generate.
+2. **Technical architecture**:
+Miden's architecture separates concerns between:
+    - **Transaction Creation**: End users create and sign transactions
+    - **Proof Generation**: Specialized provers generate validity proofs
+    - **Verification**: The network verifies these proofs
+3. **Proving efficiency**:
+Delegated provers can use optimized hardware that wouldn't be available to end-user devices, specifically designed for the mathematical operations needed in STARK proof generation.
+
+## What is the lifecycle of a transaction?
+
+### 1. Transaction Creation
+
+- User creates a transaction specifying the operations to perform (transfers, contract interactions, etc.)
+- Client performs preliminary validation of the transaction and its structure
+- The user authorizes the specified state transitions by signing the transaction
+
+### 2. Transaction Submission
+
+- The signed transaction is submitted to Miden network nodes
+- The transaction enters the mempool (transaction pool) where it waits to be selected to be included in the state
+- Nodes perform basic validation checks on the transaction structure and signature
+
+### 3. Transaction Selection
+
+- A sequencer (or multiple sequencers in a decentralized setting) selects transactions from the mempool
+- The sequencer groups transactions into bundles based on state access patterns and other criteria
+- The transaction execution order is determined according to protocol mechanism
+
+### 4. Transaction Execution
+
+- The current state relevant to the transaction is loaded
+- The Miden VM executes the transaction operations
+- **State Transition Computation**: The resulting state transitions are computed
+- An execution trace of the transaction is generated which captures all the computation
+
+### 5. Proof Generation
+
+- A STARK based cryptographic proof is generated attesting to the correctness of the execution
+- A proof for the aggregated transaction is created
+
+### 6. Block Production
+
+- The aggregated bundle of transactions along with their proofs are assembled into a block
+- A recursive proof attesting to all bundle proofs is generated
+- The block data structure is finalized with the aggregated proof
+
+### 7. L1 Submission
+
+- Transaction data is posted to the data availability layer
+- The block proof and state delta commitment are submitted to the Miden contract (that is bridged to Ethereum/Agglayer)
+- The L1 contract verifies validity of the proof
+- Upon successful verification, the L1 contract updates the state root
+
+### 8. Finalization
+
+- Transaction receipts and events are generated
+- The global state commitment is updated to reflect the new state
+- The transaction is now considered finalized on the L1
+- Users and indexers get notified/updated about the transaction completion
+
+## Do notes in Miden support recency conditions?
+
+Yes, Miden enables consumption of notes based on time conditions, such as:
+
+- A specific block height being reached
+- A timestamp threshold being passed
+- An oracle providing specific data
+- Another transaction being confirmed
+
+## What does a Miden operator do in Miden?
+
+A Miden operator is an entity that maintains the infrastructure necessary for the functioning of the Miden rollup. Their roles may involve:
+
+1. Running Sequencer Nodes
+2. Operating the Prover Infrastructure
+3. Submitting Proofs to L1
+4. Maintaining Data Availability
+5. Participating in the Consensus Mechanism
+
+## How does bridging works in Miden?
+
+Miden does not yet have a fully operational bridge, work in progress.
+
+## What does the gas fee model of Miden look like?
+
+Miden does not yet have a fully implemented fee model, work in progress.
+````
+
+## File: docs/builder/glossary.md
+````markdown
+# Glossary
+
+## Account
+
+An account is a data structure that represents an entity (user account, smart contract) of the Miden blockchain, they are analogous to smart contracts.
+
+## Account builder
+
+Account builder provides a structured way to create and initialize new accounts on the Miden network with specific properties, permissions, and initial state.
+
+## AccountCode
+
+Represents the executable code associated with an account.
+
+## AccountComponent
+
+An AccountComponent can be described as a modular unit of code to represent the functionality of a Miden Account. Each AccountCode is composed of multiple AccountComponent's.
+
+## AccountId
+
+The AccountId is a value that uniquely identifies each account in Miden.
+
+## AccountIdVersion
+
+The AccountIdVersion represents the different versions of account identifier formats supported by Miden.
+
+## AccountStorage
+
+The AccountStorage is a key-value store associated with an account. It is made up of storage slots.
+
+## Asset
+
+An Asset represents a digital resource with value that can be owned, transferred, and managed within the Miden blockchain.
+
+## AssetVault
+
+The AssetVault is used for managing assets within accounts. It provides a way for storing and transfering assets associated with each account.
+
+## Batch
+
+A Batch allows multiple transactions to be grouped together, these batches will then be aggregated into blocks, improving network throughput.
+
+## Block
+
+A Block is a fundamental data structure which groups multiple batches together and forms the blockchain's state.
+
+## Delta
+
+A Delta represents the changes between two states `s` and `s'`. Applying a Delta `d` to `s` would result in `s'`.
+
+## Felt
+
+A Felt or Field Element is a data type used for cryptographic operations. It represents an element in the finite field used in Miden.
+
+## Kernel
+
+A fundamental module of the MidenVM that acts as a base layer by providing core functionality and security guarantees for the protocol.
+
+## Miden Assembly
+
+An assembly language specifically designed for the Miden VM. It's a low-level programming language with specialized instructions optimized for zero-knowledge proof generation.
+
+## Note
+
+A Note is a fundamental data structure that represents an offchain asset or a piece of information that can be transferred between accounts. Miden's UTXO-like (Unspent Transaction Output) model is designed around the concept of notes. There are output notes which are new notes created by the transaction and input notes which are consumed (spent) by the transaction.
+
+## Note script
+
+A Note script is a program that defines the rules and conditions under which a note can be consumed.
+
+## Note tag
+
+A Note tag is an identifier or metadata associated with notes that provide additional filtering capabilities.
+
+## Note ID
+
+Note ID is a unique identifier assigned to each note to distinguish it from other notes.
+
+## Nullifier
+
+A nullifier is a cryptographic commitment that marks a note as spent, preventing it from being consumed again.
+
+## Prover
+
+A Prover is responsible for generating zero-knowledge proofs that attest to the correctness of the execution of a program without revealing the underlying data.
+
+## Word
+
+A Word is a data structure that represents the basic unit of computation and storage in Miden, it is composed or four Felt's.
+````
+
+## File: docs/core-concepts/_category_.json
+````json
+{
+  "label": "Core Concepts",
+  "position": 2,
+  "collapsible": false,
+  "collapsed": false
+}
+````
+
+## File: docs/core-concepts/index.md
+````markdown
+---
+sidebar_label: Introduction
+sidebar_position: 0
+---
+
+<!--
+ARCHITECTURE NOTE:
+This landing page is the ONLY Core Concepts content in docs/.
+Full Core Concepts documentation (Protocol, VM, Compiler, Node) lives in versioned_docs/
+and is populated by ingestion from external source repositories.
+DO NOT add protocol documentation files here.
+-->
+
+# Miden Core Concepts
+
+This section provides a comprehensive technical reference for the Miden architecture, covering the protocol design, virtual machine, compiler toolchain, and node infrastructure.
+
+:::info Version Note
+Full Core Concepts documentation is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete documentation.
+:::
+
+## Architecture Overview
+
+Miden is a zero-knowledge rollup that fundamentally rethinks blockchain architecture. Instead of a single global state updated sequentially, Miden uses an **actor model** where each account is an independent state machine that executes transactions locally and generates validity proofs.
+
+### Core Design Principles
+
+| Principle | How Miden Achieves It |
+|-----------|----------------------|
+| **Privacy** | Accounts and notes store only cryptographic commitments on-chain; full data remains with users |
+| **Parallelism** | Single-account transactions enable concurrent execution without contention |
+| **Scalability** | Client-side proving offloads computation; proof aggregation reduces on-chain verification |
+| **Programmability** | Turing-complete VM supports arbitrary smart contract logic in accounts and notes |
+
+
+1. **Local Execution** – Users execute transactions on their devices, consuming input notes and updating account state
+2. **Proof Generation** – The client generates a STARK proof attesting to valid state transitions
+3. **Note Creation** – Transactions produce output notes carrying assets and data to recipients
+4. **Verification** – The node verifies proofs, updates state commitments, and makes notes available
+
+---
+
+## Protocol (miden-base)
+
+The protocol layer defines Miden's data structures, state model, and transaction semantics.
+
+### Accounts
+
+Accounts are programmable entities that hold assets and execute code:
+
+- **ID** – Unique 64-bit identifier derived from initial code and storage
+- **Code** – Immutable smart contract logic defining the account's interface
+- **Storage** – Key-value store with up to 256 slots for persistent data
+- **Vault** – Container holding fungible and non-fungible assets
+- **Nonce** – Monotonically increasing counter preventing replay attacks
+
+Account code is composed from **components** – modular building blocks that add capabilities like wallet functionality, token standards, or custom logic.
+
+### Notes
+
+Notes are programmable messages that transfer assets between accounts:
+
+- **Script** – Code executed when the note is consumed
+- **Inputs** – Public data available to the consuming transaction
+- **Assets** – Tokens transferred to the recipient
+- **Metadata** – Sender, tag (for discovery), and auxiliary data
+
+Notes can be **public** (all data on-chain) or **private** (only a commitment stored). Private notes require off-chain communication between sender and recipient.
+
+### State Model
+
+Miden maintains three core databases:
+
+| Database | Structure | Purpose |
+|----------|-----------|---------|
+| **Accounts** | Sparse Merkle Tree | Maps account IDs to state commitments |
+| **Notes** | Merkle Mountain Range | Append-only log of created notes |
+| **Nullifiers** | Sparse Merkle Tree | Tracks consumed notes to prevent double-spending |
+
+This separation enables efficient state proofs and supports both public and private modes for accounts and notes.
+
+### Transactions
+
+Transactions are single-account operations that:
+
+1. Consume zero or more input notes
+2. Execute account code and optionally a transaction script
+3. Update account state (storage, vault, nonce)
+4. Produce zero or more output notes
+
+The single-account model means transactions don't contend for shared state, enabling **parallel execution** across the network.
+
+---
+
+## Virtual Machine (miden-vm)
+
+The Miden VM is a STARK-based virtual machine optimized for zero-knowledge proof generation.
+
+### Architecture
+
+- **Stack-based** – Operates on a push-down stack of 64-bit prime field elements
+- **Turing-complete** – Supports loops, conditionals, and recursive procedures
+- **Deterministic** – Same inputs always produce same outputs (with controlled nondeterminism for advice)
+
+### Core Components
+
+| Component | Function |
+|-----------|----------|
+| **Decoder** | Fetches and decodes instructions, manages control flow |
+| **Stack** | 16 directly accessible elements, unlimited depth via memory |
+| **Memory** | Random-access read/write storage |
+| **Chiplets** | Specialized circuits for cryptographic and bitwise operations |
+
+### Chiplets
+
+Chiplets are co-processors that accelerate common operations:
+
+- **Hash Chiplet** – Rescue Prime Optimized hashing, Merkle tree operations
+- **Bitwise Chiplet** – AND, XOR, and other bitwise operations on 32-bit integers
+- **Memory Chiplet** – Efficient random-access memory with read/write tracking
+- **Kernel ROM** – Secure execution of privileged kernel procedures
+
+### Miden Assembly (MASM)
+
+MASM is the native instruction set with:
+
+- **Field operations** – Arithmetic on prime field elements
+- **U32 operations** – 32-bit integer arithmetic, bitwise, and comparison
+- **Cryptographic operations** – Hashing, Merkle proofs, signature verification
+- **Control flow** – Conditionals, loops, and procedure calls
+- **Memory operations** – Load/store to local and global memory
+
+---
+
+## Compiler
+
+The compiler toolchain enables writing Miden programs in high-level languages.
+
+### Components
+
+- **cargo-miden** – Cargo extension for building Miden projects
+- **midenc** – Core compiler from WebAssembly to Miden Assembly
+- **Debugger** – Interactive debugging with breakpoints and state inspection
+
+### Compilation Pipeline
+
+```
+   Rust       →    WebAssembly    →    Miden IR    →    MASM
+ (source)         (Wasm binary)      (compiler IR)    (assembly)
+```
+
+The compiler supports:
+
+- **Account components** – Reusable smart contract modules
+- **Note scripts** – Logic executed when notes are consumed
+- **Transaction scripts** – Custom transaction execution logic
+
+---
+
+## Node (miden-node)
+
+The node is the network infrastructure that receives transactions and produces blocks.
+
+### Responsibilities
+
+- Receive and validate proven transactions via gRPC
+- Aggregate transaction proofs into batches
+- Produce blocks with aggregated proofs
+- Maintain state databases and serve sync requests
+
+### gRPC API
+
+The node exposes endpoints for:
+
+- **Account queries** – Get account details, proofs, and storage
+- **Note queries** – Retrieve notes by ID or script
+- **Block queries** – Fetch block headers and contents
+- **Sync operations** – Synchronize client state with the network
+- **Transaction submission** – Submit proven transactions
+
+---
+
+## Further Reading
+
+- **[Build Documentation](../builder/)** – Practical guides for building on Miden
+- **[Quick Start](../builder/quick-start/)** – Get started with your first transaction
+- **[FAQ](../builder/faq)** – Common questions answered
+````
+
+## File: docs/builder/develop/tutorials/rust-compiler/debugging.md
+````markdown
+---
+sidebar_position: 2
+title: "Debugging Guide"
+description: "Learn how to debug Miden Rust contracts using assert_eq and cycle counts."
+---
+
+# Debugging Guide
+
+Miden contracts don't support traditional debugging tools like console.log or print statements. Instead, you can use `assert_eq` statements to check values during execution.
+
+## Using assert_eq
+
+The `assert_eq` function compares two `Felt` values and fails if they differ:
+
+```rust
+use miden::*;
+
+// Check if a value equals an expected value
+assert_eq(actual_value, expected_value);
+```
+
+:::note
+`assert_eq` is a **function**, not a macro. Use `assert_eq(a, b)` without the exclamation mark.
+:::
+
+## Debugging with Cycle Counts
+
+When your code fails, the error output includes a **cycle count** indicating where execution stopped. You can use this to narrow down problems:
+
+1. **Note the cycle count** when your code fails
+2. **Place an `assert_eq`** before the code you suspect is failing
+3. **Run again** and check the result:
+   - If the assertion fails at an **earlier cycle count**: the value you're checking is wrong
+   - If the assertion passes and fails at the **same cycle count**: the value is correct, the problem is elsewhere
+
+### Example
+
+```rust
+pub fn withdraw(&mut self, depositor: AccountId, amount: Felt) {
+    let balance = self.get_balance(depositor);
+
+    // Debug: Check if balance is what you expect
+    assert_eq(balance, felt!(1000));
+
+    // If the above passes, the problem is below this line
+    // If it fails, the balance isn't what you expected
+
+    let new_balance = balance - amount;
+    self.balances.set(key, new_balance);
+}
+```
+
+By moving the `assert_eq` statement around, you can isolate which value is incorrect.
+
+## Limitations
+
+- No console.log or print debugging in contract code
+- `assert_eq` only works with `Felt` values
+- This is currently the primary debugging technique available
+````
+
+## File: docs/builder/develop/tutorials/rust-compiler/testing.md
+````markdown
+---
+sidebar_position: 1
+title: "Testing with MockChain"
+description: "Learn how to test Miden Rust compiler contracts using MockChain for simulating blockchain behavior locally."
+---
+
+# Testing with MockChain
+
+MockChain provides a local simulation of the Miden blockchain for testing your contracts without connecting to a network. This guide covers testing patterns for account components, note scripts, and transaction scripts.
+
+## Overview
+
+MockChain simulates:
+- Block production and proving
+- Account state management
+- Note creation and consumption
+- Transaction execution
+
+This enables fast, deterministic testing of your Miden contracts.
+
+## Test Project Setup
+
+Create an integration test crate alongside your contracts:
+
+```text
+your-project/
+├── contracts/
+│   ├── my-account/
+│   └── my-note/
+└── integration/
+    ├── Cargo.toml
+    ├── src/
+    │   └── helpers.rs    # Test utilities
+    └── tests/
+        └── my_test.rs    # Test files
+```
+
+### Cargo.toml for Tests
+
+```toml title="integration/Cargo.toml"
+[package]
+name = "integration"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/helpers.rs"
+
+[[test]]
+name = "my_test"
+path = "tests/my_test.rs"
+
+[dependencies]
+anyhow = "1.0"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+
+# Miden dependencies
+cargo-miden = { version = "0.7" }
+miden-client = { version = "0.13", features = ["tonic", "testing"] }
+miden-client-sqlite-store = { version = "0.13", package = "miden-client-sqlite-store" }
+miden-core = { version = "0.20" }
+miden-standards = { version = "0.13", default-features = false, features = ["testing"] }
+miden-testing = "0.13"
+miden-mast-package = { version = "0.20", default-features = false }
+rand = { version = "0.9" }
+```
+
+## Building Contracts for Tests
+
+Use `cargo-miden` to build your contracts programmatically:
+
+```rust title="integration/src/helpers.rs"
+use std::path::Path;
+use anyhow::{bail, Context, Result};
+use cargo_miden::{run, OutputType};
+use miden_mast_package::Package;
+
+pub fn build_project_in_dir(dir: &Path, release: bool) -> Result<Package> {
+    let profile = if release { "--release" } else { "--debug" };
+    let manifest_path = dir.join("Cargo.toml");
+    let manifest_arg = manifest_path.to_string_lossy();
+
+    let args = vec![
+        "cargo", "miden", "build",
+        profile,
+        "--manifest-path", &manifest_arg,
+    ];
+
+    let output = run(args.into_iter().map(String::from), OutputType::Masm)
+        .context("Failed to compile project")?
+        .context("Cargo miden build returned None")?;
+
+    let artifact_path = match output {
+        cargo_miden::CommandOutput::BuildCommandOutput { output } => match output {
+            cargo_miden::BuildOutput::Masm { artifact_path } => artifact_path,
+            other => bail!("Expected Masm output, got {:?}", other),
+        },
+        other => bail!("Expected BuildCommandOutput, got {:?}", other),
+    };
+
+    let package_bytes = std::fs::read(&artifact_path)?;
+    Package::read_from_bytes(&package_bytes)
+        .context("Failed to deserialize package")
+}
+```
+
+## MockChain Basics
+
+### Creating a MockChain
+
+Use the builder pattern to set up your test environment:
+
+```rust
+use miden_testing::{Auth, MockChain};
+
+#[tokio::test]
+async fn my_test() -> anyhow::Result<()> {
+    // Create builder
+    let mut builder = MockChain::builder();
+
+    // Add accounts, faucets, notes...
+
+    // Build the chain
+    let mut mock_chain = builder.build()?;
+
+    Ok(())
+}
+```
+
+### Adding a Faucet
+
+Faucets mint assets for testing:
+
+```rust
+// Create a faucet with 1,000,000 total supply, decimals = 10
+let faucet = builder.add_existing_basic_faucet(
+    Auth::BasicAuth,
+    "TEST",           // Token symbol
+    1_000_000,        // Total supply
+    Some(10),         // Decimals
+)?;
+```
+
+### Adding Wallet Accounts
+
+Create accounts with initial assets:
+
+```rust
+use miden_client::asset::FungibleAsset;
+
+// Create a wallet with 100 tokens from the faucet
+let sender = builder.add_existing_wallet_with_assets(
+    Auth::BasicAuth,
+    [FungibleAsset::new(faucet.id(), 100)?.into()],
+)?;
+```
+
+## Creating Custom Accounts
+
+For accounts with custom components, create configuration helpers:
+
+```rust title="integration/src/helpers.rs"
+use miden_client::account::{AccountStorageMode, AccountType, StorageSlot};
+
+#[derive(Clone)]
+pub struct AccountCreationConfig {
+    pub account_type: AccountType,
+    pub storage_mode: AccountStorageMode,
+    pub storage_slots: Vec<StorageSlot>,
+}
+
+impl Default for AccountCreationConfig {
+    fn default() -> Self {
+        Self {
+            account_type: AccountType::RegularAccountImmutableCode,
+            storage_mode: AccountStorageMode::Public,
+            storage_slots: vec![],
+        }
+    }
+}
+```
+
+### Creating Account from Package
+
+```rust
+use miden_client::account::{StorageMap, StorageSlot, StorageSlotName};
+use std::sync::Arc;
+
+// Build the contract
+let bank_package = Arc::new(build_project_in_dir(
+    Path::new("../contracts/bank-account"),
+    true,  // release mode
+)?);
+
+// Configure named storage slots
+let initialized_slot =
+    StorageSlotName::new("miden::component::miden_bank_account::initialized")
+        .expect("Valid slot name");
+let balances_slot =
+    StorageSlotName::new("miden::component::miden_bank_account::balances")
+        .expect("Valid slot name");
+
+let config = AccountCreationConfig {
+    storage_slots: vec![
+        StorageSlot::with_value(initialized_slot, Word::default()),
+        StorageSlot::with_map(
+            balances_slot.clone(),
+            StorageMap::with_entries([]).expect("Empty storage map"),
+        ),
+    ],
+    ..Default::default()
+};
+
+// Create the account
+let mut account = create_testing_account_from_package(
+    bank_package.clone(),
+    config,
+).await?;
+
+// Add to MockChain
+builder.add_account(account.clone())?;
+```
+
+## Creating Notes
+
+### Note Configuration
+
+```rust title="integration/src/helpers.rs"
+use miden_client::note::{NoteAssets, NoteTag, NoteType};
+use miden_core::Felt;
+
+pub struct NoteCreationConfig {
+    pub note_type: NoteType,
+    pub tag: NoteTag,
+    pub assets: NoteAssets,
+    pub inputs: Vec<Felt>,
+}
+
+impl Default for NoteCreationConfig {
+    fn default() -> Self {
+        Self {
+            note_type: NoteType::Public,
+            tag: NoteTag::new(0),
+            assets: Default::default(),
+            inputs: Default::default(),
+        }
+    }
+}
+```
+
+### Creating Notes with Assets
+
+```rust
+use miden_client::asset::{Asset, FungibleAsset};
+use miden_client::note::NoteAssets;
+
+// Build note script
+let deposit_note_package = Arc::new(build_project_in_dir(
+    Path::new("../contracts/deposit-note"),
+    true,
+)?);
+
+// Create assets to attach
+let deposit_amount: u64 = 1000;
+let fungible_asset = FungibleAsset::new(faucet.id(), deposit_amount)?;
+let note_assets = NoteAssets::new(vec![Asset::Fungible(fungible_asset)])?;
+
+// Create the note
+let deposit_note = create_testing_note_from_package(
+    deposit_note_package.clone(),
+    sender.id(),  // Note sender
+    NoteCreationConfig {
+        assets: note_assets,
+        ..Default::default()
+    },
+)?;
+
+// Add to MockChain
+builder.add_output_note(OutputNote::Full(deposit_note.clone()));
+```
+
+### Creating Notes with Inputs
+
+For notes that read parameters via `active_note::get_inputs()`:
+
+```rust
+use miden_core::Felt;
+
+// Note inputs are a vector of Felts
+let inputs = vec![
+    // Asset data [0-3]
+    Felt::new(withdraw_amount),
+    Felt::new(0),
+    faucet.id().suffix(),
+    faucet.id().prefix().as_felt(),
+    // Serial number [4-7]
+    Felt::new(0x1234567890abcdef),
+    Felt::new(0xfedcba0987654321),
+    Felt::new(0xdeadbeefcafebabe),
+    Felt::new(0x0123456789abcdef),
+    // Additional parameters
+    Felt::new(tag as u64),
+    Felt::new(1),  // note_type (1 = Public)
+];
+
+let note = create_testing_note_from_package(
+    note_package.clone(),
+    sender.id(),
+    NoteCreationConfig {
+        inputs,
+        ..Default::default()
+    },
+)?;
+```
+
+## Executing Transactions
+
+### Basic Transaction Execution
+
+```rust
+// Build MockChain after adding all accounts and notes
+let mut mock_chain = builder.build()?;
+
+// Build transaction context
+// Args: (account_id, input_note_ids, expected_output_note_ids)
+let tx_context = mock_chain
+    .build_tx_context(account.id(), &[note.id()], &[])?
+    .build()?;
+
+// Execute
+let executed_tx = tx_context.execute().await?;
+
+// Apply state changes to local account copy
+account.apply_delta(&executed_tx.account_delta())?;
+
+// Add to pending transactions and prove block
+mock_chain.add_pending_executed_transaction(&executed_tx)?;
+mock_chain.prove_next_block()?;
+```
+
+### Transaction with Script
+
+For transaction scripts (like initialization):
+
+```rust
+use miden_client::transaction::TransactionScript;
+
+// Build the transaction script
+let init_package = Arc::new(build_project_in_dir(
+    Path::new("../contracts/init-tx-script"),
+    true,
+)?);
+
+let init_program = init_package.unwrap_program();
+let init_tx_script = TransactionScript::new((*init_program).clone());
+
+// Execute with script
+let tx_context = mock_chain
+    .build_tx_context(account.id(), &[], &[])?
+    .tx_script(init_tx_script)
+    .build()?;
+
+let executed_tx = tx_context.execute().await?;
+```
+
+### Transactions with Expected Output Notes
+
+When your contract creates output notes, specify them:
+
+```rust
+use miden_client::transaction::OutputNote;
+
+// Build the expected output note
+let expected_note = Note::new(
+    output_assets,
+    output_metadata,
+    recipient,
+);
+
+let tx_context = mock_chain
+    .build_tx_context(account.id(), &[input_note.id()], &[])?
+    .extend_expected_output_notes(vec![OutputNote::Full(expected_note)])
+    .build()?;
+```
+
+## Verifying State Changes
+
+### Reading Storage After Transaction
+
+```rust
+// After executing and applying delta...
+
+// Read Value storage (by slot name)
+let value: Word = account.storage().get_item(&initialized_slot)?;
+
+// Read Map storage (by slot name)
+let key = Word::from([
+    depositor.prefix().as_felt(),
+    depositor.suffix(),
+    faucet.id().prefix().as_felt(),
+    faucet.id().suffix(),
+]);
+let balance = account.storage().get_map_item(&balances_slot, key)?;
+
+// Assert expected values
+assert_eq!(
+    balance,
+    Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1000)]),
+    "Balance should match deposited amount"
+);
+```
+
+## Testing Error Conditions
+
+### Expecting Transaction Failure
+
+```rust
+#[tokio::test]
+async fn should_fail_without_initialization() -> anyhow::Result<()> {
+    // Setup WITHOUT initialization step...
+
+    let tx_context = mock_chain
+        .build_tx_context(account.id(), &[note.id()], &[])?
+        .build()?;
+
+    // Execute and expect failure
+    let result = tx_context.execute().await;
+
+    assert!(
+        result.is_err(),
+        "Expected transaction to fail, but it succeeded"
+    );
+
+    // Optionally check error message
+    if let Err(e) = result {
+        println!("Expected error: {}", e);
+    }
+
+    Ok(())
+}
+```
+
+### Testing Constraint Violations
+
+```rust
+#[tokio::test]
+async fn deposit_exceeds_max_should_fail() -> anyhow::Result<()> {
+    // Create deposit with amount > MAX_DEPOSIT_AMOUNT
+    let large_amount: u64 = 2_000_000;  // Max is 1,000,000
+
+    // ... setup code ...
+
+    let result = tx_context.execute().await;
+
+    assert!(
+        result.is_err(),
+        "Expected deposit to fail due to max limit"
+    );
+
+    Ok(())
+}
+```
+
+## Complete Test Example
+
+```rust title="integration/tests/deposit_test.rs"
+use integration::helpers::{
+    build_project_in_dir, create_testing_account_from_package,
+    create_testing_note_from_package, AccountCreationConfig, NoteCreationConfig,
+};
+use miden_client::{
+    account::{StorageMap, StorageSlot, StorageSlotName},
+    asset::{Asset, FungibleAsset},
+    note::NoteAssets,
+    transaction::{OutputNote, TransactionScript},
+    Felt, Word,
+};
+use miden_testing::{Auth, MockChain};
+use std::{path::Path, sync::Arc};
+
+#[tokio::test]
+async fn deposit_test() -> anyhow::Result<()> {
+    // 1. Setup MockChain builder
+    let mut builder = MockChain::builder();
+
+    // 2. Create faucet and sender
+    let faucet = builder.add_existing_basic_faucet(Auth::BasicAuth, "TEST", 1000, Some(10))?;
+    let sender = builder.add_existing_wallet_with_assets(
+        Auth::BasicAuth,
+        [FungibleAsset::new(faucet.id(), 100)?.into()],
+    )?;
+
+    // 3. Build contracts
+    let bank_package = Arc::new(build_project_in_dir(
+        Path::new("../contracts/bank-account"), true
+    )?);
+    let deposit_note_package = Arc::new(build_project_in_dir(
+        Path::new("../contracts/deposit-note"), true
+    )?);
+    let init_tx_script_package = Arc::new(build_project_in_dir(
+        Path::new("../contracts/init-tx-script"), true
+    )?);
+
+    // 4. Create bank account with named storage slots
+    let initialized_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::initialized")
+            .expect("Valid slot name");
+    let balances_slot =
+        StorageSlotName::new("miden::component::miden_bank_account::balances")
+            .expect("Valid slot name");
+
+    let bank_cfg = AccountCreationConfig {
+        storage_slots: vec![
+            StorageSlot::with_value(initialized_slot, Word::default()),
+            StorageSlot::with_map(
+                balances_slot.clone(),
+                StorageMap::with_entries([]).expect("Empty storage map"),
+            ),
+        ],
+        ..Default::default()
+    };
+    let mut bank_account = create_testing_account_from_package(
+        bank_package.clone(), bank_cfg
+    ).await?;
+
+    // 5. Create deposit note
+    let deposit_amount: u64 = 1000;
+    let fungible_asset = FungibleAsset::new(faucet.id(), deposit_amount)?;
+    let note_assets = NoteAssets::new(vec![Asset::Fungible(fungible_asset)])?;
+    let deposit_note = create_testing_note_from_package(
+        deposit_note_package.clone(),
+        sender.id(),
+        NoteCreationConfig { assets: note_assets, ..Default::default() },
+    )?;
+
+    // 6. Add to builder and build chain
+    builder.add_account(bank_account.clone())?;
+    builder.add_output_note(OutputNote::Full(deposit_note.clone()));
+    let mut mock_chain = builder.build()?;
+
+    // 7. Initialize bank
+    let init_program = init_tx_script_package.unwrap_program();
+    let init_tx_script = TransactionScript::new((*init_program).clone());
+    let init_tx_context = mock_chain
+        .build_tx_context(bank_account.id(), &[], &[])?
+        .tx_script(init_tx_script)
+        .build()?;
+    let executed_init = init_tx_context.execute().await?;
+    bank_account.apply_delta(&executed_init.account_delta())?;
+    mock_chain.add_pending_executed_transaction(&executed_init)?;
+    mock_chain.prove_next_block()?;
+
+    // 8. Execute deposit
+    let tx_context = mock_chain
+        .build_tx_context(bank_account.id(), &[deposit_note.id()], &[])?
+        .build()?;
+    let executed_tx = tx_context.execute().await?;
+    bank_account.apply_delta(&executed_tx.account_delta())?;
+    mock_chain.add_pending_executed_transaction(&executed_tx)?;
+    mock_chain.prove_next_block()?;
+
+    // 9. Verify balance
+    let depositor_key = Word::from([
+        sender.id().prefix().as_felt(),
+        sender.id().suffix(),
+        faucet.id().prefix().as_felt(),
+        faucet.id().suffix(),
+    ]);
+    let balance = bank_account.storage().get_map_item(&balances_slot, depositor_key)?;
+    let expected = Word::from([
+        Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(deposit_amount)
+    ]);
+    assert_eq!(balance, expected, "Balance should match deposit");
+
+    println!("Deposit test passed!");
+    Ok(())
+}
+```
+
+## Running Tests
+
+```bash title=">_ Terminal"
+# Run all tests
+cargo test -p integration -- --nocapture
+
+# Run specific test
+cargo test -p integration deposit_test -- --nocapture
+
+# Run with verbose output
+RUST_LOG=debug cargo test -p integration -- --nocapture
+```
+
+## Key Takeaways
+
+1. **MockChain Builder Pattern** - Use `MockChain::builder()` to set up test environments
+2. **Build Contracts First** - Use `build_project_in_dir()` to compile contracts before tests
+3. **Configure Storage Slots** - Match your contract's storage layout when creating accounts
+4. **Apply Deltas** - Always call `apply_delta()` on local account copies after transactions
+5. **Prove Blocks** - Call `prove_next_block()` after adding executed transactions
+6. **Test Failures** - Use `result.is_err()` to verify constraint violations
+
+:::tip View Complete Source
+See the complete test implementations in the [miden-bank repository](https://github.com/keinberger/miden-bank/tree/main/integration/tests).
+:::
+
+## Next Steps
+
+- **[Debugging Guide](./debugging)** - Troubleshoot common issues
+- **[Common Pitfalls](./pitfalls)** - Avoid known gotchas
+- **[Miden Bank Tutorial](./miden-bank/)** - See testing in action
 ````
 
 ## File: docs/builder/migration/_category_.json
@@ -278,320 +1748,6 @@ The standard library has been renamed from `StdLibrary` to `CoreLibrary`.
 | `unresolved import 'miden_objects'` | Old package name | Change to `miden_protocol` |
 | `cannot find 'StdLibrary' in 'miden_lib'` | Renamed to CoreLibrary | Use `miden_standards::CoreLibrary` |
 | `unresolved import 'std::crypto'` | MASM namespace change | Use `miden::core::crypto` |
-````
-
-## File: docs/builder/migration/02-account-changes.md
-````markdown
----
-sidebar_position: 2
-title: "Account Changes"
-description: "Named storage slots, keystore, components, and procedure root changes"
----
-
-# Account Changes
-
-:::warning Breaking Change
-Storage is now name-based, not index-based. All storage access code must be updated.
-:::
-
-## Quick Fix
-
-Replace numeric indices with `StorageSlotName`:
-
-```rust title="src/account.rs"
-// Before
-let value = account.storage().get_slot(0)?;
-
-// After
-let slot_name = StorageSlotName::new("my_slot")?;
-let value = account.storage().get_slot(&slot_name)?;
-```
-
----
-
-## Named Storage Slots
-
-Replace index-based storage access with `StorageSlotName` identifiers.
-
-### Rust
-
-```diff title="src/account.rs"
-- // Before: access by numeric index
-- let value = account.storage().get_slot(0)?;
-- account.storage_mut().set_slot(0, new_value)?;
-
-+ // After: access by name
-+ let slot_name = StorageSlotName::new("my_slot")?;
-+ let value = account.storage().get_slot(&slot_name)?;
-+ account.storage_mut().set_slot(&slot_name, new_value)?;
-```
-
-### MASM Updates
-
-The `set_map_item` procedure now takes slot IDs and returns only old values:
-
-```diff title="src/contract.masm"
-- # Before
-- exec.account::set_map_item
-- # Returns: [OLD_MAP_ROOT, OLD_VALUE, ...]
-
-+ # After
-+ exec.account::set_map_item
-+ # Returns: [OLD_VALUE, ...]
-```
-
-:::info Good to know
-The return value change means you may need to update stack manipulation after calling `set_map_item`.
-:::
-
----
-
-## Keystore Changes
-
-Remove RNG generics from `FilesystemKeyStore`:
-
-```diff title="src/client.rs"
-- use miden_client::keystore::FilesystemKeyStore;
-- let keystore = FilesystemKeyStore::<rand::rngs::StdRng>::new(path)?;
-
-+ use miden_client::keystore::FilesystemKeyStore;
-+ let keystore = FilesystemKeyStore::new(path)?;
-```
-
----
-
-## Web Component Compilation
-
-Web component compilation now requires `AccountComponentCode` from `CodeBuilder`:
-
-```diff title="src/component.rs"
-- // Before
-- let component = AccountComponent::compile(source)?;
-
-+ // After
-+ use miden_protocol::code::CodeBuilder;
-+ let code = CodeBuilder::new()
-+     .with_source(source)
-+     .build()?;
-+ let component = AccountComponent::new(code)?;
-```
-
----
-
-## Storage Schemas
-
-Replace `AccountComponentTemplate` with metadata-driven `StorageSchema`:
-
-```diff title="src/schema.rs"
-- use miden_lib::AccountComponentTemplate;
-- let template = AccountComponentTemplate::new(slots)?;
-
-+ use miden_standards::StorageSchema;
-+ let schema = StorageSchema::builder()
-+     .add_slot("balance", StorageSlotType::Value)
-+     .add_slot("metadata", StorageSlotType::Map)
-+     .build()?;
-```
-
----
-
-## Procedure Roots
-
-Use `AccountProcedureRoot` instead of `AccountProcedureInfo`:
-
-```diff title="src/procedure.rs"
-- use miden_objects::accounts::AccountProcedureInfo;
-- let info = AccountProcedureInfo::new(digest, storage_offset)?;
-
-+ use miden_protocol::accounts::AccountProcedureRoot;
-+ let root = AccountProcedureRoot::new(digest)?;
-```
-
----
-
-## Migration Steps
-
-1. Identify all storage slot access patterns in your code
-2. Define `StorageSlotName` constants for each slot
-3. Update storage access to use names instead of indices
-4. Remove RNG type parameters from keystore initialization
-5. Update component compilation to use `CodeBuilder`
-6. Migrate storage templates to `StorageSchema`
-7. Replace `AccountProcedureInfo` with `AccountProcedureRoot`
-
----
-
-## Common Errors
-
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `no method named 'get_slot' taking u32` | API changed to names | Use `StorageSlotName` |
-| `FilesystemKeyStore expects 0 type parameters` | RNG generic removed | Remove type parameter |
-| `AccountComponentTemplate not found` | Renamed | Use `StorageSchema` |
-````
-
-## File: docs/builder/migration/03-note-changes.md
-````markdown
----
-sidebar_position: 3
-title: "Note Changes"
-description: "Note attachments, tags, network accounts, and input notes API changes"
----
-
-# Note Changes
-
-:::warning Breaking Change
-The note system has been redesigned. `NoteMetadata` no longer stores `aux` or `NoteExecutionHint` — use `NoteAttachment` instead.
-:::
-
-## Quick Fix
-
-```rust title="src/note.rs"
-// Before
-let metadata = NoteMetadata::new(sender, note_type, tag, aux, execution_hint)?;
-
-// After
-let metadata = NoteMetadata::new(sender, note_type, tag)?;
-let attachment = NoteAttachment::new(aux_data, execution_hint)?;
-let note = Note::new(metadata, script, inputs, attachment)?;
-```
-
----
-
-## Note Attachments
-
-`NoteMetadata` no longer stores `aux` or `NoteExecutionHint`. Use `NoteAttachment` instead.
-
-```diff title="src/note.rs"
-- // Before: aux and hints in metadata
-- let metadata = NoteMetadata::new(
--     sender,
--     note_type,
--     tag,
--     aux,                    // No longer here
--     execution_hint,         // No longer here
-- )?;
-
-+ // After: use attachments
-+ let metadata = NoteMetadata::new(sender, note_type, tag)?;
-+ let attachment = NoteAttachment::new(aux_data, execution_hint)?;
-+ let note = Note::new(metadata, script, inputs, attachment)?;
-```
-
-:::info Good to know
-This separation makes note metadata more lightweight and allows attachments to be optional.
-:::
-
----
-
-## Tag Semantics
-
-`NoteTag` is now a plain `u32`. Use `with_account_target()` for account targeting:
-
-```diff title="src/note.rs"
-- // Before: tag with embedded target
-- let tag = NoteTag::from_account_id(target_account)?;
-
-+ // After: plain tag with explicit targeting
-+ let tag: u32 = 12345;
-+ let note = note.with_account_target(target_account)?;
-```
-
----
-
-## Network Account Target
-
-Implement `NetworkAccountTarget` attachment for network-account notes:
-
-```rust title="src/network_note.rs"
-use miden_protocol::notes::NetworkAccountTarget;
-
-let target = NetworkAccountTarget::new(account_id, network_id)?;
-let note = note.with_attachment(target)?;
-```
-
----
-
-## MINT Notes
-
-New `MintNoteInputs` enum supports private and public output notes:
-
-```diff title="src/mint.rs"
-- // Before
-- let mint_note = MintNote::new(amount, recipient)?;
-
-+ // After: explicit private/public choice
-+ use miden_standards::notes::MintNoteInputs;
-+
-+ // For private notes
-+ let inputs = MintNoteInputs::Private { amount, recipient };
-+
-+ // For public notes
-+ let inputs = MintNoteInputs::Public { amount, recipient, metadata };
-```
-
-:::tip
-Choose `MintNoteInputs::Private` for most use cases. Use `Public` only when the note contents should be visible on-chain.
-:::
-
----
-
-## Input Notes API
-
-Unified interface accepts full `Note` objects instead of IDs:
-
-```diff title="src/transaction.rs"
-- // Before: separate authenticated/unauthenticated lists
-- let tx = TransactionRequest::new()
--     .with_authenticated_input_notes(auth_note_ids)
--     .with_unauthenticated_input_notes(unauth_note_ids)?;
-
-+ // After: unified input notes
-+ let tx = TransactionRequest::new()
-+     .with_input_notes(notes)?;  // Full Note objects
-```
-
----
-
-## FetchedNote Structure
-
-Private notes now carry `NoteHeader`; public notes expose `note` and `inclusionProof`:
-
-```rust title="src/fetch.rs"
-match fetched_note {
-    FetchedNote::Private { header, .. } => {
-        // Access header fields
-        let note_id = header.id();
-    }
-    FetchedNote::Public { note, inclusion_proof } => {
-        // Access full note and proof
-        let inputs = note.inputs();
-    }
-}
-```
-
----
-
-## Migration Steps
-
-1. Remove `aux` and `execution_hint` from `NoteMetadata` constructors
-2. Create `NoteAttachment` objects for aux data and hints
-3. Update `NoteTag` usage to plain `u32` values
-4. Use `with_account_target()` for targeted notes
-5. Implement `NetworkAccountTarget` for network notes
-6. Update mint note creation to use `MintNoteInputs` enum
-7. Refactor input notes to pass full `Note` objects
-8. Update `FetchedNote` handling for new structure
-
----
-
-## Common Errors
-
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `NoteMetadata::new takes 3 arguments` | aux/hint removed | Use `NoteAttachment` |
-| `NoteTag::from_account_id not found` | API changed | Use `with_account_target()` |
-| `with_authenticated_input_notes not found` | API unified | Use `with_input_notes()` |
 ````
 
 ## File: docs/builder/migration/04-transaction-changes.md
@@ -1402,6 +2558,23 @@ To make your account visible on-chain, deploy it using:
 miden client new-wallet
 ```
 
+## Mint Your First Tokens
+
+Request tokens from the public testnet faucet:
+
+```bash title=">_ Terminal"
+miden mint --target-account <ACCOUNT_ID> --amount 1000
+```
+
+This sends a mint request to the [public testnet faucet](https://faucet-api.testnet.miden.io) and automatically consumes the resulting note, depositing the tokens into your account.
+
+Display your balance:
+
+```bash title=">_ Terminal"
+miden client sync
+miden client account -s <ACCOUNT_ID>
+```
+
 ## Create a New Project
 
 **Rust workspace template**: Designed for developing, testing, and deploying Miden smart contracts using Rust
@@ -1459,1272 +2632,1006 @@ To return to your global client configuration, remove the local `miden-client.to
 ---
 ````
 
-## File: docs/builder/quick-start/setup/installation.md
-````markdown
----
-sidebar_position: 1
-title: Installation
-description: Get started with Miden development by installing Miden tools using the `midenup` toolchain.
----
-
-This guide walks you through installing the Miden development tools using the `midenup` toolchain manager.
-
-## Prerequisites
-
-### Install Rust
-
-Miden development requires Rust. Install it using rustup:
-
-```bash title=">_ Terminal"
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-```
-
-Reload your PATH environment variable:
-
-```bash title=">_ Terminal"
-. "$HOME/.cargo/env"
-```
-
-Verify the installation:
-
-```bash title=">_ Terminal"
-rustc --version
-```
-
-<details>
-<summary>Expected output</summary>
-
-```text
-rustc 1.92.0-nightly (fa3155a64 2025-09-30)
-```
-
-</details>
-
-### Install Node.js & Yarn
-
-For TypeScript development with the Miden Web Client, you'll need Node.js and Yarn.
-
-**Install Node.js:**
-
-```bash title=">_ Terminal"
-# Install Node.js using the official installer or package manager
-# For macOS with Homebrew:
-brew install node
-
-# For Ubuntu/Debian:
-curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-sudo apt-get install -y nodejs
-
-# For Windows, download from nodejs.org
-```
-
-**Install Yarn:**
-
-```bash title=">_ Terminal"
-# Install Yarn globally via npm
-npm install -g yarn
-```
-
-**Verify installations:**
-
-```bash title=">_ Terminal"
-node --version && yarn --version
-```
-
-<details>
-<summary>Expected output</summary>
-
-```text
-v20.11.0
-1.22.19
-```
-
-</details>
-
-### Install Miden CLI
-
-**Install midenup**
-
-The Miden toolchain installer makes it easy to manage Miden components:
-
-```bash title=">_ Terminal"
-cargo install midenup
-```
-
-:::info
-Until published to crates.io, install using: `cargo install --git https://github.com/0xMiden/midenup.git`
-:::
-
-**Initialize midenup**
-
-```bash title=">_ Terminal"
-midenup init
-```
-
-This creates the `$MIDENUP_HOME` directory and sets up symlinks for the `miden` command.
-
-**Configure PATH**
-
-Add the midenup bin directory to your PATH. First, check your current `$MIDENUP_HOME`:
-
-```bash title=">_ Terminal"
-midenup show home
-```
-
-Then add it to your shell configuration:
-
-**For Zsh (macOS default):**
-
-```bash title="~/.zshrc"
-export PATH="/Users/$(whoami)/Library/Application Support/midenup/bin:$PATH"
-source ~/.zshrc
-```
-
-**For Bash:**
-
-```bash title="~/.bashrc"
-export PATH="$XDG_DATA_DIR/midenup/bin:$PATH"
-source ~/.bashrc
-```
-
-**Install Miden Toolchain**
-
-Install the latest stable Miden components:
-
-```bash title=">_ Terminal"
-midenup install stable
-```
-
-### Verify Installation
-
-Check that everything is working correctly:
-
-```bash title=">_ Terminal"
-midenup show active-toolchain
-```
-
-<details>
-<summary>Expected output</summary>
-
-```text
-stable
-```
-
-</details>
-
-```bash title=">_ Terminal"
-which miden
-```
-
-<details>
-<summary>Expected output</summary>
-
-```text
-/Users/<USERNAME>/Library/Application Support/midenup/bin/miden
-```
-
-</details>
-
-Test by creating a new project:
-
-```bash title=">_ Terminal"
-miden new my-test-project
-```
-
-If successful, you'll see a new directory with Miden project files.
-
-### Troubleshooting
-
-**"miden: command not found"**
-
-This means the PATH isn't configured correctly. Verify midenup's bin directory is in your PATH:
-
-```bash title=">_ Terminal"
-echo $PATH | grep midenup
-```
-
-If missing, re-add the export command to your shell configuration and reload it.
-
----
-````
-
-## File: docs/builder/quick-start/your-first-smart-contract/index.md
-````markdown
----
-sidebar_position: 1
-title: Your First Smart Contract
-description: Learn to build, test, and deploy smart contracts on Miden using Rust.
----
-
-# Your First Smart Contract
-
-Welcome to the **Your First Smart Contract** guide! This tutorial will walk you through building, testing, and deploying your first Miden smart contract using Rust.
-
-## What You'll Learn
-
-By the end of this tutorial, you will have:
-
-- **Set up a Miden project** with the proper workspace structure
-- **Written and understood** a counter smart contract and increment note
-- **Deployed your contract** to the Miden testnet using integration scripts
-- **Mastered the fundamentals** of Miden's account-based smart contract model
-
-This guide focuses on practical, hands-on learning. You'll work with real code and deploy to a live network, giving you everything needed to start building on Miden.
-
-## What We'll Build
-
-You'll create a **counter contract system** consisting of:
-
-- **Counter Account**: A smart contract that stores and manages a counter value in its storage
-- **Increment Note**: A note script that increments the counter when executed
-- **Integration Scripts**: Deployment and interaction scripts for managing the contract lifecycle
-
-The counter example is designed to teach core Miden concepts through a simple, understandable use case that you can extend for your own projects.
-
-## Prerequisites
-
-Before starting this guide, ensure you have completed the [Installation](../setup/installation) tutorial and have:
-
-- **Rust toolchain** installed and configured
-- **midenup toolchain** installed with Miden CLI tools
-
-:::tip Prerequisites Required
-You need those development tools installed for this guide. If you haven't set up your environment yet, please complete the [installation](../setup/installation) guide first.
-:::
-
-## No Prior Experience Required
-
-This tutorial is designed for developers new to Miden. You don't need prior experience with:
-
-- Miden's account model or note-based transactions
-- Smart contract development on Miden
-- The specifics of Rust development for blockchain
-
-We'll explain these concepts as we encounter them in the tutorial.
-
-## Getting Help
-
-If you get stuck during this tutorial:
-
-- Check the rest of the Miden Docs for detailed technical references
-- Join the [Build On Miden](https://t.me/BuildOnMiden) Telegram community for support
-- Review the code examples in your project's `contracts` and `integration/` folder
-
-## Guide Structure
-
-This tutorial is divided into focused sections:
-
-1. **[Create Your Project](./create)** - Set up your workspace and understand the counter contract code
-2. **[Deploy Your Contract](./deploy)** - Learn the integration folder and deploy to testnet
-3. **[Test Your Contract](./test)** - Learn how to effectively test your contracts
-
-Each section builds on the previous one, so we recommend following them in order.
-
-Ready to build your first Miden smart contract? Let's get started!
-````
-
-## File: docs/builder/quick-start/_category_.json
-````json
-{
-  "label": "Quick Start",
-  "position": 1,
-  "link": {
-    "type": "doc",
-    "id": "builder/quick-start/index"
-  }
-}
-````
-
-## File: docs/builder/tools/_category_.json
-````json
-{
-  "label": "Tools",
-  "position": 5
-}
-````
-
-## File: docs/builder/faq.md
-````markdown
-# FAQ
-
-## How is privacy implemented in Miden?
-
-Miden leverages zero-knowledge proofs and client side execution and proving to provide security and privacy.
-
-## Does Miden support encrypted notes?
-
-At the moment, Miden does not have support for encrypted notes but it is a planned feature.
-
-## Why does Miden have delegated proving?
-
-Miden leverages delegated proving for a few technical and practical reasons:
-
-1. **Computational:** Generating zero-knowledge proofs is a computationally intensive work. The proving process requires significant processing power and memory, making it impractical for some end-user devices (like smartphones) to generate.
-2. **Technical architecture**:
-Miden's architecture separates concerns between:
-    - **Transaction Creation**: End users create and sign transactions
-    - **Proof Generation**: Specialized provers generate validity proofs
-    - **Verification**: The network verifies these proofs
-3. **Proving efficiency**:
-Delegated provers can use optimized hardware that wouldn't be available to end-user devices, specifically designed for the mathematical operations needed in STARK proof generation.
-
-## What is the lifecycle of a transaction?
-
-### 1. Transaction Creation
-
-- User creates a transaction specifying the operations to perform (transfers, contract interactions, etc.)
-- Client performs preliminary validation of the transaction and its structure
-- The user authorizes the specified state transitions by signing the transaction
-
-### 2. Transaction Submission
-
-- The signed transaction is submitted to Miden network nodes
-- The transaction enters the mempool (transaction pool) where it waits to be selected to be included in the state
-- Nodes perform basic validation checks on the transaction structure and signature
-
-### 3. Transaction Selection
-
-- A sequencer (or multiple sequencers in a decentralized setting) selects transactions from the mempool
-- The sequencer groups transactions into bundles based on state access patterns and other criteria
-- The transaction execution order is determined according to protocol mechanism
-
-### 4. Transaction Execution
-
-- The current state relevant to the transaction is loaded
-- The Miden VM executes the transaction operations
-- **State Transition Computation**: The resulting state transitions are computed
-- An execution trace of the transaction is generated which captures all the computation
-
-### 5. Proof Generation
-
-- A STARK based cryptographic proof is generated attesting to the correctness of the execution
-- A proof for the aggregated transaction is created
-
-### 6. Block Production
-
-- The aggregated bundle of transactions along with their proofs are assembled into a block
-- A recursive proof attesting to all bundle proofs is generated
-- The block data structure is finalized with the aggregated proof
-
-### 7. L1 Submission
-
-- Transaction data is posted to the data availability layer
-- The block proof and state delta commitment are submitted to the Miden contract (that is bridged to Ethereum/Agglayer)
-- The L1 contract verifies validity of the proof
-- Upon successful verification, the L1 contract updates the state root
-
-### 8. Finalization
-
-- Transaction receipts and events are generated
-- The global state commitment is updated to reflect the new state
-- The transaction is now considered finalized on the L1
-- Users and indexers get notified/updated about the transaction completion
-
-## Do notes in Miden support recency conditions?
-
-Yes, Miden enables consumption of notes based on time conditions, such as:
-
-- A specific block height being reached
-- A timestamp threshold being passed
-- An oracle providing specific data
-- Another transaction being confirmed
-
-## What does a Miden operator do in Miden?
-
-A Miden operator is an entity that maintains the infrastructure necessary for the functioning of the Miden rollup. Their roles may involve:
-
-1. Running Sequencer Nodes
-2. Operating the Prover Infrastructure
-3. Submitting Proofs to L1
-4. Maintaining Data Availability
-5. Participating in the Consensus Mechanism
-
-## How does bridging works in Miden?
-
-Miden does not yet have a fully operational bridge, work in progress.
-
-## What does the gas fee model of Miden look like?
-
-Miden does not yet have a fully implemented fee model, work in progress.
-````
-
-## File: docs/builder/glossary.md
-````markdown
-# Glossary
-
-## Account
-
-An account is a data structure that represents an entity (user account, smart contract) of the Miden blockchain, they are analogous to smart contracts.
-
-## Account builder
-
-Account builder provides a structured way to create and initialize new accounts on the Miden network with specific properties, permissions, and initial state.
-
-## AccountCode
-
-Represents the executable code associated with an account.
-
-## AccountComponent
-
-An AccountComponent can be described as a modular unit of code to represent the functionality of a Miden Account. Each AccountCode is composed of multiple AccountComponent's.
-
-## AccountId
-
-The AccountId is a value that uniquely identifies each account in Miden.
-
-## AccountIdVersion
-
-The AccountIdVersion represents the different versions of account identifier formats supported by Miden.
-
-## AccountStorage
-
-The AccountStorage is a key-value store associated with an account. It is made up of storage slots.
-
-## Asset
-
-An Asset represents a digital resource with value that can be owned, transferred, and managed within the Miden blockchain.
-
-## AssetVault
-
-The AssetVault is used for managing assets within accounts. It provides a way for storing and transfering assets associated with each account.
-
-## Batch
-
-A Batch allows multiple transactions to be grouped together, these batches will then be aggregated into blocks, improving network throughput.
-
-## Block
-
-A Block is a fundamental data structure which groups multiple batches together and forms the blockchain's state.
-
-## Delta
-
-A Delta represents the changes between two states `s` and `s'`. Applying a Delta `d` to `s` would result in `s'`.
-
-## Felt
-
-A Felt or Field Element is a data type used for cryptographic operations. It represents an element in the finite field used in Miden.
-
-## Kernel
-
-A fundamental module of the MidenVM that acts as a base layer by providing core functionality and security guarantees for the protocol.
-
-## Miden Assembly
-
-An assembly language specifically designed for the Miden VM. It's a low-level programming language with specialized instructions optimized for zero-knowledge proof generation.
-
-## Note
-
-A Note is a fundamental data structure that represents an offchain asset or a piece of information that can be transferred between accounts. Miden's UTXO-like (Unspent Transaction Output) model is designed around the concept of notes. There are output notes which are new notes created by the transaction and input notes which are consumed (spent) by the transaction.
-
-## Note script
-
-A Note script is a program that defines the rules and conditions under which a note can be consumed.
-
-## Note tag
-
-A Note tag is an identifier or metadata associated with notes that provide additional filtering capabilities.
-
-## Note ID
-
-Note ID is a unique identifier assigned to each note to distinguish it from other notes.
-
-## Nullifier
-
-A nullifier is a cryptographic commitment that marks a note as spent, preventing it from being consumed again.
-
-## Prover
-
-A Prover is responsible for generating zero-knowledge proofs that attest to the correctness of the execution of a program without revealing the underlying data.
-
-## Word
-
-A Word is a data structure that represents the basic unit of computation and storage in Miden, it is composed or four Felt's.
-````
-
-## File: docs/builder/develop/tutorials/rust-compiler/debugging.md
+## File: docs/builder/quick-start/your-first-smart-contract/create.md
 ````markdown
 ---
 sidebar_position: 2
-title: "Debugging Guide"
-description: "Learn how to debug Miden Rust contracts using assert_eq and cycle counts."
+title: Create Your Project
+description: Set up a new Miden project and understand the counter contract implementation.
 ---
 
-# Debugging Guide
+In this section, you'll set up a new Miden project and understand the structure and implementation of both the counter account contract and increment note script.
 
-Miden contracts don't support traditional debugging tools like console.log or print statements. Instead, you can use `assert_eq` statements to check values during execution.
+## Setting Up Your Project
 
-## Using assert_eq
+Create a new Miden project using the CLI:
 
-The `assert_eq` function compares two `Felt` values and fails if they differ:
+```bash title=">_ Terminal"
+miden new counter-project
+cd counter-project
+```
+
+This creates a workspace with the following structure:
+
+```text
+counter-project/
+├── contracts/                   # Each contract as individual crate
+│   ├── counter-account/         # Example: Counter account contract
+│   └── increment-note/          # Example: Increment note contract
+├── integration/                 # Integration crate (scripts + tests)
+│   ├── src/
+│   │   ├── bin/                 # Rust binaries for on-chain interactions
+│   │   ├── lib.rs
+│   │   └── helpers.rs           # Temporary helper file
+│   └── tests/                   # Test files
+├── Cargo.toml                   # Workspace root
+└── rust-toolchain.toml          # Rust toolchain specification
+```
+
+The project follows Miden's design philosophy of clean separation:
+
+- **`contracts/`**: Your primary working directory for writing Miden smart contract code
+- **`integration/`**: All on-chain interactions, deployment scripts, and tests
+
+Each contract is organized as its own individual crate, providing independent versioning, dependencies, and clear isolation between different contracts.
+
+## Building Your Contracts
+
+You can build individual contracts by navigating to their directory and running the Miden build command:
+
+```bash title=">_ Terminal"
+# Build the counter account contract
+cd contracts/counter-account
+miden build
+
+# Build the increment note contract
+cd ../increment-note
+miden build
+```
+
+This compiles the Rust contract code into Miden assembly, making it ready for deployment and interaction.
+
+## Understanding the Counter Account Contract
+
+Let's examine the counter account contract that comes with the project template. Open `contracts/counter-account/src/lib.rs`:
+
+```rust title="contracts/counter-account/src/lib.rs"
+// Do not link against libstd (i.e. anything defined in `std::`)
+#![no_std]
+#![feature(alloc_error_handler)]
+
+// However, we could still use some standard library types while
+// remaining no-std compatible, if we uncommented the following lines:
+//
+// extern crate alloc;
+
+use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
+
+/// Main contract structure for the counter example.
+#[component]
+struct CounterContract {
+    /// Storage map holding the counter value.
+    #[storage(description = "counter contract storage map")]
+    count_map: StorageMap,
+}
+
+#[component]
+impl CounterContract {
+    /// Returns the current counter value stored in the contract's storage map.
+    pub fn get_count(&self) -> Felt {
+        // Define a fixed key for the counter value within the map
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
+        // Read the value associated with the key from the storage map
+        self.count_map.get(&key)
+    }
+
+    /// Increments the counter value stored in the contract's storage map by one.
+    pub fn increment_count(&mut self) -> Felt {
+        // Define the same fixed key
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
+        // Read the current value
+        let current_value: Felt = self.count_map.get(&key);
+        // Increment the value by one
+        let new_value = current_value + felt!(1);
+        // Write the new value back to the storage map
+        self.count_map.set(key, new_value);
+        new_value
+    }
+}
+```
+
+### Counter Contract Walkthrough
+
+#### No-std Environment
+
+```rust
+#![no_std]
+```
+
+Miden contracts run in a `no_std` environment, meaning they don't link against Rust's standard library. This is essential for blockchain execution where contracts need to be deterministic and lightweight.
+
+#### Miden Library Imports
+
+```rust
+use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
+```
+
+These imports provide:
+
+- **`component`**: Macro for defining contract components
+- **`Felt`/`Word`**: Miden's native field element and word types
+- **`StorageMap`**: Key-value storage within account storage slots
+- **`StorageMapAccess`**: Needed for reading storage values (`get_count` function)
+
+#### Contract Structure Definition
+
+```rust
+#[component]
+struct CounterContract {
+    /// Storage map holding the counter value.
+    #[storage(description = "counter contract storage map")]
+    count_map: StorageMap,
+}
+```
+
+The `#[component]` attribute marks this as a Miden component. The `count_map` field is a `StorageMap` stored in a named storage slot of the account. In v0.13, storage slots are identified by name rather than explicit index numbers — the slot name is derived automatically from the component's package name and field name (e.g., `miden::component::miden_counter_account::count_map`).
+
+**Important**: Storage slots in Miden hold `Word` values, which are composed of four field elements (`Felt`). Each `Felt` is a 64-bit unsigned integer (u64). The `StorageMap` provides a key-value interface within a single storage slot, allowing you to store multiple key-value pairs within the four-element word structure.
+
+#### Contract Implementation
+
+```rust
+impl CounterContract {
+    // Function implementations...
+}
+```
+
+The `CounterContract` implementation defines the external interface that other contracts and notes can call. This is the contract's public API.
+
+#### Storage Key Strategy
+
+```rust
+let key = Word::from_u64_unchecked(0, 0, 0, 1);
+```
+
+Both functions use the same fixed key `[0, 0, 0, 1]` to store and retrieve the counter value within the storage map. The `Word::from_u64_unchecked` constructor creates a `Word` from four `u64` values. This demonstrates a simple but effective storage pattern.
+
+## Understanding the Increment Note Script
+
+Now let's examine the increment note script at `contracts/increment-note/src/lib.rs`:
+
+```rust title="contracts/increment-note/src/lib.rs"
+// Do not link against libstd (i.e. anything defined in `std::`)
+#![no_std]
+#![feature(alloc_error_handler)]
+
+// However, we could still use some standard library types while
+// remaining no-std compatible, if we uncommented the following lines:
+//
+// extern crate alloc;
+// use alloc::vec::Vec;
+
+use miden::*;
+
+use crate::bindings::miden::counter_account::counter_account;
+
+#[note]
+struct IncrementNote;
+
+#[note]
+impl IncrementNote {
+    #[note_script]
+    fn run(self, _arg: Word) {
+        let initial_value = counter_account::get_count();
+        counter_account::increment_count();
+        let expected_value = initial_value + Felt::from_u32(1);
+        let final_value = counter_account::get_count();
+        assert_eq(final_value, expected_value);
+    }
+}
+```
+
+### Increment Note Script Walkthrough
+
+#### No-std Setup
+
+Similar to the account contract, the note script uses `#![no_std]` with the same allocator and panic handler setup.
+
+#### Miden Imports
 
 ```rust
 use miden::*;
 
-// Check if a value equals an expected value
-assert_eq(actual_value, expected_value);
+use crate::bindings::miden::counter_account::counter_account;
 ```
 
-:::note
-`assert_eq` is a **function**, not a macro. Use `assert_eq(a, b)` without the exclamation mark.
-:::
+The wildcard import brings in all Miden note script functionality. The `counter_account` binding imports the interface functions from the counter contract, allowing the note script to call them.
 
-## Debugging with Cycle Counts
+#### Note Script Structure
 
-When your code fails, the error output includes a **cycle count** indicating where execution stopped. You can use this to narrow down problems:
-
-1. **Note the cycle count** when your code fails
-2. **Place an `assert_eq`** before the code you suspect is failing
-3. **Run again** and check the result:
-   - If the assertion fails at an **earlier cycle count**: the value you're checking is wrong
-   - If the assertion passes and fails at the **same cycle count**: the value is correct, the problem is elsewhere
-
-### Example
+Note scripts use a struct-based pattern. The `#[note]` attribute on both the struct and `impl` block marks this as a Miden note script component:
 
 ```rust
-pub fn withdraw(&mut self, depositor: AccountId, amount: Felt) {
-    let balance = self.get_balance(depositor);
+#[note]
+struct IncrementNote;
 
-    // Debug: Check if balance is what you expect
-    assert_eq(balance, felt!(1000));
-
-    // If the above passes, the problem is below this line
-    // If it fails, the balance isn't what you expected
-
-    let new_balance = balance - amount;
-    self.balances.set(key, new_balance);
+#[note]
+impl IncrementNote {
+    #[note_script]
+    fn run(self, _arg: Word) { ... }
 }
 ```
 
-By moving the `assert_eq` statement around, you can isolate which value is incorrect.
+The struct definition (`IncrementNote`) provides a named type for the note script. Unlike account contracts, note scripts don't store persistent data — the struct serves as the entry point container.
 
-## Limitations
+Learn more about [note scripts in the Miden documentation](/miden-base/note/).
 
-- No console.log or print debugging in contract code
-- `assert_eq` only works with `Felt` values
-- This is currently the primary debugging technique available
+#### The Note Script Function
+
+```rust
+#[note_script]
+fn run(self, _arg: Word) {
+    let initial_value = counter_account::get_count();
+    counter_account::increment_count();
+    let expected_value = initial_value + Felt::from_u32(1);
+    let final_value = counter_account::get_count();
+    assert_eq(final_value, expected_value);
+}
+```
+
+The `#[note_script]` attribute marks this method as the entry point for note execution. The `self` parameter is required for methods in the `impl` block. The function:
+
+1. **Gets the initial counter value** using the imported `counter_account::get_count()` function
+2. **Calls increment_count()** to increment the counter on the target account
+3. **Verifies the operation succeeded** by checking the final value matches expectations
+
+This demonstrates how note scripts interact with account contracts through their public interfaces, calling functions to change state.
+
+The counter example demonstrates a complete interaction pattern: the account contract manages persistent state, while the note script provides a mechanism to trigger state changes through note consumption.
+
+## Next Steps
+
+Now that you understand the contract code structure, let's move on to [deploying your contract](./deploy) and learn how the integration folder enables interaction with your contracts on the Miden network.
+
+---
 ````
 
-## File: docs/builder/develop/tutorials/rust-compiler/index.md
+## File: docs/builder/quick-start/your-first-smart-contract/test.md
 ````markdown
 ---
-title: "Rust Compiler"
-sidebar_position: 1
-description: "Learn to build Miden smart contracts using Rust with the Miden Rust compiler."
+sidebar_position: 4
+title: Test Your Contract
+description: Learn how to write and run tests for your Miden smart contracts using the integration testing framework.
 ---
 
-# Rust Compiler
+# Test Your Contract
 
-The Miden Rust compiler allows you to write smart contracts in Rust and compile them to Miden Assembly (MASM). This section provides tutorials and reference documentation for developing with the Rust compiler.
+In this final section, you'll learn how to test your counter contract using Miden's **Mockchain** - a purpose-built testing framework that enables fast, local testing without network dependencies.
 
-## Getting Started
+## Test Structure and Organization
 
-If you're new to the Miden Rust compiler, start with the **Miden Bank Tutorial** - a comprehensive, step-by-step guide that teaches all the core concepts through building a complete banking application.
+All tests for your smart contracts should be placed in the `integration/tests/` folder. This follows the same separation of concerns we've seen throughout the project:
 
-<div className="row margin-bottom--lg">
-  <div className="col col--6">
-    <div className="card">
-      <div className="card__header">
-        <h3>Miden Bank Tutorial</h3>
-      </div>
-      <div className="card__body">
-        <p>Build a complete banking application while learning:</p>
-        <ul>
-          <li>Account components and storage</li>
-          <li>Note scripts and transaction scripts</li>
-          <li>Asset management</li>
-          <li>Cross-component calls</li>
-          <li>Output note creation</li>
-        </ul>
-      </div>
-      <div className="card__footer">
-        <a className="button button--primary button--block" href="./miden-bank/">Start Tutorial</a>
-      </div>
-    </div>
-  </div>
-</div>
+- **`contracts/`**: Contains your contract source code
+- **`integration/src/bin/`**: Contains deployment and interaction scripts
+- **`integration/tests/`**: Contains all test files for your contracts
 
-## Reference Documentation
+This structure keeps your contract logic clean while providing a dedicated space for comprehensive testing.
 
-These guides provide detailed reference information for Rust compiler development:
+## Local Testing with Mockchain
 
-| Guide | Description |
-|-------|-------------|
-| [Testing with MockChain](./testing) | Learn to test your contracts using MockChain for local blockchain simulation |
-| [Debugging Guide](./debugging) | Interpret errors and debug common issues |
-| [Common Pitfalls](./pitfalls) | Avoid known issues and limitations |
+For most testing scenarios, we use Miden's **Mockchain** - a local, mocked blockchain instance specifically designed for testing. While you can also create tests that use the Miden client for end-to-end testing and on-chain interactions, the Mockchain provides the best developer experience for unit and integration testing.
 
-## Source Code
+### What is the Mockchain?
 
-The complete source code for the Miden Bank example is available at:
+The Mockchain is Miden's purpose-built testing framework that provides several key advantages over testing against a live network:
 
-**[github.com/keinberger/miden-bank](https://github.com/keinberger/miden-bank)**
+- **Blazing Fast Tests**: Run tests locally without network latency or external dependencies
+- **Full State Control**: Manipulate blockchain state precisely to create specific test scenarios
+- **Simpler Code**: Cleaner, more focused test logic without network complexity
+- **Deterministic Results**: Consistent test outcomes independent of network conditions
+- **Debugging Capabilities**: Detailed inspection of transaction execution and state changes
 
-## Prerequisites
+This makes testing faster, more reliable, and easier to debug than testing against the testnet.
 
-Before starting, ensure you have:
+## Running the Tests
 
-- Completed the [Quick Start guide](../../../quick-start/)
-- Basic familiarity with Rust programming
-- Understanding of Miden concepts (accounts, notes, transactions)
-````
+Execute your tests from the integration directory using the standard Cargo test command:
 
-## File: docs/builder/develop/tutorials/rust-compiler/testing.md
-````markdown
----
-sidebar_position: 1
-title: "Testing with MockChain"
-description: "Learn how to test Miden Rust compiler contracts using MockChain for simulating blockchain behavior locally."
----
-
-# Testing with MockChain
-
-MockChain provides a local simulation of the Miden blockchain for testing your contracts without connecting to a network. This guide covers testing patterns for account components, note scripts, and transaction scripts.
-
-## Overview
-
-MockChain simulates:
-- Block production and proving
-- Account state management
-- Note creation and consumption
-- Transaction execution
-
-This enables fast, deterministic testing of your Miden contracts.
-
-## Test Project Setup
-
-Create an integration test crate alongside your contracts:
-
-```text
-your-project/
-├── contracts/
-│   ├── my-account/
-│   └── my-note/
-└── integration/
-    ├── Cargo.toml
-    ├── src/
-    │   └── helpers.rs    # Test utilities
-    └── tests/
-        └── my_test.rs    # Test files
+```bash title="Terminal"
+cd integration
+cargo test --release
 ```
 
-### Cargo.toml for Tests
+You should see output confirming the test passes:
 
-```toml title="integration/Cargo.toml"
-[package]
-name = "integration"
-version = "0.1.0"
-edition = "2021"
+```text title="Expected Output"
+running 1 test
+Test passed!
+test counter_test ... ok
 
-[lib]
-path = "src/helpers.rs"
-
-[[test]]
-name = "my_test"
-path = "tests/my_test.rs"
-
-[dependencies]
-anyhow = "1.0"
-tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
-
-# Miden dependencies
-cargo-miden = { version = "0.7" }
-miden-client = { version = "0.13", features = ["tonic", "testing"] }
-miden-client-sqlite-store = { version = "0.13", package = "miden-client-sqlite-store" }
-miden-core = { version = "0.20" }
-miden-standards = { version = "0.13", default-features = false, features = ["testing"] }
-miden-testing = "0.13"
-miden-mast-package = { version = "0.20", default-features = false }
-rand = { version = "0.9" }
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-## Building Contracts for Tests
+## Understanding the Mockchain Test
 
-Use `cargo-miden` to build your contracts programmatically:
+Your project includes a comprehensive test file at `integration/tests/counter_test.rs` that demonstrates how to test the counter contract using the Mockchain. Let's walk through this test to understand the testing patterns:
 
-```rust title="integration/src/helpers.rs"
-use std::path::Path;
-use anyhow::{bail, Context, Result};
-use cargo_miden::{run, OutputType};
-use miden_mast_package::Package;
+<details class="normal-text">
+<summary>Test File</summary>
 
-pub fn build_project_in_dir(dir: &Path, release: bool) -> Result<Package> {
-    let profile = if release { "--release" } else { "--debug" };
-    let manifest_path = dir.join("Cargo.toml");
-    let manifest_arg = manifest_path.to_string_lossy();
-
-    let args = vec![
-        "cargo", "miden", "build",
-        profile,
-        "--manifest-path", &manifest_arg,
-    ];
-
-    let output = run(args.into_iter().map(String::from), OutputType::Masm)
-        .context("Failed to compile project")?
-        .context("Cargo miden build returned None")?;
-
-    let artifact_path = match output {
-        cargo_miden::CommandOutput::BuildCommandOutput { output } => match output {
-            cargo_miden::BuildOutput::Masm { artifact_path } => artifact_path,
-            other => bail!("Expected Masm output, got {:?}", other),
-        },
-        other => bail!("Expected BuildCommandOutput, got {:?}", other),
-    };
-
-    let package_bytes = std::fs::read(&artifact_path)?;
-    Package::read_from_bytes(&package_bytes)
-        .context("Failed to deserialize package")
-}
-```
-
-## MockChain Basics
-
-### Creating a MockChain
-
-Use the builder pattern to set up your test environment:
-
-```rust
-use miden_testing::{Auth, MockChain};
-
-#[tokio::test]
-async fn my_test() -> anyhow::Result<()> {
-    // Create builder
-    let mut builder = MockChain::builder();
-
-    // Add accounts, faucets, notes...
-
-    // Build the chain
-    let mut mock_chain = builder.build()?;
-
-    Ok(())
-}
-```
-
-### Adding a Faucet
-
-Faucets mint assets for testing:
-
-```rust
-// Create a faucet with 1,000,000 total supply, decimals = 10
-let faucet = builder.add_existing_basic_faucet(
-    Auth::BasicAuth,
-    "TEST",           // Token symbol
-    1_000_000,        // Total supply
-    Some(10),         // Decimals
-)?;
-```
-
-### Adding Wallet Accounts
-
-Create accounts with initial assets:
-
-```rust
-use miden_client::asset::FungibleAsset;
-
-// Create a wallet with 100 tokens from the faucet
-let sender = builder.add_existing_wallet_with_assets(
-    Auth::BasicAuth,
-    [FungibleAsset::new(faucet.id(), 100)?.into()],
-)?;
-```
-
-## Creating Custom Accounts
-
-For accounts with custom components, create configuration helpers:
-
-```rust title="integration/src/helpers.rs"
-use miden_client::account::{AccountStorageMode, AccountType, StorageSlot};
-
-#[derive(Clone)]
-pub struct AccountCreationConfig {
-    pub account_type: AccountType,
-    pub storage_mode: AccountStorageMode,
-    pub storage_slots: Vec<StorageSlot>,
-}
-
-impl Default for AccountCreationConfig {
-    fn default() -> Self {
-        Self {
-            account_type: AccountType::RegularAccountImmutableCode,
-            storage_mode: AccountStorageMode::Public,
-            storage_slots: vec![],
-        }
-    }
-}
-```
-
-### Creating Account from Package
-
-```rust
-use miden_client::account::{StorageMap, StorageSlot, StorageSlotName};
-use std::sync::Arc;
-
-// Build the contract
-let bank_package = Arc::new(build_project_in_dir(
-    Path::new("../contracts/bank-account"),
-    true,  // release mode
-)?);
-
-// Configure named storage slots
-let initialized_slot =
-    StorageSlotName::new("miden::component::miden_bank_account::initialized")
-        .expect("Valid slot name");
-let balances_slot =
-    StorageSlotName::new("miden::component::miden_bank_account::balances")
-        .expect("Valid slot name");
-
-let config = AccountCreationConfig {
-    storage_slots: vec![
-        StorageSlot::with_value(initialized_slot, Word::default()),
-        StorageSlot::with_map(
-            balances_slot.clone(),
-            StorageMap::with_entries([]).expect("Empty storage map"),
-        ),
-    ],
-    ..Default::default()
-};
-
-// Create the account
-let mut account = create_testing_account_from_package(
-    bank_package.clone(),
-    config,
-).await?;
-
-// Add to MockChain
-builder.add_account(account.clone())?;
-```
-
-## Creating Notes
-
-### Note Configuration
-
-```rust title="integration/src/helpers.rs"
-use miden_client::note::{NoteAssets, NoteTag, NoteType};
-use miden_core::Felt;
-
-pub struct NoteCreationConfig {
-    pub note_type: NoteType,
-    pub tag: NoteTag,
-    pub assets: NoteAssets,
-    pub inputs: Vec<Felt>,
-}
-
-impl Default for NoteCreationConfig {
-    fn default() -> Self {
-        Self {
-            note_type: NoteType::Public,
-            tag: NoteTag::new(0),
-            assets: Default::default(),
-            inputs: Default::default(),
-        }
-    }
-}
-```
-
-### Creating Notes with Assets
-
-```rust
-use miden_client::asset::{Asset, FungibleAsset};
-use miden_client::note::NoteAssets;
-
-// Build note script
-let deposit_note_package = Arc::new(build_project_in_dir(
-    Path::new("../contracts/deposit-note"),
-    true,
-)?);
-
-// Create assets to attach
-let deposit_amount: u64 = 1000;
-let fungible_asset = FungibleAsset::new(faucet.id(), deposit_amount)?;
-let note_assets = NoteAssets::new(vec![Asset::Fungible(fungible_asset)])?;
-
-// Create the note
-let deposit_note = create_testing_note_from_package(
-    deposit_note_package.clone(),
-    sender.id(),  // Note sender
-    NoteCreationConfig {
-        assets: note_assets,
-        ..Default::default()
-    },
-)?;
-
-// Add to MockChain
-builder.add_output_note(OutputNote::Full(deposit_note.clone()));
-```
-
-### Creating Notes with Inputs
-
-For notes that read parameters via `active_note::get_inputs()`:
-
-```rust
-use miden_core::Felt;
-
-// Note inputs are a vector of Felts
-let inputs = vec![
-    // Asset data [0-3]
-    Felt::new(withdraw_amount),
-    Felt::new(0),
-    faucet.id().suffix(),
-    faucet.id().prefix().as_felt(),
-    // Serial number [4-7]
-    Felt::new(0x1234567890abcdef),
-    Felt::new(0xfedcba0987654321),
-    Felt::new(0xdeadbeefcafebabe),
-    Felt::new(0x0123456789abcdef),
-    // Additional parameters
-    Felt::new(tag as u64),
-    Felt::new(1),  // note_type (1 = Public)
-];
-
-let note = create_testing_note_from_package(
-    note_package.clone(),
-    sender.id(),
-    NoteCreationConfig {
-        inputs,
-        ..Default::default()
-    },
-)?;
-```
-
-## Executing Transactions
-
-### Basic Transaction Execution
-
-```rust
-// Build MockChain after adding all accounts and notes
-let mut mock_chain = builder.build()?;
-
-// Build transaction context
-// Args: (account_id, input_note_ids, expected_output_note_ids)
-let tx_context = mock_chain
-    .build_tx_context(account.id(), &[note.id()], &[])?
-    .build()?;
-
-// Execute
-let executed_tx = tx_context.execute().await?;
-
-// Apply state changes to local account copy
-account.apply_delta(&executed_tx.account_delta())?;
-
-// Add to pending transactions and prove block
-mock_chain.add_pending_executed_transaction(&executed_tx)?;
-mock_chain.prove_next_block()?;
-```
-
-### Transaction with Script
-
-For transaction scripts (like initialization):
-
-```rust
-use miden_client::transaction::TransactionScript;
-
-// Build the transaction script
-let init_package = Arc::new(build_project_in_dir(
-    Path::new("../contracts/init-tx-script"),
-    true,
-)?);
-
-let init_program = init_package.unwrap_program();
-let init_tx_script = TransactionScript::new((*init_program).clone());
-
-// Execute with script
-let tx_context = mock_chain
-    .build_tx_context(account.id(), &[], &[])?
-    .tx_script(init_tx_script)
-    .build()?;
-
-let executed_tx = tx_context.execute().await?;
-```
-
-### Transactions with Expected Output Notes
-
-When your contract creates output notes, specify them:
-
-```rust
-use miden_client::transaction::OutputNote;
-
-// Build the expected output note
-let expected_note = Note::new(
-    output_assets,
-    output_metadata,
-    recipient,
-);
-
-let tx_context = mock_chain
-    .build_tx_context(account.id(), &[input_note.id()], &[])?
-    .extend_expected_output_notes(vec![OutputNote::Full(expected_note)])
-    .build()?;
-```
-
-## Verifying State Changes
-
-### Reading Storage After Transaction
-
-```rust
-// After executing and applying delta...
-
-// Read Value storage (by slot name)
-let value: Word = account.storage().get_item(&initialized_slot)?;
-
-// Read Map storage (by slot name)
-let key = Word::from([
-    depositor.prefix().as_felt(),
-    depositor.suffix(),
-    faucet.id().prefix().as_felt(),
-    faucet.id().suffix(),
-]);
-let balance = account.storage().get_map_item(&balances_slot, key)?;
-
-// Assert expected values
-assert_eq!(
-    balance,
-    Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1000)]),
-    "Balance should match deposited amount"
-);
-```
-
-## Testing Error Conditions
-
-### Expecting Transaction Failure
-
-```rust
-#[tokio::test]
-async fn should_fail_without_initialization() -> anyhow::Result<()> {
-    // Setup WITHOUT initialization step...
-
-    let tx_context = mock_chain
-        .build_tx_context(account.id(), &[note.id()], &[])?
-        .build()?;
-
-    // Execute and expect failure
-    let result = tx_context.execute().await;
-
-    assert!(
-        result.is_err(),
-        "Expected transaction to fail, but it succeeded"
-    );
-
-    // Optionally check error message
-    if let Err(e) = result {
-        println!("Expected error: {}", e);
-    }
-
-    Ok(())
-}
-```
-
-### Testing Constraint Violations
-
-```rust
-#[tokio::test]
-async fn deposit_exceeds_max_should_fail() -> anyhow::Result<()> {
-    // Create deposit with amount > MAX_DEPOSIT_AMOUNT
-    let large_amount: u64 = 2_000_000;  // Max is 1,000,000
-
-    // ... setup code ...
-
-    let result = tx_context.execute().await;
-
-    assert!(
-        result.is_err(),
-        "Expected deposit to fail due to max limit"
-    );
-
-    Ok(())
-}
-```
-
-## Complete Test Example
-
-```rust title="integration/tests/deposit_test.rs"
+```rust title="integration/tests/counter_test.rs"
 use integration::helpers::{
-    build_project_in_dir, create_testing_account_from_package,
-    create_testing_note_from_package, AccountCreationConfig, NoteCreationConfig,
+    build_project_in_dir, create_testing_account_from_package, create_testing_note_from_package,
+    AccountCreationConfig, NoteCreationConfig,
 };
+
 use miden_client::{
     account::{StorageMap, StorageSlot, StorageSlotName},
-    asset::{Asset, FungibleAsset},
-    note::NoteAssets,
-    transaction::{OutputNote, TransactionScript},
+    transaction::OutputNote,
     Felt, Word,
 };
 use miden_testing::{Auth, MockChain};
 use std::{path::Path, sync::Arc};
 
 #[tokio::test]
-async fn deposit_test() -> anyhow::Result<()> {
-    // 1. Setup MockChain builder
+async fn counter_test() -> anyhow::Result<()> {
+    // Test that after executing the increment note, the counter value is incremented by 1
     let mut builder = MockChain::builder();
 
-    // 2. Create faucet and sender
-    let faucet = builder.add_existing_basic_faucet(Auth::BasicAuth, "TEST", 1000, Some(10))?;
-    let sender = builder.add_existing_wallet_with_assets(
-        Auth::BasicAuth,
-        [FungibleAsset::new(faucet.id(), 100)?.into()],
-    )?;
+    // Crate note sender account
+    let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
 
-    // 3. Build contracts
-    let bank_package = Arc::new(build_project_in_dir(
-        Path::new("../contracts/bank-account"), true
+    // Build contracts
+    let contract_package = Arc::new(build_project_in_dir(
+        Path::new("../contracts/counter-account"),
+        true,
     )?);
-    let deposit_note_package = Arc::new(build_project_in_dir(
-        Path::new("../contracts/deposit-note"), true
-    )?);
-    let init_tx_script_package = Arc::new(build_project_in_dir(
-        Path::new("../contracts/init-tx-script"), true
+    let note_package = Arc::new(build_project_in_dir(
+        Path::new("../contracts/increment-note"),
+        true,
     )?);
 
-    // 4. Create bank account with named storage slots
-    let initialized_slot =
-        StorageSlotName::new("miden::component::miden_bank_account::initialized")
-            .expect("Valid slot name");
-    let balances_slot =
-        StorageSlotName::new("miden::component::miden_bank_account::balances")
-            .expect("Valid slot name");
+    // Create the counter account with initial storage and no-auth auth component
+    let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
+    let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
 
-    let bank_cfg = AccountCreationConfig {
-        storage_slots: vec![
-            StorageSlot::with_value(initialized_slot, Word::default()),
-            StorageSlot::with_map(
-                balances_slot.clone(),
-                StorageMap::with_entries([]).expect("Empty storage map"),
-            ),
-        ],
+    // The slot name is constructed as
+    // `miden::component::[to_underscore(Cargo.toml:package.metadata.component.package)]::[field_name]`
+    let counter_storage_slot =
+        StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
+    let storage_slots = vec![StorageSlot::with_map(
+        counter_storage_slot.clone(),
+        StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
+    )];
+    let counter_cfg = AccountCreationConfig {
+        storage_slots,
         ..Default::default()
     };
-    let mut bank_account = create_testing_account_from_package(
-        bank_package.clone(), bank_cfg
-    ).await?;
 
-    // 5. Create deposit note
-    let deposit_amount: u64 = 1000;
-    let fungible_asset = FungibleAsset::new(faucet.id(), deposit_amount)?;
-    let note_assets = NoteAssets::new(vec![Asset::Fungible(fungible_asset)])?;
-    let deposit_note = create_testing_note_from_package(
-        deposit_note_package.clone(),
+    // create testing counter account
+    let mut counter_account =
+        create_testing_account_from_package(contract_package.clone(), counter_cfg).await?;
+
+    // create testing increment note
+    let counter_note = create_testing_note_from_package(
+        note_package.clone(),
         sender.id(),
-        NoteCreationConfig { assets: note_assets, ..Default::default() },
+        NoteCreationConfig::default(),
     )?;
 
-    // 6. Add to builder and build chain
-    builder.add_account(bank_account.clone())?;
-    builder.add_output_note(OutputNote::Full(deposit_note.clone()));
+    // add counter account and note to mockchain
+    builder.add_account(counter_account.clone())?;
+    builder.add_output_note(OutputNote::Full(counter_note.clone()));
+
+    // Build the mock chain
     let mut mock_chain = builder.build()?;
-
-    // 7. Initialize bank
-    let init_program = init_tx_script_package.unwrap_program();
-    let init_tx_script = TransactionScript::new((*init_program).clone());
-    let init_tx_context = mock_chain
-        .build_tx_context(bank_account.id(), &[], &[])?
-        .tx_script(init_tx_script)
-        .build()?;
-    let executed_init = init_tx_context.execute().await?;
-    bank_account.apply_delta(&executed_init.account_delta())?;
-    mock_chain.add_pending_executed_transaction(&executed_init)?;
-    mock_chain.prove_next_block()?;
-
-    // 8. Execute deposit
+    // Build the transaction context
     let tx_context = mock_chain
-        .build_tx_context(bank_account.id(), &[deposit_note.id()], &[])?
+        .build_tx_context(counter_account.id(), &[counter_note.id()], &[])?
         .build()?;
-    let executed_tx = tx_context.execute().await?;
-    bank_account.apply_delta(&executed_tx.account_delta())?;
-    mock_chain.add_pending_executed_transaction(&executed_tx)?;
+
+    // Execute the transaction
+    let executed_transaction = tx_context.execute().await?;
+
+    // Apply the account delta to the counter account
+    counter_account.apply_delta(executed_transaction.account_delta())?;
+
+    // Add the executed transaction to the mockchain
+    mock_chain.add_pending_executed_transaction(&executed_transaction)?;
     mock_chain.prove_next_block()?;
 
-    // 9. Verify balance
-    let depositor_key = Word::from([
-        sender.id().prefix().as_felt(),
-        sender.id().suffix(),
-        faucet.id().prefix().as_felt(),
-        faucet.id().suffix(),
-    ]);
-    let balance = bank_account.storage().get_map_item(&balances_slot, depositor_key)?;
-    let expected = Word::from([
-        Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(deposit_amount)
-    ]);
-    assert_eq!(balance, expected, "Balance should match deposit");
+    // Get the count from the updated counter account
+    let count = counter_account
+        .storage()
+        .get_map_item(&counter_storage_slot, count_storage_key)
+        .expect("Failed to get counter value from storage slot");
 
-    println!("Deposit test passed!");
+    // Assert that the count value is equal to 1 after executing the transaction
+    assert_eq!(
+        count,
+        Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]),
+        "Count value is not equal to 1"
+    );
+
+    println!("Test passed!");
     Ok(())
 }
 ```
 
-## Running Tests
+</details>
 
-```bash title=">_ Terminal"
-# Run all tests
-cargo test -p integration -- --nocapture
+## Test Code Walkthrough
 
-# Run specific test
-cargo test -p integration deposit_test -- --nocapture
+Let's break down this test step by step to understand how Mockchain testing works.
 
-# Run with verbose output
-RUST_LOG=debug cargo test -p integration -- --nocapture
+### 1. Setting Up the Mockchain Builder
+
+```rust
+let mut builder = MockChain::builder();
+let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
 ```
 
-## Key Takeaways
+**What's happening:**
 
-1. **MockChain Builder Pattern** - Use `MockChain::builder()` to set up test environments
-2. **Build Contracts First** - Use `build_project_in_dir()` to compile contracts before tests
-3. **Configure Storage Slots** - Match your contract's storage layout when creating accounts
-4. **Apply Deltas** - Always call `apply_delta()` on local account copies after transactions
-5. **Prove Blocks** - Call `prove_next_block()` after adding executed transactions
-6. **Test Failures** - Use `result.is_err()` to verify constraint violations
+- We instantiate the **Mockchain builder**, which is used to configure our testing environment
+- We create a **sender account** using basic authentication - this account will publish the increment note
+- The builder pattern allows us to incrementally add all the components needed for our test
 
-:::tip View Complete Source
-See the complete test implementations in the [miden-bank repository](https://github.com/keinberger/miden-bank/tree/main/integration/tests).
-:::
+### 2. Building the Contract Packages
+
+```rust
+let contract_package = Arc::new(build_project_in_dir(
+    Path::new("../contracts/counter-account"),
+    true,
+)?);
+let note_package = Arc::new(build_project_in_dir(
+    Path::new("../contracts/increment-note"),
+    true,
+)?);
+```
+
+**What's happening:**
+
+- Just like in the deployment script, we **build both contract packages** (counter account and increment note)
+- The `build_project_in_dir()` function compiles the Rust contracts into Miden packages
+- We wrap them in `Arc` for efficient memory sharing across the test
+
+### 3. Creating the Test Account and Note
+
+```rust
+// Create the counter account with initial storage and no-auth auth component
+let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
+let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
+
+let counter_storage_slot =
+    StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
+let storage_slots = vec![StorageSlot::with_map(
+    counter_storage_slot.clone(),
+    StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
+)];
+let counter_cfg = AccountCreationConfig {
+    storage_slots,
+    ..Default::default()
+};
+
+// Create testing entities
+let counter_account = create_testing_account_from_package(contract_package.clone(), counter_cfg).await?;
+let counter_note = create_testing_note_from_package(
+    note_package.clone(),
+    sender.id(),
+    NoteCreationConfig::default(),
+)?;
+```
+
+**What's happening:**
+
+- We configure the **counter account's initial storage** with count = 0 at storage key `[0, 0, 0, 1]`
+- We create the **testing counter account** from the compiled package using `create_testing_account_from_package()`
+- We create the **testing increment note** using `create_testing_note_from_package()`
+- These helper functions create test-specific versions optimized for the Mockchain environment
+
+### 4. Adding Components to the Mockchain
+
+```rust
+builder.add_account(counter_account.clone())?;
+builder.add_output_note(OutputNote::Full(counter_note.clone()));
+let mut mock_chain = builder.build()?;
+```
+
+**What's happening:**
+
+- We **add the counter account** to the mockchain builder
+- We **add the increment note** as a full output note to the mockchain
+- We **build the mockchain** - now we have a complete testing environment ready to use
+
+### 5. Creating and Executing the Transaction
+
+```rust
+let tx_context = mock_chain
+    .build_tx_context(counter_account.id(), &[counter_note.id()], &[])?
+    .build()?;
+
+let executed_transaction = tx_context.execute().await?;
+```
+
+**What's happening:**
+
+- We **build the transaction context** using the counter account and counter note
+- We **execute the transaction** - this runs the increment logic locally in the mockchain
+
+### 6. Verifying the Results
+
+```rust
+// Apply the account delta to the counter account
+counter_account.apply_delta(executed_transaction.account_delta())?;
+
+// Add the executed transaction to the mockchain
+mock_chain.add_pending_executed_transaction(&executed_transaction)?;
+mock_chain.prove_next_block()?;
+
+// Get the count from the updated counter account
+let count = counter_account
+    .storage()
+    .get_map_item(&counter_storage_slot, count_storage_key)
+    .expect("Failed to get counter value from storage slot");
+
+// Assert that the count value is equal to 1 after executing the transaction
+assert_eq!(
+    count,
+    Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]),
+    "Count value is not equal to 1"
+);
+```
+
+**What's happening:**
+
+- We **apply the account delta** from the executed transaction to the counter account to update its state
+- We **add the executed transaction** to the mockchain
+- We **read the counter value** from storage using the same key we initialized
+- We **assert that the count equals 1** - verifying the increment operation worked correctly
+
+The test verifies the complete flow: the increment note successfully increments the counter from 0 to 1, proving our smart contract works as expected.
 
 ## Next Steps
 
-- **[Debugging Guide](./debugging)** - Troubleshoot common issues
-- **[Common Pitfalls](./pitfalls)** - Avoid known gotchas
-- **[Miden Bank Tutorial](./miden-bank/)** - See testing in action
+Congratulations! You've successfully completed the Miden smart contract quick start guide. You're now equipped to build more sophisticated smart contracts on Miden. Consider exploring:
+
+To deepen your knowledge, we recommend exploring the following resources:
+
+- Visit the [Tutorials section](/miden-tutorials) for detailed, hands-on guides on topics such as contract interactions, advanced storage, custom note scripting, and integrating with external applications via the Miden Web Client.
+- For in-depth technical explanations of core concepts, consult the [Protocol section](/miden-base) of the documentation. Here you'll find comprehensive information on Miden's architecture, account model, transaction lifecycle, and the underlying zero-knowledge technology that powers the network.
+
+The foundational patterns and concepts you've practiced in this Quick Start will enable you to build complex, privacy-preserving applications on the Miden network. Continue with the resources above to take your development further!
 ````
 
-## File: docs/builder/develop/index.md
+## File: docs/builder/quick-start/accounts.md
 ````markdown
 ---
-title: Develop on Miden
-sidebar_position: 4
+sidebar_position: 2
+title: Accounts
+description: Learn how to create and manage Miden accounts programmatically using Rust and TypeScript.
 ---
 
-<!--
-ARCHITECTURE NOTE:
-Tutorials content is canonical in versioned_docs/version-X.Y/miden-tutorials/.
-This landing page exists only for the "current/next" version.
-Full tutorial content is available by selecting a released version.
--->
+import { CodeTabs } from '@site/src/components';
 
-# Develop on Miden
+# Accounts
 
-:::info Version Note
-Full tutorials and examples are available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete tutorial documentation.
+Miden's account model is fundamentally different from traditional blockchains. Let's explore how to create and manage accounts programmatically.
+
+## Understanding Miden Accounts
+
+Before diving into account creation, it's essential to understand what makes Miden accounts unique compared to traditional blockchain addresses.
+
+**What Makes Miden Accounts Special:**
+
+- **Smart Contract Wallets**: Every account is a programmable smart contract that can hold assets and execute custom logic
+- **Modular Design**: Accounts are composed of reusable components (authentication, wallet functionality, etc.)
+- **Privacy Levels**: Choose between public or private storage modes
+
+Miden accounts differ from traditional blockchain addresses in fundamental ways.
+
+**Account Architecture:**
+
+- Every account is a **smart contract** with programmable logic
+- Accounts can store **assets** (fungible and non-fungible tokens) in their vault
+- Each account has **storage slots** for custom data
+- Accounts are composed of **modular components** for different functionalities
+
+**Storage Modes:**
+
+- **Public**: All state visible onchain (transparent operations)
+- **Private**: Only commitments onchain, full state held privately
+
+### Account Structure
+
+Every Miden account contains these core components:
+
+- **Vault**: Secure asset storage
+- **Storage**: Key-value data store (up to 255 slots)
+- **Code**: Smart contract logic
+- **Nonce**: Anti-replay counter
+- **Components**: Modular functionality (authentication, wallet, etc.)
+
+<details>
+<summary>Account Struct</summary>
+
+```rust
+pub struct MidenAccount {
+    /// Immutable, 120-bit ID encoding type, storage mode and version.
+    pub id: [u8; 15],
+
+    /// Determines mutability of the account (immutable, mutable).
+    pub account_type: AccountType,
+
+    /// Storage placement preference (public/private).
+    pub storage_mode: StorageMode,
+
+    /// Root commitment of the account CODE (MAST root).
+    pub code_commitment: [u8; 32],
+
+    /// Root commitment of the account STORAGE (slots / maps).
+    /// Think of this as the "root hash" of the Account's storage merkle tree.
+    pub storage_commitment: [u8; 32],
+
+    /// Vault commitment. For compact headers we keep only an optional aggregate commitment.
+    /// Indexers can materialize a richer view (e.g., list of assets) offchain.
+    pub vault_commitment: Option<[u8; 32]>,
+
+    /// Monotonically increasing counter; must increment exactly once when state changes.
+    pub nonce: u64,
+
+    /// Merged set of account components that defined this account's interface and storage.
+    /// Accounts are composed by merging components (e.g. wallet component + an auth component).
+    pub components: Vec<ComponentDescriptor>,
+
+    /// Authentication procedure metadata (e.g. "RpoFalcon512").
+    pub authentication: AuthenticationDescriptor,
+}
+```
+
+**Account Types:**
+
+```rust
+pub enum AccountType {
+    // Faucet that can issue fungible assets
+    FungibleFaucet = 2,
+    // Faucet that can issue non-fungible assets
+    NonFungibleFaucet = 3,
+    // Regular account with immutable code
+    RegularAccountImmutableCode = 0,
+    /// Regular account with updateable code
+    RegularAccountUpdatableCode = 1,
+}
+```
+
+**Storage Modes:**
+
+```rust
+pub enum StorageMode {
+    /// State stored onchain and publicly readable.
+    Public,
+    /// Only a commitment is onchain; full state is held privately by the owner.
+    Private,
+}
+```
+
+</details>
+
+## Set Up Development Environment
+
+To run the code examples in this guide, you'll need to set up a development environment for either Rust or TypeScript.
+
+### Rust Environment
+
+Create a new Miden Rust project:
+
+```bash title=">_ Terminal"
+miden new my-project
+cd my-project/integration/
+```
+
+For each code example, create a new binary file:
+
+```bash title=">_ Terminal"
+touch src/bin/demo.rs
+```
+
+Copy the Rust code example into the file, then run:
+
+```bash title=">_ Terminal"
+cargo run --bin demo --release
+```
+
+### TypeScript Environment
+
+Create a new Miden frontend project:
+
+```bash title=">_ Terminal"
+yarn create-miden-app
+cd miden-app/
+```
+
+For each code example, create a demo file:
+
+```bash title=">_ Terminal"
+touch src/lib/demo.ts
+```
+
+Copy the TypeScript code into the file, then import and call the `demo()` function in your `App.tsx`. Run the project:
+
+```bash title=">_ Terminal"
+yarn dev
+# or
+npm run dev
+```
+
+:::tip
+For detailed frontend setup guidance, see the [Web Client tutorial](/miden-tutorials/web-client/create_deploy_tutorial#step-2-set-up-the-webclient).
 :::
 
-## Overview
+## Creating Accounts Programmatically
 
-Basic tutorials and examples of how to build applications on Miden.
+Let's start by creating accounts using the Miden client libraries:
 
-The goal is to make getting up to speed with building on Miden as quick and simple as possible.
+<CodeTabs
+tsFilename="src/lib/account.ts"
+rustFilename="integration/src/bin/account.rs"
+example={{
+rust: {
+code: `use miden_client::{
+    account::{
+        component::BasicWallet,
+        AccountBuilder, AccountStorageMode, AccountType,
+    },
+    auth::{AuthFalcon512Rpo, AuthSecretKey},
+    builder::ClientBuilder,
+    keystore::FilesystemKeyStore,
+    rpc::{Endpoint, GrpcClient},
+};
+use miden_client_sqlite_store::ClientBuilderSqliteExt;
+use rand::RngCore;
+use std::sync::Arc;
 
-All tutorials are accompanied by code examples in Rust and TypeScript, which can be found in the [Miden Tutorials](https://github.com/0xMiden/miden-tutorials) repository.
-````
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    // Initialize RPC connection
+    let endpoint = Endpoint::testnet();
+    let timeout_ms = 10_000;
+    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
 
-## File: docs/builder/quick-start/setup/_category_.json
-````json
-{
-  "label": "Set Up",
-  "position": 1
+    // Initialize keystore
+    let keystore_path = std::path::PathBuf::from("./keystore");
+    let keystore =
+        Arc::new(FilesystemKeyStore::new(keystore_path).unwrap());
+
+    let store_path = std::path::PathBuf::from("./store.sqlite3");
+
+    // Initialize client to connect with the Miden Testnet.
+    // NOTE: The client is our entry point to the Miden network.
+    // All interactions with the network go through the client.
+    let mut client = ClientBuilder::new()
+        .rpc(rpc_client)
+        .sqlite_store(store_path)
+        .authenticator(keystore.clone())
+        .in_debug_mode(true.into())
+        .build()
+        .await?;
+
+    client.sync_state().await?;
+
+    let mut init_seed = [0_u8; 32];
+    client.rng().fill_bytes(&mut init_seed);
+
+    let key_pair = AuthSecretKey::new_falcon512_rpo();
+
+    let builder = AccountBuilder::new(init_seed)
+        .account_type(AccountType::RegularAccountUpdatableCode)
+        .storage_mode(AccountStorageMode::Public)
+        .with_auth_component(AuthFalcon512Rpo::new(
+            key_pair.public_key().to_commitment(),
+        ))
+        .with_component(BasicWallet);
+
+    let account = builder.build()?;
+
+    client.add_account(&account, false).await?;
+
+    keystore.add_key(&key_pair)?;
+
+    println!("Account ID: {}", account.id());
+    println!("No assets in Vault: {:?}", account.vault().is_empty());
+
+    Ok(())
 }
-````
+` },
+  typescript: {
+    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
 
-## File: docs/builder/quick-start/your-first-smart-contract/_category_.json
-````json
-{
-  "label": "Your First Smart Contract",
-  "position": 5
+export async function demo() {
+    // Initialize client to connect with the Miden Testnet.
+    // NOTE: The client is our entry point to the Miden network.
+    // All interactions with the network go through the client.
+    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+
+    // Initialize client
+    const client = await WebClient.createClient(nodeEndpoint);
+    await client.syncState();
+
+    // Create new wallet account
+    const account = await client.newWallet(
+        AccountStorageMode.public(), // Public: account state is visible onchain
+        true, // Mutable: account code can be upgraded later
+        AuthScheme.AuthRpoFalcon512 // Authentication scheme
+    );
+
+    console.log("Account ID:", account.id().toString());
+    console.log(
+        "No Assets in Vault:",
+        account.vault().fungibleAssets().length === 0
+    );
 }
+`
+}
+}}
+/>
+
+<details>
+<summary>Expected output</summary>
+
+```text
+Account ID: 0x94733054a40d1610178320cc0c8060
+No Assets in Vault: true
+```
+
+</details>
+
+## Creating a Token Faucet
+
+Before we can work with tokens, we need a source of tokens. Let's create a fungible token faucet:
+
+<CodeTabs
+tsFilename="src/lib/faucet.ts"
+rustFilename="integration/src/bin/faucet.rs"
+example={{
+rust: {
+code: `use miden_client::{
+    account::{
+        component::BasicFungibleFaucet,
+        AccountBuilder, AccountStorageMode, AccountType,
+    },
+    asset::TokenSymbol,
+    auth::{AuthFalcon512Rpo, AuthSecretKey},
+    builder::ClientBuilder,
+    keystore::FilesystemKeyStore,
+    rpc::{Endpoint, GrpcClient},
+    Felt,
+};
+use miden_client_sqlite_store::ClientBuilderSqliteExt;
+use rand::RngCore;
+use std::sync::Arc;
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    // Initialize RPC connection
+    let endpoint = Endpoint::testnet();
+    let timeout_ms = 10_000;
+    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
+
+    // Initialize keystore
+    let keystore_path = std::path::PathBuf::from("./keystore");
+    let keystore =
+        Arc::new(FilesystemKeyStore::new(keystore_path).unwrap());
+
+    let store_path = std::path::PathBuf::from("./store.sqlite3");
+
+    // Initialize client to connect with the Miden Testnet.
+    // NOTE: The client is our entry point to the Miden network.
+    // All interactions with the network go through the client.
+    let mut client = ClientBuilder::new()
+        .rpc(rpc_client)
+        .sqlite_store(store_path)
+        .authenticator(keystore.clone())
+        .in_debug_mode(true.into())
+        .build()
+        .await?;
+
+    client.sync_state().await?;
+
+    // Faucet seed
+    let mut init_seed = [0u8; 32];
+    client.rng().fill_bytes(&mut init_seed);
+
+    // Faucet parameters
+    let symbol = TokenSymbol::new("TEST")?;
+    let decimals = 8;
+    let max_supply = Felt::new(1_000_000);
+
+    // Generate key pair
+    let key_pair = AuthSecretKey::new_falcon512_rpo();
+
+    // Build the account
+    let builder = AccountBuilder::new(init_seed)
+        .account_type(AccountType::FungibleFaucet)
+        .storage_mode(AccountStorageMode::Public)
+        .with_auth_component(AuthFalcon512Rpo::new(
+            key_pair.public_key().to_commitment(),
+        ))
+        .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
+
+    let faucet_account = builder.build()?;
+
+    client.add_account(&faucet_account, false).await?;
+    keystore.add_key(&key_pair)?;
+
+    println!("Faucet account ID: {}", faucet_account.id());
+
+    Ok(())
+}
+`},
+  typescript: {
+    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
+
+export async function demo() {
+    // Initialize client to connect with the Miden Testnet.
+    // NOTE: The client is our entry point to the Miden network.
+    // All interactions with the network go through the client.
+    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+
+    // Initialize client
+    const client = await WebClient.createClient(nodeEndpoint);
+    await client.syncState();
+
+    const symbol = "TEST";
+    const decimals = 8;
+    const initialSupply = BigInt(10_000_000 * 10 ** decimals);
+
+    const faucet = await client.newFaucet(
+        AccountStorageMode.public(),
+        false,
+        symbol,
+        decimals,
+        initialSupply,
+        AuthScheme.AuthRpoFalcon512 // Authentication scheme
+    );
+
+    console.log("Faucet account ID:", faucet.id().toString());
+}
+`
+}
+}}
+/>
+
+<details>
+<summary>Expected output</summary>
+
+```text
+Faucet account ID: 0xde0ba31282f7522046d3d4af40722b
+```
+
+</details>
+
+## Key Takeaways
+
+**Account Types:**
+
+- **Regular Accounts**: Standard smart contract wallets that can hold assets and execute custom logic
+- **Faucet Accounts**: Specialized accounts with minting permissions for tokens
+
+**Storage Modes:**
+
+- **Public**: Account state is fully transparent and visible onchain
+- **Private**: Only cryptographic commitments are stored onchain, with full state maintained privately
+
+**Modular Components:**
+
+- **BasicWallet**: Provides asset management functionality
+- **BasicFungibleFaucet**: Enables token minting capabilities
+- **AuthFalcon512Rpo**: Handles cryptographic authentication
+
+Now that you understand how to create accounts and faucets, you're ready to learn about Miden's unique transaction model. Continue to [Notes & Transactions](./notes) to explore how assets move between accounts using notes.
+
+---
 ````
 
 ## File: docs/builder/quick-start/index.md
@@ -2824,6 +3731,1127 @@ import DocCard from '@theme/DocCard';
     />
   </div>
 </div>
+````
+
+## File: docs/builder/_category_.json
+````json
+{
+  "label": "Builder",
+  "position": 1,
+  "collapsible": false,
+  "collapsed": false
+}
+````
+
+## File: docs/builder/develop/tutorials/rust-compiler/pitfalls.md
+````markdown
+---
+sidebar_position: 3
+title: "Common Pitfalls"
+description: "Reference guide for known issues, limitations, and workarounds when developing with the Miden Rust compiler."
+---
+
+# Common Pitfalls
+
+This reference documents known issues and limitations when developing with the Miden Rust compiler, along with recommended workarounds.
+
+## Felt Comparison Operators
+
+### Problem
+
+Direct comparison operators (`<`, `>`, `<=`, `>=`) on `Felt` values produce incorrect results.
+
+```rust
+// WRONG: This does NOT work correctly
+let a = Felt::new(100);
+let b = Felt::new(200);
+if a < b {  // May produce unexpected results!
+    // ...
+}
+```
+
+### Solution
+
+Always convert Felt values to `u64` before comparing:
+
+```rust
+// CORRECT: Convert to u64 first
+let a = Felt::new(100);
+let b = Felt::new(200);
+if a.as_u64() < b.as_u64() {
+    // Works correctly
+}
+```
+
+### Example from Bank Contract
+
+```rust title="contracts/bank-account/src/lib.rs"
+// Validating deposit amount
+let amount = asset.unwrap_fungible().amount().as_u64();
+
+// Use u64 comparison
+assert!(
+    amount <= MAX_DEPOSIT_AMOUNT,  // MAX_DEPOSIT_AMOUNT is u64
+    "Deposit exceeds maximum"
+);
+```
+
+:::warning Always Use .as_u64()
+Any time you compare Felt values, convert them first. This applies to:
+- Amount comparisons
+- Balance checks
+- Index comparisons
+- Any numeric ordering
+:::
+
+---
+
+## Stack Limit (16 Elements)
+
+### Problem
+
+The Miden VM stack only allows direct access to the first 16 elements. Complex functions with many local variables trigger this error:
+
+```
+invalid stack index: only the first 16 elements on the stack are directly accessible
+```
+
+This may also appear as:
+```
+values not found in advice provider
+```
+
+### Solution
+
+**1. Reduce local variables:**
+
+```rust
+// WRONG: Too many local variables
+fn complex_operation(&mut self) {
+    let a = self.get_a();
+    let b = self.get_b();
+    let c = self.get_c();
+    let d = self.get_d();
+    let e = self.get_e();
+    let f = self.get_f();
+    // ... more variables cause stack overflow
+}
+
+// CORRECT: Use values directly or minimize locals
+fn complex_operation(&mut self) {
+    // Process in smaller batches
+    let result_ab = self.process(self.get_a(), self.get_b());
+    let result_cd = self.process(self.get_c(), self.get_d());
+    self.finalize(result_ab, result_cd);
+}
+```
+
+**2. Break into smaller functions:**
+
+```rust
+// WRONG: One large function
+fn do_everything(&mut self, a: Word, b: Word, c: Word) {
+    // Many operations touching all parameters...
+}
+
+// CORRECT: Split into stages
+fn stage_one(&mut self, a: Word) -> Felt {
+    // Process a
+}
+
+fn stage_two(&mut self, b: Word, result: Felt) -> Felt {
+    // Process b with result from stage one
+}
+
+fn stage_three(&mut self, c: Word, result: Felt) {
+    // Final processing
+}
+```
+
+**3. Process iteratively:**
+
+```rust
+// CORRECT: Process one at a time
+for asset in assets {
+    self.process_single_asset(asset);
+}
+```
+
+---
+
+## Function Argument Limit (4 Words)
+
+### Problem
+
+Miden functions can receive at most 4 Words (16 Felts) as arguments:
+
+```
+error: expected at most 4 words of arguments
+```
+
+```rust
+// WRONG: Too many arguments
+fn process(
+    &mut self,
+    depositor: AccountId,    // ~1 Word
+    asset: Asset,            // 1 Word
+    serial_num: Word,        // 1 Word
+    tag: Felt,               // 1 Felt
+    note_type: Felt,         // 1 Felt
+    extra_data: Word,        // 1 Word - EXCEEDS LIMIT!
+) {
+    // ...
+}
+```
+
+### Solution
+
+**1. Make sure to only pass 4 Words to functions:**
+
+```rust
+// CORRECT: Only pass 4 Words
+fn process(
+    &mut self,
+    depositor: AccountId,    // ~1 Word
+    asset: Asset,            // 1 Word
+    serial_num: Word,        // 1 Word
+    params: Word,            // [tag, note_type, 0, 0] - 1 Word
+) {
+    let tag = params[0];
+    let note_type = params[1];
+    // ...
+}
+```
+
+**2. Use note inputs for passing data:**
+
+For note scripts, pass complex data via `active_note::get_inputs()`:
+
+```rust
+#[note]
+struct MyNote;
+
+#[note]
+impl MyNote {
+    #[note_script]
+    fn run(self, _arg: Word) {
+        let inputs = active_note::get_inputs();
+        // Inputs can hold many Felts without function argument limits
+        let param1 = inputs[0];
+        let param2 = inputs[1];
+        // ... access up to the full input capacity
+    }
+}
+```
+
+**3. Store data first, reference by key:**
+
+```rust
+// Store complex data in storage
+fn store_config(&mut self, key: Word, config_data: Word) {
+    self.configs.set(key, config_data);
+}
+
+// Reference by key in other operations
+fn process_with_config(&mut self, key: Word) {
+    let config = self.configs.get(&key);
+    // Use config...
+}
+```
+
+---
+
+## Array Ordering (Rust/MASM Reversal)
+
+### Problem
+
+Arrays passed from Rust to the Miden VM are received in **reversed order**.
+
+```rust
+// In Rust, you define:
+let word = Word::from([a, b, c, d]);
+
+// In MASM, this becomes: [d, c, b, a]
+```
+
+### Solution
+
+Be aware of this when:
+- Constructing storage keys
+- Parsing note inputs
+- Working with asset data
+
+**Example: Storage Key Construction**
+
+```rust
+// Balance key format in Rust
+let key = Word::from([
+    depositor.prefix().as_felt(),  // Position 0 in Rust
+    depositor.suffix(),             // Position 1
+    faucet.prefix().as_felt(),      // Position 2
+    faucet.suffix(),                // Position 3
+]);
+
+// When the VM processes this, it sees:
+// [faucet.suffix, faucet.prefix, depositor.suffix, depositor.prefix]
+```
+
+**Example: Asset Structure**
+
+```rust
+// Asset Word layout (Rust perspective)
+// [amount, 0, faucet_suffix, faucet_prefix]
+
+let asset_word = Word::from([
+    Felt::new(amount),           // [0] amount
+    Felt::new(0),                // [1] padding
+    faucet.id().suffix(),        // [2] faucet suffix
+    faucet.id().prefix().as_felt(), // [3] faucet prefix
+]);
+```
+
+:::tip Consistency is Key
+The reversal doesn't matter as long as you're **consistent**. Always construct and parse arrays the same way throughout your codebase.
+:::
+
+---
+
+## Felt Arithmetic Underflow/Overflow
+
+### Problem
+
+Miden uses field element (Felt) arithmetic, which operates in a prime field with modulus `p = 2^64 - 2^32 + 1`. This means arithmetic is **modular** and will silently wrap around instead of causing an error.
+
+```rust
+// DANGEROUS: This does NOT error on underflow!
+let balance = Felt::new(100);
+let withdrawal = Felt::new(500);
+let new_balance = balance - withdrawal;  // Silently wraps to a huge positive number!
+```
+
+When you subtract a larger value from a smaller one, the result wraps around to a large positive number (approximately `2^64`). This is NOT an error in the Miden VM - the transaction will succeed with an incorrect balance.
+
+### Why This Happens
+
+The Miden VM performs all Felt arithmetic as modular operations within the prime field. There is no automatic overflow or underflow detection at the VM level. The Rust compiler's default overflow mode is `Unchecked`, meaning it compiles directly to raw VM arithmetic operations.
+
+### Solution
+
+**Always validate before subtraction:**
+
+```rust
+// CORRECT: Check balance before subtracting
+let current_balance: Felt = self.balances.get(&key);
+let withdraw_amount = withdraw_asset.inner[0];
+
+// Validate that balance is sufficient
+assert!(
+    current_balance.as_u64() >= withdraw_amount.as_u64(),
+    "Withdrawal amount exceeds available balance"
+);
+
+// Only subtract after validation
+let new_balance = current_balance - withdraw_amount;
+```
+
+### Example from Bank Contract
+
+```rust title="contracts/bank-account/src/lib.rs"
+pub fn withdraw(&mut self, depositor: AccountId, withdraw_asset: Asset, /* ... */) {
+    let withdraw_amount = withdraw_asset.inner[0];
+
+    // Get current balance and validate sufficient funds exist.
+    // This check is critical: Felt arithmetic is modular, so subtracting
+    // more than the balance would silently wrap to a large positive number.
+    let current_balance: Felt = self.balances.get(&key);
+    assert!(
+        current_balance.as_u64() >= withdraw_amount.as_u64(),
+        "Withdrawal amount exceeds available balance"
+    );
+
+    let new_balance = current_balance - withdraw_amount;
+    self.balances.set(key, new_balance);
+}
+```
+
+:::danger Critical Security Issue
+Failure to validate before subtraction can lead to:
+- Users withdrawing more than their balance
+- Balance values becoming astronomically large
+- Complete loss of funds in the contract
+
+**Always check bounds before Felt subtraction operations.**
+:::
+
+---
+
+## Wallet Component Requirement
+
+### Problem
+
+The `active_note::add_assets_to_account()` function fails if the consuming account doesn't have the basic wallet component.
+
+```
+Error: Account does not support asset operations
+```
+
+### Solution
+
+Ensure accounts that receive assets via this function have wallet capability:
+
+```rust
+use miden_client::account::component::BasicWallet;
+
+// When creating an account that needs to receive assets
+let account = AccountBuilder::new(seed)
+    .with_component(BasicWallet)  // Add wallet capability
+    .with_component(YourCustomComponent)
+    .build()?;
+```
+
+**Alternative: Use `native_account::add_asset()`**
+
+For account components, use the native account API instead:
+
+```rust
+#[component]
+impl Bank {
+    pub fn deposit(&mut self, depositor: AccountId, asset: Asset) {
+        // This works for any account - no wallet required
+        native_account::add_asset(asset);
+
+        // Track balance in storage
+        self.update_balance(depositor, asset);
+    }
+}
+```
+
+---
+
+## Storage Map Key Consistency
+
+### Problem
+
+Storage map lookups return unexpected results or zeros when keys are constructed inconsistently.
+
+### Solution
+
+Define a single key construction pattern and use it everywhere:
+
+```rust title="contracts/bank-account/src/lib.rs"
+#[component]
+impl Bank {
+    /// Construct a balance key for a depositor and asset.
+    /// Key format: [depositor_prefix, depositor_suffix, faucet_prefix, faucet_suffix]
+    fn balance_key(&self, depositor: AccountId, faucet_id: AccountId) -> Word {
+        Word::from([
+            depositor.prefix().as_felt(),
+            depositor.suffix(),
+            faucet_id.prefix().as_felt(),
+            faucet_id.suffix(),
+        ])
+    }
+
+    pub fn get_balance(&self, depositor: AccountId, faucet_id: AccountId) -> Felt {
+        let key = self.balance_key(depositor, faucet_id);
+        self.balances.get(&key)
+    }
+
+    fn update_balance(&mut self, depositor: AccountId, faucet_id: AccountId, amount: Felt) {
+        let key = self.balance_key(depositor, faucet_id);
+        self.balances.set(key, amount);
+    }
+}
+```
+
+---
+
+## Note Type Values
+
+### Problem
+
+When creating output notes, the `note_type` parameter uses specific integer values that aren't obvious.
+
+### Solution
+
+Use the correct values for note types:
+
+| Value | Type | Description |
+|-------|------|-------------|
+| 1 | Public | Note data is visible on-chain |
+| 2 | Private | Note data is hidden (only hash on-chain) |
+
+```rust
+// In note inputs or when creating output notes
+let note_type = Felt::new(1);  // Public note
+// or
+let note_type = Felt::new(2);  // Private note
+```
+
+---
+
+## P2ID Script Root
+
+### Problem
+
+When creating P2ID (Pay-to-ID) output notes, you need the correct script root digest, which is a constant value from miden-base.
+
+### Solution
+
+Use the hardcoded P2ID script root:
+
+```rust title="contracts/bank-account/src/lib.rs"
+/// Get the P2ID note script root digest.
+/// This is a constant from miden-standards that identifies the P2ID script.
+fn p2id_note_root() -> Digest {
+    Digest::from_word(Word::new([
+        Felt::from_u64_unchecked(13362761878458161062),
+        Felt::from_u64_unchecked(15090726097241769395),
+        Felt::from_u64_unchecked(444910447169617901),
+        Felt::from_u64_unchecked(3558201871398422326),
+    ]))
+}
+```
+
+:::info Where This Comes From
+This digest is computed from the P2ID note script in miden-standards. If the P2ID script changes in a future version, this value will need to be updated.
+:::
+
+---
+
+## Quick Reference Table
+
+| Pitfall | Symptom | Solution |
+|---------|---------|----------|
+| Felt comparison | Wrong comparison results | Use `.as_u64()` |
+| Stack overflow | "16 elements" error | Reduce locals, split functions |
+| Too many args | "4 words" error | Group into Words, use inputs |
+| Array reversal | Wrong data order | Be consistent with construction |
+| Felt underflow | Balance wraps to huge number | Validate before subtraction |
+| Missing wallet | Asset operation fails | Add `BasicWallet` component |
+| Key mismatch | Zero balances | Use helper function for keys |
+| Note type | Wrong note visibility | Use 1 (Public) or 2 (Private) |
+
+:::tip View Complete Source
+See these patterns in context in the [miden-bank repository](https://github.com/keinberger/miden-bank).
+:::
+
+## Next Steps
+
+- **[Debugging Guide](./debugging)** - Troubleshoot errors
+- **[Testing Guide](./testing)** - MockChain patterns
+- **[Miden Bank Tutorial](./miden-bank/)** - See these patterns in context
+````
+
+## File: docs/builder/migration/02-account-changes.md
+````markdown
+---
+sidebar_position: 2
+title: "Account Changes"
+description: "Named storage slots, keystore, components, and procedure root changes"
+---
+
+# Account Changes
+
+:::warning Breaking Change
+Storage is now name-based, not index-based. All storage access code must be updated.
+:::
+
+## Quick Fix
+
+Replace numeric indices with `StorageSlotName`:
+
+```rust title="src/account.rs"
+// Before
+let value = account.storage().get_item(0)?;
+
+// After
+let slot_name = StorageSlotName::new("my_component::my_slot")?;
+let value = account.storage().get_item(&slot_name)?;
+```
+
+---
+
+## Named Storage Slots
+
+Replace index-based storage access with `StorageSlotName` identifiers.
+
+### Rust
+
+```diff title="src/account.rs"
+- // Before: access by numeric index
+- let value = account.storage().get_item(0)?;
+- let _old_value = account.storage_mut().set_item(0, new_value)?;
+
++ // After: access by name
++ let slot_name = StorageSlotName::new("my_component::my_slot")?;
++ let value = account.storage().get_item(&slot_name)?;
++ let _old_value = account.storage_mut().set_item(&slot_name, new_value)?;
+```
+
+### MASM Updates
+
+The `native_account::set_map_item` procedure now takes slot IDs and returns only old values:
+
+```diff title="src/contract.masm"
+- # Before
+- exec.native_account::set_map_item
+- # Returns: [OLD_MAP_ROOT, OLD_VALUE, ...]
+
++ # After
++ # Inputs: [slot_id_prefix, slot_id_suffix, KEY, NEW_VALUE]
++ exec.native_account::set_map_item
++ # Returns: [OLD_VALUE, ...]
+```
+
+:::info Good to know
+The return value change means you may need to update stack manipulation after calling `set_map_item`.
+:::
+
+---
+
+## Keystore Changes
+
+Remove RNG generics from `FilesystemKeyStore`:
+
+```diff title="src/client.rs"
+- use miden_client::keystore::FilesystemKeyStore;
+- let keystore = FilesystemKeyStore::<rand::rngs::StdRng>::new(path)?;
+
++ use miden_client::keystore::FilesystemKeyStore;
++ let keystore = FilesystemKeyStore::new(path)?;
+```
+
+---
+
+## Web Component Compilation
+
+Web component compilation now requires `AccountComponentCode` from `CodeBuilder`:
+
+```diff title="src/component.ts"
+- // Before
+- const component = AccountComponent.compile(accountCode, builder, [slot]);
+
++ // After
++ const componentCode = builder.compileAccountComponentCode(accountCode);
++ const component = AccountComponent.compile(componentCode, [slot]);
+```
+
+---
+
+## Storage Schemas
+
+Replace `AccountComponentTemplate` with metadata-driven `StorageSchema`:
+
+```diff title="src/schema.rs"
+- use miden_lib::AccountComponentTemplate;
+- let template = AccountComponentTemplate::new(slots)?;
+
++ use miden_protocol::account::component::{SchemaTypeId, StorageSchema, StorageSlotSchema};
++ use miden_protocol::account::StorageSlotName;
++ let schema = StorageSchema::new([
++     (
++         StorageSlotName::new("my_component::balance")?,
++         StorageSlotSchema::value("balance", SchemaTypeId::native_word()),
++     ),
++     (
++         StorageSlotName::new("my_component::metadata")?,
++         StorageSlotSchema::map(
++             "metadata",
++             SchemaTypeId::native_word(),
++             SchemaTypeId::native_word(),
++         ),
++     ),
++ ])?;
+```
+
+---
+
+## Procedure Roots
+
+Use `AccountProcedureRoot` instead of `AccountProcedureInfo`:
+
+```diff title="src/procedure.rs"
+- use miden_objects::account::AccountProcedureInfo;
+- let info = AccountProcedureInfo::new(digest, storage_offset)?;
+
++ use miden_protocol::account::AccountProcedureRoot;
++ let root = AccountProcedureRoot::from_raw(digest);
+```
+
+---
+
+## Migration Steps
+
+1. Identify all storage slot access patterns in your code
+2. Define `StorageSlotName` constants for each slot
+3. Update storage access to use names instead of indices
+4. Remove RNG type parameters from keystore initialization
+5. Update component compilation to use `CodeBuilder`
+6. Migrate storage templates to `StorageSchema`
+7. Replace `AccountProcedureInfo` with `AccountProcedureRoot`
+
+---
+
+## Common Errors
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `expected &StorageSlotName, found u8` | API changed to names | Use `StorageSlotName` |
+| `FilesystemKeyStore expects 0 type parameters` | RNG generic removed | Remove type parameter |
+| `AccountComponentTemplate not found` | Renamed | Use `StorageSchema` |
+````
+
+## File: docs/builder/migration/03-note-changes.md
+````markdown
+---
+sidebar_position: 3
+title: "Note Changes"
+description: "Note attachments, tags, network accounts, and input notes API changes"
+---
+
+# Note Changes
+
+:::warning Breaking Change
+The note system has been redesigned. `NoteMetadata` no longer stores `aux` or `NoteExecutionHint` — use `NoteAttachment` instead.
+:::
+
+## Quick Fix
+
+```rust title="src/note.rs"
+// Before
+let metadata = NoteMetadata::new(sender, note_type, tag, execution_hint, aux)?;
+
+// After
+let attachment_word = Word::from([aux, execution_hint.into(), felt!(0), felt!(0)]);
+let attachment = NoteAttachment::new_word(NoteAttachmentScheme::none(), attachment_word);
+let metadata = NoteMetadata::new(sender, note_type)
+    .with_tag(tag)
+    .with_attachment(attachment);
+let note = Note::new(assets, metadata, recipient);
+```
+
+---
+
+## Note Attachments
+
+`NoteMetadata` no longer stores `aux` or `NoteExecutionHint`. Use `NoteAttachment` instead.
+
+```diff title="src/note.rs"
+- // Before: aux and hints in metadata
+- let metadata = NoteMetadata::new(
+-     sender,
+-     note_type,
+-     tag,
+-     execution_hint,         // No longer here
+-     aux,                    // No longer here
+- )?;
+
++ // After: use attachments
++ let attachment_word = Word::from([aux, execution_hint.into(), felt!(0), felt!(0)]);
++ let attachment = NoteAttachment::new_word(NoteAttachmentScheme::none(), attachment_word);
++ let metadata = NoteMetadata::new(sender, note_type)
++     .with_tag(tag)
++     .with_attachment(attachment);
++ let note = Note::new(assets, metadata, recipient);
+```
+
+:::info Good to know
+This separation makes note metadata more lightweight and allows attachments to be optional.
+:::
+
+---
+
+## Tag Semantics
+
+`NoteTag::from_account_id` was removed. Use `NoteTag::new()` for explicit values and
+`NoteTag::with_account_target()` for account targeting:
+
+```diff title="src/note.rs"
+- // Before: tag with embedded target
+- let tag = NoteTag::from_account_id(target_account);
+-
++ // After: use tag constructors
++ let tag = NoteTag::new(12345);
++ let target_tag = NoteTag::with_account_target(target_account);
++ let metadata = metadata.with_tag(target_tag);
+```
+
+---
+
+## Network Account Target
+
+Implement `NetworkAccountTarget` attachment for network-account notes:
+
+```rust title="src/network_note.rs"
+use miden_protocol::note::NoteAttachment;
+use miden_standards::note::NetworkAccountTarget;
+
+let target = NetworkAccountTarget::new(account_id, execution_hint)?;
+let attachment = NoteAttachment::from(target);
+let metadata = metadata.with_attachment(attachment);
+```
+
+---
+
+## MINT Notes
+
+`MintNoteStorage` supports private and public output notes:
+
+```diff title="src/mint.rs"
+- // Before
+- use miden_lib::note::create_mint_note;
+- let mint_note = create_mint_note(
+-     faucet_id,
+-     sender,
+-     recipient_digest,
+-     output_note_tag,
+-     amount,
+-     aux,
+-     output_note_aux,
+-     rng,
+- )?;
+
++ // After: explicit private/public choice
++ use miden_standards::note::{MintNote, MintNoteStorage};
++ use miden_protocol::note::NoteAttachment;
++
++ // For private output notes
++ let mint_storage = MintNoteStorage::new_private(recipient_digest, amount, output_note_tag);
++
++ // For public output notes
++ let mint_storage = MintNoteStorage::new_public(recipient, amount, output_note_tag)?;
++ let mint_note = MintNote::create(
++     faucet_id,
++     sender,
++     mint_storage,
++     NoteAttachment::default(),
++     rng,
++ )?;
+```
+
+:::tip
+Choose `MintNoteStorage::new_private` for most use cases. Use `new_public` only when the note
+contents should be visible on-chain.
+:::
+
+---
+
+## Input Notes API
+
+Unified interface accepts full `Note` objects instead of IDs:
+
+```diff title="src/transaction.rs"
+- // Before: separate authenticated/unauthenticated lists
+- let tx = TransactionRequestBuilder::new()
+-     .with_authenticated_input_notes(auth_note_ids)
+-     .with_unauthenticated_input_notes(unauth_note_ids)
+-     .build()?;
+
++ // After: unified input notes
++ let tx = TransactionRequestBuilder::new()
++     .input_notes(notes) // Full Note objects
++     .build()?;
+```
+
+---
+
+## FetchedNote Structure
+
+Private notes now carry `NoteHeader`; public notes expose `note` and `inclusionProof`:
+
+```rust title="src/fetch.rs"
+match fetched_note {
+    FetchedNote::Private(header, _) => {
+        // Access header fields
+        let note_id = header.id();
+    }
+    FetchedNote::Public(note, inclusion_proof) => {
+        // Access full note and proof
+        let inputs = note.inputs();
+    }
+}
+```
+
+---
+
+## Migration Steps
+
+1. Remove `aux` and `execution_hint` from `NoteMetadata` constructors
+2. Create `NoteAttachment` objects for aux data and hints
+3. Update `NoteTag` usage to `NoteTag::new()` / `NoteTag::with_account_target()`
+4. Use `with_account_target()` for targeted notes
+5. Implement `NetworkAccountTarget` for network notes
+6. Update mint note creation to use `MintNoteStorage`
+7. Refactor input notes to pass full `Note` objects
+8. Update `FetchedNote` handling for new structure
+
+---
+
+## Common Errors
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `NoteMetadata::new takes 2 arguments` | aux/hint removed | Use `NoteAttachment` |
+| `NoteTag::from_account_id not found` | API changed | Use `with_account_target()` |
+| `with_authenticated_input_notes not found` | API unified | Use `with_input_notes()` |
+````
+
+## File: docs/builder/quick-start/your-first-smart-contract/deploy.md
+````markdown
+---
+sidebar_position: 3
+title: Deploy Your Contract
+description: Learn about the integration folder and deploy your counter contract to the Miden testnet.
+---
+
+# Deploy Your Contract
+
+In this section, you'll learn about how to deploy and interact with your counter contract using the included "increment-count" scripts.
+
+## Understanding the Integration Folder
+
+The `integration/` folder is a crucial part of your Miden project workspace. It serves as the command center for all interactions with your smart contracts. Let's explore its structure and purpose.
+
+Navigate to your project's integration folder:
+
+```bash title=">_ Terminal"
+cd integration
+ls -la
+```
+
+You'll see a structure like:
+
+```text
+integration/
+├── Cargo.toml                  # Integration crate configuration
+├── src/
+│   ├── bin/                    # Executable scripts for onchain interactions
+│   │   └── increment_count.rs  # Script to deploy and increment counter
+│   ├── helpers.rs              # Temporary helper file
+│   └── lib.rs                  # Exports helpers
+└── tests/                      # Integration tests
+    └── counter_test.rs         # Tests for counter contract
+```
+
+## Purpose of the Integration Folder
+
+The integration folder serves two essential functions in Miden development:
+
+### 1. Contract Interaction Scripts (Binary Executables)
+
+Think of the scripts in `src/bin/` as Miden's equivalent to [**Foundry scripts**](https://getfoundry.sh/guides/scripting-with-solidity). These are executable Rust binaries that handle all your contract interactions:
+
+- **Contract Deployment**: Scripts that create and deploy accounts to the network
+- **Function/Procedure Calls**: Scripts that interact with deployed contracts through notes or [transaction scripts](/miden-base/transaction#transaction-lifecycle)
+- **State Queries**: Scripts that read contract state from the network
+- **Operations**: Scripts for contract upgrades, configuration changes, etc.
+
+Each binary is designed to handle a specific task.
+
+### 2. Testing Infrastructure
+
+All testing logic for your smart contracts lives here:
+
+- **Integration Tests**: End-to-end tests that verify contract behavior on Testnet
+- **Mockchain Tests**: Local testing using Miden's testing framework
+
+This separation ensures your contract logic in `contracts/` remains clean and focused while all interaction complexity is managed in the integration layer.
+
+## The Increment Count Script
+
+Let's examine the `increment_count.rs` script located at `integration/src/bin/increment_count.rs`. This script demonstrates the complete lifecycle of deploying and interacting with your counter contract.
+
+The script performs these key operations:
+
+1. **Sets up a Miden client** connected to the testnet
+2. **Builds both contract packages** (counter account and increment note)
+3. **Creates the counter account** with initial storage configuration
+4. **Creates a sender account** for publishing notes
+5. **Creates and publishes the increment note**
+6. **Consumes the note** to trigger the counter increment
+
+### Running the Script
+
+Execute the increment script to deploy your contract:
+
+```bash title=">_ Terminal"
+cd integration
+cargo run --bin increment_count --release
+```
+
+<details>
+<summary>Expected Output</summary>
+
+```text
+Account ID: V0(AccountIdV0 { prefix: 14134910893364381952, suffix: 3644349760121494784 })
+Sender account ID: "0xd85b347218c5a80052dbd47b2f36ad"
+Counter note hash: "0xf0e821396a896eb9983e682bc056021d57ddcaa43082f34597bf9e026421e566"
+Note publish transaction ID: "0xc6f080855724402cadf26650ffe993fe97a127a8f6c9c82ec621960e936e6d732
+Consume transaction ID: "0x2d1d8510e546ce0fbc22fa7d1a82322259d73cd1d7e0ca86622d0be70fab0548"
+Account delta: AccountDelta { account_id: V0(AccountIdV0 { prefix: 7255964780328958976, suffix: 2724050564200846336 }), storage: AccountStorageDelta { values: {}, maps: {0: StorageMapDelta({LexicographicWord(Word([0, 0, 0, 1])): Word([0, 0, 0, 1])})} }, vault: AccountVaultDelta { fungible: FungibleAssetDelta({}), non_fungible: NonFungibleAssetDelta({}) }, nonce_delta: 1 }
+```
+
+</details>
+
+Congratulations, you have successfully deployed the Counter Contract to the Miden Testnet, and incremented its count by one!
+
+### What Happens During Execution
+
+The script demonstrates Miden's deployment flow:
+
+1. **Contract Building**: The script compiles both the counter account and increment note contracts
+2. **Account Creation**: Creates a counter account with initial storage (counter value = 0)
+3. **Note Publishing**: Creates an increment note and publishes it to the network
+4. **Note Consumption**: The counter account consumes the note, executing the increment logic
+5. **State Update**: The counter value increases and the change is recorded onchain
+
+This process shows how Miden contracts are deployed through state changes rather than separate deployment transactions.
+
+**Miden's Deployment Flow**: In Miden, accounts (contracts) become visible onchain only when they undergo a state change. Simply creating an account locally doesn't deploy it - the account must participate in a transaction that modifies its state. In our case, by incrementing the counter, we're effectively "deploying" the contract and making it visible on the Miden testnet explorer. This is why the increment operation serves both as the deployment and the first interaction with the contract.
+
+## How the Scripts Work
+
+The integration scripts work by connecting to the Miden client and then building contracts from the Miden package files. These package files are generated when you run `miden build` inside each contract directory, but the scripts handle this compilation step automatically - you don't need to manually build the contracts before running the scripts.
+
+Next, we look into how the scripts convert your Rust contract code into deployable Miden contracts.
+
+## Script Breakdown
+
+Let's examine key parts of the increment script:
+
+### Client Setup
+
+```rust
+let ClientSetup { mut client, keystore } = setup_client().await?;
+let sync_summary = client.sync_state().await?;
+```
+
+This establishes a connection to the Miden testnet and synchronizes with the latest network state.
+
+### Building Contracts from Source
+
+The first step is building the Rust contracts into Miden packages:
+
+```rust
+// Build the counter account contract from source
+let counter_package = Arc::new(
+    build_project_in_dir(Path::new("../contracts/counter-account"), true)
+        .context("Failed to build counter account contract")?
+);
+
+// Build the increment note script from source
+let note_package = Arc::new(
+    build_project_in_dir(Path::new("../contracts/increment-note"), true)
+        .context("Failed to build increment note contract")?
+);
+```
+
+The `build_project_in_dir()` function:
+
+- Takes the path to your contract's Rust source code
+- Compiles the Rust code into Miden assembly
+- Generates a package containing the compiled contract bytecode and metadata
+- This is equivalent to manually running `miden build` in each contract directory
+
+These packages contain all the information needed to deploy and interact with your contracts on the Miden network.
+
+### Converting Packages to Deployable Accounts
+
+Once we have the compiled packages, we convert them into deployable accounts and notes:
+
+```rust
+// Configure initial storage for the counter account
+let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
+let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
+
+// The slot name is constructed as:
+// `miden::component::[to_underscore(Cargo.toml:package.metadata.component.package)]::[field_name]`
+let counter_storage_slot =
+    StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
+let storage_slots = vec![StorageSlot::with_map(
+    counter_storage_slot.clone(),
+    StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
+)];
+let counter_cfg = AccountCreationConfig {
+    storage_slots,
+    ..Default::default()
+};
+
+// Convert the counter package into a deployable account
+let counter_account = create_account_from_package(
+    &mut client,
+    counter_package.clone(),
+    counter_cfg
+)
+.await
+.context("Failed to create counter account")?;
+```
+
+The `create_account_from_package()` function:
+
+- Takes the compiled contract package
+- Combines it with the provided configuration (storage, settings, etc.)
+- Creates a deployable Miden account that can be used in transactions
+
+**Important**: Accounts that use storage must have their storage slots specified when instantiating the account. In v0.13, storage slots are identified by name rather than index. The slot name follows the pattern `miden::component::<package_name>::<field_name>`. We define the storage configuration with:
+
+- A named `StorageMap` slot (`miden::component::miden_counter_account::count_map`)
+- The counter key `[0, 0, 0, 1]` with initial value `[0, 0, 0, 0]` (representing count = 0)
+
+This pre-initialization ensures the account's storage is properly configured before deployment.
+
+### Converting Packages to Executable Notes
+
+Similarly, we convert the note package into an executable note:
+
+```rust
+// Convert the increment note package into an executable note
+let counter_note = create_note_from_package(
+    &mut client,
+    note_package.clone(),
+    sender_account.id(),
+    NoteCreationConfig::default()
+)
+.context("Failed to create counter note from package")?;
+
+// Publish the note to the network
+let note_publish_request = TransactionRequestBuilder::new()
+    .own_output_notes(vec![OutputNote::Full(counter_note.clone())])
+    .build()
+    .context("Failed to build note publish transaction request")?;
+```
+
+The `create_note_from_package()` function:
+
+- Takes the compiled note script package
+- Combines it with the sender account ID and configuration
+- Creates an executable note containing the increment script logic
+- The note can then be published to the network and consumed by the target (counter) account
+
+This demonstrates the complete workflow: Rust source code → compiled packages → deployable accounts/notes → network transactions.
+
+### Note Consumption
+
+```rust
+let consume_note_request = TransactionRequestBuilder::new()
+    .input_notes([(counter_note.clone(), None)])
+    .build()
+    .context("Failed to build consume note transaction request")?;
+
+let consume_tx_id = client
+    .submit_new_transaction(counter_account.id(), consume_note_request)
+    .await
+    .context("Failed to create consume note transaction")?;
+```
+
+The counter account consumes the increment note, executing the note script which calls the counter's increment function.
+
+## Next Steps
+
+Congratulations! You've successfully deployed and interacted with your first Miden smart contract. The integration folder provides the foundation for managing all aspects of your contract lifecycle.
+
+This completes the core smart contract development workflow on Miden. You're now equipped to build and deploy your own smart contracts using these patterns and tools!
 ````
 
 ## File: docs/builder/quick-start/notes.md
@@ -4055,57 +6083,47 @@ Alice's TEST token balance: 900
 ---
 ````
 
-## File: docs/builder/tools/index.md
-````markdown
----
-title: Tools
-sidebar_position: 1
----
-
-<!--
-ARCHITECTURE NOTE:
-Client documentation is canonical in versioned_docs/version-X.Y/miden-client/.
-This landing page exists only for the "current/next" version.
-Full client docs are available by selecting a released version.
--->
-
-# Tools
-
-:::info Version Note
-Full client documentation (Rust Client, Web Client, CLI reference) is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete client documentation.
-:::
-
-## Miden Client
-
-The Miden client has three main components:
-
-1. **Miden client library** - A Rust library for integrating with the Miden rollup
-2. **Miden client CLI** - Command-line interface for interacting with the network
-3. **Miden web client** - Browser-based interface for managing accounts and transactions
-
-## Additional Tools
-
-- **Playground** - Interactive environment for testing Miden assembly
-- **Explorer** - Block explorer for the Miden network
-````
-
-## File: docs/builder/_category_.json
+## File: docs/builder/smart-contracts/accounts/_category_.json
 ````json
 {
-  "label": "Builder",
-  "position": 1,
-  "collapsible": false,
-  "collapsed": false
+  "label": "Accounts",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "slug": "/builder/smart-contracts/accounts"
+  }
 }
 ````
 
-## File: docs/design/_category_.json
+## File: docs/builder/smart-contracts/notes/_category_.json
 ````json
 {
-  "label": "Design",
-  "position": 2,
-  "collapsible": false,
-  "collapsed": false
+  "label": "Notes",
+  "position": 4.5,
+  "link": {
+    "type": "generated-index",
+    "slug": "/builder/smart-contracts/notes"
+  }
+}
+````
+
+## File: docs/builder/smart-contracts/transactions/_category_.json
+````json
+{
+  "label": "Transactions",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "slug": "/builder/smart-contracts/transactions"
+  }
+}
+````
+
+## File: docs/builder/smart-contracts/_category_.json
+````json
+{
+  "label": "Miden Smart Contracts",
+  "position": 3
 }
 ````
 
@@ -4459,1508 +6477,6 @@ Your bank can be created, but doesn't do anything useful yet. In the next parts,
 ## Next Steps
 
 Now that your project is set up, let's dive deeper into account components and storage in [Part 1: Account Components and Storage](./account-components).
-````
-
-## File: docs/builder/develop/tutorials/rust-compiler/pitfalls.md
-````markdown
----
-sidebar_position: 3
-title: "Common Pitfalls"
-description: "Reference guide for known issues, limitations, and workarounds when developing with the Miden Rust compiler."
----
-
-# Common Pitfalls
-
-This reference documents known issues and limitations when developing with the Miden Rust compiler, along with recommended workarounds.
-
-## Felt Comparison Operators
-
-### Problem
-
-Direct comparison operators (`<`, `>`, `<=`, `>=`) on `Felt` values produce incorrect results.
-
-```rust
-// WRONG: This does NOT work correctly
-let a = Felt::new(100);
-let b = Felt::new(200);
-if a < b {  // May produce unexpected results!
-    // ...
-}
-```
-
-### Solution
-
-Always convert Felt values to `u64` before comparing:
-
-```rust
-// CORRECT: Convert to u64 first
-let a = Felt::new(100);
-let b = Felt::new(200);
-if a.as_u64() < b.as_u64() {
-    // Works correctly
-}
-```
-
-### Example from Bank Contract
-
-```rust title="contracts/bank-account/src/lib.rs"
-// Validating deposit amount
-let amount = asset.unwrap_fungible().amount().as_u64();
-
-// Use u64 comparison
-assert!(
-    amount <= MAX_DEPOSIT_AMOUNT,  // MAX_DEPOSIT_AMOUNT is u64
-    "Deposit exceeds maximum"
-);
-```
-
-:::warning Always Use .as_u64()
-Any time you compare Felt values, convert them first. This applies to:
-- Amount comparisons
-- Balance checks
-- Index comparisons
-- Any numeric ordering
-:::
-
----
-
-## Stack Limit (16 Elements)
-
-### Problem
-
-The Miden VM stack only allows direct access to the first 16 elements. Complex functions with many local variables trigger this error:
-
-```
-invalid stack index: only the first 16 elements on the stack are directly accessible
-```
-
-This may also appear as:
-```
-values not found in advice provider
-```
-
-### Solution
-
-**1. Reduce local variables:**
-
-```rust
-// WRONG: Too many local variables
-fn complex_operation(&mut self) {
-    let a = self.get_a();
-    let b = self.get_b();
-    let c = self.get_c();
-    let d = self.get_d();
-    let e = self.get_e();
-    let f = self.get_f();
-    // ... more variables cause stack overflow
-}
-
-// CORRECT: Use values directly or minimize locals
-fn complex_operation(&mut self) {
-    // Process in smaller batches
-    let result_ab = self.process(self.get_a(), self.get_b());
-    let result_cd = self.process(self.get_c(), self.get_d());
-    self.finalize(result_ab, result_cd);
-}
-```
-
-**2. Break into smaller functions:**
-
-```rust
-// WRONG: One large function
-fn do_everything(&mut self, a: Word, b: Word, c: Word) {
-    // Many operations touching all parameters...
-}
-
-// CORRECT: Split into stages
-fn stage_one(&mut self, a: Word) -> Felt {
-    // Process a
-}
-
-fn stage_two(&mut self, b: Word, result: Felt) -> Felt {
-    // Process b with result from stage one
-}
-
-fn stage_three(&mut self, c: Word, result: Felt) {
-    // Final processing
-}
-```
-
-**3. Process iteratively:**
-
-```rust
-// CORRECT: Process one at a time
-for asset in assets {
-    self.process_single_asset(asset);
-}
-```
-
----
-
-## Function Argument Limit (4 Words)
-
-### Problem
-
-Miden functions can receive at most 4 Words (16 Felts) as arguments:
-
-```
-error: expected at most 4 words of arguments
-```
-
-```rust
-// WRONG: Too many arguments
-fn process(
-    &mut self,
-    depositor: AccountId,    // ~1 Word
-    asset: Asset,            // 1 Word
-    serial_num: Word,        // 1 Word
-    tag: Felt,               // 1 Felt
-    note_type: Felt,         // 1 Felt
-    extra_data: Word,        // 1 Word - EXCEEDS LIMIT!
-) {
-    // ...
-}
-```
-
-### Solution
-
-**1. Make sure to only pass 4 Words to functions:**
-
-```rust
-// CORRECT: Only pass 4 Words
-fn process(
-    &mut self,
-    depositor: AccountId,    // ~1 Word
-    asset: Asset,            // 1 Word
-    serial_num: Word,        // 1 Word
-    params: Word,            // [tag, note_type, 0, 0] - 1 Word
-) {
-    let tag = params[0];
-    let note_type = params[1];
-    // ...
-}
-```
-
-**2. Use note inputs for passing data:**
-
-For note scripts, pass complex data via `active_note::get_inputs()`:
-
-```rust
-#[note]
-struct MyNote;
-
-#[note]
-impl MyNote {
-    #[note_script]
-    fn run(self, _arg: Word) {
-        let inputs = active_note::get_inputs();
-        // Inputs can hold many Felts without function argument limits
-        let param1 = inputs[0];
-        let param2 = inputs[1];
-        // ... access up to the full input capacity
-    }
-}
-```
-
-**3. Store data first, reference by key:**
-
-```rust
-// Store complex data in storage
-fn store_config(&mut self, key: Word, config_data: Word) {
-    self.configs.set(key, config_data);
-}
-
-// Reference by key in other operations
-fn process_with_config(&mut self, key: Word) {
-    let config = self.configs.get(&key);
-    // Use config...
-}
-```
-
----
-
-## Array Ordering (Rust/MASM Reversal)
-
-### Problem
-
-Arrays passed from Rust to the Miden VM are received in **reversed order**.
-
-```rust
-// In Rust, you define:
-let word = Word::from([a, b, c, d]);
-
-// In MASM, this becomes: [d, c, b, a]
-```
-
-### Solution
-
-Be aware of this when:
-- Constructing storage keys
-- Parsing note inputs
-- Working with asset data
-
-**Example: Storage Key Construction**
-
-```rust
-// Balance key format in Rust
-let key = Word::from([
-    depositor.prefix().as_felt(),  // Position 0 in Rust
-    depositor.suffix(),             // Position 1
-    faucet.prefix().as_felt(),      // Position 2
-    faucet.suffix(),                // Position 3
-]);
-
-// When the VM processes this, it sees:
-// [faucet.suffix, faucet.prefix, depositor.suffix, depositor.prefix]
-```
-
-**Example: Asset Structure**
-
-```rust
-// Asset Word layout (Rust perspective)
-// [amount, 0, faucet_suffix, faucet_prefix]
-
-let asset_word = Word::from([
-    Felt::new(amount),           // [0] amount
-    Felt::new(0),                // [1] padding
-    faucet.id().suffix(),        // [2] faucet suffix
-    faucet.id().prefix().as_felt(), // [3] faucet prefix
-]);
-```
-
-:::tip Consistency is Key
-The reversal doesn't matter as long as you're **consistent**. Always construct and parse arrays the same way throughout your codebase.
-:::
-
----
-
-## Felt Arithmetic Underflow/Overflow
-
-### Problem
-
-Miden uses field element (Felt) arithmetic, which operates in a prime field with modulus `p = 2^64 - 2^32 + 1`. This means arithmetic is **modular** and will silently wrap around instead of causing an error.
-
-```rust
-// DANGEROUS: This does NOT error on underflow!
-let balance = Felt::new(100);
-let withdrawal = Felt::new(500);
-let new_balance = balance - withdrawal;  // Silently wraps to a huge positive number!
-```
-
-When you subtract a larger value from a smaller one, the result wraps around to a large positive number (approximately `2^64`). This is NOT an error in the Miden VM - the transaction will succeed with an incorrect balance.
-
-### Why This Happens
-
-The Miden VM performs all Felt arithmetic as modular operations within the prime field. There is no automatic overflow or underflow detection at the VM level. The Rust compiler's default overflow mode is `Unchecked`, meaning it compiles directly to raw VM arithmetic operations.
-
-### Solution
-
-**Always validate before subtraction:**
-
-```rust
-// CORRECT: Check balance before subtracting
-let current_balance: Felt = self.balances.get(&key);
-let withdraw_amount = withdraw_asset.inner[0];
-
-// Validate that balance is sufficient
-assert!(
-    current_balance.as_u64() >= withdraw_amount.as_u64(),
-    "Withdrawal amount exceeds available balance"
-);
-
-// Only subtract after validation
-let new_balance = current_balance - withdraw_amount;
-```
-
-### Example from Bank Contract
-
-```rust title="contracts/bank-account/src/lib.rs"
-pub fn withdraw(&mut self, depositor: AccountId, withdraw_asset: Asset, /* ... */) {
-    let withdraw_amount = withdraw_asset.inner[0];
-
-    // Get current balance and validate sufficient funds exist.
-    // This check is critical: Felt arithmetic is modular, so subtracting
-    // more than the balance would silently wrap to a large positive number.
-    let current_balance: Felt = self.balances.get(&key);
-    assert!(
-        current_balance.as_u64() >= withdraw_amount.as_u64(),
-        "Withdrawal amount exceeds available balance"
-    );
-
-    let new_balance = current_balance - withdraw_amount;
-    self.balances.set(key, new_balance);
-}
-```
-
-:::danger Critical Security Issue
-Failure to validate before subtraction can lead to:
-- Users withdrawing more than their balance
-- Balance values becoming astronomically large
-- Complete loss of funds in the contract
-
-**Always check bounds before Felt subtraction operations.**
-:::
-
----
-
-## Wallet Component Requirement
-
-### Problem
-
-The `active_note::add_assets_to_account()` function fails if the consuming account doesn't have the basic wallet component.
-
-```
-Error: Account does not support asset operations
-```
-
-### Solution
-
-Ensure accounts that receive assets via this function have wallet capability:
-
-```rust
-use miden_client::account::component::BasicWallet;
-
-// When creating an account that needs to receive assets
-let account = AccountBuilder::new(seed)
-    .with_component(BasicWallet)  // Add wallet capability
-    .with_component(YourCustomComponent)
-    .build()?;
-```
-
-**Alternative: Use `native_account::add_asset()`**
-
-For account components, use the native account API instead:
-
-```rust
-#[component]
-impl Bank {
-    pub fn deposit(&mut self, depositor: AccountId, asset: Asset) {
-        // This works for any account - no wallet required
-        native_account::add_asset(asset);
-
-        // Track balance in storage
-        self.update_balance(depositor, asset);
-    }
-}
-```
-
----
-
-## Storage Map Key Consistency
-
-### Problem
-
-Storage map lookups return unexpected results or zeros when keys are constructed inconsistently.
-
-### Solution
-
-Define a single key construction pattern and use it everywhere:
-
-```rust title="contracts/bank-account/src/lib.rs"
-#[component]
-impl Bank {
-    /// Construct a balance key for a depositor and asset.
-    /// Key format: [depositor_prefix, depositor_suffix, faucet_prefix, faucet_suffix]
-    fn balance_key(&self, depositor: AccountId, faucet_id: AccountId) -> Word {
-        Word::from([
-            depositor.prefix().as_felt(),
-            depositor.suffix(),
-            faucet_id.prefix().as_felt(),
-            faucet_id.suffix(),
-        ])
-    }
-
-    pub fn get_balance(&self, depositor: AccountId, faucet_id: AccountId) -> Felt {
-        let key = self.balance_key(depositor, faucet_id);
-        self.balances.get(&key)
-    }
-
-    fn update_balance(&mut self, depositor: AccountId, faucet_id: AccountId, amount: Felt) {
-        let key = self.balance_key(depositor, faucet_id);
-        self.balances.set(key, amount);
-    }
-}
-```
-
----
-
-## Note Type Values
-
-### Problem
-
-When creating output notes, the `note_type` parameter uses specific integer values that aren't obvious.
-
-### Solution
-
-Use the correct values for note types:
-
-| Value | Type | Description |
-|-------|------|-------------|
-| 1 | Public | Note data is visible on-chain |
-| 2 | Private | Note data is hidden (only hash on-chain) |
-
-```rust
-// In note inputs or when creating output notes
-let note_type = Felt::new(1);  // Public note
-// or
-let note_type = Felt::new(2);  // Private note
-```
-
----
-
-## P2ID Script Root
-
-### Problem
-
-When creating P2ID (Pay-to-ID) output notes, you need the correct script root digest, which is a constant value from miden-base.
-
-### Solution
-
-Use the hardcoded P2ID script root:
-
-```rust title="contracts/bank-account/src/lib.rs"
-/// Get the P2ID note script root digest.
-/// This is a constant from miden-standards that identifies the P2ID script.
-fn p2id_note_root() -> Digest {
-    Digest::from_word(Word::new([
-        Felt::from_u64_unchecked(13362761878458161062),
-        Felt::from_u64_unchecked(15090726097241769395),
-        Felt::from_u64_unchecked(444910447169617901),
-        Felt::from_u64_unchecked(3558201871398422326),
-    ]))
-}
-```
-
-:::info Where This Comes From
-This digest is computed from the P2ID note script in miden-standards. If the P2ID script changes in a future version, this value will need to be updated.
-:::
-
----
-
-## Quick Reference Table
-
-| Pitfall | Symptom | Solution |
-|---------|---------|----------|
-| Felt comparison | Wrong comparison results | Use `.as_u64()` |
-| Stack overflow | "16 elements" error | Reduce locals, split functions |
-| Too many args | "4 words" error | Group into Words, use inputs |
-| Array reversal | Wrong data order | Be consistent with construction |
-| Felt underflow | Balance wraps to huge number | Validate before subtraction |
-| Missing wallet | Asset operation fails | Add `BasicWallet` component |
-| Key mismatch | Zero balances | Use helper function for keys |
-| Note type | Wrong note visibility | Use 1 (Public) or 2 (Private) |
-
-:::tip View Complete Source
-See these patterns in context in the [miden-bank repository](https://github.com/keinberger/miden-bank).
-:::
-
-## Next Steps
-
-- **[Debugging Guide](./debugging)** - Troubleshoot errors
-- **[Testing Guide](./testing)** - MockChain patterns
-- **[Miden Bank Tutorial](./miden-bank/)** - See these patterns in context
-````
-
-## File: docs/builder/quick-start/your-first-smart-contract/create.md
-````markdown
----
-sidebar_position: 2
-title: Create Your Project
-description: Set up a new Miden project and understand the counter contract implementation.
----
-
-In this section, you'll set up a new Miden project and understand the structure and implementation of both the counter account contract and increment note script.
-
-## Setting Up Your Project
-
-Create a new Miden project using the CLI:
-
-```bash title=">_ Terminal"
-miden new counter-project
-cd counter-project
-```
-
-This creates a workspace with the following structure:
-
-```text
-counter-project/
-├── contracts/                   # Each contract as individual crate
-│   ├── counter-account/         # Example: Counter account contract
-│   └── increment-note/          # Example: Increment note contract
-├── integration/                 # Integration crate (scripts + tests)
-│   ├── src/
-│   │   ├── bin/                 # Rust binaries for on-chain interactions
-│   │   ├── lib.rs
-│   │   └── helpers.rs           # Temporary helper file
-│   └── tests/                   # Test files
-├── Cargo.toml                   # Workspace root
-└── rust-toolchain.toml          # Rust toolchain specification
-```
-
-The project follows Miden's design philosophy of clean separation:
-
-- **`contracts/`**: Your primary working directory for writing Miden smart contract code
-- **`integration/`**: All on-chain interactions, deployment scripts, and tests
-
-Each contract is organized as its own individual crate, providing independent versioning, dependencies, and clear isolation between different contracts.
-
-## Building Your Contracts
-
-You can build individual contracts by navigating to their directory and running the Miden build command:
-
-```bash title=">_ Terminal"
-# Build the counter account contract
-cd contracts/counter-account
-miden build
-
-# Build the increment note contract
-cd ../increment-note
-miden build
-```
-
-This compiles the Rust contract code into Miden assembly, making it ready for deployment and interaction.
-
-## Understanding the Counter Account Contract
-
-Let's examine the counter account contract that comes with the project template. Open `contracts/counter-account/src/lib.rs`:
-
-```rust title="contracts/counter-account/src/lib.rs"
-// Do not link against libstd (i.e. anything defined in `std::`)
-#![no_std]
-#![feature(alloc_error_handler)]
-
-// However, we could still use some standard library types while
-// remaining no-std compatible, if we uncommented the following lines:
-//
-// extern crate alloc;
-
-use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
-
-/// Main contract structure for the counter example.
-#[component]
-struct CounterContract {
-    /// Storage map holding the counter value.
-    #[storage(description = "counter contract storage map")]
-    count_map: StorageMap,
-}
-
-#[component]
-impl CounterContract {
-    /// Returns the current counter value stored in the contract's storage map.
-    pub fn get_count(&self) -> Felt {
-        // Define a fixed key for the counter value within the map
-        let key = Word::from_u64_unchecked(0, 0, 0, 1);
-        // Read the value associated with the key from the storage map
-        self.count_map.get(&key)
-    }
-
-    /// Increments the counter value stored in the contract's storage map by one.
-    pub fn increment_count(&mut self) -> Felt {
-        // Define the same fixed key
-        let key = Word::from_u64_unchecked(0, 0, 0, 1);
-        // Read the current value
-        let current_value: Felt = self.count_map.get(&key);
-        // Increment the value by one
-        let new_value = current_value + felt!(1);
-        // Write the new value back to the storage map
-        self.count_map.set(key, new_value);
-        new_value
-    }
-}
-```
-
-### Counter Contract Walkthrough
-
-#### No-std Environment
-
-```rust
-#![no_std]
-```
-
-Miden contracts run in a `no_std` environment, meaning they don't link against Rust's standard library. This is essential for blockchain execution where contracts need to be deterministic and lightweight.
-
-#### Miden Library Imports
-
-```rust
-use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
-```
-
-These imports provide:
-
-- **`component`**: Macro for defining contract components
-- **`Felt`/`Word`**: Miden's native field element and word types
-- **`StorageMap`**: Key-value storage within account storage slots
-- **`StorageMapAccess`**: Needed for reading storage values (`get_count` function)
-
-#### Contract Structure Definition
-
-```rust
-#[component]
-struct CounterContract {
-    /// Storage map holding the counter value.
-    #[storage(description = "counter contract storage map")]
-    count_map: StorageMap,
-}
-```
-
-The `#[component]` attribute marks this as a Miden component. The `count_map` field is a `StorageMap` stored in a named storage slot of the account. In v0.13, storage slots are identified by name rather than explicit index numbers — the slot name is derived automatically from the component's package name and field name (e.g., `miden::component::miden_counter_account::count_map`).
-
-**Important**: Storage slots in Miden hold `Word` values, which are composed of four field elements (`Felt`). Each `Felt` is a 64-bit unsigned integer (u64). The `StorageMap` provides a key-value interface within a single storage slot, allowing you to store multiple key-value pairs within the four-element word structure.
-
-#### Contract Implementation
-
-```rust
-impl CounterContract {
-    // Function implementations...
-}
-```
-
-The `CounterContract` implementation defines the external interface that other contracts and notes can call. This is the contract's public API.
-
-#### Storage Key Strategy
-
-```rust
-let key = Word::from_u64_unchecked(0, 0, 0, 1);
-```
-
-Both functions use the same fixed key `[0, 0, 0, 1]` to store and retrieve the counter value within the storage map. The `Word::from_u64_unchecked` constructor creates a `Word` from four `u64` values. This demonstrates a simple but effective storage pattern.
-
-## Understanding the Increment Note Script
-
-Now let's examine the increment note script at `contracts/increment-note/src/lib.rs`:
-
-```rust title="contracts/increment-note/src/lib.rs"
-// Do not link against libstd (i.e. anything defined in `std::`)
-#![no_std]
-#![feature(alloc_error_handler)]
-
-// However, we could still use some standard library types while
-// remaining no-std compatible, if we uncommented the following lines:
-//
-// extern crate alloc;
-// use alloc::vec::Vec;
-
-use miden::*;
-
-use crate::bindings::miden::counter_account::counter_account;
-
-#[note]
-struct IncrementNote;
-
-#[note]
-impl IncrementNote {
-    #[note_script]
-    fn run(self, _arg: Word) {
-        let initial_value = counter_account::get_count();
-        counter_account::increment_count();
-        let expected_value = initial_value + Felt::from_u32(1);
-        let final_value = counter_account::get_count();
-        assert_eq(final_value, expected_value);
-    }
-}
-```
-
-### Increment Note Script Walkthrough
-
-#### No-std Setup
-
-Similar to the account contract, the note script uses `#![no_std]` with the same allocator and panic handler setup.
-
-#### Miden Imports
-
-```rust
-use miden::*;
-
-use crate::bindings::miden::counter_account::counter_account;
-```
-
-The wildcard import brings in all Miden note script functionality. The `counter_account` binding imports the interface functions from the counter contract, allowing the note script to call them.
-
-#### Note Script Structure
-
-Note scripts use a struct-based pattern. The `#[note]` attribute on both the struct and `impl` block marks this as a Miden note script component:
-
-```rust
-#[note]
-struct IncrementNote;
-
-#[note]
-impl IncrementNote {
-    #[note_script]
-    fn run(self, _arg: Word) { ... }
-}
-```
-
-The struct definition (`IncrementNote`) provides a named type for the note script. Unlike account contracts, note scripts don't store persistent data — the struct serves as the entry point container.
-
-Learn more about [note scripts in the Miden documentation](/miden-base/note/).
-
-#### The Note Script Function
-
-```rust
-#[note_script]
-fn run(self, _arg: Word) {
-    let initial_value = counter_account::get_count();
-    counter_account::increment_count();
-    let expected_value = initial_value + Felt::from_u32(1);
-    let final_value = counter_account::get_count();
-    assert_eq(final_value, expected_value);
-}
-```
-
-The `#[note_script]` attribute marks this method as the entry point for note execution. The `self` parameter is required for methods in the `impl` block. The function:
-
-1. **Gets the initial counter value** using the imported `counter_account::get_count()` function
-2. **Calls increment_count()** to increment the counter on the target account
-3. **Verifies the operation succeeded** by checking the final value matches expectations
-
-This demonstrates how note scripts interact with account contracts through their public interfaces, calling functions to change state.
-
-The counter example demonstrates a complete interaction pattern: the account contract manages persistent state, while the note script provides a mechanism to trigger state changes through note consumption.
-
-## Next Steps
-
-Now that you understand the contract code structure, let's move on to [deploying your contract](./deploy) and learn how the integration folder enables interaction with your contracts on the Miden network.
-
----
-````
-
-## File: docs/builder/quick-start/your-first-smart-contract/test.md
-````markdown
----
-sidebar_position: 4
-title: Test Your Contract
-description: Learn how to write and run tests for your Miden smart contracts using the integration testing framework.
----
-
-# Test Your Contract
-
-In this final section, you'll learn how to test your counter contract using Miden's **Mockchain** - a purpose-built testing framework that enables fast, local testing without network dependencies.
-
-## Test Structure and Organization
-
-All tests for your smart contracts should be placed in the `integration/tests/` folder. This follows the same separation of concerns we've seen throughout the project:
-
-- **`contracts/`**: Contains your contract source code
-- **`integration/src/bin/`**: Contains deployment and interaction scripts
-- **`integration/tests/`**: Contains all test files for your contracts
-
-This structure keeps your contract logic clean while providing a dedicated space for comprehensive testing.
-
-## Local Testing with Mockchain
-
-For most testing scenarios, we use Miden's **Mockchain** - a local, mocked blockchain instance specifically designed for testing. While you can also create tests that use the Miden client for end-to-end testing and on-chain interactions, the Mockchain provides the best developer experience for unit and integration testing.
-
-### What is the Mockchain?
-
-The Mockchain is Miden's purpose-built testing framework that provides several key advantages over testing against a live network:
-
-- **Blazing Fast Tests**: Run tests locally without network latency or external dependencies
-- **Full State Control**: Manipulate blockchain state precisely to create specific test scenarios
-- **Simpler Code**: Cleaner, more focused test logic without network complexity
-- **Deterministic Results**: Consistent test outcomes independent of network conditions
-- **Debugging Capabilities**: Detailed inspection of transaction execution and state changes
-
-This makes testing faster, more reliable, and easier to debug than testing against the testnet.
-
-## Running the Tests
-
-Execute your tests from the integration directory using the standard Cargo test command:
-
-```bash title="Terminal"
-cd integration
-cargo test --release
-```
-
-You should see output confirming the test passes:
-
-```text title="Expected Output"
-running 1 test
-Test passed!
-test counter_test ... ok
-
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
-```
-
-## Understanding the Mockchain Test
-
-Your project includes a comprehensive test file at `integration/tests/counter_test.rs` that demonstrates how to test the counter contract using the Mockchain. Let's walk through this test to understand the testing patterns:
-
-<details class="normal-text">
-<summary>Test File</summary>
-
-```rust title="integration/tests/counter_test.rs"
-use integration::helpers::{
-    build_project_in_dir, create_testing_account_from_package, create_testing_note_from_package,
-    AccountCreationConfig, NoteCreationConfig,
-};
-
-use miden_client::{
-    account::{StorageMap, StorageSlot, StorageSlotName},
-    transaction::OutputNote,
-    Felt, Word,
-};
-use miden_testing::{Auth, MockChain};
-use std::{path::Path, sync::Arc};
-
-#[tokio::test]
-async fn counter_test() -> anyhow::Result<()> {
-    // Test that after executing the increment note, the counter value is incremented by 1
-    let mut builder = MockChain::builder();
-
-    // Crate note sender account
-    let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
-
-    // Build contracts
-    let contract_package = Arc::new(build_project_in_dir(
-        Path::new("../contracts/counter-account"),
-        true,
-    )?);
-    let note_package = Arc::new(build_project_in_dir(
-        Path::new("../contracts/increment-note"),
-        true,
-    )?);
-
-    // Create the counter account with initial storage and no-auth auth component
-    let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
-    let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
-
-    // The slot name is constructed as
-    // `miden::component::[to_underscore(Cargo.toml:package.metadata.component.package)]::[field_name]`
-    let counter_storage_slot =
-        StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
-    let storage_slots = vec![StorageSlot::with_map(
-        counter_storage_slot.clone(),
-        StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
-    )];
-    let counter_cfg = AccountCreationConfig {
-        storage_slots,
-        ..Default::default()
-    };
-
-    // create testing counter account
-    let mut counter_account =
-        create_testing_account_from_package(contract_package.clone(), counter_cfg).await?;
-
-    // create testing increment note
-    let counter_note = create_testing_note_from_package(
-        note_package.clone(),
-        sender.id(),
-        NoteCreationConfig::default(),
-    )?;
-
-    // add counter account and note to mockchain
-    builder.add_account(counter_account.clone())?;
-    builder.add_output_note(OutputNote::Full(counter_note.clone()));
-
-    // Build the mock chain
-    let mut mock_chain = builder.build()?;
-    // Build the transaction context
-    let tx_context = mock_chain
-        .build_tx_context(counter_account.id(), &[counter_note.id()], &[])?
-        .build()?;
-
-    // Execute the transaction
-    let executed_transaction = tx_context.execute().await?;
-
-    // Apply the account delta to the counter account
-    counter_account.apply_delta(executed_transaction.account_delta())?;
-
-    // Add the executed transaction to the mockchain
-    mock_chain.add_pending_executed_transaction(&executed_transaction)?;
-    mock_chain.prove_next_block()?;
-
-    // Get the count from the updated counter account
-    let count = counter_account
-        .storage()
-        .get_map_item(&counter_storage_slot, count_storage_key)
-        .expect("Failed to get counter value from storage slot");
-
-    // Assert that the count value is equal to 1 after executing the transaction
-    assert_eq!(
-        count,
-        Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]),
-        "Count value is not equal to 1"
-    );
-
-    println!("Test passed!");
-    Ok(())
-}
-```
-
-</details>
-
-## Test Code Walkthrough
-
-Let's break down this test step by step to understand how Mockchain testing works.
-
-### 1. Setting Up the Mockchain Builder
-
-```rust
-let mut builder = MockChain::builder();
-let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
-```
-
-**What's happening:**
-
-- We instantiate the **Mockchain builder**, which is used to configure our testing environment
-- We create a **sender account** using basic authentication - this account will publish the increment note
-- The builder pattern allows us to incrementally add all the components needed for our test
-
-### 2. Building the Contract Packages
-
-```rust
-let contract_package = Arc::new(build_project_in_dir(
-    Path::new("../contracts/counter-account"),
-    true,
-)?);
-let note_package = Arc::new(build_project_in_dir(
-    Path::new("../contracts/increment-note"),
-    true,
-)?);
-```
-
-**What's happening:**
-
-- Just like in the deployment script, we **build both contract packages** (counter account and increment note)
-- The `build_project_in_dir()` function compiles the Rust contracts into Miden packages
-- We wrap them in `Arc` for efficient memory sharing across the test
-
-### 3. Creating the Test Account and Note
-
-```rust
-// Create the counter account with initial storage and no-auth auth component
-let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
-let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
-
-let counter_storage_slot =
-    StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
-let storage_slots = vec![StorageSlot::with_map(
-    counter_storage_slot.clone(),
-    StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
-)];
-let counter_cfg = AccountCreationConfig {
-    storage_slots,
-    ..Default::default()
-};
-
-// Create testing entities
-let counter_account = create_testing_account_from_package(contract_package.clone(), counter_cfg).await?;
-let counter_note = create_testing_note_from_package(
-    note_package.clone(),
-    sender.id(),
-    NoteCreationConfig::default(),
-)?;
-```
-
-**What's happening:**
-
-- We configure the **counter account's initial storage** with count = 0 at storage key `[0, 0, 0, 1]`
-- We create the **testing counter account** from the compiled package using `create_testing_account_from_package()`
-- We create the **testing increment note** using `create_testing_note_from_package()`
-- These helper functions create test-specific versions optimized for the Mockchain environment
-
-### 4. Adding Components to the Mockchain
-
-```rust
-builder.add_account(counter_account.clone())?;
-builder.add_output_note(OutputNote::Full(counter_note.clone()));
-let mut mock_chain = builder.build()?;
-```
-
-**What's happening:**
-
-- We **add the counter account** to the mockchain builder
-- We **add the increment note** as a full output note to the mockchain
-- We **build the mockchain** - now we have a complete testing environment ready to use
-
-### 5. Creating and Executing the Transaction
-
-```rust
-let tx_context = mock_chain
-    .build_tx_context(counter_account.id(), &[counter_note.id()], &[])?
-    .build()?;
-
-let executed_transaction = tx_context.execute().await?;
-```
-
-**What's happening:**
-
-- We **build the transaction context** using the counter account and counter note
-- We **execute the transaction** - this runs the increment logic locally in the mockchain
-
-### 6. Verifying the Results
-
-```rust
-// Apply the account delta to the counter account
-counter_account.apply_delta(executed_transaction.account_delta())?;
-
-// Add the executed transaction to the mockchain
-mock_chain.add_pending_executed_transaction(&executed_transaction)?;
-mock_chain.prove_next_block()?;
-
-// Get the count from the updated counter account
-let count = counter_account
-    .storage()
-    .get_map_item(&counter_storage_slot, count_storage_key)
-    .expect("Failed to get counter value from storage slot");
-
-// Assert that the count value is equal to 1 after executing the transaction
-assert_eq!(
-    count,
-    Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]),
-    "Count value is not equal to 1"
-);
-```
-
-**What's happening:**
-
-- We **apply the account delta** from the executed transaction to the counter account to update its state
-- We **add the executed transaction** to the mockchain
-- We **read the counter value** from storage using the same key we initialized
-- We **assert that the count equals 1** - verifying the increment operation worked correctly
-
-The test verifies the complete flow: the increment note successfully increments the counter from 0 to 1, proving our smart contract works as expected.
-
-## Next Steps
-
-Congratulations! You've successfully completed the Miden smart contract quick start guide. You're now equipped to build more sophisticated smart contracts on Miden. Consider exploring:
-
-To deepen your knowledge, we recommend exploring the following resources:
-
-- Visit the [Tutorials section](/miden-tutorials) for detailed, hands-on guides on topics such as contract interactions, advanced storage, custom note scripting, and integrating with external applications via the Miden Web Client.
-- For in-depth technical explanations of core concepts, consult the [Protocol section](/miden-base) of the documentation. Here you'll find comprehensive information on Miden's architecture, account model, transaction lifecycle, and the underlying zero-knowledge technology that powers the network.
-
-The foundational patterns and concepts you've practiced in this Quick Start will enable you to build complex, privacy-preserving applications on the Miden network. Continue with the resources above to take your development further!
-````
-
-## File: docs/builder/quick-start/accounts.md
-````markdown
----
-sidebar_position: 2
-title: Accounts
-description: Learn how to create and manage Miden accounts programmatically using Rust and TypeScript.
----
-
-import { CodeTabs } from '@site/src/components';
-
-# Accounts
-
-Miden's account model is fundamentally different from traditional blockchains. Let's explore how to create and manage accounts programmatically.
-
-## Understanding Miden Accounts
-
-Before diving into account creation, it's essential to understand what makes Miden accounts unique compared to traditional blockchain addresses.
-
-**What Makes Miden Accounts Special:**
-
-- **Smart Contract Wallets**: Every account is a programmable smart contract that can hold assets and execute custom logic
-- **Modular Design**: Accounts are composed of reusable components (authentication, wallet functionality, etc.)
-- **Privacy Levels**: Choose between public or private storage modes
-
-Miden accounts differ from traditional blockchain addresses in fundamental ways.
-
-**Account Architecture:**
-
-- Every account is a **smart contract** with programmable logic
-- Accounts can store **assets** (fungible and non-fungible tokens) in their vault
-- Each account has **storage slots** for custom data
-- Accounts are composed of **modular components** for different functionalities
-
-**Storage Modes:**
-
-- **Public**: All state visible onchain (transparent operations)
-- **Private**: Only commitments onchain, full state held privately
-
-### Account Structure
-
-Every Miden account contains these core components:
-
-- **Vault**: Secure asset storage
-- **Storage**: Key-value data store (up to 255 slots)
-- **Code**: Smart contract logic
-- **Nonce**: Anti-replay counter
-- **Components**: Modular functionality (authentication, wallet, etc.)
-
-<details>
-<summary>Account Struct</summary>
-
-```rust
-pub struct MidenAccount {
-    /// Immutable, 120-bit ID encoding type, storage mode and version.
-    pub id: [u8; 15],
-
-    /// Determines mutability of the account (immutable, mutable).
-    pub account_type: AccountType,
-
-    /// Storage placement preference (public/private).
-    pub storage_mode: StorageMode,
-
-    /// Root commitment of the account CODE (MAST root).
-    pub code_commitment: [u8; 32],
-
-    /// Root commitment of the account STORAGE (slots / maps).
-    /// Think of this as the "root hash" of the Account's storage merkle tree.
-    pub storage_commitment: [u8; 32],
-
-    /// Vault commitment. For compact headers we keep only an optional aggregate commitment.
-    /// Indexers can materialize a richer view (e.g., list of assets) offchain.
-    pub vault_commitment: Option<[u8; 32]>,
-
-    /// Monotonically increasing counter; must increment exactly once when state changes.
-    pub nonce: u64,
-
-    /// Merged set of account components that defined this account's interface and storage.
-    /// Accounts are composed by merging components (e.g. wallet component + an auth component).
-    pub components: Vec<ComponentDescriptor>,
-
-    /// Authentication procedure metadata (e.g. "RpoFalcon512").
-    pub authentication: AuthenticationDescriptor,
-}
-```
-
-**Account Types:**
-
-```rust
-pub enum AccountType {
-    // Faucet that can issue fungible assets
-    FungibleFaucet = 2,
-    // Faucet that can issue non-fungible assets
-    NonFungibleFaucet = 3,
-    // Regular account with immutable code
-    RegularAccountImmutableCode = 0,
-    /// Regular account with updateable code
-    RegularAccountUpdatableCode = 1,
-}
-```
-
-**Storage Modes:**
-
-```rust
-pub enum StorageMode {
-    /// State stored onchain and publicly readable.
-    Public,
-    /// Only a commitment is onchain; full state is held privately by the owner.
-    Private,
-}
-```
-
-</details>
-
-## Set Up Development Environment
-
-To run the code examples in this guide, you'll need to set up a development environment for either Rust or TypeScript.
-
-### Rust Environment
-
-Create a new Miden Rust project:
-
-```bash title=">_ Terminal"
-miden new my-project
-cd my-project/integration/
-```
-
-For each code example, create a new binary file:
-
-```bash title=">_ Terminal"
-touch src/bin/demo.rs
-```
-
-Copy the Rust code example into the file, then run:
-
-```bash title=">_ Terminal"
-cargo run --bin demo --release
-```
-
-### TypeScript Environment
-
-Create a new Miden frontend project:
-
-```bash title=">_ Terminal"
-yarn create-miden-app
-cd miden-app/
-```
-
-For each code example, create a demo file:
-
-```bash title=">_ Terminal"
-touch src/lib/demo.ts
-```
-
-Copy the TypeScript code into the file, then import and call the `demo()` function in your `App.tsx`. Run the project:
-
-```bash title=">_ Terminal"
-yarn dev
-# or
-npm run dev
-```
-
-:::tip
-For detailed frontend setup guidance, see the [Web Client tutorial](/miden-tutorials/web-client/create_deploy_tutorial#step-2-set-up-the-webclient).
-:::
-
-## Creating Accounts Programmatically
-
-Let's start by creating accounts using the Miden client libraries:
-
-<CodeTabs
-tsFilename="src/lib/account.ts"
-rustFilename="integration/src/bin/account.rs"
-example={{
-rust: {
-code: `use miden_client::{
-    account::{
-        component::BasicWallet,
-        AccountBuilder, AccountStorageMode, AccountType,
-    },
-    auth::{AuthFalcon512Rpo, AuthSecretKey},
-    builder::ClientBuilder,
-    keystore::FilesystemKeyStore,
-    rpc::{Endpoint, GrpcClient},
-};
-use miden_client_sqlite_store::ClientBuilderSqliteExt;
-use rand::RngCore;
-use std::sync::Arc;
-
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    // Initialize RPC connection
-    let endpoint = Endpoint::testnet();
-    let timeout_ms = 10_000;
-    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
-
-    // Initialize keystore
-    let keystore_path = std::path::PathBuf::from("./keystore");
-    let keystore =
-        Arc::new(FilesystemKeyStore::new(keystore_path).unwrap());
-
-    let store_path = std::path::PathBuf::from("./store.sqlite3");
-
-    // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    let mut client = ClientBuilder::new()
-        .rpc(rpc_client)
-        .sqlite_store(store_path)
-        .authenticator(keystore.clone())
-        .in_debug_mode(true.into())
-        .build()
-        .await?;
-
-    client.sync_state().await?;
-
-    let mut init_seed = [0_u8; 32];
-    client.rng().fill_bytes(&mut init_seed);
-
-    let key_pair = AuthSecretKey::new_falcon512_rpo();
-
-    let builder = AccountBuilder::new(init_seed)
-        .account_type(AccountType::RegularAccountUpdatableCode)
-        .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthFalcon512Rpo::new(
-            key_pair.public_key().to_commitment(),
-        ))
-        .with_component(BasicWallet);
-
-    let account = builder.build()?;
-
-    client.add_account(&account, false).await?;
-
-    keystore.add_key(&key_pair)?;
-
-    println!("Account ID: {}", account.id());
-    println!("No assets in Vault: {:?}", account.vault().is_empty());
-
-    Ok(())
-}
-` },
-  typescript: {
-    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
-
-export async function demo() {
-    // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
-
-    // Create new wallet account
-    const account = await client.newWallet(
-        AccountStorageMode.public(), // Public: account state is visible onchain
-        true, // Mutable: account code can be upgraded later
-        AuthScheme.AuthRpoFalcon512 // Authentication scheme
-    );
-
-    console.log("Account ID:", account.id().toString());
-    console.log(
-        "No Assets in Vault:",
-        account.vault().fungibleAssets().length === 0
-    );
-}
-`
-}
-}}
-/>
-
-<details>
-<summary>Expected output</summary>
-
-```text
-Account ID: 0x94733054a40d1610178320cc0c8060
-No Assets in Vault: true
-```
-
-</details>
-
-## Creating a Token Faucet
-
-Before we can work with tokens, we need a source of tokens. Let's create a fungible token faucet:
-
-<CodeTabs
-tsFilename="src/lib/faucet.ts"
-rustFilename="integration/src/bin/faucet.rs"
-example={{
-rust: {
-code: `use miden_client::{
-    account::{
-        component::BasicFungibleFaucet,
-        AccountBuilder, AccountStorageMode, AccountType,
-    },
-    asset::TokenSymbol,
-    auth::{AuthFalcon512Rpo, AuthSecretKey},
-    builder::ClientBuilder,
-    keystore::FilesystemKeyStore,
-    rpc::{Endpoint, GrpcClient},
-    Felt,
-};
-use miden_client_sqlite_store::ClientBuilderSqliteExt;
-use rand::RngCore;
-use std::sync::Arc;
-
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    // Initialize RPC connection
-    let endpoint = Endpoint::testnet();
-    let timeout_ms = 10_000;
-    let rpc_client = Arc::new(GrpcClient::new(&endpoint, timeout_ms));
-
-    // Initialize keystore
-    let keystore_path = std::path::PathBuf::from("./keystore");
-    let keystore =
-        Arc::new(FilesystemKeyStore::new(keystore_path).unwrap());
-
-    let store_path = std::path::PathBuf::from("./store.sqlite3");
-
-    // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    let mut client = ClientBuilder::new()
-        .rpc(rpc_client)
-        .sqlite_store(store_path)
-        .authenticator(keystore.clone())
-        .in_debug_mode(true.into())
-        .build()
-        .await?;
-
-    client.sync_state().await?;
-
-    // Faucet seed
-    let mut init_seed = [0u8; 32];
-    client.rng().fill_bytes(&mut init_seed);
-
-    // Faucet parameters
-    let symbol = TokenSymbol::new("TEST")?;
-    let decimals = 8;
-    let max_supply = Felt::new(1_000_000);
-
-    // Generate key pair
-    let key_pair = AuthSecretKey::new_falcon512_rpo();
-
-    // Build the account
-    let builder = AccountBuilder::new(init_seed)
-        .account_type(AccountType::FungibleFaucet)
-        .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthFalcon512Rpo::new(
-            key_pair.public_key().to_commitment(),
-        ))
-        .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
-
-    let faucet_account = builder.build()?;
-
-    client.add_account(&faucet_account, false).await?;
-    keystore.add_key(&key_pair)?;
-
-    println!("Faucet account ID: {}", faucet_account.id());
-
-    Ok(())
-}
-`},
-  typescript: {
-    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
-
-export async function demo() {
-    // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
-
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
-
-    const symbol = "TEST";
-    const decimals = 8;
-    const initialSupply = BigInt(10_000_000 * 10 ** decimals);
-
-    const faucet = await client.newFaucet(
-        AccountStorageMode.public(),
-        false,
-        symbol,
-        decimals,
-        initialSupply,
-        AuthScheme.AuthRpoFalcon512 // Authentication scheme
-    );
-
-    console.log("Faucet account ID:", faucet.id().toString());
-}
-`
-}
-}}
-/>
-
-<details>
-<summary>Expected output</summary>
-
-```text
-Faucet account ID: 0xde0ba31282f7522046d3d4af40722b
-```
-
-</details>
-
-## Key Takeaways
-
-**Account Types:**
-
-- **Regular Accounts**: Standard smart contract wallets that can hold assets and execute custom logic
-- **Faucet Accounts**: Specialized accounts with minting permissions for tokens
-
-**Storage Modes:**
-
-- **Public**: Account state is fully transparent and visible onchain
-- **Private**: Only cryptographic commitments are stored onchain, with full state maintained privately
-
-**Modular Components:**
-
-- **BasicWallet**: Provides asset management functionality
-- **BasicFungibleFaucet**: Enables token minting capabilities
-- **AuthFalcon512Rpo**: Handles cryptographic authentication
-
-Now that you understand how to create accounts and faucets, you're ready to learn about Miden's unique transaction model. Continue to [Notes & Transactions](./notes) to explore how assets move between accounts using notes.
-
----
 ````
 
 ## File: docs/builder/develop/tutorials/rust-compiler/miden-bank/01-account-components.md
@@ -7179,261 +7695,938 @@ See the complete transaction script implementation in the [miden-bank repository
 Now that you understand transaction scripts, let's learn the advanced topic of creating output notes in [Part 7: Creating Output Notes](./output-notes).
 ````
 
-## File: docs/builder/quick-start/your-first-smart-contract/deploy.md
+## File: docs/builder/develop/tutorials/rust-compiler/index.md
 ````markdown
 ---
-sidebar_position: 3
-title: Deploy Your Contract
-description: Learn about the integration folder and deploy your counter contract to the Miden testnet.
+title: "Rust Compiler"
+sidebar_position: 1
+description: "Learn to build Miden smart contracts using Rust with the Miden Rust compiler."
 ---
 
-# Deploy Your Contract
+# Rust Compiler
 
-In this section, you'll learn about how to deploy and interact with your counter contract using the included "increment-count" scripts.
+The Miden Rust compiler allows you to write smart contracts in Rust and compile them to Miden Assembly (MASM). This section provides tutorials and reference documentation for developing with the Rust compiler.
 
-## Understanding the Integration Folder
+## Getting Started
 
-The `integration/` folder is a crucial part of your Miden project workspace. It serves as the command center for all interactions with your smart contracts. Let's explore its structure and purpose.
+If you're new to the Miden Rust compiler, start with the **Miden Bank Tutorial** - a comprehensive, step-by-step guide that teaches all the core concepts through building a complete banking application.
 
-Navigate to your project's integration folder:
+<div className="row margin-bottom--lg">
+  <div className="col col--6">
+    <div className="card">
+      <div className="card__header">
+        <h3>Miden Bank Tutorial</h3>
+      </div>
+      <div className="card__body">
+        <p>Build a complete banking application while learning:</p>
+        <ul>
+          <li>Account components and storage</li>
+          <li>Note scripts and transaction scripts</li>
+          <li>Asset management</li>
+          <li>Cross-component calls</li>
+          <li>Output note creation</li>
+        </ul>
+      </div>
+      <div className="card__footer">
+        <a className="button button--primary button--block" href="./miden-bank/">Start Tutorial</a>
+      </div>
+    </div>
+  </div>
+</div>
 
-```bash title=">_ Terminal"
-cd integration
-ls -la
-```
+## Rust Smart Contract Reference
 
-You'll see a structure like:
+For detailed reference documentation on the Miden Rust SDK — types, macros, storage, APIs, and more — see the **[Rust Smart Contract Reference](../../../smart-contracts/)**.
 
-```text
-integration/
-├── Cargo.toml                  # Integration crate configuration
-├── src/
-│   ├── bin/                    # Executable scripts for onchain interactions
-│   │   └── increment_count.rs  # Script to deploy and increment counter
-│   ├── helpers.rs              # Temporary helper file
-│   └── lib.rs                  # Exports helpers
-└── tests/                      # Integration tests
-    └── counter_test.rs         # Tests for counter contract
-```
+## Supplementary Guides
 
-## Purpose of the Integration Folder
+| Guide | Description |
+|-------|-------------|
+| [Testing with MockChain](./testing) | Learn to test your contracts using MockChain for local blockchain simulation |
+| [Debugging Guide](./debugging) | Interpret errors and debug common issues |
+| [Common Pitfalls](./pitfalls) | Avoid known issues and limitations |
 
-The integration folder serves two essential functions in Miden development:
+## Source Code
 
-### 1. Contract Interaction Scripts (Binary Executables)
+The complete source code for the Miden Bank example is available at:
 
-Think of the scripts in `src/bin/` as Miden's equivalent to [**Foundry scripts**](https://getfoundry.sh/guides/scripting-with-solidity). These are executable Rust binaries that handle all your contract interactions:
+**[github.com/keinberger/miden-bank](https://github.com/keinberger/miden-bank)**
 
-- **Contract Deployment**: Scripts that create and deploy accounts to the network
-- **Function/Procedure Calls**: Scripts that interact with deployed contracts through notes or [transaction scripts](/miden-base/transaction#transaction-lifecycle)
-- **State Queries**: Scripts that read contract state from the network
-- **Operations**: Scripts for contract upgrades, configuration changes, etc.
+## Prerequisites
 
-Each binary is designed to handle a specific task.
+Before starting, ensure you have:
 
-### 2. Testing Infrastructure
+- Completed the [Quick Start guide](../../../quick-start/)
+- Basic familiarity with Rust programming
+- Understanding of Miden concepts (accounts, notes, transactions)
+````
 
-All testing logic for your smart contracts lives here:
+## File: docs/builder/smart-contracts/accounts/cryptography.md
+````markdown
+---
+title: "Cryptography"
+sidebar_position: 5
+description: "RPO-Falcon512 signature verification and hashing primitives in Miden contracts."
+---
 
-- **Integration Tests**: End-to-end tests that verify contract behavior on Testnet
-- **Mockchain Tests**: Local testing using Miden's testing framework
+# Cryptography
 
-This separation ensures your contract logic in `contracts/` remains clean and focused while all interaction complexity is managed in the integration layer.
+The Miden SDK exposes cryptographic primitives for signature verification and hashing. These are low-level functions used by authentication components and anywhere message digests or hash-based commitments are needed.
 
-## The Increment Count Script
+## RPO-Falcon512 verification
 
-Let's examine the `increment_count.rs` script located at `integration/src/bin/increment_count.rs`. This script demonstrates the complete lifecycle of deploying and interacting with your counter contract.
-
-The script performs these key operations:
-
-1. **Sets up a Miden client** connected to the testnet
-2. **Builds both contract packages** (counter account and increment note)
-3. **Creates the counter account** with initial storage configuration
-4. **Creates a sender account** for publishing notes
-5. **Creates and publishes the increment note**
-6. **Consumes the note** to trigger the counter increment
-
-### Running the Script
-
-Execute the increment script to deploy your contract:
-
-```bash title=">_ Terminal"
-cd integration
-cargo run --bin increment_count --release
-```
-
-<details>
-<summary>Expected Output</summary>
-
-```text
-Account ID: V0(AccountIdV0 { prefix: 14134910893364381952, suffix: 3644349760121494784 })
-Sender account ID: "0xd85b347218c5a80052dbd47b2f36ad"
-Counter note hash: "0xf0e821396a896eb9983e682bc056021d57ddcaa43082f34597bf9e026421e566"
-Note publish transaction ID: "0xc6f080855724402cadf26650ffe993fe97a127a8f6c9c82ec621960e936e6d732
-Consume transaction ID: "0x2d1d8510e546ce0fbc22fa7d1a82322259d73cd1d7e0ca86622d0be70fab0548"
-Account delta: AccountDelta { account_id: V0(AccountIdV0 { prefix: 7255964780328958976, suffix: 2724050564200846336 }), storage: AccountStorageDelta { values: {}, maps: {0: StorageMapDelta({LexicographicWord(Word([0, 0, 0, 1])): Word([0, 0, 0, 1])})} }, vault: AccountVaultDelta { fungible: FungibleAssetDelta({}), non_fungible: NonFungibleAssetDelta({}) }, nonce_delta: 1 }
-```
-
-</details>
-
-Congratulations, you have successfully deployed the Counter Contract to the Miden Testnet, and incremented its count by one!
-
-### What Happens During Execution
-
-The script demonstrates Miden's deployment flow:
-
-1. **Contract Building**: The script compiles both the counter account and increment note contracts
-2. **Account Creation**: Creates a counter account with initial storage (counter value = 0)
-3. **Note Publishing**: Creates an increment note and publishes it to the network
-4. **Note Consumption**: The counter account consumes the note, executing the increment logic
-5. **State Update**: The counter value increases and the change is recorded onchain
-
-This process shows how Miden contracts are deployed through state changes rather than separate deployment transactions.
-
-**Miden's Deployment Flow**: In Miden, accounts (contracts) become visible onchain only when they undergo a state change. Simply creating an account locally doesn't deploy it - the account must participate in a transaction that modifies its state. In our case, by incrementing the counter, we're effectively "deploying" the contract and making it visible on the Miden testnet explorer. This is why the increment operation serves both as the deployment and the first interaction with the contract.
-
-## How the Scripts Work
-
-The integration scripts work by connecting to the Miden client and then building contracts from the Miden package files. These package files are generated when you run `miden build` inside each contract directory, but the scripts handle this compilation step automatically - you don't need to manually build the contracts before running the scripts.
-
-Next, we look into how the scripts convert your Rust contract code into deployable Miden contracts.
-
-## Script Breakdown
-
-Let's examine key parts of the increment script:
-
-### Client Setup
+The core function for signature verification:
 
 ```rust
-let ClientSetup { mut client, keystore } = setup_client().await?;
-let sync_summary = client.sync_state().await?;
+use miden::rpo_falcon512_verify;
+
+// Verify a Falcon512 signature
+// pk: RPO256 hash of the public key
+// msg: RPO256 hash of the message
+rpo_falcon512_verify(pk, msg);
 ```
 
-This establishes a connection to the Miden testnet and synchronizes with the latest network state.
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `pk` | `Word` | RPO256 hash of the signer's public key |
+| `msg` | `Word` | RPO256 hash of the message being verified |
 
-### Building Contracts from Source
+The function panics (proof generation fails) if the signature is invalid.
 
-The first step is building the Rust contracts into Miden packages:
+:::info Where's the signature?
+The actual signature data is loaded onto the advice stack by the host. The `rpo_falcon512_verify` function reads it from there. You don't pass the signature as an argument.
+:::
+
+## Hashing
+
+`hash_words` creates a message digest from a slice of Words:
 
 ```rust
-// Build the counter account contract from source
-let counter_package = Arc::new(
-    build_project_in_dir(Path::new("../contracts/counter-account"), true)
-        .context("Failed to build counter account contract")?
+use miden::hash_words;
+
+// Hash multiple Words into a Digest
+let words = [commitment, nonce_word, extra_data];
+let digest: Word = hash_words(&words).into();
+```
+
+Other available hash functions:
+
+```rust
+use miden::{blake3_hash, sha256_hash};
+
+// BLAKE3 (32-byte input -> 32-byte output)
+let hash: [u8; 32] = blake3_hash(input_bytes);
+
+// SHA256 (32-byte input -> 32-byte output)
+let hash: [u8; 32] = sha256_hash(input_bytes);
+```
+
+## Related
+
+- [Authentication](./authentication) — auth component pattern and nonce management
+- [Advice Provider](../transactions/advice-provider) — supplying auxiliary data during proof generation
+````
+
+## File: docs/builder/smart-contracts/accounts/storage.md
+````markdown
+---
+title: "Storage"
+sidebar_position: 2
+description: "Persistent state management with Value slots and StorageMaps in Miden smart contracts."
+---
+
+# Storage
+
+Miden accounts have persistent storage organized into up to 255 name-addressable slots. Each slot holds either a single [`Word`](../types) (via `Value`) or a key-value map (via `StorageMap`). Slots are identified by `StorageSlotId` values derived from slot names, which in turn are derived from the component package name and the field name. Renaming a field changes the slot ID and is a breaking change for stored data.
+
+## Storage slots
+
+An account can have up to **255 storage slots**. Each slot is declared as a field on your component struct:
+
+```rust
+#[component]
+struct MyContract {
+    #[storage(description = "configuration")]
+    config: Value,
+
+    #[storage(description = "user balances")]
+    balances: StorageMap,
+}
+```
+Slot IDs are derived from the component package name and the field name. Ordering does not matter, and `slot(N)` is not supported.
+
+## Value — Single-slot storage
+
+A `Value` stores a single `Word` (4 Felts) at a fixed slot.
+
+### The `ValueAccess` trait
+
+```rust
+pub trait ValueAccess<V> {
+    fn read(&self) -> V;
+    fn write(&mut self, value: V) -> V;
+}
+```
+
+`Value` implements `ValueAccess<V>` for any `V` that converts to/from `Word`. Note that `write()` returns the **previous** slot value, not the value written. Most usage is `V = Word`:
+
+### Reading
+
+```rust
+pub fn get_config(&self) -> Word {
+    self.config.read()
+}
+
+pub fn is_initialized(&self) -> bool {
+    let state: Word = self.initialized.read();
+    state[0] == felt!(1)
+}
+```
+
+### Writing
+
+`write()` returns the **previous value**:
+
+```rust
+pub fn initialize(&mut self) {
+    let old: Word = self.initialized.write(
+        Word::from([felt!(1), felt!(0), felt!(0), felt!(0)])
+    );
+    // old contains the previous value of the slot
+}
+```
+
+### Packing multiple values
+
+Since each slot holds a `Word` (4 Felts), pack related values together:
+
+```rust
+// Store limits as [max_per_tx, daily_max, 0, 0]
+pub fn set_limits(&mut self, max_per_tx: u64, daily_max: u64) {
+    self.limits.write(Word::from([
+        Felt::from_u64_unchecked(max_per_tx),
+        Felt::from_u64_unchecked(daily_max),
+        felt!(0),
+        felt!(0),
+    ]));
+}
+
+// Read individual fields
+pub fn get_max_per_tx(&self) -> u64 {
+    let limits: Word = self.limits.read();
+    limits[0].as_u64()
+}
+```
+
+## StorageMap — Key-value storage
+
+A `StorageMap` stores key-value pairs where both keys and values are `Word`-sized.
+
+### The `StorageMapAccess` trait
+
+```rust
+pub trait StorageMapAccess<K, V> {
+    fn get(&self, key: &K) -> V;
+    fn set(&mut self, key: K, value: V) -> V;
+}
+```
+
+`StorageMap` implements `StorageMapAccess<K, V>` for types that convert to/from `Word`.
+
+### Reading from a map
+
+```rust
+// Get returns a Felt (the last element of the stored Word)
+pub fn get_balance(&self, account_id: AccountId) -> Felt {
+    let key = Word::from([account_id.prefix, account_id.suffix, felt!(0), felt!(0)]);
+    self.balances.get(&key)
+}
+```
+
+When you call `get()` with a `Felt` return type, it returns index 3 of the stored `Word` (via `From<Word> for Felt`). This means single-value maps should store their value at index 3. For the full `Word`, specify the return type:
+
+```rust
+// Get the full Word value
+let full_value: Word = self.my_map.get(&key);
+```
+
+### Writing to a map
+
+`set()` returns the **previous value**:
+
+```rust
+pub fn set_balance(&mut self, account_id: AccountId, amount: Felt) {
+    let key = Word::from([account_id.prefix, account_id.suffix, felt!(0), felt!(0)]);
+    let old: Felt = self.balances.set(key, amount);
+    // old contains the previous balance
+}
+```
+
+### Map with Word values
+
+```rust
+pub fn store_data(&mut self, key: Word, value: Word) {
+    let old: Word = self.data_map.set(key, value);
+}
+
+pub fn read_data(&self, key: Word) -> Word {
+    self.data_map.get(&key)
+}
+```
+
+## Storage layout conventions
+
+Each slot and each Felt within a Word can be documented with inline comments on the struct:
+
+```rust
+#[component]
+struct TokenVault {
+    /// Config slot:
+    /// [0] = max_supply (u64)
+    /// [1] = is_paused (0 or 1)
+    /// [2] = decimals
+    /// [3] = unused
+    #[storage(description = "vault configuration")]
+    config: Value,
+
+    /// State slot:
+    /// [0] = total_supply (u64)
+    /// [1] = total_holders (u64)
+    /// [2] = last_mint_block
+    /// [3] = unused
+    #[storage(description = "vault state")]
+    state: Value,
+
+    /// Balance map slot:
+    /// Key: [account_prefix, account_suffix, 0, 0]
+    /// Value: [balance, last_activity_block, 0, 0]
+    #[storage(description = "user balances")]
+    balances: StorageMap,
+}
+```
+
+## Low-level storage access
+
+Direct storage access outside the component traits uses the bindings:
+
+```rust
+use miden::storage;
+
+// Direct slot access
+let value: Word = storage::get_item(slot_id);
+let old: Word = storage::set_item(slot_id, new_value);
+
+// Direct map access
+let value: Word = storage::get_map_item(slot_id, &key);
+let old: Word = storage::set_map_item(slot_id, key, value);
+
+// Initial values (at transaction start)
+let initial: Word = storage::get_initial_item(slot_id);
+let initial: Word = storage::get_initial_map_item(slot_id, &key);
+```
+
+These functions return values from before any modifications in the current transaction.
+
+For Felt and Word conversion details, see [Types](../types). To export your own types for public APIs, see [Custom Types](./custom-types). For common storage patterns like access control and rate limiting, see [Patterns & Security](../patterns).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden::storage`](https://docs.rs/miden/latest/miden/storage/)
+:::
+````
+
+## File: docs/builder/smart-contracts/notes/introduction.md
+````markdown
+---
+title: "What are Notes?"
+sidebar_position: 0
+description: "Miden's cross-account communication mechanism — programmable UTXOs that carry assets, execute scripts, and trigger logic on consuming accounts."
+---
+
+# What are Notes?
+
+Notes are Miden's primary mechanism for cross-account communication — they carry assets, execute programmable logic, and trigger state changes on the consuming account. Like UTXOs, notes are created and consumed atomically. Unlike Bitcoin's UTXOs, each Miden note carries an arbitrary executable script — written in Rust — that runs when the note is consumed, enabling programmable conditions far beyond simple locking scripts.
+
+While asset transfers are the most common use of notes, notes are how accounts communicate with one another in general: a note can trigger a counter increment, initiate a swap, delegate an operation, or carry arbitrary data to be acted on by the recipient's logic.
+
+Assets never transfer directly between accounts. Instead, they always move through notes. This indirection is what makes Miden private: the network sees notes being created and consumed, but it can't link sender and recipient accounts because those operations happen in separate transactions.
+
+## Anatomy of a note
+
+Every note has four parts:
+
+| Part | Description |
+|------|-------------|
+| **Assets** | The fungible or non-fungible tokens the note carries |
+| **Script** | Code that executes when the note is consumed — determines who can claim it and what side effects occur |
+| **Inputs** | Custom data the script can read at consumption time (e.g., a target account ID, an expiration block) |
+| **Metadata** | Sender ID, note tag (for discovery routing), and auxiliary data |
+
+The **recipient** is a cryptographic hash that encodes who can consume the note. When creating notes programmatically (via [`output_note::create`](./output-notes#create-a-note)), you compute a `Recipient` from the note's serial number, script hash, and inputs:
+
+```
+recipient = hash(hash(hash(serial_num, [0;4]), script_root), inputs_commitment)
+```
+
+Only someone who knows these values can construct a valid consumption proof. See [Computing a Recipient](./output-notes#computing-a-recipient) for the SDK API.
+
+## The two-transaction model
+
+Unlike Ethereum where a transfer is a single atomic call, Miden transfers happen across two separate transactions:
+
+```
+Transaction 1 (Sender)                Transaction 2 (Recipient)
+┌─────────────────────────┐            ┌─────────────────────────┐
+│ 1. Create note           │            │ 1. Discover note         │
+│ 2. Attach assets         │            │ 2. Consume note          │
+│ 3. Note published        │──────────▶│ 3. Script runs           │
+│    (on-chain or private) │            │ 4. Assets move to vault  │
+│                          │            │ 5. Note nullified        │
+└─────────────────────────┘            └─────────────────────────┘
+```
+
+**Transaction 1**: The sender's account creates an output note, attaches assets to it, and the note is published (either on-chain or kept private).
+
+**Transaction 2**: The recipient discovers the note, consumes it in their own transaction, the note script runs and verifies the consumer is authorized, and assets transfer into the recipient's vault. A **nullifier** is recorded to prevent the same note from being consumed again (see [note design](/core-concepts/miden-base/note)).
+
+This separation is what enables privacy and parallelism — the two transactions are independent and unlinkable from the network's perspective.
+
+## Public vs. private notes
+
+Notes come in two visibility modes:
+
+| Mode | Description |
+|------|-------------|
+| **Public** | The note's full data (assets, script, inputs) is stored by the Miden network and visible on-chain. Anyone can discover and attempt to consume it. |
+| **Private** | Only a commitment (hash) is stored on-chain. The actual note data must be communicated off-chain between sender and recipient. |
+
+Private notes provide stronger privacy guarantees — the network can't even see what assets a note carries — but they require the sender and recipient to have a communication channel outside the protocol.
+
+Miden provides built-in note patterns (P2ID, P2IDE, SWAP) for common transfer scenarios — see [Note Types](./note-types.md). You can also write fully custom note scripts for arbitrary consumption logic.
+
+## How notes differ from EVM transfers
+
+| | EVM | Miden |
+|---|---|---|
+| **Transfer model** | Single `transfer()` call on a token contract | Two transactions: create note, then consume note |
+| **Privacy** | Sender, recipient, and amount are public | Transactions are unlinkable; private notes hide all data |
+| **Programmability** | Token contracts control transfer logic | Each note carries its own script with custom conditions |
+| **Failure** | Revert on-chain, gas consumed | Proof can't be generated — no on-chain trace |
+| **Parallelism** | Transfers contend for contract state | Notes are independent — unlimited parallel creation |
+````
+
+## File: docs/builder/smart-contracts/notes/output-notes.md
+````markdown
+---
+title: "Output Notes"
+sidebar_position: 4
+description: "Create output notes, attach assets, set attachments, and compute recipients."
+---
+
+# Output Notes
+
+The `output_note` module creates notes from inside account component code and transaction scripts. Use it to send assets to other accounts by creating notes that carry assets and a recipient hash.
+
+```rust
+use miden::{output_note, Asset, NoteIdx, Tag, NoteType, Recipient};
+```
+
+## Create a note
+
+```rust
+let note_idx: NoteIdx = output_note::create(tag, note_type, recipient);
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `tag` | `Tag` | Routing/filtering tag — used by the network for note discovery and delivery |
+| `note_type` | `NoteType` | Visibility: `NoteType::Public` (stored on-chain) or `NoteType::Private` (only commitment on-chain) |
+| `recipient` | `Recipient` | Cryptographic hash identifying who can consume the note (see [Computing a Recipient](#computing-a-recipient)) |
+
+To construct a tag targeting a specific account, use `NoteTag::with_account_target(account_id)` from `miden_protocol::note`.
+
+Returns a `NoteIdx` used to reference this note in subsequent operations within the same transaction.
+
+## Add assets to a note
+
+```rust
+output_note::add_asset(asset, note_idx);
+```
+
+Call `add_asset` multiple times with the same `note_idx` to attach several assets to one note. A note can carry both fungible and non-fungible assets.
+
+## Query output note state
+
+```rust
+// Asset commitment and count
+let info: OutputNoteAssetsInfo = output_note::get_assets_info(note_idx);
+
+// All assets on the note
+let assets: Vec<Asset> = output_note::get_assets(note_idx);
+
+// The recipient hash
+let recipient: Recipient = output_note::get_recipient(note_idx);
+```
+
+`OutputNoteAssetsInfo` contains `commitment: Word` and `num_assets: Felt`.
+
+### Note metadata
+
+Returns a `NoteMetadata` struct (not a raw `Word`):
+
+```rust
+let metadata: NoteMetadata = output_note::get_metadata(note_idx);
+```
+
+See [Reading Notes — Note metadata](./reading-notes#note-metadata) for the `NoteMetadata` struct definition.
+
+## Note attachments
+
+Notes can carry auxiliary data as attachments. The attachment API uses `Felt`-typed discriminants to select the scheme and kind:
+
+```rust
+// Full form — specify scheme, kind, and payload
+output_note::set_attachment(note_idx, attachment_scheme, attachment_kind, attachment_word);
+
+// Word attachment — a single Word of inline data
+output_note::set_word_attachment(note_idx, attachment_scheme, word_data);
+
+// Array attachment — a commitment to data stored in the advice map
+output_note::set_array_attachment(note_idx, attachment_scheme, commitment_word);
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `attachment_scheme` | `Felt` | Identifies the encoding/interpretation scheme for the attachment data |
+| `attachment_kind` | `Felt` | Discriminant for the attachment variant (None, Word, or Array) |
+| `attachment_word` | `Word` | The attachment payload — either inline data or a commitment |
+
+**Word attachments** store data directly in the note. **Array attachments** store a commitment (hash) to larger data that lives in the advice map — the consumer must have access to the corresponding advice map entries to read the full data.
+
+## Computing a Recipient
+
+When creating notes programmatically, you need a `Recipient` to pass to `output_note::create`. The `Recipient` is a hash that encodes the note script and inputs, ensuring only someone who knows these values can consume the note.
+
+```rust
+use miden::{Recipient, Digest};
+
+let recipient = Recipient::compute(
+    serial_num,       // Word: unique serial number for this note
+    script_digest,    // Digest: hash of the note script
+    inputs,           // Vec<Felt>: note inputs (e.g., target account ID)
 );
-
-// Build the increment note script from source
-let note_package = Arc::new(
-    build_project_in_dir(Path::new("../contracts/increment-note"), true)
-        .context("Failed to build increment note contract")?
-);
 ```
 
-The `build_project_in_dir()` function:
+The computation is: `hash(hash(hash(serial_num, [0;4]), script_root), inputs_commitment)`. `script_digest` and `script_root` refer to the same value — the hash of the note script program. The formula uses `script_root`; the Rust parameter is named `script_digest`.
 
-- Takes the path to your contract's Rust source code
-- Compiles the Rust code into Miden assembly
-- Generates a package containing the compiled contract bytecode and metadata
-- This is equivalent to manually running `miden build` in each contract directory
+## Example: creating and funding a note
 
-These packages contain all the information needed to deploy and interact with your contracts on the Miden network.
-
-### Converting Packages to Deployable Accounts
-
-Once we have the compiled packages, we convert them into deployable accounts and notes:
+A complete flow for creating a note inside an account component:
 
 ```rust
-// Configure initial storage for the counter account
-let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
-let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
+use miden::{output_note, Asset, Tag, NoteType, Recipient, Digest};
 
-// The slot name is constructed as:
-// `miden::component::[to_underscore(Cargo.toml:package.metadata.component.package)]::[field_name]`
-let counter_storage_slot =
-    StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
-let storage_slots = vec![StorageSlot::with_map(
-    counter_storage_slot.clone(),
-    StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
-)];
-let counter_cfg = AccountCreationConfig {
-    storage_slots,
-    ..Default::default()
+pub fn send_assets(recipient: Recipient, asset: Asset, tag: Tag) {
+    // 1. Create the note
+    let note_idx = output_note::create(tag, NoteType::Public, recipient);
+
+    // 2. Attach assets
+    output_note::add_asset(asset, note_idx);
+}
+```
+
+:::info API Reference
+Full API docs on docs.rs: [`miden::output_note`](https://docs.rs/miden/latest/miden/output_note/)
+:::
+````
+
+## File: docs/builder/smart-contracts/transactions/advice-provider.md
+````markdown
+---
+title: "Advice Provider"
+sidebar_position: 5
+description: "Reading and writing the advice map, loading preimages, and requesting Falcon signatures in Miden transactions."
+---
+
+# Advice Provider
+
+The advice provider is a mechanism for supplying non-deterministic auxiliary data to the VM during proof generation. It backs an **advice map** (a key-value store of `Word → Vec<Felt>`) and an **advice stack** that host-provided data can be pushed onto. Common uses include passing structured data into transaction scripts, providing Falcon signatures for authentication, and seeding note scripts with external inputs.
+
+## Trust model and data integrity
+
+The advice provider is supplied by the **host** (the Miden client or node) — not by on-chain consensus. This means the VM cannot blindly trust that the host provided correct data. Two patterns address this:
+
+### Commitment-verified loading (safe)
+
+`adv_load_preimage` is integrity-safe by construction. The VM verifies that the loaded data hashes to the provided `commitment` before returning it. If the host tampers with the data, the hash won't match and proof generation fails:
+
+```rust
+// The VM will abort if hash(loaded_data) != commitment
+let data = adv_load_preimage(num_words, commitment);
+// `data` is guaranteed to match `commitment`
+```
+
+Use this pattern when the commitment is known ahead of time (e.g., stored in a note input or passed as a script argument).
+
+### Unverified stack push (caller must verify)
+
+`adv_push_mapvaln` pushes data onto the advice stack **without verification**. The caller is responsible for checking integrity if the data is security-sensitive:
+
+```rust
+let num_felts = adv_push_mapvaln(key);
+// Data is now on the stack — but not verified
+// If integrity matters, hash the result and compare to a known commitment:
+let data = adv_load_preimage(num_words, key); // Use this instead for verified loading
+```
+
+For signatures, `emit_falcon_sig_to_stack` pushes a Falcon512 signature that is subsequently verified by `rpo_falcon512_verify` — the verification step is what makes it safe.
+
+:::warning
+Never use `adv_push_mapvaln` for security-sensitive data without a subsequent integrity check. The host can supply any value it wants. Use `adv_load_preimage` (commitment-verified) or verify the loaded data yourself using `hash_words`.
+:::
+
+## Reading from the advice map
+
+### `adv_push_mapvaln`
+
+Pushes the value associated with a key onto the advice stack and returns its length.
+
+```rust
+use miden::intrinsics::advice::adv_push_mapvaln;
+
+// Push the value for `key` onto the advice stack; returns the number of Felts pushed.
+let num_felts: Felt = adv_push_mapvaln(key);
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `key` | `Word` | Key to look up in the advice map |
+| **Returns** | `Felt` | Number of `Felt` elements pushed onto the advice stack |
+
+### `adv_load_preimage`
+
+Loads a preimage from the advice provider given a commitment and expected word count. This is useful when a note or transaction script needs to retrieve data that was hashed and stored by the sender.
+
+```rust
+use miden::stdlib::mem::adv_load_preimage;
+
+// Load `num_words` Words whose hash matches `commitment`.
+let felts: Vec<Felt> = adv_load_preimage(num_words, commitment);
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `num_words` | `Felt` | Number of `Word`s to load |
+| `commitment` | `Word` | Expected hash of the preimage data |
+| **Returns** | `Vec<Felt>` | The preimage data as a flat vector of `Felt` elements |
+
+### Pattern: passing structured data to a transaction script
+
+The canonical pattern (used in `basic-wallet-tx-script`) combines `adv_push_mapvaln` with `adv_load_preimage` to retrieve structured data encoded as a preimage:
+
+```rust
+use miden::intrinsics::advice::adv_push_mapvaln;
+use miden::stdlib::mem::adv_load_preimage;
+
+// 1. Look up the key — returns the number of Felts stored there
+let num_felts = adv_push_mapvaln(key);
+
+// 2. Load the preimage (num_felts must be word-aligned)
+let num_words = Felt::from_u64_unchecked(num_felts.as_u64() / 4);
+let data: Vec<Felt> = adv_load_preimage(num_words, key);
+
+// 3. Index into the data by field position
+let tag       = data[0];
+let note_type = data[1];
+// ...
+```
+
+See [Transaction Scripts](./transaction-scripts) for the full `basic-wallet-tx-script` example.
+
+## Writing to the advice map
+
+### `adv_insert`
+
+Inserts a slice of `Word`s into the advice map under the given key.
+
+```rust
+use miden::intrinsics::advice::adv_insert;
+
+let values: &[Word] = &[word_a, word_b];
+adv_insert(key, values);
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `key` | `Word` | Key under which to store the data |
+| `values` | `&[Word]` | Slice of `Word`s to store |
+
+### `adv_insert_mem`
+
+Inserts a range of memory into the advice map. The VM reads `Word`s from addresses `[start_addr, end_addr)` and stores them under the key.
+
+```rust
+use miden::intrinsics::advice::adv_insert_mem;
+
+adv_insert_mem(key, start_addr, end_addr);
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `key` | `Word` | Key under which to store the data |
+| `start_addr` | `u32` | Start memory address (inclusive) |
+| `end_addr` | `u32` | End memory address (exclusive) |
+
+## Requesting a Falcon signature
+
+`emit_falcon_sig_to_stack` emits an `AUTH_REQUEST_EVENT` that instructs the host to push a Falcon512 signature onto the advice stack. This is typically used in [authentication components](../accounts/authentication) before calling `rpo_falcon512_verify`.
+
+```rust
+use miden::intrinsics::advice::emit_falcon_sig_to_stack;
+
+// Request the host to push a Falcon signature onto the advice stack
+emit_falcon_sig_to_stack(msg, pub_key);
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `msg` | `Word` | RPO256 hash of the message to sign |
+| `pub_key` | `Word` | RPO256 hash of the signer's public key |
+
+## Function reference
+
+| Function | Module | Signature | Description |
+|----------|--------|-----------|-------------|
+| `adv_push_mapvaln` | `miden::intrinsics::advice` | `(key: Word) -> Felt` | Push advice-map value onto the advice stack |
+| `adv_load_preimage` | `miden::stdlib::mem` | `(num_words: Felt, commitment: Word) -> Vec<Felt>` | Load a preimage matching a commitment |
+| `adv_insert` | `miden::intrinsics::advice` | `(key: Word, values: &[Word])` | Insert words into the advice map |
+| `adv_insert_mem` | `miden::intrinsics::advice` | `(key: Word, start_addr: u32, end_addr: u32)` | Insert a memory range into the advice map |
+| `emit_falcon_sig_to_stack` | `miden::intrinsics::advice` | `(msg: Word, pub_key: Word)` | Request a Falcon512 signature from the host |
+
+## Related
+
+- [Authentication](../accounts/authentication) — RPO-Falcon512 signature verification and nonce management
+- [Transaction Scripts](./transaction-scripts) — executing logic in the transaction context
+- [Transaction Context](./transaction-context) — overview of transaction execution
+````
+
+## File: docs/builder/smart-contracts/cross-component-calls.md
+````markdown
+---
+title: "Cross-Component Calls"
+sidebar_position: 5.5
+description: "Call methods across components using generate!(), WIT bindings, and Miden dependencies."
+---
+
+# Cross-Component Calls
+
+Miden [components](./accounts/components) communicate through WIT (WebAssembly Interface Types) bindings. Since accounts can have multiple components (e.g., wallet + auth + custom logic), those components need to call each other's methods. [Note scripts](./notes/note-scripts) also need to call methods on the consuming account's components to transfer assets. WIT provides the interface contract between caller and callee.
+
+## How it works
+
+When you build a component with `miden build`, the compiler generates a WIT interface describing its public methods. Other projects can import this WIT interface to call those methods.
+
+```
+counter-contract (component)
+    → generates WIT interface
+        → counter-note imports the WIT
+            → calls counter_contract::get_count()
+```
+
+## Using `#[note]` macros (recommended)
+
+The simplest way to make cross-component calls from note scripts is through the `#[note]` macro with an `Account` parameter:
+
+```rust
+use crate::bindings::Account;
+use miden::{active_note, Asset};
+
+#[note]
+struct P2idNote;
+
+#[note]
+impl P2idNote {
+    #[note_script]
+    pub fn run(self, _arg: Word, account: &mut Account) {
+        // Iterate over the note's assets and transfer each to the account
+        for asset in active_note::get_assets() {
+            account.receive_asset(asset);
+        }
+    }
+}
+```
+
+The `_arg: Word` parameter is the note's first input Word, passed automatically when the note is consumed. It's unused in this example (prefixed with `_`), but note scripts can use it for recipient-specific data like expected account IDs or amounts.
+
+The `Account` type is auto-generated from the WIT bindings of the dependent component. Its methods correspond to the component's public methods.
+
+## Using `generate!()` directly
+
+For more control, use `miden::generate!()` to manually generate bindings:
+
+```rust
+use miden::*;
+
+miden::generate!();
+bindings::export!(MyNote);
+```
+
+This generates a `bindings` module with:
+- **`exports::miden::base::note_script::Guest`** — The trait your note must implement
+- **Imported interfaces** — Functions from dependent components
+
+### Example: cross-ctx-note
+
+```rust title="cross-ctx-note/src/lib.rs"
+#![no_std]
+#![feature(alloc_error_handler)]
+
+#[global_allocator]
+static ALLOC: miden::BumpAlloc = miden::BumpAlloc::new();
+
+use miden::*;
+
+miden::generate!();
+bindings::export!(MyNote);
+
+use bindings::{
+    exports::miden::base::note_script::Guest,
+    miden::cross_ctx_account::foo::process_felt,
 };
 
-// Convert the counter package into a deployable account
-let counter_account = create_account_from_package(
-    &mut client,
-    counter_package.clone(),
-    counter_cfg
-)
-.await
-.context("Failed to create counter account")?;
+struct MyNote;
+
+impl Guest for MyNote {
+    fn run(_arg: Word) {
+        let input = Felt::from_u32(11);
+        let output = process_felt(input);
+        assert_eq(output, felt!(53));
+    }
+}
 ```
 
-The `create_account_from_package()` function:
+Key points:
+- `miden::generate!()` generates the `bindings` module from WIT definitions
+- `bindings::export!(MyNote)` registers `MyNote` as the implementation
+- `process_felt` is imported from the `cross-ctx-account` component
+- The import path follows the WIT package structure: `bindings::miden::cross_ctx_account::foo::process_felt`
 
-- Takes the compiled contract package
-- Combines it with the provided configuration (storage, settings, etc.)
-- Creates a deployable Miden account that can be used in transactions
+## The `bindings::` module structure
 
-**Important**: Accounts that use storage must have their storage slots specified when instantiating the account. In v0.13, storage slots are identified by name rather than index. The slot name follows the pattern `miden::component::<package_name>::<field_name>`. We define the storage configuration with:
+After `generate!()`, the bindings module has this structure:
 
-- A named `StorageMap` slot (`miden::component::miden_counter_account::count_map`)
-- The counter key `[0, 0, 0, 1]` with initial value `[0, 0, 0, 0]` (representing count = 0)
-
-This pre-initialization ensures the account's storage is properly configured before deployment.
-
-### Converting Packages to Executable Notes
-
-Similarly, we convert the note package into an executable note:
-
-```rust
-// Convert the increment note package into an executable note
-let counter_note = create_note_from_package(
-    &mut client,
-    note_package.clone(),
-    sender_account.id(),
-    NoteCreationConfig::default()
-)
-.context("Failed to create counter note from package")?;
-
-// Publish the note to the network
-let note_publish_request = TransactionRequestBuilder::new()
-    .own_output_notes(vec![OutputNote::Full(counter_note.clone())])
-    .build()
-    .context("Failed to build note publish transaction request")?;
+```
+bindings/
+├── exports/
+│   └── miden/
+│       └── base/
+│           └── note_script/
+│               └── Guest (trait to implement)
+└── miden/
+    └── <package-name>/
+        └── <interface-name>/
+            └── <function-name>()  (callable functions)
 ```
 
-The `create_note_from_package()` function:
+## Cargo.toml configuration
 
-- Takes the compiled note script package
-- Combines it with the sender account ID and configuration
-- Creates an executable note containing the increment script logic
-- The note can then be published to the network and consumed by the target (counter) account
+Cross-component calls require two dependency declarations:
 
-This demonstrates the complete workflow: Rust source code → compiled packages → deployable accounts/notes → network transactions.
+### 1. Miden dependencies (for `cargo-miden` linking)
 
-### Note Consumption
-
-```rust
-let consume_note_request = TransactionRequestBuilder::new()
-    .input_notes([(counter_note.clone(), None)])
-    .build()
-    .context("Failed to build consume note transaction request")?;
-
-let consume_tx_id = client
-    .submit_new_transaction(counter_account.id(), consume_note_request)
-    .await
-    .context("Failed to create consume note transaction")?;
+```toml
+[package.metadata.miden.dependencies]
+"miden:basic-wallet" = { path = "../basic-wallet" }
 ```
 
-The counter account consumes the increment note, executing the note script which calls the counter's increment function.
+This tells `cargo-miden` where to find the component for linking.
 
-## Next Steps
+### 2. WIT dependencies (for binding generation)
 
-Congratulations! You've successfully deployed and interacted with your first Miden smart contract. The integration folder provides the foundation for managing all aspects of your contract lifecycle.
+```toml
+[package.metadata.component.target.dependencies]
+"miden:basic-wallet" = { path = "../basic-wallet/target/generated-wit/" }
+```
 
-This completes the core smart contract development workflow on Miden. You're now equipped to build and deploy your own smart contracts using these patterns and tools!
+This points to the generated WIT files used to create Rust bindings.
+
+### Complete example
+
+```toml title="counter-note/Cargo.toml"
+[package]
+name = "counter-note"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+miden = { path = "../../sdk/sdk" }
+
+[package.metadata.miden]
+project-kind = "note-script"
+
+[package.metadata.component]
+package = "miden:counter-note"
+
+# Miden dependency — the component we want to call
+[package.metadata.miden.dependencies]
+"miden:counter-contract" = { path = "../counter-contract" }
+
+# WIT dependency — generated interface for binding generation
+[package.metadata.component.target.dependencies]
+"miden:counter-account" = { path = "../counter-contract/target/generated-wit/" }
+```
+
+:::info Build order matters
+The dependent component must be built first so its WIT files exist. Build `counter-contract` before building `counter-note`.
+:::
+
+## Example: Counter note calling counter contract
+
+```rust title="counter-note/src/lib.rs"
+#![no_std]
+#![feature(alloc_error_handler)]
+
+use miden::*;
+
+// Import the counter contract's generated bindings
+use crate::bindings::miden::counter_contract::counter_contract;
+
+#[note]
+struct CounterNote;
+
+#[note]
+impl CounterNote {
+    #[note_script]
+    pub fn run(self, _arg: Word) {
+        // Call get_count() on the counter contract component
+        let initial_value = counter_contract::get_count();
+
+        // Call increment_count() — modifies the account's storage
+        counter_contract::increment_count();
+
+        // Verify the count increased
+        let expected_value = initial_value + Felt::from_u32(1);
+        let final_value = counter_contract::get_count();
+        assert_eq(final_value, expected_value);
+    }
+}
+```
+
+## When to use which pattern
+
+| Pattern | Use when |
+|---------|----------|
+| `#[note]` with `&mut Account` | Note needs to call a single account component's methods |
+| `generate!()` + `Guest` trait | Note needs to call multiple components or needs full control |
+| Direct module imports | Calling specific functions from a known component interface |
+
+For the complete list of macros and bindings functions, see the [Cheatsheet](./api-reference).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`generate!()` macro)
+:::
 ````
 
 ## File: docs/builder/develop/tutorials/rust-compiler/miden-bank/02-constants-constraints.md
@@ -10585,6 +11778,1675 @@ If you get stuck during this tutorial:
 Ready to build your first Miden banking application? Let's get started with [Part 0: Project Setup](./project-setup)!
 ````
 
+## File: docs/builder/smart-contracts/accounts/custom-types.md
+````markdown
+---
+title: "Custom Types"
+sidebar_position: 3
+description: "Export custom structs and enums for use in public component methods with #[export_type]."
+---
+
+# Custom Types
+
+When public [component](./components) methods use custom structs or enums, those types must be annotated with `#[export_type]` so the compiler can generate corresponding WIT interface definitions. Types used only internally (in private methods or local variables) don't need this annotation.
+
+## `#[export_type]` requirement
+
+Any custom type that appears in a **public method signature** must be annotated with `#[export_type]`:
+
+```rust
+use miden::{export_type, Felt, Word, Asset};
+
+#[export_type]
+pub struct StructA {
+    pub foo: Word,
+    pub asset: Asset,
+}
+
+#[export_type]
+pub struct StructB {
+    pub bar: Felt,
+    pub baz: Felt,
+}
+```
+
+Types that are only used internally (in private methods or local variables) don't need the annotation.
+
+## Exporting structs
+
+Struct fields must be public and use types that are either SDK types (`Felt`, `Word`, `Asset`, etc.) or themselves marked with `#[export_type]`:
+
+```rust
+use miden::{export_type, Felt, Word, Asset, component};
+
+#[export_type]
+pub struct StructA {
+    pub foo: Word,
+    pub asset: Asset,
+}
+
+#[export_type]
+pub struct StructB {
+    pub bar: Felt,
+    pub baz: Felt,
+}
+
+#[component]
+struct MyAccount;
+
+#[component]
+impl MyAccount {
+    pub fn test_custom_types(&self, a: StructA, asset: Asset) -> StructB {
+        StructB {
+            bar: a.foo[0],
+            baz: a.foo[1],
+        }
+    }
+}
+```
+
+## Exporting enums
+
+Enums use the same annotation:
+
+```rust
+use miden::{export_type, Felt};
+
+#[export_type]
+pub enum EnumA {
+    VariantA,
+    VariantB,
+}
+```
+
+Enum variants can be unit variants (as shown above). The compiler generates the corresponding WIT enum definition.
+
+## Types in submodules
+
+Custom types can be defined in submodules. Each type still needs `#[export_type]`:
+
+```rust
+pub mod my_types {
+    use miden::{Felt, export_type};
+
+    #[export_type]
+    pub enum EnumA {
+        VariantA,
+        VariantB,
+    }
+
+    #[export_type]
+    pub struct StructC {
+        pub inner1: Felt,
+        pub inner2: Felt,
+    }
+}
+
+// Use in component methods
+#[component]
+impl MyAccount {
+    pub fn process(&self, a: StructA, asset: Asset) -> my_types::StructC {
+        my_types::StructC {
+            inner1: a.foo[0],
+            inner2: a.foo[1],
+        }
+    }
+}
+```
+
+## Nested types
+
+Exported types can reference other exported types:
+
+```rust
+#[export_type]
+pub struct LaterDefined {
+    pub value: Felt,
+}
+
+#[export_type]
+pub struct ForwardHolder {
+    pub nested: LaterDefined,
+}
+```
+
+The compiler resolves references regardless of declaration order — `ForwardHolder` can reference `LaterDefined` even if it's defined first.
+
+## Complete example
+
+From the compiler test suite (`component-macros-account`):
+
+```rust title="src/lib.rs"
+#![no_std]
+#![feature(alloc_error_handler)]
+
+use miden::{Asset, Felt, Word, component, export_type};
+
+pub mod my_types {
+    use miden::{Felt, export_type};
+
+    #[export_type]
+    pub enum EnumA {
+        VariantA,
+        VariantB,
+    }
+
+    #[export_type]
+    pub struct StructC {
+        pub inner1: Felt,
+        pub inner2: Felt,
+    }
+}
+
+#[export_type]
+pub struct StructA {
+    pub foo: Word,
+    pub asset: Asset,
+}
+
+#[export_type]
+pub struct StructB {
+    pub bar: Felt,
+    pub baz: Felt,
+}
+
+#[component]
+struct MyAccount;
+
+#[component]
+impl MyAccount {
+    pub fn test_custom_types(&self, a: StructA, asset: Asset) -> StructB {
+        StructB {
+            bar: a.foo[0],
+            baz: a.foo[1],
+        }
+    }
+
+    pub fn test_custom_types2(&self, a: StructA, asset: Asset) -> my_types::StructC {
+        my_types::StructC {
+            inner1: a.foo[0],
+            inner2: a.foo[1],
+        }
+    }
+}
+```
+
+```toml title="Cargo.toml"
+[package]
+name = "component_macros_account"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+miden = "0.10"
+
+[package.metadata.component]
+package = "miden:component-macros-account"
+
+[package.metadata.miden]
+project-kind = "account"
+supported-types = ["RegularAccountUpdatableCode"]
+```
+
+## Rules summary
+
+| Rule | Details |
+|------|---------|
+| When needed | Any custom type in a `pub fn` signature on a `#[component]` impl |
+| Struct fields | Must be `pub` |
+| Allowed field types | `Felt`, `Word`, `Asset`, `AccountId`, or other `#[export_type]` types |
+| Enums | Unit variants supported |
+| Modules | Types in submodules work — just apply `#[export_type]` to each |
+| Order | Declaration order doesn't matter — forward references are resolved |
+
+Exported types appear in generated WIT bindings used by [cross-component calls](../cross-component-calls).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`#[export_type]` macro)
+:::
+````
+
+## File: docs/builder/smart-contracts/notes/note-types.md
+````markdown
+---
+title: "Note Types"
+sidebar_position: 2
+description: "Built-in note types: P2ID, P2IDE (with expiration), and SWAP (atomic exchange)."
+---
+
+# Note Types
+
+Miden provides built-in note patterns for common asset transfer scenarios. These are protocol primitives you can use directly or extend for custom behavior.
+
+## P2ID (Pay to ID)
+
+The most common pattern — a note that can only be consumed by a specific account. The note script checks that the consuming account's ID matches the target, then transfers all assets.
+
+### When to use
+
+Use P2ID for standard asset transfers where only the intended recipient should be able to consume the note. This is the most common note type.
+
+:::info
+P2ID notes use `create_p2id_note` from the `miden-standards` crate. The script is pre-compiled MASM — use the builder API to create P2ID notes in client code.
+:::
+
+### How it works
+
+1. Creator creates a P2ID note containing the assets and the target account ID as a note input
+2. Consumer's transaction processes the note — the script verifies the consuming account's ID matches the target
+3. If the IDs match, all assets transfer to the consuming account; otherwise proof generation fails
+
+### Note inputs
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `target_account_id` | `AccountId` | The account allowed to consume this note |
+
+### Builder API
+
+```rust
+create_p2id_note(
+    sender,       // AccountId: who sends the note
+    target,       // AccountId: the only account that can consume this note
+    assets,       // Vec<Asset>: assets to attach
+    note_type,    // NoteType: Public or Private
+    attachment,   // NoteAttachment: auxiliary data
+    rng,          // &mut impl FeltRng
+) -> Result<Note, NoteError>
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `sender` | `AccountId` | Account sending the note |
+| `target` | `AccountId` | The only account that can consume this note |
+| `assets` | `Vec<Asset>` | Assets to attach to the note |
+| `note_type` | `NoteType` | `Public` or `Private` |
+| `attachment` | `NoteAttachment` | Auxiliary data for the note |
+| `rng` | `&mut impl FeltRng` | Random number generator |
+
+## P2IDE (Pay to ID with Expiration)
+
+P2IDE extends P2ID with a timelock and a reclaim window. The note can't be consumed before `timelock_height`, and if the target hasn't consumed it by `reclaim_height`, the creator can reclaim the assets.
+
+### When to use
+
+Use P2IDE when the sender wants the option to reclaim assets if the recipient doesn't consume the note within a time window.
+
+:::info
+P2IDE notes use `create_p2ide_note` from the `miden-standards` crate. The script is pre-compiled MASM — use the builder API to create P2IDE notes in client code.
+:::
+
+### How it works
+
+1. Creator creates a P2IDE note with the target account ID, a timelock height, and a reclaim height as note inputs
+2. **Target consumes after `timelock_height`** — assets transfer to the target account
+3. **Creator reclaims after `reclaim_height`** — assets return to the creator
+4. **Before timelock or between timelock and reclaim by a non-target** — any consumption attempt fails (proof generation fails)
+
+### Note inputs
+
+| Input | Type | Description |
+|-------|------|-------------|
+| `target_account_id_prefix` | `Felt` | Target account ID prefix |
+| `target_account_id_suffix` | `Felt` | Target account ID suffix |
+| `timelock_height` | `Felt` | Block height before which the note can't be consumed |
+| `reclaim_height` | `Felt` | Block height after which the creator can reclaim |
+
+### Builder API
+
+```rust
+create_p2ide_note(
+    sender,           // AccountId: who sends the note
+    target,           // AccountId: the only account that can consume this note
+    assets,           // Vec<Asset>: assets to attach
+    reclaim_height,   // Option<BlockNumber>: None = no reclaim window
+    timelock_height,  // Option<BlockNumber>: None = no timelock
+    note_type,        // NoteType: Public or Private
+    attachment,       // NoteAttachment: auxiliary data
+    rng,              // &mut impl FeltRng
+) -> Result<Note, NoteError>
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `sender` | `AccountId` | Account sending the note |
+| `target` | `AccountId` | The only account that can consume this note |
+| `assets` | `Vec<Asset>` | Assets to attach to the note |
+| `reclaim_height` | `Option<BlockNumber>` | Block height after which sender can reclaim; `None` = no reclaim |
+| `timelock_height` | `Option<BlockNumber>` | Block height before which note can't be consumed; `None` = no timelock |
+| `note_type` | `NoteType` | `Public` or `Private` |
+| `attachment` | `NoteAttachment` | Auxiliary data for the note |
+| `rng` | `&mut impl FeltRng` | Random number generator |
+
+## SWAP (Atomic Exchange)
+
+SWAP enables atomic asset exchange. The creator offers one asset; any consumer who provides the requested asset in return can consume the note. The swap is atomic — both sides happen in a single transaction or neither does.
+
+### When to use
+
+Use SWAP for trustless atomic exchanges where two parties trade assets without intermediaries.
+
+:::info
+SWAP notes use `create_swap_note` from the `miden-standards` crate. The script is pre-compiled MASM — use the builder API to create SWAP notes in client code.
+:::
+
+### How it works
+
+1. Creator creates a SWAP note containing the offered asset and metadata describing the requested asset + payback recipient
+2. Consumer's transaction processes the note — the script creates a P2ID payback note targeted at the original creator containing the requested asset
+3. Consumer receives the offered asset into their vault
+4. Both transfers happen atomically in one transaction
+
+### Builder API
+
+```rust
+create_swap_note(
+    sender,
+    offered_asset,
+    requested_asset,
+    swap_note_type,
+    swap_note_attachment,
+    payback_note_type,
+    payback_note_attachment,
+    rng,
+) -> Result<(Note, NoteDetails), NoteError>
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `sender` | `AccountId` | Account that receives the payback P2ID note |
+| `offered_asset` | `Asset` | Asset the note carries (what the consumer receives) |
+| `requested_asset` | `Asset` | Asset the consumer must provide in return |
+| `swap_note_type` | `NoteType` | `Public` or `Private` for the SWAP note |
+| `swap_note_attachment` | `NoteAttachment` | Auxiliary data for the SWAP note |
+| `payback_note_type` | `NoteType` | `Public` or `Private` for the P2ID payback note |
+| `payback_note_attachment` | `NoteAttachment` | Auxiliary data for the payback note |
+| `rng` | `&mut impl FeltRng` | Random number generator |
+
+Returns a tuple of `(Note, NoteDetails)` — the SWAP note to submit and the expected payback note details (for tracking).
+
+`NoteAttachment` is defined in the `miden-standards` crate (not the core `miden` SDK). It wraps the attachment data that gets set on output notes — see [note attachments](./output-notes#note-attachments) for the underlying SDK API.
+
+## More note types
+
+For writing custom note scripts, see [Note Scripts](./note-scripts). For the transaction context and `#[tx_script]`, see [Transaction Context](../transactions/transaction-context). For common patterns, see [Patterns & Security](../patterns).
+````
+
+## File: docs/builder/smart-contracts/notes/reading-notes.md
+````markdown
+---
+title: "Reading Notes"
+sidebar_position: 3
+description: "Read the active note's data and access input notes by index during transactions."
+---
+
+# Reading Notes
+
+Miden provides two modules for reading note data, each for a different execution context:
+
+- **`active_note`** — used inside **note scripts**. Reads data from the note currently being executed (the note whose `#[note_script]` is running).
+- **`input_note`** — used inside **transaction scripts** and **account code**. Reads data from any input note by index, useful when a transaction consumes multiple notes and needs to inspect them.
+
+## `active_note` — the executing note
+
+When a note script runs, `active_note` provides access to the current note's inputs, assets, and metadata:
+
+```rust
+use miden::active_note;
+```
+
+### Inputs
+
+Note inputs are custom `Felt` values set by the note creator. Use these to pass parameters to the note script (e.g., a target account ID, an expiration block height):
+
+```rust
+let inputs: Vec<Felt> = active_note::get_inputs();
+```
+
+### Assets
+
+```rust
+let assets: Vec<Asset> = active_note::get_assets();
+```
+
+### Identity and metadata
+
+```rust
+let sender: AccountId = active_note::get_sender();
+let recipient: Recipient = active_note::get_recipient();
+let script_root: Word = active_note::get_script_root();
+let serial_num: Word = active_note::get_serial_number();
+```
+
+### Note metadata
+
+`get_metadata()` returns a `NoteMetadata` struct containing the note's attachment and header:
+
+```rust
+let metadata: NoteMetadata = active_note::get_metadata();
+```
+
+`NoteMetadata` has two fields:
+
+```rust
+pub struct NoteMetadata {
+    pub attachment: Word,  // auxiliary data attached to the note
+    pub header: Word,      // metadata header (sender, tag, etc.)
+}
+```
+
+## `input_note` — querying notes by index
+
+Inside transaction scripts or account code, use `input_note` to read data from any input note being consumed in the current transaction. Each function takes a `NoteIdx` identifying which note to query:
+
+```rust
+use miden::input_note;
+```
+
+### Assets
+
+```rust
+let info: InputNoteAssetsInfo = input_note::get_assets_info(note_idx);
+let assets: Vec<Asset> = input_note::get_assets(note_idx);
+```
+
+`InputNoteAssetsInfo` contains `commitment: Word` and `num_assets: Felt`.
+
+### Identity and metadata
+
+```rust
+let sender: AccountId = input_note::get_sender(note_idx);
+let recipient: Recipient = input_note::get_recipient(note_idx);
+let script_root: Word = input_note::get_script_root(note_idx);
+let serial_num: Word = input_note::get_serial_number(note_idx);
+```
+
+### Inputs
+
+```rust
+let inputs_info: InputNoteInputsInfo = input_note::get_inputs_info(note_idx);
+```
+
+:::note
+Unlike `active_note::get_inputs()` which returns the full `Vec<Felt>` of input values, `input_note` only exposes the inputs commitment and count — not the actual values. The transaction kernel only has commitments for input notes that are not currently executing. To read actual input values, use `active_note::get_inputs()` inside the note script itself.
+:::
+
+`InputNoteInputsInfo` contains `commitment: Word` and `num_inputs: Felt`.
+
+### Note metadata
+
+Returns the same `NoteMetadata` struct as `active_note`:
+
+```rust
+let metadata: NoteMetadata = input_note::get_metadata(note_idx);
+```
+
+## Examples
+
+### Reading inputs in a note script
+
+A note script that reads the target account ID from inputs and verifies the consumer:
+
+```rust
+use miden::{AccountId, Word, active_note, note};
+
+#[note]
+struct P2idNote {
+    target_account_id: AccountId,
+}
+
+#[note]
+impl P2idNote {
+    #[note_script]
+    pub fn run(self, _arg: Word, account: &mut Account) {
+        assert_eq!(account.get_id(), self.target_account_id);
+
+        let assets = active_note::get_assets();
+        for asset in assets {
+            account.receive_asset(asset);
+        }
+    }
+}
+```
+
+### Reading input notes in a transaction script
+
+A transaction script that reads data from a consumed input note:
+
+```rust
+use miden::*;
+
+#[tx_script]
+pub fn run(arg: Word) {
+    // Query the first input note (index 0)
+    let idx = NoteIdx { inner: felt!(0) };
+    let assets = input_note::get_assets(idx);
+    let sender = input_note::get_sender(idx);
+}
+```
+
+:::info API Reference
+Full API docs on docs.rs: [`miden::active_note`](https://docs.rs/miden/latest/miden/active_note/), [`miden::input_note`](https://docs.rs/miden/latest/miden/input_note/)
+:::
+````
+
+## File: docs/builder/smart-contracts/transactions/transaction-scripts.md
+````markdown
+---
+title: "Transaction Scripts"
+sidebar_position: 3
+description: "Write transaction scripts with #[tx_script] to orchestrate multi-note transactions and build output notes."
+---
+
+# Transaction Scripts
+
+A transaction script is a top-level function that runs once per transaction, after all note scripts have executed. Use it to orchestrate logic that spans multiple consumed notes — moving assets from the account vault into output notes, calling account methods via [cross-component calls](../cross-component-calls), or running anything that must happen after all note scripts finish.
+
+## `#[tx_script]` signature
+
+```rust
+// With account access
+#[tx_script]
+fn run(arg: Word, account: &mut Account) { ... }
+
+// Without account access
+#[tx_script]
+fn run(arg: Word) { ... }
+```
+
+| Constraint | Details |
+|------------|---------|
+| Function name | Must be `run` (enforced by the macro) |
+| Return type | `()` |
+| Required arg | One `Word` (the script argument, passed by the transaction executor) |
+| Optional arg | `&Account` or `&mut Account` |
+| Generics | Not allowed |
+| Async | Not allowed |
+
+## Cargo.toml
+
+```toml
+[package.metadata.miden]
+project-kind = "transaction-script"
+```
+
+## Example: basic-wallet-tx-script
+
+This example reads note parameters from the advice map and creates an output note:
+
+```rust
+// Do not link against libstd (i.e. anything defined in `std::`)
+#![no_std]
+#![feature(alloc_error_handler)]
+
+// However, we could still use some standard library types while
+// remaining no-std compatible, if we uncommented the following lines:
+//
+//
+// extern crate alloc;
+// use alloc::vec::Vec;
+
+use miden::{intrinsics::advice::{adv_load_preimage, adv_push_mapvaln}, *};
+
+use crate::bindings::Account;
+
+// Input layout constants
+const TAG_INDEX: usize = 0;
+const NOTE_TYPE_INDEX: usize = 1;
+const RECIPIENT_START: usize = 2;
+const RECIPIENT_END: usize = 6;
+const ASSET_START: usize = 6;
+const ASSET_END: usize = 10;
+
+#[tx_script]
+fn run(arg: Word, account: &mut Account) {
+    let num_felts = adv_push_mapvaln(arg.clone());
+    let num_felts_u64 = num_felts.as_u64();
+    assert_eq(Felt::from_u32((num_felts_u64 % 4) as u32), felt!(0));
+    let num_words = Felt::from_u64_unchecked(num_felts_u64 / 4);
+    let commitment = arg;
+    let input = adv_load_preimage(num_words, commitment);
+    let tag = input[TAG_INDEX];
+    let note_type = input[NOTE_TYPE_INDEX];
+    let recipient: [Felt; 4] = input[RECIPIENT_START..RECIPIENT_END].try_into().unwrap();
+    let note_idx = output_note::create(tag.into(), note_type.into(), recipient.into());
+    let asset: [Felt; 4] = input[ASSET_START..ASSET_END].try_into().unwrap();
+    account.move_asset_to_note(asset.into(), note_idx);
+}
+```
+
+### Walkthrough
+
+1. **`arg: Word`** is a map key used to look up the transaction data in the advice map
+2. **`adv_push_mapvaln(arg)`** reads the number of felts stored at that key
+3. **`adv_load_preimage(num_words, commitment)`** retrieves the actual data (tag, note_type, recipient, asset) from the advice map
+4. **`output_note::create(tag, note_type, recipient)`** creates the output note
+5. **`account.move_asset_to_note(asset, note_idx)`** moves the asset from the account vault into the newly created note
+
+:::note
+This script uses the advice map to pass structured input data. The caller encodes the note parameters (tag, note_type, recipient, asset) as a preimage and passes the commitment hash as the `arg` Word.
+:::
+
+:::tip
+`adv_push_mapvaln` and `adv_load_preimage` are part of the advice provider — the mechanism for supplying auxiliary data to a transaction. See [Advice Provider](./advice-provider) for the full function reference.
+:::
+
+## Related
+
+- [Transaction Context](./transaction-context) — `tx` module (block info, note commitments, expiration)
+- [Cross-Component Calls](../cross-component-calls) — how `&mut Account` works in tx scripts
+- [Reading Notes](../notes/reading-notes) — reading input notes by index inside tx scripts
+````
+
+## File: docs/builder/smart-contracts/getting-started.md
+````markdown
+---
+title: "Toolchain & Project Structure"
+sidebar_position: 6.5
+description: "The Miden toolchain, project layout, Cargo.toml configuration, and how Rust source becomes a deployable .masp file."
+---
+
+# Toolchain & Project Structure
+
+Miden contracts are written in Rust and compiled to WebAssembly, then translated to Miden Assembly (MASM) by the Miden compiler. The toolchain manages this pipeline. This page explains what the tools are, how a project is organized, and what each piece of configuration controls. For a hands-on walkthrough, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
+
+## The Miden toolchain
+
+The Miden toolchain consists of two main tools:
+
+| Tool | Purpose |
+|------|---------|
+| `midenup` | Toolchain manager — installs and updates Miden tools (similar to `rustup`) |
+| `cargo-miden` | Cargo subcommand that compiles Rust contracts to `.masp` files |
+
+`midenup` is installed via a shell script and manages versioned Miden toolchain components, including the correct Rust nightly and Wasm targets required by `cargo-miden`. This ensures your contracts are always compiled with a compatible toolchain.
+
+### Installing the toolchain
+
+```bash title=">_ Terminal"
+curl -L https://raw.githubusercontent.com/0xMiden/midenup/main/install.sh | bash
+midenup install
+```
+
+`midenup install` downloads `cargo-miden`, the Miden CLI, and the required Rust toolchain components. After installation, `miden --version` confirms the toolchain is ready.
+
+## Project layout
+
+A Miden project created with `miden new` is a Cargo workspace with a conventional structure:
+
+```text
+my-project/
+├── contracts/
+│   ├── counter-account/        # Account component
+│   │   ├── src/lib.rs
+│   │   └── Cargo.toml
+│   └── increment-note/         # Note script
+│       ├── src/lib.rs
+│       └── Cargo.toml
+├── integration/                # Tests and deployment scripts
+│   ├── src/
+│   │   ├── bin/
+│   │   ├── lib.rs
+│   │   └── helpers.rs
+│   └── tests/
+├── Cargo.toml                  # Workspace root
+└── rust-toolchain.toml         # Pinned Rust toolchain
+```
+
+| Directory | What lives here |
+|-----------|----------------|
+| `contracts/` | Smart contract source — account components, note scripts, transaction scripts. Each contract is its own crate with its own `Cargo.toml`. |
+| `integration/` | Tests, deployment scripts, and helpers for interacting with the Miden network or a local mock. |
+| `rust-toolchain.toml` | Pins the Rust toolchain version. The Miden compiler requires specific Rust and Wasm target versions. |
+
+## `Cargo.toml` configuration
+
+Each contract crate has Miden-specific configuration under `[package.metadata.miden]`:
+
+```toml title="contracts/counter-account/Cargo.toml"
+[package]
+name = "counter-contract"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+miden = "0.10"
+
+[package.metadata.component]
+package = "miden:counter-contract"
+
+[package.metadata.miden]
+project-kind = "account"
+supported-types = ["RegularAccountUpdatableCode"]
+```
+
+### Key fields
+
+| Field | Required | What it controls |
+|-------|----------|-----------------|
+| `crate-type = ["cdylib"]` | Yes | Tells Cargo to produce a dynamic library — required for WebAssembly compilation |
+| `[package.metadata.miden]` | Yes | Miden compiler configuration block |
+| `project-kind` | Yes | What kind of contract this is (see below) |
+| `supported-types` | Account only | Which account types this component supports |
+| `[package.metadata.component]` | Yes | WIT component package name — used for cross-component interoperability |
+| `[package.metadata.miden.dependencies]` | Cross-component only | References to other Miden packages this component calls |
+
+### Project kinds
+
+| Kind | Description |
+|------|-------------|
+| `"account"` | An account component — has storage slots, exposes public methods, and is attached to an account on deployment |
+| `"note-script"` | Code that executes when a note is consumed by a recipient |
+| `"transaction-script"` | Code that runs in a transaction context, used for initialization or scripted interactions |
+
+## What a contract looks like
+
+Miden contracts are `#![no_std]` Rust libraries. Here's the `counter-account` component that `miden new` generates:
+
+```rust title="contracts/counter-account/src/lib.rs"
+#![no_std]
+#![feature(alloc_error_handler)]
+
+use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
+
+#[component]
+struct CounterContract {
+    #[storage(description = "counter contract storage map")]
+    count_map: StorageMap,
+}
+
+#[component]
+impl CounterContract {
+    pub fn get_count(&self) -> Felt {
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
+        self.count_map.get(&key)
+    }
+
+    pub fn increment_count(&mut self) -> Felt {
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
+        let current_value: Felt = self.count_map.get(&key);
+        let new_value = current_value + felt!(1);
+        self.count_map.set(key, new_value);
+        new_value
+    }
+}
+```
+
+- **`#![no_std]`** — Miden contracts run inside the Miden VM, which has no OS or standard library
+- **`#[component]`** — Applied to both the struct and `impl` block; generates WIT bindings and storage scaffolding
+- **`StorageMap`** — A persistent key-value store annotated with `#[storage]`
+- **`&self` vs `&mut self`** — Read-only methods take `&self`, write methods take `&mut self`
+
+Most contracts also need `extern crate alloc` and a bump allocator if they use heap types (`Vec`, `String`, etc.):
+
+```rust
+extern crate alloc;
+use alloc::vec::Vec;
+
+#[global_allocator]
+static ALLOC: miden::BumpAlloc = miden::BumpAlloc::new();
+```
+
+## The build output: `.masp` files
+
+Running `miden build --release` from a contract directory produces a `.masp` file (Miden Assembly Package):
+
+```text
+target/miden/release/counter_contract.masp
+```
+
+A `.masp` file contains:
+
+- **Compiled MASM** — The Miden Assembly the VM executes at transaction time
+- **WIT interface definitions** — For cross-component interoperability
+- **Storage layout metadata** — How the component's storage slots are organized
+- **Account type configuration** — Which account types this component supports
+
+This is the artifact that gets deployed to the Miden network. The Miden VM executes the MASM code and produces a zero-knowledge proof; the network verifies the proof without ever seeing the original Rust source.
+
+## Common `#![no_std]` patterns
+
+| Pattern | When to use |
+|---------|-------------|
+| `extern crate alloc;` | When you need `Vec`, `String`, `Box`, or other heap types |
+| `#[global_allocator] static ALLOC: miden::BumpAlloc` | Required alongside `extern crate alloc` — the VM has no default allocator |
+| `use alloc::vec::Vec;` | Heap-allocated collections |
+| `#![feature(alloc_error_handler)]` | Required when using a custom allocator |
+
+## Troubleshooting
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `requires #![no_std]` | Missing `no_std` attribute | Add `#![no_std]` to the top of `lib.rs` |
+| `crate-type must be cdylib` | Wrong crate type | Set `crate-type = ["cdylib"]` in `[lib]` |
+| `unknown project-kind` | Typo in project kind | Valid values: `"account"`, `"note-script"`, `"transaction-script"` |
+| `.masp` not generated after successful build | Built from workspace root without specifying package | Run from the contract directory, or use `miden build -p counter-contract --release` |
+
+Once you understand the project structure, explore [Components](./accounts/components) for the full `#[component]` API, [Types](./types) for Felt, Word, and field arithmetic, and the [compiler examples](https://github.com/0xMiden/compiler/tree/next/examples) for complete working projects.
+````
+
+## File: docs/builder/smart-contracts/types.md
+````markdown
+---
+title: "Types"
+sidebar_position: 5.6
+description: "Felt field arithmetic, Word layout, Asset encoding, and type conversions in the Miden Rust SDK."
+---
+
+# Types
+
+Miden's type system is built around field elements rather than standard integers. All computation inside the Miden VM is modular arithmetic over the Goldilocks prime field ($p = 2^{64} - 2^{32} + 1$), so overflow and division behave differently from standard integers. `Felt` is the native numeric type, `Word` is a tuple of four Felts used for [storage](./accounts/storage) and hashing, and `Asset` encodes fungible and non-fungible assets as Words.
+
+## Felt — Field elements
+
+`Felt` is the fundamental numeric type in Miden. It represents an element of the **Goldilocks prime field**:
+
+$$
+p = 2^{64} - 2^{32} + 1 = 18446744069414584321
+$$
+
+:::warning This is not integer arithmetic
+`Felt` uses **modular arithmetic**. Values wrap around the prime modulus, not at `u64::MAX`. Addition, subtraction, and multiplication all happen modulo $p$. Division computes the **multiplicative inverse**, not integer division.
+:::
+
+### Creating Felt values
+
+```rust
+use miden::{felt, Felt};
+
+// Compile-time literal (validated at compile time)
+let zero = felt!(0);
+let one = felt!(1);
+let answer = felt!(42);
+
+// From u32 (always safe)
+let f = Felt::from_u32(255);
+
+// From u64 without range check (caller ensures value < p)
+let f = Felt::from_u64_unchecked(1_000_000_000);
+
+// From u64 with validation (returns Result)
+let f = Felt::new(999).unwrap();
+```
+
+:::info `felt!()` range limitation
+The `felt!()` macro currently only accepts values up to `u32::MAX` (4,294,967,295). For larger values, use `Felt::from_u64_unchecked()`. This limitation may be lifted in a future release.
+:::
+
+### Arithmetic
+
+```rust
+let a = felt!(10);
+let b = felt!(3);
+
+// Standard arithmetic (modular)
+let sum = a + b;        // felt!(13)
+let diff = a - b;       // felt!(7)
+let prod = a * b;       // felt!(30)
+let neg = -a;           // p - 10
+
+// Division computes multiplicative inverse
+// a / b = a * b^(-1) mod p
+let quot = a / b;       // NOT integer 3 — it's 10 * inverse(3) mod p
+
+// In-place operators
+let mut x = felt!(5);
+x += felt!(1);          // x is now felt!(6)
+x *= felt!(2);          // x is now felt!(12)
+```
+
+:::note For business logic, use u64
+Felt arithmetic is modular — there are no overflow panics and no underflow protection. For computing amounts, balances, counters, or any value where overflow/underflow behavior matters, convert to `u64` first, perform the arithmetic, then convert back with `Felt::from_u64_unchecked()`.
+:::
+
+### Comparison and conversion
+
+```rust
+let f = felt!(42);
+
+// Convert to u64 (canonical representation)
+let n: u64 = f.as_u64();
+
+// Equality comparison
+if f == felt!(42) { /* ... */ }
+
+// For numeric comparisons, convert to u64 first
+if f.as_u64() > 100 { /* ... */ }
+
+// Check parity
+if f.is_odd() { /* ... */ }
+```
+
+:::tip Integer arithmetic on Felt values
+Converting `Felt` to `u64` with `.as_u64()` gives you standard Rust integer arithmetic — with overflow and underflow protection from Rust's debug-mode checks and `saturating_*` / `checked_*` methods. For business logic involving amounts, limits, or counters, prefer `u64` arithmetic:
+
+```rust
+// Convert, compute in u64, convert back
+let a: u64 = felt_a.as_u64();
+let b: u64 = felt_b.as_u64();
+let sum = a.saturating_add(b); // safe addition
+let diff = a.saturating_sub(b); // no underflow
+let result = Felt::from_u64_unchecked(sum);
+```
+:::
+
+### Advanced operations
+
+```rust
+let f = felt!(7);
+
+// Multiplicative inverse: f * f.inv() == felt!(1)
+let inv = f.inv();      // Panics if f == felt!(0)
+
+// Exponentiation: base^exponent mod p
+let result = f.exp(felt!(3));  // 7^3 mod p = 343
+
+// Power of 2: computes 2^self
+let power = felt!(10).pow2();  // 2^10 = 1024 (panics if self > 63)
+```
+
+## Word — Four-element tuples
+
+A `Word` is a tuple of four `Felt` values. It's the standard unit for storage, hashing, and data passing in Miden.
+
+```rust
+#[repr(C, align(16))]
+pub struct Word {
+    pub inner: (Felt, Felt, Felt, Felt),
+}
+```
+
+### Creating Words
+
+```rust
+use miden::{felt, Felt, Word};
+
+// From an array of 4 Felts
+let w = Word::new([felt!(1), felt!(2), felt!(3), felt!(4)]);
+
+// Shorthand from array (via From trait)
+let w = Word::from([felt!(1), felt!(2), felt!(3), felt!(4)]);
+
+// From 4 u64 values (unchecked)
+let w = Word::from_u64_unchecked(1, 2, 3, 4);
+
+// From a single Felt (placed in position [3], positions [0]–[2] zeroed)
+let w = Word::from(felt!(42));  // [felt!(0), felt!(0), felt!(0), felt!(42)]
+
+// From a tuple
+let w = Word::from((felt!(1), felt!(2), felt!(3), felt!(4)));
+```
+
+### Indexing
+
+```rust
+let w = Word::from([felt!(10), felt!(20), felt!(30), felt!(40)]);
+
+// Read by index
+let first: Felt = w[0];   // felt!(10)
+let last: Felt = w[3];    // felt!(40)
+
+// Mutable indexing
+let mut w = Word::from([felt!(0), felt!(0), felt!(0), felt!(0)]);
+w[0] = felt!(99);
+
+// Convert to array
+let arr: [Felt; 4] = w.into();
+
+// Convert to tuple
+let tup: (Felt, Felt, Felt, Felt) = w.into();
+```
+
+### Packing data into Words
+
+Since each storage slot holds one `Word`, you'll often pack multiple values:
+
+```rust
+// Pack two u64 values into a Word
+let config = Word::from([
+    Felt::from_u64_unchecked(max_amount),    // [0]: max amount
+    Felt::from_u64_unchecked(cooldown),      // [1]: cooldown blocks
+    felt!(0),                                 // [2]: unused
+    felt!(0),                                 // [3]: unused
+]);
+
+// Unpack
+let max_amount = config[0].as_u64();
+let cooldown = config[1].as_u64();
+```
+
+## Asset
+
+`Asset` wraps a `Word` and represents either a fungible or non-fungible asset.
+
+```rust
+pub struct Asset {
+    pub inner: Word,
+}
+```
+
+### Encoding
+
+**Fungible assets** (tokens):
+
+| Index | Content |
+|-------|---------|
+| `inner[0]` | Amount |
+| `inner[1]` | `0` |
+| `inner[2]` | Faucet ID suffix |
+| `inner[3]` | Faucet ID prefix |
+
+**Non-fungible assets** (NFTs):
+
+| Index | Content |
+|-------|---------|
+| `inner[0]` | Data hash element 0 |
+| `inner[1]` | Data hash element 1 |
+| `inner[2]` | Data hash element 2 |
+| `inner[3]` | Faucet ID prefix |
+
+### Working with assets
+
+```rust
+use miden::Asset;
+
+// Create from a Word
+let asset = Asset::new([felt!(100), felt!(0), faucet_suffix, faucet_prefix]);
+
+// Read the amount (fungible)
+let amount: u64 = asset.inner[0].as_u64();
+
+// Build a fungible asset from faucet ID and amount
+use miden::asset;
+let asset = asset::build_fungible_asset(faucet_id, felt!(1000));
+
+// Build a non-fungible asset
+let nft = asset::build_non_fungible_asset(faucet_id, data_hash);
+```
+
+## AccountId
+
+Identifies an account with two Felt values:
+
+```rust
+pub struct AccountId {
+    pub prefix: Felt,
+    pub suffix: Felt,
+}
+```
+
+```rust
+use miden::AccountId;
+
+let id = AccountId::new(prefix_felt, suffix_felt);
+
+// Use in comparisons
+let current = active_account::get_id();
+assert_eq(current.prefix, expected.prefix);
+assert_eq(current.suffix, expected.suffix);
+```
+
+## Other types
+
+| Type | Definition | Description |
+|------|-----------|-------------|
+| `NoteIdx` | `{ inner: Felt }` | Index of an output note in the current transaction |
+| `Tag` | `{ inner: Felt }` | Note tag for filtering/routing |
+| `NoteType` | `{ inner: Felt }` | Note visibility (public or private) |
+| `Recipient` | `{ inner: Word }` | Computed note recipient (hash of serial number + script + inputs) |
+| `Digest` | `{ inner: Word }` | Cryptographic hash output (RPO256) |
+| `StorageSlotId` | `{ suffix: Felt, prefix: Felt }` | Identifies a storage slot |
+
+## Type conversion table
+
+| From | To | Method |
+|------|----|--------|
+| `u32` | `Felt` | `Felt::from_u32(n)` |
+| `u64` | `Felt` | `Felt::from_u64_unchecked(n)` or `Felt::new(n)?` |
+| literal | `Felt` | `felt!(n)` |
+| `Felt` | `u64` | `f.as_u64()` |
+| `Felt` | `Word` | `Word::from(f)` — fills position 3, rest zeroed |
+| `Word` | `Felt` | `let f: Felt = w.into()` — extracts position 3 |
+| `[Felt; 4]` | `Word` | `Word::from(arr)` |
+| `Word` | `[Felt; 4]` | `let arr: [Felt; 4] = w.into()` |
+| `(Felt, Felt, Felt, Felt)` | `Word` | `Word::from(tuple)` |
+| `Word` | `Digest` | `Digest::from_word(w)` |
+| `Digest` | `Word` | `let w: Word = d.into()` |
+
+Use these types in [component definitions](./accounts/components), store and retrieve Words from [persistent storage](./accounts/storage), or define your own types for public APIs with [`#[export_type]`](./accounts/custom-types).
+
+:::info API Reference
+Full API docs on docs.rs: [`Felt`](https://docs.rs/miden/latest/miden/struct.Felt.html), [`Word`](https://docs.rs/miden/latest/miden/struct.Word.html), [`Asset`](https://docs.rs/miden/latest/miden/struct.Asset.html)
+:::
+````
+
+## File: docs/builder/smart-contracts/accounts/authentication.md
+````markdown
+---
+title: "Authentication"
+sidebar_position: 6
+description: "Authentication component pattern and nonce management for Miden accounts."
+---
+
+# Authentication
+
+Miden uses RPO-Falcon512 digital signatures for transaction authentication. Because transactions execute on the client rather than on-chain validators, the system needs a way to prove that a transaction was authorized by the account owner. Without authentication, anyone could construct a valid proof that transfers assets out of an account. The nonce prevents replay attacks — without it, a valid proof could be resubmitted to execute the same state change twice. For details on the cryptographic primitives, see [Cryptography](./cryptography).
+
+## How authentication works
+
+An auth component stores the RPO256 hash of the account owner's Falcon512 public key in a dedicated storage slot. During transaction execution, it computes a message digest from the transaction's delta commitment and the incremented nonce, requests the signature from the advice provider via `emit_falcon_sig_to_stack`, and verifies it with `rpo_falcon512_verify`. If verification fails, proof generation fails and the transaction is rejected before reaching the network.
+
+The signature itself isn't passed as a function argument — it's provided through the **advice provider**, a special mechanism that supplies auxiliary data to the VM during proof generation.
+
+## The advice provider
+
+The advice provider supplies auxiliary data during proof generation — see [Advice Provider](../transactions/advice-provider) for the full API.
+
+## Auth component implementation
+
+```rust
+#![no_std]
+#![feature(alloc_error_handler)]
+
+use miden::*;
+use miden::intrinsics::advice::emit_falcon_sig_to_stack;
+
+#[component]
+struct AuthComponent {
+    /// RPO256 hash of the Falcon512 public key
+    #[storage(description = "auth::rpo_falcon512::pub_key")]
+    pub_key: Value,
+}
+
+#[component]
+impl AuthComponent {
+    /// Verify the caller has the correct private key.
+    /// Called during transaction execution to authenticate state changes.
+    pub fn auth(&mut self) -> Felt {
+        // 1. Read the stored public key hash
+        let pub_key: Word = self.pub_key.read();
+
+        // 2. Build the message to verify (transaction summary)
+        let commitment = self.compute_delta_commitment();
+        let nonce = Word::from(self.incr_nonce()); // Felt → [0, 0, 0, nonce_felt]
+        let msg: Word = hash_words(&[commitment, nonce]).into();
+
+        // 3. Request signature from advice provider
+        emit_falcon_sig_to_stack(msg, pub_key);
+
+        // 4. Verify the signature
+        // Panics if signature is invalid -> proof generation fails
+        rpo_falcon512_verify(pub_key, msg);
+
+        felt!(1)
+    }
+}
+```
+
+## Nonce management
+
+The nonce prevents replay attacks — each transaction must use a unique nonce:
+
+```rust
+// Increment and return the new nonce
+let new_nonce: Felt = self.incr_nonce();
+
+// Or via the module function
+let new_nonce: Felt = native_account::incr_nonce();
+```
+
+The nonce is automatically included in the transaction's proof. If someone tries to replay a transaction, the nonce won't match and verification will fail.
+
+Auth components are typically called via [cross-component calls](../cross-component-calls) from note scripts or [transaction scripts](../transactions/transaction-scripts). For access control and security patterns, see [Patterns & Security](../patterns).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`rpo_falcon512_verify`)
+:::
+
+## Related
+
+- [Cryptography](./cryptography) — RPO-Falcon512 verification and hashing primitives
+- [Advice Provider](../transactions/advice-provider) — supplying auxiliary data during proof generation
+- [Patterns & Security](../patterns) — access control, rate limiting, and anti-patterns
+````
+
+## File: docs/builder/smart-contracts/accounts/components.md
+````markdown
+---
+title: "Components"
+sidebar_position: 1
+description: "Define Miden account components using the #[component] macro — storage, methods, and auto-generated bindings."
+---
+
+# Components
+
+Components are the building blocks of Miden accounts. Each component defines a [storage](./storage) layout, exposes public methods through a WIT interface, and can be composed with other components on the same account — for example, a wallet component + an auth component + custom logic. This modularity lets you reuse a wallet component across many accounts and test or upgrade components independently.
+
+## The `#[component]` macro
+
+Apply `#[component]` to both a struct definition and its impl block:
+
+```rust
+use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
+
+#[component]
+struct CounterContract {
+    #[storage(description = "counter contract storage map")]
+    count_map: StorageMap,
+}
+
+#[component]
+impl CounterContract {
+    pub fn get_count(&self) -> Felt {
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
+        self.count_map.get(&key)
+    }
+
+    pub fn increment_count(&mut self) -> Felt {
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
+        let current_value: Felt = self.count_map.get(&key);
+        let new_value = current_value + felt!(1);
+        self.count_map.set(key, new_value);
+        new_value
+    }
+}
+```
+
+The macro generates:
+
+1. **WIT interface definition** describing the component's public API
+2. **Storage metadata** mapping slot names to slot IDs (derived from the component package + field name)
+3. **Export bindings** for the Miden runtime
+
+## Struct definition
+
+The struct defines the component's storage layout:
+
+```rust
+#[component]
+struct MyContract {
+    #[storage(description = "owner account identifier")]
+    owner: Value,
+
+    #[storage(description = "user balances")]
+    balances: StorageMap,
+}
+```
+
+### Storage fields
+
+Each field must be either `Value` (single-slot) or `StorageMap` (map-slot), annotated with `#[storage]`:
+
+```rust
+#[storage(description = "human-readable description")]
+field_name: Value,
+
+#[storage(description = "human-readable description")]
+field_name: StorageMap,
+```
+
+The `description` is optional and becomes part of the generated metadata. Slot IDs are derived from the component package name (from `[package.metadata.component]`) and the field name, so **renaming a field changes the slot ID**. Ordering does not matter, and `slot(N)` is not supported.
+
+## Impl block — methods
+
+### Read methods (`&self`)
+
+Methods that take `&self` are **read-only** — they can query storage and account state but cannot modify anything:
+
+```rust
+pub fn get_balance(&self, depositor: AccountId) -> Felt {
+    let key = Word::from([depositor.prefix, depositor.suffix, felt!(0), felt!(0)]);
+    self.balances.get(&key)
+}
+```
+
+### Write methods (`&mut self`)
+
+Methods that take `&mut self` can **modify state** — write to storage, add/remove assets, create notes:
+
+```rust
+pub fn deposit(&mut self, asset: Asset) {
+    self.add_asset(asset);
+}
+```
+
+:::info ZK proof implications
+Read methods (`&self`) produce proofs that don't include state transitions. Write methods (`&mut self`) produce proofs that do. The distinction is enforced by the compiler and determines which kernel operations are available.
+:::
+
+### Private methods
+
+Methods without `pub` are private — they can be called from other methods in the same component but are not exported in the WIT interface:
+
+```rust
+fn require_initialized(&self) {
+    let state: Word = self.initialized.read();
+    assert!(state[0] == felt!(1));
+}
+
+pub fn do_something(&mut self) {
+    self.require_initialized();
+    // ...
+}
+```
+
+### Supported parameter and return types
+
+Public methods can use these types in their signatures:
+
+| Type | As parameter | As return |
+|------|-------------|-----------|
+| `Felt` | Yes | Yes |
+| `Word` | Yes | Yes |
+| `Asset` | Yes | Yes |
+| `AccountId` | Yes | Yes |
+| `NoteIdx` | Yes | Yes |
+| Custom types with `#[export_type]` | Yes | Yes |
+
+## Auto-generated methods
+
+The `#[component]` macro automatically provides methods on `self` through the `NativeAccount` and `ActiveAccount` traits.
+
+### Always available (via `NativeAccount` trait)
+
+```rust
+// Add an asset to the account vault
+self.add_asset(asset: Asset) -> Asset
+
+// Remove an asset from the account vault
+self.remove_asset(asset: Asset) -> Asset
+
+// Increment the account nonce (replay protection)
+self.incr_nonce() -> Felt
+
+// Compute commitment of account state changes (read-only)
+self.compute_delta_commitment() -> Word
+
+// Check if a procedure was called during this transaction (read-only)
+self.was_procedure_called(proc_root: Word) -> bool
+```
+
+### Always available (via `ActiveAccount` trait on `&self`)
+
+```rust
+// Get the account ID
+self.get_id() -> AccountId
+
+// Get the account nonce
+self.get_nonce() -> Felt
+
+// Get fungible asset balance for a faucet
+self.get_balance(faucet_id: AccountId) -> Felt
+
+// Check non-fungible asset ownership
+self.has_non_fungible_asset(asset: Asset) -> bool
+
+// Get storage and vault commitments
+self.get_vault_root() -> Word
+self.compute_commitment() -> Word
+self.compute_storage_commitment() -> Word
+// ... and more (see API Reference)
+```
+
+For the full list of auto-generated methods, see the [Cheatsheet](../api-reference). To export your own types for use in public method signatures, see [Custom Types](./custom-types). For the complete account and vault query API, see [Account Operations](./account-operations).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (top-level — `#[component]` macro)
+:::
+````
+
+## File: docs/builder/smart-contracts/accounts/introduction.md
+````markdown
+---
+title: "What are Accounts?"
+sidebar_position: 0
+description: "Accounts are the primary actors in Miden — they store code, state, and assets, and execute transactions locally with private state."
+---
+
+# What are Accounts?
+
+Accounts are the primary actors in Miden. Every entity on the network — wallets, smart contracts, token faucets — is an account. Unlike traditional blockchains where user wallets and smart contracts are fundamentally different, Miden treats them all as programmable accounts with the same structure.
+
+Each account is an independent state machine that executes transactions locally and generates a zero-knowledge proof of correct execution. This means accounts never share a global execution environment — they run in isolation, which enables parallel execution and privacy by default.
+
+## Anatomy of an account
+
+Every account has four parts:
+
+| Part | Description |
+|------|-------------|
+| **Code** | One or more [components](./components.md) that define the account's behavior — its public API and internal logic |
+| **Storage** | Persistent state — up to 255 typed [slots](./storage.md) of `Value` or `StorageMap` |
+| **Vault** | The fungible and non-fungible assets the account holds |
+| **Nonce** | A counter that increments exactly once per state change, providing replay protection |
+
+The network doesn't store the full account state. Instead, it stores cryptographic commitments — hashes of the code, storage, and vault (see [account design](/core-concepts/miden-base/account/)). Only the account owner (or a public account's observers) sees the actual data.
+
+## Components, not contracts
+
+On Ethereum, a smart contract is a single monolithic unit of code deployed to an address. On Miden, accounts are composed of **components** — reusable modules that each contribute their own storage layout and exported procedures.
+
+```rust
+use miden::{component, Asset};
+
+#[component]
+struct MyWallet;
+
+#[component]
+impl MyWallet {
+    pub fn receive_asset(&mut self, asset: Asset) {
+        self.add_asset(asset);
+    }
+}
+```
+
+An account can have multiple components. For example, a DeFi account might combine a wallet component (for holding assets), an auth component (for signature verification), and custom application logic — all in a single account. Components communicate with each other through [cross-component calls](../cross-component-calls.md) using WIT (WebAssembly Interface Types) bindings.
+
+## Account types
+
+Accounts are configured by type and storage mode:
+
+| Type | Description |
+|------|-------------|
+| `RegularAccountUpdatableCode` | Standard account — code can be updated after deployment |
+| `RegularAccountImmutableCode` | Account with fixed code — cannot be changed after deployment |
+| `FungibleFaucet` | Mints and burns fungible tokens |
+| `NonFungibleFaucet` | Mints and burns non-fungible tokens (NFTs) |
+
+Storage mode controls privacy:
+
+| Mode | Description |
+|------|-------------|
+| **Public** | Full state is stored on-chain and visible to everyone — suitable for shared protocols like DEXs and faucets |
+| **Private** | Only a state commitment is stored on-chain — the actual data stays with the account owner |
+
+## How accounts differ from EVM contracts
+
+| | EVM | Miden |
+|---|---|---|
+| **Execution** | Every validator re-executes every transaction | Account owner executes locally, submits a ZK proof |
+| **State visibility** | All state variables are public on-chain | State is private by default (only commitments on-chain) |
+| **Code structure** | Monolithic contract deployed to an address | Multiple reusable components composed into one account |
+| **Identity** | Wallets are EOAs, contracts are separate | Everything is an account — wallets are smart contracts |
+| **Failure** | `revert` consumes gas, leaves an on-chain trace | Proof cannot be generated — no on-chain trace, no cost |
+````
+
+## File: docs/builder/smart-contracts/transactions/introduction.md
+````markdown
+---
+title: "What are Transactions?"
+sidebar_position: 0
+description: "Transactions are Miden's execution unit — they consume input notes and produce output notes, executed locally and proven before submission."
+---
+
+# What are Transactions?
+
+Transactions are the execution unit in Miden. Every state change — transferring assets, updating storage, minting tokens — happens inside a transaction. Each transaction runs against a single account, consumes zero or more input notes, and produces zero or more output notes.
+
+The critical difference from other blockchains: transactions execute locally on the user's machine, not on a shared VM. After execution, the Miden VM generates a zero-knowledge proof that the transaction was valid (see [transaction design](/core-concepts/miden-base/transaction)). Only this proof and the resulting state commitments are submitted to the network. The network never sees the transaction inputs, the account's private state, or the logic that ran.
+
+## Anatomy of a transaction
+
+Every transaction has these elements:
+
+| Element | Description |
+|---------|-------------|
+| **Account** | The single account this transaction mutates — its storage, vault, and nonce |
+| **Input notes** | Zero or more notes being consumed — their scripts run and assets transfer to the account |
+| **Output notes** | Zero or more notes being created — carrying assets and scripts for future consumption |
+| **Transaction script** | Optional entry-point logic that runs in addition to note scripts and component code |
+| **Block reference** | The chain state the transaction executes against — provides block number, timestamp, and commitments |
+
+A transaction can only modify one account. Cross-account interactions happen through notes: one account's transaction creates a note, another account's transaction consumes it.
+
+## Transaction lifecycle
+
+```
+┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
+│  Build    │────▶│ Execute  │────▶│  Prove   │────▶│  Submit  │────▶│  Verify  │
+│          │     │          │     │          │     │          │     │          │
+│ Assemble │     │ VM runs  │     │ ZK proof │     │ Proof +  │     │ Network  │
+│ tx inputs│     │ locally  │     │ generated│     │ state    │     │ updates  │
+│          │     │          │     │          │     │ sent     │     │ state    │
+└──────────┘     └──────────┘     └──────────┘     └──────────┘     └──────────┘
+```
+
+1. **Build**: The client assembles the transaction — which account, which notes to consume, what methods to call.
+2. **Execute**: The Miden VM runs the transaction locally. Note scripts execute, component code runs, storage is mutated, output notes are created.
+3. **Prove**: The VM produces a zero-knowledge proof of correct execution. If any assertion fails (e.g., insufficient balance, unauthorized caller), the proof cannot be generated — the transaction is rejected before it ever reaches the network.
+4. **Submit**: The proof and public state updates (new note commitments, updated account commitment, nullifiers for consumed notes) are submitted to the network.
+5. **Verify**: The network verifies the proof, records the state changes, and includes the transaction in a batch and eventually a block.
+
+## The transaction context
+
+During execution, your code runs inside a **transaction context** that provides access to:
+
+- **Block data** — current block number, timestamp, and commitments via the `tx` module
+- **Input notes** — the notes being consumed, their assets, inputs, and metadata
+- **Account state** — the executing account's storage, vault, and nonce
+- **Output notes** — the ability to create new notes and attach assets
+
+The transaction context is what connects your component code to the chain state. For example, you can implement time-based logic by comparing `tx::get_block_number()` against a stored value, or read note inputs to determine what action to take.
+
+## What happens when execution fails
+
+When an assertion fails in your code:
+
+```rust
+assert!(amount > felt!(0));
+```
+
+The ZK circuit **cannot produce a valid proof**. This means:
+
+- The transaction is rejected **before it ever reaches the network**
+- No state changes occur — it's as if the transaction never happened
+- No gas or fees are consumed
+- The client gets an error explaining which assertion failed
+
+This is fundamentally different from Ethereum's `revert`, where the failed transaction still lands on-chain, consumes gas, and is visible to everyone.
+
+## How transactions differ from EVM transactions
+
+| | EVM | Miden |
+|---|---|---|
+| **Execution** | Every validator re-executes the transaction | Client executes locally, submits only the proof |
+| **Scope** | Can call multiple contracts in one tx | One transaction mutates one account; cross-account via notes |
+| **Privacy** | All inputs, state reads, and call traces are public | Network sees only the proof and state commitments |
+| **Failure** | On-chain revert, gas consumed, visible trace | Proof can't be generated — no on-chain trace, no cost |
+| **Parallelism** | Transactions touching same state must serialize | Single-account scope enables parallel execution |
+| **Authentication** | `msg.sender` set by protocol | Falcon512 signatures verified inside the transaction |
+````
+
+## File: docs/builder/smart-contracts/transactions/transaction-context.md
+````markdown
+---
+title: "The tx Module"
+sidebar_position: 2
+description: "Block queries, note commitments, and expiration management with the tx module."
+---
+
+# The tx Module
+
+A Miden transaction is a local operation that consumes zero or more input notes and produces state changes plus output notes for a single account. The transaction executes entirely on the client — the VM runs the code, generates a ZK proof, and only the proof is submitted to the network. The `tx` module provides access to block information, note commitments, and expiration controls. Transaction scripts (`#[tx_script]`) serve as standalone entry points that orchestrate the transaction.
+
+## The `tx` module
+
+```rust
+use miden::tx;
+```
+
+### Block information
+
+```rust
+// Current block number
+let block_num: Felt = tx::get_block_number();
+
+// Block commitment (hash of block header)
+let commitment: Word = tx::get_block_commitment();
+
+// Block timestamp (seconds since epoch)
+let timestamp: Felt = tx::get_block_timestamp();
+```
+
+### Note commitments
+
+```rust
+// Commitment over all input notes in this transaction
+let input_commit: Word = tx::get_input_notes_commitment();
+
+// Commitment over all output notes in this transaction
+let output_commit: Word = tx::get_output_notes_commitment();
+
+// Number of input/output notes
+let num_inputs: Felt = tx::get_num_input_notes();
+let num_outputs: Felt = tx::get_num_output_notes();
+```
+
+### Transaction expiration
+
+Control how long a transaction remains valid:
+
+```rust
+// Get current expiration delta (in blocks)
+let delta: Felt = tx::get_expiration_block_delta();
+
+// Set a new expiration delta
+tx::update_expiration_block_delta(felt!(100));
+```
+
+The expiration delta determines how many blocks after creation the transaction remains valid. If the transaction isn't included within this window, it expires.
+
+## Transaction scripts
+
+Transaction scripts use the `#[tx_script]` macro to define a top-level entry point for the transaction. See [Transaction Scripts](./transaction-scripts) for the full `#[tx_script]` API and examples.
+
+## Complete `tx` module reference
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `get_block_number` | `fn() -> Felt` | Current block number |
+| `get_block_commitment` | `fn() -> Word` | Block header commitment |
+| `get_block_timestamp` | `fn() -> Felt` | Block timestamp (seconds) |
+| `get_input_notes_commitment` | `fn() -> Word` | Hash of all input notes |
+| `get_output_notes_commitment` | `fn() -> Word` | Hash of all output notes |
+| `get_num_input_notes` | `fn() -> Felt` | Number of input notes |
+| `get_num_output_notes` | `fn() -> Felt` | Number of output notes |
+| `get_expiration_block_delta` | `fn() -> Felt` | Current expiration delta |
+| `update_expiration_block_delta` | `fn(delta: Felt)` | Set expiration delta |
+
+For signature verification using the transaction context, see [Authentication](../accounts/authentication). For time-based patterns using `tx::get_block_number()`, see [Patterns & Security — Rate limiting](../patterns#rate-limiting). For the complete function table, see the [Cheatsheet](../api-reference).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden::tx`](https://docs.rs/miden/latest/miden/tx/)
+:::
+````
+
 ## File: docs/builder/index.md
 ````markdown
 ---
@@ -10649,12 +13511,25 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
+        href: './smart-contracts',
+        label: 'Miden Smart Contracts',
+        description: 'Reference documentation for building Miden smart contracts in Rust.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
         href: './develop',
         label: 'Tutorials',
         description: 'Step-by-step guides for building applications on Miden.',
       }}
     />
   </div>
+</div>
+
+<div className="row">
   <div className="col col--6">
     <DocCard
       item={{
@@ -10665,9 +13540,6 @@ import DocCard from '@theme/DocCard';
       }}
     />
   </div>
-</div>
-
-<div className="row">
   <div className="col col--6">
     <DocCard
       item={{
@@ -10716,195 +13588,1466 @@ import DocCard from '@theme/DocCard';
 Licensed under the [MIT License](http://opensource.org/licenses/MIT).
 ````
 
-## File: docs/design/index.md
+## File: docs/builder/smart-contracts/accounts/account-operations.md
 ````markdown
 ---
-sidebar_label: Introduction
-sidebar_position: 0
+title: "Account Operations"
+sidebar_position: 4
+description: "Query account state with active_account and mutate the vault with native_account."
 ---
 
-<!--
-ARCHITECTURE NOTE:
-This landing page is the ONLY Design content in docs/.
-Full Design documentation (Protocol, VM, Compiler, Node) lives in versioned_docs/
-and is populated by ingestion from external source repositories.
-DO NOT add protocol documentation files here.
--->
+# Account Operations
 
-# Miden Design
+Miden provides two modules for interacting with the current account during a transaction: `active_account` for read-only queries (balance, nonce, commitments) and `native_account` for mutations (add/remove assets, increment nonce). The split reflects the ZK proof model — `active_account` calls don't affect the proof's state transition, while `native_account` calls represent state changes that must be proven. The vault is the account's asset container where all fungible and non-fungible assets live.
 
-This section provides a comprehensive technical reference for the Miden architecture, covering the protocol design, virtual machine, compiler toolchain, and node infrastructure.
+## `active_account` — Read-only queries
 
-:::info Version Note
-Full Design documentation is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete documentation.
+These functions query the current account's state without modifying it. They're available in both `&self` and `&mut self` methods.
+
+```rust
+use miden::active_account;
+```
+
+### Account identity
+
+```rust
+// Get the account ID
+let id: AccountId = active_account::get_id();
+
+// Get the current nonce
+let nonce: Felt = active_account::get_nonce();
+```
+
+### Vault queries
+
+```rust
+// Get fungible asset balance for a specific faucet
+let balance: Felt = active_account::get_balance(faucet_id);
+
+// Get the balance at the start of this transaction
+let initial: Felt = active_account::get_initial_balance(faucet_id);
+
+// Check if a non-fungible asset exists in the vault
+let has_nft: bool = active_account::has_non_fungible_asset(asset);
+
+// Get vault commitment (Merkle root)
+let root: Word = active_account::get_vault_root();
+let initial_root: Word = active_account::get_initial_vault_root();
+```
+
+### Commitment queries
+
+```rust
+// Full account commitment (code + storage + vault + nonce)
+let commitment: Word = active_account::compute_commitment();
+let initial: Word = active_account::get_initial_commitment();
+
+// Storage commitment only
+let storage: Word = active_account::compute_storage_commitment();
+let initial_storage: Word = active_account::get_initial_storage_commitment();
+
+// Code commitment
+let code: Word = active_account::get_code_commitment();
+```
+
+### Procedure queries
+
+```rust
+// Number of exported procedures
+let count: Felt = active_account::get_num_procedures();
+
+// Get the root hash of procedure at index
+let root: Word = active_account::get_procedure_root(0);
+
+// Check if a procedure exists
+let exists: bool = active_account::has_procedure(proc_root);
+```
+
+## native_account — Mutations
+
+`add_asset`, `remove_asset`, and `incr_nonce` require `&mut self` and modify account state. `compute_delta_commitment` and `was_procedure_called` take `&self` — they are read-only queries on the native account.
+
+```rust
+use miden::native_account;
+```
+
+### Asset operations
+
+```rust
+// Add an asset to the vault — returns the asset as stored
+let stored: Asset = native_account::add_asset(asset);
+
+// Remove an asset from the vault — returns the removed asset
+// Proof generation fails if the asset doesn't exist or insufficient balance
+let removed: Asset = native_account::remove_asset(asset);
+```
+
+### Nonce management
+
+```rust
+// Increment the account nonce (replay protection)
+let new_nonce: Felt = native_account::incr_nonce();
+```
+
+:::warning
+The nonce must be incremented for any transaction that modifies account state. Without it, the same transaction could be replayed.
 :::
 
-## Architecture Overview
+### Transaction tracking
 
-Miden is a zero-knowledge rollup that fundamentally rethinks blockchain architecture. Instead of a single global state updated sequentially, Miden uses an **actor model** where each account is an independent state machine that executes transactions locally and generates validity proofs.
+```rust
+// Compute commitment of all state changes in this transaction
+let delta: Word = native_account::compute_delta_commitment();
 
-### Core Design Principles
+// Check if a specific procedure was called during this transaction
+let called: bool = native_account::was_procedure_called(proc_root);
+```
 
-| Principle | How Miden Achieves It |
-|-----------|----------------------|
-| **Privacy** | Accounts and notes store only cryptographic commitments on-chain; full data remains with users |
-| **Parallelism** | Single-account transactions enable concurrent execution without contention |
-| **Scalability** | Client-side proving offloads computation; proof aggregation reduces on-chain verification |
-| **Programmability** | Turing-complete VM supports arbitrary smart contract logic in accounts and notes |
+## Auto-generated methods on components
 
+`#[component]` implements the `ActiveAccount` and `NativeAccount` traits on the struct, exposing these functions as methods on `self`:
 
-1. **Local Execution** – Users execute transactions on their devices, consuming input notes and updating account state
-2. **Proof Generation** – The client generates a STARK proof attesting to valid state transitions
-3. **Note Creation** – Transactions produce output notes carrying assets and data to recipients
-4. **Verification** – The node verifies proofs, updates state commitments, and makes notes available
+```rust
+#[component]
+impl MyAccount {
+    pub fn receive_asset(&mut self, asset: Asset) {
+        // These are equivalent:
+        self.add_asset(asset);              // via NativeAccount trait
+        native_account::add_asset(asset);   // direct module call
+    }
+
+    pub fn check_balance(&self, faucet_id: AccountId) -> Felt {
+        // These are equivalent:
+        self.get_balance(faucet_id)          // via ActiveAccount trait
+        active_account::get_balance(faucet_id)  // direct module call
+    }
+}
+```
+
+### NativeAccount methods (on `&mut self`)
+
+| Method | Signature |
+|--------|-----------|
+| `add_asset` | `fn add_asset(&mut self, asset: Asset) -> Asset` |
+| `remove_asset` | `fn remove_asset(&mut self, asset: Asset) -> Asset` |
+| `incr_nonce` | `fn incr_nonce(&mut self) -> Felt` |
+| `compute_delta_commitment` | `fn compute_delta_commitment(&self) -> Word` |
+| `was_procedure_called` | `fn was_procedure_called(&self, proc_root: Word) -> bool` |
+
+### ActiveAccount methods (on `&self`)
+
+| Method | Signature |
+|--------|-----------|
+| `get_id` | `fn get_id(&self) -> AccountId` |
+| `get_nonce` | `fn get_nonce(&self) -> Felt` |
+| `get_balance` | `fn get_balance(&self, faucet_id: AccountId) -> Felt` |
+| `get_initial_balance` | `fn get_initial_balance(&self, faucet_id: AccountId) -> Felt` |
+| `has_non_fungible_asset` | `fn has_non_fungible_asset(&self, asset: Asset) -> bool` |
+| `get_vault_root` | `fn get_vault_root(&self) -> Word` |
+| `get_initial_vault_root` | `fn get_initial_vault_root(&self) -> Word` |
+| `compute_commitment` | `fn compute_commitment(&self) -> Word` |
+| `get_initial_commitment` | `fn get_initial_commitment(&self) -> Word` |
+| `compute_storage_commitment` | `fn compute_storage_commitment(&self) -> Word` |
+| `get_initial_storage_commitment` | `fn get_initial_storage_commitment(&self) -> Word` |
+| `get_code_commitment` | `fn get_code_commitment(&self) -> Word` |
+| `get_num_procedures` | `fn get_num_procedures(&self) -> Felt` |
+| `get_procedure_root` | `fn get_procedure_root(&self, index: u8) -> Word` |
+| `has_procedure` | `fn has_procedure(&self, proc_root: Word) -> bool` |
+
+## When proof generation fails
+
+Several operations cause proof generation to fail if preconditions aren't met:
+
+| Operation | Fails when |
+|-----------|-----------|
+| `remove_asset(asset)` | Asset not in vault or insufficient balance |
+| `get_balance(faucet_id)` | Referenced asset is non-fungible |
+| `get_procedure_root(index)` | Index out of bounds |
+| Any `assert!()` | Condition is false |
+
+When proof generation fails:
+1. The ZK circuit cannot produce a valid proof
+2. The transaction is rejected **before reaching the network**
+3. No state changes occur
+4. The client receives an error describing the failure
+
+## ManagedWallet component
+
+```rust
+#![no_std]
+#![feature(alloc_error_handler)]
+
+use miden::{component, output_note, Asset, AccountId, NoteIdx, Felt};
+
+#[component]
+struct ManagedWallet;
+
+#[component]
+impl ManagedWallet {
+    /// Receive an asset into the vault.
+    pub fn receive_asset(&mut self, asset: Asset) {
+        self.add_asset(asset);
+    }
+
+    /// Send an asset to an output note, with balance check.
+    pub fn send_asset(&mut self, asset: Asset, note_idx: NoteIdx) {
+        let removed = self.remove_asset(asset);
+        output_note::add_asset(removed, note_idx);
+    }
+
+    /// Query the balance of a fungible asset.
+    pub fn balance_of(&self, faucet_id: AccountId) -> Felt {
+        self.get_balance(faucet_id)
+    }
+}
+```
+
+To move assets out of an account, create [output notes](../notes/output-notes) with `output_note::add_asset`. For signature verification and nonce management, see [Authentication](./authentication). For complete function signatures, see the [Cheatsheet](../api-reference).
+
+:::info API Reference
+Full API docs on docs.rs: [`miden::active_account`](https://docs.rs/miden/latest/miden/active_account/), [`miden::native_account`](https://docs.rs/miden/latest/miden/native_account/)
+:::
+````
+
+## File: docs/builder/smart-contracts/notes/note-scripts.md
+````markdown
+---
+title: "Note Scripts"
+sidebar_position: 1
+description: "Write note scripts using #[note] and #[note_script] macros to define logic that executes when notes are consumed."
+---
+
+# Note Scripts
+
+Note scripts define the logic that executes when a note is consumed. They determine **who** can consume a note and **what happens** to its assets.
+
+## The `#[note]` pattern
+
+A note script consists of a struct (holding note inputs) and an impl block with a `#[note_script]` method:
+
+```rust
+use miden::{AccountId, Word, active_note, note};
+
+#[note]
+struct MyNote {
+    target_account_id: AccountId,
+}
+
+#[note]
+impl MyNote {
+    #[note_script]
+    pub fn run(self, _arg: Word, account: &mut Account) {
+        // Script logic here
+    }
+}
+```
+
+The `#[note]` macro:
+1. Generates the WIT note-script interface
+2. Deserializes note inputs into struct fields
+3. Exports the `run` function as the note's entry point
+
+## Struct fields as note inputs
+
+Fields on the `#[note]` struct are populated from the note's input data when the note is consumed:
+
+```rust
+#[note]
+struct MyNote {
+    target_account_id: AccountId,  // Deserialized from note inputs
+}
+```
+
+The compiler maps struct fields to note inputs based on their order and type. Supported field types include `AccountId`, `Felt`, `Word`, and other SDK types.
+
+If you don't need inputs, use a unit struct:
+
+```rust
+#[note]
+struct CounterNote;
+```
+
+## `#[note_script]` method requirements
+
+The `#[note_script]` method has specific signature constraints:
+
+| Constraint | Details |
+|------------|---------|
+| Receiver | `self` (by value only — not `&self` or `&mut self`) |
+| Return type | `()` |
+| Required arg | One `Word` argument (the note script argument) |
+| Optional arg | `&Account` or `&mut Account` (the consuming account) |
+| Generics | Not allowed |
+| Async | Not allowed |
+
+### Parameter ordering
+
+The `Word` and `&mut Account` parameters can appear in either order:
+
+```rust
+// Both are valid:
+pub fn run(self, _arg: Word, account: &mut Account) { ... }
+pub fn run(self, account: &mut Account, _arg: Word) { ... }
+```
+
+### With account access
+
+When you include `&mut Account` (or `&Account`), the note script can call methods on the consuming account's components:
+
+```rust
+#[note_script]
+pub fn run(self, _arg: Word, account: &mut Account) {
+    let assets = active_note::get_assets();
+    for asset in assets {
+        account.receive_asset(asset);  // Cross-component call
+    }
+}
+```
+
+The `Account` type comes from WIT bindings of the account component — see [Cross-Component Calls](../cross-component-calls).
+
+### Without account access
+
+Use this pattern for **trigger or command notes** that carry no assets and only execute logic (e.g., calling a counter contract). If your note transfers assets, include `&mut Account`.
+
+```rust
+#[note_script]
+pub fn run(self, _arg: Word) {
+    // For logic-only notes that carry no assets.
+    // Cannot call account methods — see the counter note example below.
+}
+```
+
+## Example: Counter note (cross-component calls)
+
+A note that calls methods on the consuming account's component:
+
+:::note
+All note script crates require `#![no_std]` and `#![feature(alloc_error_handler)]` at the crate root. These are omitted from examples for brevity.
+:::
+
+```rust title="counter-note/src/lib.rs"
+use miden::*;
+
+// generated by cargo-component from the counter component's WIT interface
+use crate::bindings::miden::counter_contract::counter_contract;
+
+#[note]
+struct CounterNote;
+
+#[note]
+impl CounterNote {
+    #[note_script]
+    pub fn run(self, _arg: Word) {
+        let initial_value = counter_contract::get_count();
+        counter_contract::increment_count();
+        let expected_value = initial_value + Felt::from_u32(1);
+        let final_value = counter_contract::get_count();
+        assert_eq(final_value, expected_value);
+    }
+}
+```
+
+This note doesn't take `&mut Account` — instead it calls the counter contract's methods directly through generated bindings. See [Cross-Component Calls](../cross-component-calls).
+
+## Cargo.toml for note scripts
+
+Note scripts require `project-kind = "note-script"` and must declare dependencies on any account components they interact with:
+
+```toml
+[package.metadata.miden]
+project-kind = "note-script"
+
+# Miden dependencies — account components this note calls
+[package.metadata.miden.dependencies]
+"miden:basic-wallet" = { path = "../basic-wallet" }
+
+# WIT dependencies — generated interfaces for cross-component calls
+[package.metadata.component.target.dependencies]
+"miden:basic-wallet" = { path = "../basic-wallet/target/generated-wit/" }
+```
+
+## Related
+
+- [Cross-Component Calls](../cross-component-calls) — how `bindings::Account` and `counter_contract::` calls work
+- [Transaction Context](../transactions/transaction-context) — transaction scripts with `#[tx_script]`
+````
+
+## File: docs/builder/smart-contracts/index.md
+````markdown
+---
+title: "Miden Smart Contracts"
+sidebar_position: 0
+description: "Reference documentation for building Miden smart contracts in Rust using the Miden compiler SDK."
+---
+
+# Miden Smart Contracts
+
+This section is the complete reference for building smart contracts on Miden using Rust and the compiler SDK (v0.9.0). If you're new to Miden, start with the [Toolchain & Project Structure](./getting-started) guide below, or follow the hands-on [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
+
+All Miden Rust contracts compile under these constraints: `#![no_std]`, Rust 2024 edition, targeting `wasm32-unknown-unknown` → Miden Assembly → ZK proof.
+
+import DocCard from '@theme/DocCard';
+
+## Overview
+
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './overview',
+        label: 'What is a Miden Smart Contract',
+        description: 'Execution model, accounts, notes, and the transaction lifecycle.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './getting-started',
+        label: 'Toolchain & Project Structure',
+        description: 'The Miden toolchain, project layout, and how Rust source becomes a deployable .masp file.',
+      }}
+    />
+  </div>
+</div>
+
+## Core Concepts
+
+<div className="row">
+  <div className="col col--4">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './accounts/',
+        label: 'Accounts',
+        description: 'Components, storage, custom types, operations, cryptography, and authentication.',
+      }}
+    />
+  </div>
+  <div className="col col--4">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './notes/',
+        label: 'Notes',
+        description: 'Programmable UTXOs for asset transfers.',
+      }}
+    />
+  </div>
+  <div className="col col--4">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './transactions/',
+        label: 'Transactions',
+        description: 'Transaction context, scripts, and the advice provider.',
+      }}
+    />
+  </div>
+</div>
+
+<div className="row">
+  <div className="col col--4">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './cross-component-calls',
+        label: 'Cross-Component Calls',
+        description: 'WIT bindings and generate!() for inter-component calls.',
+      }}
+    />
+  </div>
+</div>
+
+## Reference
+
+<div className="row">
+  <div className="col col--4">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './types',
+        label: 'Types',
+        description: 'Core types: Felt, Word, AccountId, NoteId, and more.',
+      }}
+    />
+  </div>
+  <div className="col col--4">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './patterns',
+        label: 'Patterns & Security',
+        description: 'Access control, rate limiting, spending limits, and anti-patterns.',
+      }}
+    />
+  </div>
+  <div className="col col--4">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './api-reference',
+        label: 'Cheatsheet',
+        description: 'Every function, type, trait, and macro at a glance.',
+      }}
+    />
+  </div>
+</div>
+````
+
+## File: docs/builder/smart-contracts/api-reference.md
+````markdown
+---
+title: "Cheatsheet"
+sidebar_position: 7
+description: "Quick-reference cheatsheet for every function, type, trait, and macro in the Miden Rust SDK."
+---
+
+# Cheatsheet
+
+:::info
+This is a quick-reference cheatsheet. The SDK functions below are wrappers around Miden's transaction kernel procedures — they execute locally during proof generation, not on-chain. For full API documentation with examples, see [`miden` on docs.rs](https://docs.rs/miden/latest/miden/).
+:::
+
+Quick-reference for the Miden Rust SDK — every function signature, type, trait, and macro at a glance. Each section links to the detailed page for full explanations and examples. The SDK exposes the Miden transaction kernel's host functions — all execution happens locally on the client during proof generation, not on-chain. For runnable examples, see the [compiler examples directory](https://github.com/0xMiden/compiler/tree/next/examples).
+
+## Core imports
+
+```rust
+use miden::{
+    // Macros
+    component, note, note_script, tx_script, export_type, felt,
+
+    // Types
+    Felt, Word, Asset, AccountId, NoteIdx, Tag, NoteType, Recipient, Digest,
+
+    // Storage
+    Value, StorageMap, ValueAccess, StorageMapAccess,
+
+    // Modules
+    active_account, native_account, active_note, output_note, input_note, tx,
+    asset, faucet, storage,
+
+    // Crypto
+    hash_words, rpo_falcon512_verify,
+
+    // Allocator
+    BumpAlloc,
+};
+```
 
 ---
 
-## Protocol (miden-base)
+## Macros → [Components](./accounts/components), [Notes](./notes/note-scripts), [Transaction Context](./transactions/transaction-context), [Custom Types](./accounts/custom-types), [Cross-Component Calls](./cross-component-calls)
 
-The protocol layer defines Miden's data structures, state model, and transaction semantics.
+### `#[component]`
 
-### Accounts
+Defines an account component. Apply to both struct and impl block.
 
-Accounts are programmable entities that hold assets and execute code:
+```rust
+#[component]
+struct MyAccount { /* storage fields */ }
 
-- **ID** – Unique 64-bit identifier derived from initial code and storage
-- **Code** – Immutable smart contract logic defining the account's interface
-- **Storage** – Key-value store with up to 256 slots for persistent data
-- **Vault** – Container holding fungible and non-fungible assets
-- **Nonce** – Monotonically increasing counter preventing replay attacks
+#[component]
+impl MyAccount { /* public and private methods */ }
+```
 
-Account code is composed from **components** – modular building blocks that add capabilities like wallet functionality, token standards, or custom logic.
+### `#[note]`
 
-### Notes
+Defines a note script. Apply to both struct and impl block.
 
-Notes are programmable messages that transfer assets between accounts:
+```rust
+#[note]
+struct MyNote { /* fields from note inputs */ }
 
-- **Script** – Code executed when the note is consumed
-- **Inputs** – Public data available to the consuming transaction
-- **Assets** – Tokens transferred to the recipient
-- **Metadata** – Sender, tag (for discovery), and auxiliary data
+#[note]
+impl MyNote { /* must contain a #[note_script] method */ }
+```
 
-Notes can be **public** (all data on-chain) or **private** (only a commitment stored). Private notes require off-chain communication between sender and recipient.
+### `#[note_script]`
 
-### State Model
+Marks the entry point method of a note script. Must be inside a `#[note] impl` block.
 
-Miden maintains three core databases:
+**Constraints**: `self` by value, returns `()`, one `Word` arg, optional `&Account`/`&mut Account`.
 
-| Database | Structure | Purpose |
-|----------|-----------|---------|
-| **Accounts** | Sparse Merkle Tree | Maps account IDs to state commitments |
-| **Notes** | Merkle Mountain Range | Append-only log of created notes |
-| **Nullifiers** | Sparse Merkle Tree | Tracks consumed notes to prevent double-spending |
+### `#[tx_script]`
 
-This separation enables efficient state proofs and supports both public and private modes for accounts and notes.
+Marks a function as a transaction script entry point.
 
-### Transactions
+```rust
+#[tx_script]
+fn my_script(arg: Word) { ... }
+```
 
-Transactions are single-account operations that:
+### `#[export_type]`
 
-1. Consume zero or more input notes
-2. Execute account code and optionally a transaction script
-3. Update account state (storage, vault, nonce)
-4. Produce zero or more output notes
+Exports a custom type for use in public component method signatures.
 
-The single-account model means transactions don't contend for shared state, enabling **parallel execution** across the network.
+```rust
+#[export_type]
+pub struct MyType { pub field: Felt }
+```
 
----
+### `felt!(n)`
 
-## Virtual Machine (miden-vm)
+Creates a `Felt` from an integer literal at compile time. Limited to values ≤ `u32::MAX`.
 
-The Miden VM is a STARK-based virtual machine optimized for zero-knowledge proof generation.
+```rust
+let f = felt!(42);
+```
 
-### Architecture
+### `miden::generate!()`
 
-- **Stack-based** – Operates on a push-down stack of 64-bit prime field elements
-- **Turing-complete** – Supports loops, conditionals, and recursive procedures
-- **Deterministic** – Same inputs always produce same outputs (with controlled nondeterminism for advice)
+Generates WIT bindings for cross-component calls. Creates a `bindings` module.
 
-### Core Components
-
-| Component | Function |
-|-----------|----------|
-| **Decoder** | Fetches and decodes instructions, manages control flow |
-| **Stack** | 16 directly accessible elements, unlimited depth via memory |
-| **Memory** | Random-access read/write storage |
-| **Chiplets** | Specialized circuits for cryptographic and bitwise operations |
-
-### Chiplets
-
-Chiplets are co-processors that accelerate common operations:
-
-- **Hash Chiplet** – Rescue Prime Optimized hashing, Merkle tree operations
-- **Bitwise Chiplet** – AND, XOR, and other bitwise operations on 32-bit integers
-- **Memory Chiplet** – Efficient random-access memory with read/write tracking
-- **Kernel ROM** – Secure execution of privileged kernel procedures
-
-### Miden Assembly (MASM)
-
-MASM is the native instruction set with:
-
-- **Field operations** – Arithmetic on prime field elements
-- **U32 operations** – 32-bit integer arithmetic, bitwise, and comparison
-- **Cryptographic operations** – Hashing, Merkle proofs, signature verification
-- **Control flow** – Conditionals, loops, and procedure calls
-- **Memory operations** – Load/store to local and global memory
+```rust
+miden::generate!();
+bindings::export!(MyNote);
+```
 
 ---
 
-## Compiler
+## Types → [Types](./types)
 
-The compiler toolchain enables writing Miden programs in high-level languages.
+### `Felt`
+
+Field element over the Goldilocks prime ($p = 2^{64} - 2^{32} + 1$).
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `from_u32` | `fn(value: u32) -> Self` | Create from u32 (always safe) |
+| `from_u64_unchecked` | `fn(value: u64) -> Self` | Create from u64 (caller ensures < p) |
+| `new` | `fn(value: u64) -> Result<Self, FeltError>` | Create with validation |
+| `as_u64` | `fn(self) -> u64` | Get canonical u64 representation |
+| `is_odd` | `fn(self) -> bool` | Check parity |
+| `inv` | `fn(self) -> Self` | Multiplicative inverse (panics if 0) |
+| `exp` | `fn(self, other: Self) -> Self` | Exponentiation: self^other mod p |
+| `pow2` | `fn(self) -> Self` | Compute 2^self (panics if > 63) |
+
+**Operators**: `Add`, `Sub`, `Mul`, `Div`, `Neg`, `AddAssign`, `SubAssign`, `MulAssign`, `DivAssign`, `Eq`, `Ord`
+
+### `Word`
+
+Four-element tuple: `(Felt, Felt, Felt, Felt)`. Repr: `#[repr(C, align(16))]`.
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `new` | `fn(word: [Felt; 4]) -> Self` | Create from array |
+| `from_u64_unchecked` | `fn(a: u64, b: u64, c: u64, d: u64) -> Self` | Create from 4 u64 values |
+| `reverse` | `fn(&self) -> Word` | Reverse element order |
+
+**Indexing**: `word[0]` through `word[3]`. Supports `Index<usize>` and `IndexMut<usize>`.
+
+**Conversions**: `From<[Felt; 4]>`, `From<(Felt, Felt, Felt, Felt)>`, `From<Felt>`, `Into<[Felt; 4]>`, `Into<Felt>`
+
+### `Asset`
+
+Wraps a `Word`. Field: `inner: Word`.
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `new` | `fn(word: impl Into<Word>) -> Self` | Create from Word |
+| `as_word` | `fn(&self) -> &Word` | Borrow as Word |
+
+**Fungible encoding**: `[amount, 0, faucet_suffix, faucet_prefix]`
+**Non-fungible encoding**: `[hash0, hash1, hash2, faucet_prefix]`
+
+### `AccountId`
+
+Fields: `prefix: Felt`, `suffix: Felt`.
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `new` | `fn(prefix: Felt, suffix: Felt) -> Self` | Create from prefix/suffix |
+
+### `Recipient`
+
+Field: `inner: Word`.
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `compute` | `fn(serial_num: Word, script_digest: Digest, inputs: Vec<Felt>) -> Self` | Compute from components |
+
+### `Digest`
+
+Field: `inner: Word`.
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `new` | `fn(felts: [Felt; 4]) -> Self` | Create from array |
+| `from_word` | `const fn(word: Word) -> Self` | Create from Word |
+
+### Other types
+
+| Type | Inner | Description |
+|------|-------|-------------|
+| `NoteIdx` | `Felt` | Output note index |
+| `Tag` | `Felt` | Note routing tag |
+| `NoteType` | `Felt` | Note visibility |
+| `StorageSlotId` | `prefix: Felt, suffix: Felt` | Storage slot identifier |
+
+---
+
+## Traits → [Storage](./accounts/storage), [Components](./accounts/components)
+
+### `ValueAccess<V>`
+
+```rust
+pub trait ValueAccess<V> {
+    fn read(&self) -> V;
+    fn write(&mut self, value: V) -> V;  // Returns previous value
+}
+```
+
+Implemented by `Value` for any `V: Into<Word> + From<Word>`.
+
+### `StorageMapAccess<K, V>`
+
+```rust
+pub trait StorageMapAccess<K, V> {
+    fn get(&self, key: &K) -> V;
+    fn set(&mut self, key: K, value: V) -> V;  // Returns previous value
+}
+```
+
+Implemented by `StorageMap` for `K: Into<Word> + AsRef<Word>`, `V: From<Word> + Into<Word>`.
+
+### `ActiveAccount`
+
+Auto-implemented on `#[component]` structs. Provides read-only account queries on `&self`.
+
+### `NativeAccount`
+
+Auto-implemented on `#[component]` structs. Provides account mutations on `&mut self`.
+
+---
+
+## `active_account` module → [Account Operations](./accounts/account-operations)
+
+Read-only account state queries.
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `get_id` | `fn() -> AccountId` | Account ID |
+| `get_nonce` | `fn() -> Felt` | Current nonce |
+| `get_balance` | `fn(faucet_id: AccountId) -> Felt` | Fungible balance for faucet |
+| `get_initial_balance` | `fn(faucet_id: AccountId) -> Felt` | Balance at tx start |
+| `has_non_fungible_asset` | `fn(asset: Asset) -> bool` | Check NFT ownership |
+| `get_initial_commitment` | `fn() -> Word` | Account commitment at tx start |
+| `compute_commitment` | `fn() -> Word` | Current account commitment |
+| `get_code_commitment` | `fn() -> Word` | Code commitment |
+| `get_initial_storage_commitment` | `fn() -> Word` | Storage commitment at tx start |
+| `compute_storage_commitment` | `fn() -> Word` | Current storage commitment |
+| `get_initial_vault_root` | `fn() -> Word` | Vault root at tx start |
+| `get_vault_root` | `fn() -> Word` | Current vault root |
+| `get_num_procedures` | `fn() -> Felt` | Number of exported procedures |
+| `get_procedure_root` | `fn(index: u8) -> Word` | Procedure root at index |
+| `has_procedure` | `fn(proc_root: Word) -> bool` | Check procedure existence |
+
+---
+
+## `native_account` module → [Account Operations](./accounts/account-operations)
+
+Account state mutations (write operations).
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `add_asset` | `fn(asset: Asset) -> Asset` | Add asset to vault |
+| `remove_asset` | `fn(asset: Asset) -> Asset` | Remove asset from vault |
+| `incr_nonce` | `fn() -> Felt` | Increment nonce, return new value |
+| `compute_delta_commitment` | `fn() -> Word` | Commitment of state changes |
+| `was_procedure_called` | `fn(proc_root: Word) -> bool` | Check if procedure was called |
+
+---
+
+## `storage` module → [Storage](./accounts/storage)
+
+Direct storage access (lower-level than `Value`/`StorageMap` traits).
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `get_item` | `fn(slot_id: StorageSlotId) -> Word` | Get slot value |
+| `get_initial_item` | `fn(slot_id: StorageSlotId) -> Word` | Value at tx start |
+| `set_item` | `fn(slot_id: StorageSlotId, value: Word) -> Word` | Set slot, return old |
+| `get_map_item` | `fn(slot_id: StorageSlotId, key: &Word) -> Word` | Get map value |
+| `get_initial_map_item` | `fn(slot_id: StorageSlotId, key: &Word) -> Word` | Map value at tx start |
+| `set_map_item` | `fn(slot_id: StorageSlotId, key: Word, value: Word) -> Word` | Set map value, return old |
+
+---
+
+## `active_note` module → [Notes](./notes/reading-notes)
+
+Access the currently executing note's data.
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `get_inputs` | `fn() -> Vec<Felt>` | Note input values |
+| `get_assets` | `fn() -> Vec<Asset>` | Note assets |
+| `get_sender` | `fn() -> AccountId` | Note sender |
+| `get_recipient` | `fn() -> Recipient` | Note recipient hash |
+| `get_script_root` | `fn() -> Word` | Note script root |
+| `get_serial_number` | `fn() -> Word` | Note serial number |
+| `get_metadata` | `fn() -> NoteMetadata` | Note metadata (attachment + header) |
+
+---
+
+## `output_note` module → [Notes](./notes/output-notes)
+
+Create and manage output notes.
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `create` | `fn(tag: Tag, note_type: NoteType, recipient: Recipient) -> NoteIdx` | Create a new output note |
+| `add_asset` | `fn(asset: Asset, note_idx: NoteIdx)` | Add asset to output note |
+| `get_assets_info` | `fn(note_idx: NoteIdx) -> OutputNoteAssetsInfo` | Assets commitment and count |
+| `get_assets` | `fn(note_idx: NoteIdx) -> Vec<Asset>` | All assets on note |
+| `get_recipient` | `fn(note_idx: NoteIdx) -> Recipient` | Note recipient |
+| `get_metadata` | `fn(note_idx: NoteIdx) -> NoteMetadata` | Note metadata (attachment + header) |
+| `set_attachment` | `fn(note_idx: NoteIdx, scheme: Felt, kind: Felt, data: Word)` | Set attachment with explicit kind |
+| `set_word_attachment` | `fn(note_idx: NoteIdx, scheme: Felt, data: Word)` | Set Word attachment |
+| `set_array_attachment` | `fn(note_idx: NoteIdx, scheme: Felt, data: Word)` | Set array attachment (commitment) |
+
+---
+
+## `input_note` module → [Notes](./notes/reading-notes)
+
+Access specific input notes by index.
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `get_assets_info` | `fn(note_idx: NoteIdx) -> InputNoteAssetsInfo` | Assets commitment and count |
+| `get_assets` | `fn(note_idx: NoteIdx) -> Vec<Asset>` | All assets on note |
+| `get_recipient` | `fn(note_idx: NoteIdx) -> Recipient` | Note recipient |
+| `get_metadata` | `fn(note_idx: NoteIdx) -> NoteMetadata` | Note metadata (attachment + header) |
+| `get_sender` | `fn(note_idx: NoteIdx) -> AccountId` | Note sender |
+| `get_inputs_info` | `fn(note_idx: NoteIdx) -> InputNoteInputsInfo` | Inputs commitment and count |
+| `get_script_root` | `fn(note_idx: NoteIdx) -> Word` | Note script root |
+| `get_serial_number` | `fn(note_idx: NoteIdx) -> Word` | Note serial number |
+
+---
+
+## `tx` module → [Transaction Context](./transactions/transaction-context)
+
+Transaction context queries.
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `get_block_number` | `fn() -> Felt` | Current block number |
+| `get_block_commitment` | `fn() -> Word` | Block header commitment |
+| `get_block_timestamp` | `fn() -> Felt` | Block timestamp (seconds) |
+| `get_input_notes_commitment` | `fn() -> Word` | Hash of all input notes |
+| `get_output_notes_commitment` | `fn() -> Word` | Hash of all output notes |
+| `get_num_input_notes` | `fn() -> Felt` | Number of input notes |
+| `get_num_output_notes` | `fn() -> Felt` | Number of output notes |
+| `get_expiration_block_delta` | `fn() -> Felt` | Expiration delta |
+| `update_expiration_block_delta` | `fn(delta: Felt)` | Set expiration delta |
+
+---
+
+## `asset` module
+
+Asset construction.
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `build_fungible_asset` | `fn(faucet_id: AccountId, amount: Felt) -> Asset` | Create fungible asset |
+| `build_non_fungible_asset` | `fn(faucet_id: AccountId, data_hash: Word) -> Asset` | Create non-fungible asset |
+
+---
+
+## `faucet` module
+
+Faucet operations (for faucet account types only).
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `create_fungible_asset` | `fn(amount: Felt) -> Asset` | Create asset from this faucet |
+| `create_non_fungible_asset` | `fn(data_hash: Word) -> Asset` | Create NFT from this faucet |
+| `mint` | `fn(asset: Asset) -> Asset` | Mint asset |
+| `burn` | `fn(asset: Asset) -> Asset` | Burn asset |
+| `get_total_issuance` | `fn() -> Felt` | Total minted supply |
+| `is_non_fungible_asset_issued` | `fn(asset: Asset) -> bool` | Check if NFT issued |
+
+---
+
+## Cryptography → [Cryptography](./accounts/cryptography)
+
+### Hash functions
+
+```rust
+use miden::{hash_words, blake3_hash, sha256_hash};
+use miden::intrinsics::advice::adv_push_mapvaln;
+```
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `hash_words` | `fn(words: &[Word]) -> Digest` | RPO256 hash of Words |
+| `intrinsics::crypto::merge` | `fn(digests: [Digest; 2]) -> Digest` | RPO 2-to-1 merge |
+| `blake3_hash` | `fn(input: [u8; 32]) -> [u8; 32]` | BLAKE3 hash |
+| `blake3_merge` | `fn(input: [u8; 64]) -> [u8; 32]` | BLAKE3 2-to-1 hash |
+| `sha256_hash` | `fn(input: [u8; 32]) -> [u8; 32]` | SHA256 hash |
+| `sha256_merge` | `fn(input: [u8; 64]) -> [u8; 32]` | SHA256 2-to-1 hash |
+
+### Digital signatures
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `rpo_falcon512_verify` | `fn(pk: Word, msg: Word)` | Verify Falcon512 signature (panics if invalid) |
+
+### Advice provider
+
+```rust
+use miden::intrinsics::advice::{adv_insert, emit_falcon_sig_to_stack, adv_push_mapvaln};
+```
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `adv_insert` | `fn(key: Word, values: &[Word])` | Insert into advice map |
+| `adv_push_mapvaln` | `fn(key: Word) -> Felt` | Push advice map values to stack |
+| `emit_falcon_sig_to_stack` | `fn(msg: Word, pub_key: Word)` | Request Falcon signature |
+
+---
+
+## Assertion functions
+
+```rust
+use miden::{assert, assertz, assert_eq};
+```
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `assert` | `fn(a: Felt)` | Fails if `a != 1` |
+| `assertz` | `fn(a: Felt)` | Fails if `a != 0` |
+| `assert_eq` | `fn(a: Felt, b: Felt)` | Fails if `a != b` |
+
+---
+
+## Allocator
+
+```rust
+use miden::BumpAlloc;
+
+#[global_allocator]
+static ALLOC: BumpAlloc = BumpAlloc::new();
+```
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `new` | `const fn() -> Self` | Create allocator |
+| `alloc` | `unsafe fn(&self, layout: Layout) -> *mut u8` | Allocate (bump pointer) |
+| `dealloc` | `unsafe fn(&self, ptr: *mut u8, layout: Layout)` | No-op (memory not reclaimed) |
+
+Properties: 16-byte minimum alignment, Wasm page size (64KB), grows until exhausted.
+
+---
+
+## Debug
+
+```rust
+use miden::intrinsics::debug::breakpoint;
+```
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `breakpoint` | `fn()` | Set VM breakpoint at call site |
+
+---
+
+## Supported account types
+
+Configure in `Cargo.toml` under `[package.metadata.miden]`:
+
+| Type | Description |
+|------|-------------|
+| `RegularAccountUpdatableCode` | Standard account with updatable code |
+| `RegularAccountImmutableCode` | Account with fixed code |
+| `FungibleFaucet` | Token minting faucet |
+| `NonFungibleFaucet` | NFT minting faucet |
+````
+
+## File: docs/builder/smart-contracts/patterns.md
+````markdown
+---
+title: "Patterns & Security"
+sidebar_position: 6
+draft: true
+description: "Common patterns for access control, rate limiting, spending limits, and security in Miden Rust contracts."
+---
+
+# Patterns & Security
+
+Proven patterns for writing safe, correct Miden smart contracts, followed by security considerations specific to the Miden execution model. Each pattern is presented problem-first: the problem is stated, then the solution is shown with code. For a hands-on tutorial applying these patterns, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
+
+## Common Patterns
+
+### Basic wallet
+
+The simplest useful contract — receive and send assets:
+
+```rust
+#![no_std]
+#![feature(alloc_error_handler)]
+
+use miden::{component, output_note, Asset, NoteIdx};
+
+#[component]
+struct Wallet;
+
+#[component]
+impl Wallet {
+    pub fn receive_asset(&mut self, asset: Asset) {
+        self.add_asset(asset);
+    }
+
+    pub fn send_asset(&mut self, asset: Asset, note_idx: NoteIdx) {
+        let removed = self.remove_asset(asset);
+        output_note::add_asset(removed, note_idx);
+    }
+}
+```
+
+:::note
+All Miden contracts require `#![no_std]`. The remaining examples on this page omit the preamble (`#![no_std]`, `#![feature(alloc_error_handler)]`) for brevity. See [Toolchain & Project Structure](./getting-started#no_std-environment) for the full setup.
+:::
+
+### Counter
+
+Track a numeric value in storage:
+
+```rust
+use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
+
+#[component]
+struct Counter {
+    #[storage(description = "counter storage map")]
+    count_map: StorageMap,
+}
+
+#[component]
+impl Counter {
+    pub fn get_count(&self) -> Felt {
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
+        self.count_map.get(&key)
+    }
+
+    pub fn increment_count(&mut self) -> Felt {
+        let key = Word::from_u64_unchecked(0, 0, 0, 1);
+        let current: Felt = self.count_map.get(&key);
+        let new_value = current + felt!(1);
+        self.count_map.set(key, new_value);
+        new_value
+    }
+}
+```
+
+### Access control
+
+:::warning[No msg.sender in account components]
+Unlike Solidity, account component procedures cannot check "who is calling me." In Miden:
+- **Note scripts** can check who created the note via `active_note::get_sender()`
+- **Account components** rely on authentication components (Falcon512, ECDSA) which the transaction kernel invokes automatically in the epilogue
+:::
+
+#### Note-based ownership check
+
+Note scripts can restrict execution to notes from a specific sender. This mirrors how the protocol-level `ownable` standard works (`miden-standards/asm/standards/access/ownable.masm`):
+
+```rust
+use miden::*;
+
+/// A note that only executes if created by the expected owner account.
+#[note]
+struct OwnerOnlyNote;
+
+#[note]
+impl OwnerOnlyNote {
+    #[note_script]
+    pub fn run(self, _arg: Word) {
+        // Get the account that created this note
+        let sender = active_note::get_sender();
+
+        // Compare against the expected owner
+        // In practice, load this from account storage
+        let expected_prefix = Felt::from_u64_unchecked(0x1234); // placeholder
+        let expected_suffix = Felt::from_u64_unchecked(0x5678); // placeholder
+
+        assert_eq(sender.prefix, expected_prefix);
+        assert_eq(sender.suffix, expected_suffix);
+
+        // ... proceed with privileged operation
+    }
+}
+```
+
+#### Authentication components
+
+For most account-level access control, Miden uses authentication components rather than manual sender checks. The transaction kernel calls the account's `auth` procedure automatically during the transaction epilogue — if the signature is invalid, the entire transaction fails. See [Authentication](./accounts/authentication) for the full pattern.
+
+### Rate limiting {#rate-limiting}
+
+Enforce cooldown periods between actions:
+
+```rust
+use miden::{component, felt, tx, Felt, Value, ValueAccess, Word};
+
+const COOLDOWN_BLOCKS: u64 = 100;
+
+#[component]
+struct RateLimited {
+    #[storage(description = "last action block")]
+    last_action: Value,
+}
+
+#[component]
+impl RateLimited {
+    pub fn rate_limited_action(&mut self) -> Felt {
+        let state: Word = self.last_action.read();
+        let last_block = state[0].as_u64();
+        let current_block = tx::get_block_number().as_u64();
+
+        assert!(current_block.saturating_sub(last_block) >= COOLDOWN_BLOCKS);
+
+        self.last_action.write(Word::from([
+            tx::get_block_number(), felt!(0), felt!(0), felt!(0),
+        ]));
+
+        tx::get_block_number()
+    }
+}
+```
+
+### Spending limits
+
+Cap per-transaction and daily spending:
+
+```rust
+use miden::{component, felt, output_note, tx, Asset, Felt, NoteIdx, Value, ValueAccess, Word};
+
+const BLOCKS_PER_DAY: u64 = 28800;
+
+#[component]
+struct LimitedWallet {
+    #[storage(description = "limits: [max_per_tx, daily_max, 0, 0]")]
+    limits: Value,
+
+    #[storage(description = "state: [daily_spent, last_reset, 0, 0]")]
+    state: Value,
+}
+
+#[component]
+impl LimitedWallet {
+    pub fn send(&mut self, asset: Asset, note_idx: NoteIdx) {
+        let amount = asset.inner[0].as_u64();
+
+        // Check per-tx limit
+        let limits: Word = self.limits.read();
+        assert!(amount <= limits[0].as_u64());
+
+        // Check daily limit with auto-reset
+        let state: Word = self.state.read();
+        let daily_spent = state[0].as_u64();
+        let last_reset = state[1].as_u64();
+        let current_block = tx::get_block_number().as_u64();
+        let blocks_since_reset = current_block.saturating_sub(last_reset);
+
+        let effective_daily = if blocks_since_reset >= BLOCKS_PER_DAY { 0 } else { daily_spent };
+        assert!(effective_daily + amount <= limits[1].as_u64());
+
+        // Update state
+        let new_reset = if blocks_since_reset >= BLOCKS_PER_DAY {
+            tx::get_block_number()
+        } else {
+            Felt::from_u64_unchecked(last_reset)
+        };
+        self.state.write(Word::from([
+            Felt::from_u64_unchecked(effective_daily + amount),
+            new_reset, felt!(0), felt!(0),
+        ]));
+
+        // Execute transfer
+        let removed = self.remove_asset(asset);
+        output_note::add_asset(removed, note_idx);
+    }
+}
+```
+
+## Security
+
+### Assertions and error handling
+
+Miden doesn't support error strings or `Result` types in contract execution. Use assertions:
+
+```rust
+// Good — clear, simple assertions
+assert!(amount > felt!(0));
+assert!(amount.as_u64() <= 1_000_000);
+
+// Also available — SDK assertion functions
+use miden::{assert_eq, assertz};
+assert_eq(a, b);     // Fails if a != b
+assertz(flag);       // Fails if flag != 0
+```
+
+When an assertion fails, proof generation fails and the transaction is rejected before reaching the network.
+
+### Replay protection
+
+Always increment the nonce when modifying account state (see [Authentication](./accounts/authentication) for the full pattern):
+
+```rust
+// The auth component should call incr_nonce()
+let new_nonce = self.incr_nonce();
+```
+
+Without nonce management, the same transaction proof could be submitted multiple times.
+
+### Safe arithmetic
+
+Use `saturating_sub` to prevent underflow:
+
+```rust
+// Good — won't underflow
+let elapsed = current_block.saturating_sub(last_block);
+
+// Dangerous — could underflow if current < last
+let elapsed = current_block - last_block;
+```
+
+For Felt arithmetic, values wrap modulo the prime field (no overflow panic), but the result may not be what you expect if you're treating Felts as integers.
+
+### Anti-patterns
+
+#### Don't use integer division with Felt
+
+```rust
+// WRONG — Felt division computes multiplicative inverse, not integer division
+let half = amount / felt!(2);
+
+// RIGHT — convert to u64 for integer division
+let half = Felt::from_u64_unchecked(amount.as_u64() / 2);
+```
+
+#### Don't compare Felts with `>` or `<` directly
+
+```rust
+// WRONG — Felt comparison is over field elements, not integers
+if amount > felt!(100) { ... }
+
+// RIGHT — convert to u64 for numeric comparison
+if amount.as_u64() > 100 { ... }
+```
+
+#### Don't store secrets in contract code
+
+Contract code is visible on-chain. Never embed private keys, seeds, or other secrets.
+
+#### Don't skip nonce management
+
+Every state-changing transaction must increment the nonce to prevent replay attacks.
+
+For the complete function reference, see the [Cheatsheet](./api-reference).
+
+## `#![no_std]` Environment
+
+All Miden contracts run without the standard library. This means:
+
+### Standard library alternatives
+
+| Not available | Alternative |
+|---------------|-------------|
+| `std::collections::HashMap` | Use `StorageMap` for on-chain state |
+| `std::string::String` | Use `alloc::string::String` with allocator |
+| `std::vec::Vec` | Use `alloc::vec::Vec` with allocator |
+| `println!()` / `eprintln!()` | Use `miden::intrinsics::debug::breakpoint()` for debugging |
+| `std::io` | Not available |
+| Error strings in `assert!()` | Use `assert!(condition)` without messages |
+
+### Using the allocator
+
+If you need heap allocation (`Vec`, `String`, etc.), add the bump allocator:
+
+```rust
+#![no_std]
+#![feature(alloc_error_handler)]
+
+extern crate alloc;
+use alloc::vec::Vec;
+
+#[global_allocator]
+static ALLOC: miden::BumpAlloc = miden::BumpAlloc::new();
+
+#[cfg(not(test))]
+#[panic_handler]
+fn my_panic(_info: &core::panic::PanicInfo) -> ! {
+    loop {}
+}
+
+#[cfg(not(test))]
+#[alloc_error_handler]
+fn my_alloc_error(_info: core::alloc::Layout) -> ! {
+    loop {}
+}
+```
+
+`BumpAlloc` is a bump allocator — it grows memory but never frees it. This is fine for short-lived transaction execution.
+````
+
+## File: docs/builder/smart-contracts/overview.md
+````markdown
+---
+title: "What is a Miden Smart Contract"
+sidebar_position: 1
+description: "Miden's execution model, account structure, note system, and transaction lifecycle — how Rust code becomes zero-knowledge proofs."
+---
+
+# What is a Miden Smart Contract
+
+Miden is a ZK rollup where transactions execute on the client and only a cryptographic proof is submitted to the network. Every entity — wallets, contracts, faucets — is an account with code, storage, a vault, and a nonce. Assets move between accounts through notes, which act as programmable UTXOs. This page describes the execution model, account structure, note system, and transaction lifecycle. For a hands-on walkthrough, see the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
+
+## What makes Miden different
+
+On Ethereum, smart contracts execute on every node. On Miden, **transactions execute locally on the client** — and only a cryptographic proof is submitted to the network.
+
+This means:
+
+- **Privacy by default** — The network sees the proof, not the inputs
+- **Parallel execution** — Transactions don't compete for block space
+- **Lower fees** — No gas wars; proofs are cheap to verify
+- **Client-side proving** — Your machine generates the ZK proof
+
+## The compilation pipeline
+
+Your Rust code goes through several transformations before it runs:
+
+```
+Rust → Wasm → Miden Assembly (MASM) → ZK Circuit → Proof
+```
+
+1. **Rust → Wasm**: The Miden compiler (`cargo-miden`) compiles your `#![no_std]` Rust to WebAssembly
+2. **Wasm → MASM**: The compiler translates Wasm to Miden Assembly, the VM's native instruction set
+3. **MASM → Proof**: When a transaction executes, the Miden VM runs the MASM code and produces a zero-knowledge proof
+
+The output of `miden build` is a `.masp` file (Miden Assembly Package) containing the compiled MASM and metadata.
+
+## The account model
+
+Every entity on Miden is an **account**. Accounts are smart contracts — even user wallets.
+
+An account has four parts:
+
+| Part | Description |
+|------|-------------|
+| **Code** | One or more components that define the account's behavior |
+| **Storage** | Persistent state — up to 255 slots of `Value` or `StorageMap` |
+| **Vault** | The assets (fungible and non-fungible) the account holds |
+| **Nonce** | A counter that increments with every state change (replay protection) |
 
 ### Components
 
-- **cargo-miden** – Cargo extension for building Miden projects
-- **midenc** – Core compiler from WebAssembly to Miden Assembly
-- **Debugger** – Interactive debugging with breakpoints and state inspection
+Components are reusable code modules attached to accounts. Think of them as **traits or mixins**, not monolithic contracts. An account can have multiple components.
 
-### Compilation Pipeline
+```rust
+#[component]
+struct MyWallet;
+
+#[component]
+impl MyWallet {
+    pub fn receive_asset(&mut self, asset: Asset) {
+        self.add_asset(asset);
+    }
+}
+```
+
+Each component defines its own storage layout and public methods. The `#[component]` macro generates the necessary WIT (WebAssembly Interface Type) definitions for cross-component interoperability.
+
+See [Components](./accounts/components) for full details.
+
+## Notes as UTXOs
+
+Assets don't transfer directly between accounts. Instead, they move through **notes** — programmable messages that carry assets and logic.
 
 ```
-   Rust       →    WebAssembly    →    Miden IR    →    MASM
- (source)         (Wasm binary)      (compiler IR)    (assembly)
+Sender Account → creates Note (with assets + script) → Recipient Account consumes Note
 ```
 
-The compiler supports:
+Notes are similar to Bitcoin's UTXOs, but with arbitrary programmable logic. A note contains:
 
-- **Account components** – Reusable smart contract modules
-- **Note scripts** – Logic executed when notes are consumed
-- **Transaction scripts** – Custom transaction execution logic
+- **Assets**: The tokens or NFTs being transferred
+- **Script**: Code that executes when the note is consumed (e.g., "only account X can claim this")
+- **Inputs**: Custom data the script can read
 
----
+The most common pattern is **P2ID** (Pay to ID) — a note that can only be consumed by a specific account.
 
-## Node (miden-node)
+See [Notes](./notes/) for implementation details.
 
-The node is the network infrastructure that receives transactions and produces blocks.
+## Transaction flow
 
-### Responsibilities
+A transaction in Miden follows this flow:
 
-- Receive and validate proven transactions via gRPC
-- Aggregate transaction proofs into batches
-- Produce blocks with aggregated proofs
-- Maintain state databases and serve sync requests
+```mermaid
+flowchart LR
+    A[Client builds tx locally] --> B[VM executes MASM]
+    B --> C[Proof generated]
+    C --> D[Proof submitted to network]
+    D --> E[Network verifies proof]
+    E --> F[State updated]
+```
 
-### gRPC API
+1. **Build**: The client assembles the transaction — which notes to consume, which account methods to call
+2. **Execute**: The Miden VM executes the transaction locally
+3. **Prove**: The VM produces a zero-knowledge proof of correct execution
+4. **Submit**: Only the proof (and state commitments) go to the network
+5. **Verify**: The network verifies the proof and updates state
 
-The node exposes endpoints for:
+:::info Privacy
+Because execution happens locally, the network never sees your transaction inputs, the account's private state, or the logic that ran. It only sees that the proof is valid and the resulting state commitments.
+:::
 
-- **Account queries** – Get account details, proofs, and storage
-- **Note queries** – Retrieve notes by ID or script
-- **Block queries** – Fetch block headers and contents
-- **Sync operations** – Synchronize client state with the network
-- **Transaction submission** – Submit proven transactions
+## What "proof generation fails" means
 
----
+When you write assertions in Miden contracts:
 
-## Further Reading
+```rust
+assert!(amount > felt!(0));
+```
 
-- **[Build Documentation](../builder/)** – Practical guides for building on Miden
-- **[Quick Start](../builder/quick-start/)** – Get started with your first transaction
-- **[FAQ](../builder/faq)** – Common questions answered
+If the assertion fails, the ZK circuit **cannot produce a valid proof**. This means:
+
+- The transaction is rejected **before it ever reaches the network**
+- No state changes occur — it's as if the transaction never happened
+- The client gets an error explaining which assertion failed
+
+This is fundamentally different from Ethereum's `revert` — there's no on-chain transaction that fails. The proof simply doesn't exist if the execution is invalid.
+
+## Account types
+
+Miden supports several account types, configured in `Cargo.toml`:
+
+| Type | Description |
+|------|-------------|
+| `RegularAccountUpdatableCode` | Standard account — code can be updated after deployment |
+| `RegularAccountImmutableCode` | Account with fixed code — cannot be changed |
+| `FungibleFaucet` | Token minting account (fungible assets) |
+| `NonFungibleFaucet` | NFT minting account (non-fungible assets) |
+
+## Building blocks
+
+| Building Block | Description | Details |
+|----------------|-------------|---------|
+| [Components](./accounts/components) | Reusable code modules with storage and WIT interfaces | `#[component]` macro |
+| [Storage](./accounts/storage) | Up to 255 slots of Value or StorageMap | Persistent state |
+| [Custom Types](./accounts/custom-types) | Exported structs/enums for public APIs | `#[export_type]` |
+| [Account Operations](./accounts/account-operations) | Read/write account state and vault | `active_account`, `native_account` |
+| [Notes](./notes/) | Programmable UTXOs for asset transfers | Note scripts |
+| [The tx Module](./transactions/transaction-context) | Block queries and expiration management | `tx` module, `#[tx_script]` |
+| [Authentication](./accounts/authentication) | Falcon512 signatures and replay protection | Nonce management |
+| [Cross-Component Calls](./cross-component-calls) | Inter-component communication | WIT bindings, `generate!()` |
+| [Types](./types) | Felt, Word, Asset — the VM's native types | Field arithmetic |
+
+Ready to start building? Follow the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/) for a hands-on walkthrough.
 ````
 
 
