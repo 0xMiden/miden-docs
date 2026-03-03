@@ -38,7 +38,7 @@ impl Wallet {
 ```
 
 :::note
-All Miden contracts require `#![no_std]`. The remaining examples on this page omit the preamble (`#![no_std]`, `#![feature(alloc_error_handler)]`) for brevity. See [Toolchain & Project Structure](./getting-started#common-no_std-patterns) for the full setup.
+All Miden contracts require `#![no_std]`. The remaining examples on this page omit the preamble (`#![no_std]`, `#![feature(alloc_error_handler)]`) for brevity. See the [quick-start guide](../quick-start/) for the full `#![no_std]` setup.
 :::
 
 ### Counter
@@ -286,4 +286,4 @@ All Miden contracts run without the standard library. This means:
 
 ### Heap allocation
 
-If you need heap allocation (`Vec`, `String`, etc.), the SDK provides a bump allocator. See [Toolchain & Project Structure](./getting-started#common-no_std-patterns) for setup details.
+If you need heap allocation (`Vec`, `String`, etc.), the SDK provides a bump allocator. See the [quick-start guide](../quick-start/) for setup details.
