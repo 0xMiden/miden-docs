@@ -148,7 +148,7 @@ No. Miden uses its own virtual machine (the Miden VM) and its own assembly langu
 
 How do I test my Miden smart contracts locally?
 
-Miden provides MockChain — a local testing environment that simulates the Miden network without requiring a live node connection. MockChain allows you to write unit tests for your smart contracts, verify state transitions, and debug issues before deploying to testnet. See the [Testing with MockChain](/builder/develop/tutorials/rust-compiler/testing) guide for details.
+Miden provides MockChain a local testing environment that simulates the Miden network without requiring a live node connection. MockChain allows you to write unit tests for your smart contracts, verify state transitions, and debug issues before deploying to testnet. See the [Testing with MockChain](/builder/develop/tutorials/rust-compiler/testing) guide for details.
 
 ## What is `midenup` and how do I install it?
 
