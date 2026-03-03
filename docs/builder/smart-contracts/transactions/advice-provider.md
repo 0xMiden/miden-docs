@@ -53,10 +53,6 @@ use miden::intrinsics::advice::adv_push_mapvaln;
 let num_felts: Felt = adv_push_mapvaln(key);
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `key` | `Word` | Key to look up in the advice map |
-| **Returns** | `Felt` | Number of `Felt` elements pushed onto the advice stack |
 
 ### `adv_load_preimage`
 
@@ -69,11 +65,6 @@ use miden::stdlib::mem::adv_load_preimage;
 let felts: Vec<Felt> = adv_load_preimage(num_words, commitment);
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `num_words` | `Felt` | Number of `Word`s to load |
-| `commitment` | `Word` | Expected hash of the preimage data |
-| **Returns** | `Vec<Felt>` | The preimage data as a flat vector of `Felt` elements |
 
 ### Pattern: passing structured data to a transaction script
 
@@ -111,10 +102,6 @@ let values: &[Word] = &[word_a, word_b];
 adv_insert(key, values);
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `key` | `Word` | Key under which to store the data |
-| `values` | `&[Word]` | Slice of `Word`s to store |
 
 ### `adv_insert_mem`
 
@@ -126,11 +113,6 @@ use miden::intrinsics::advice::adv_insert_mem;
 adv_insert_mem(key, start_addr, end_addr);
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `key` | `Word` | Key under which to store the data |
-| `start_addr` | `u32` | Start memory address (inclusive) |
-| `end_addr` | `u32` | End memory address (exclusive) |
 
 ## Requesting a Falcon signature
 
@@ -143,10 +125,6 @@ use miden::intrinsics::advice::emit_falcon_sig_to_stack;
 emit_falcon_sig_to_stack(msg, pub_key);
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `msg` | `Word` | RPO256 hash of the message to sign |
-| `pub_key` | `Word` | RPO256 hash of the signer's public key |
 
 :::info API Reference
 Full API docs on docs.rs: [`miden::intrinsics::advice`](https://docs.rs/miden/latest/miden/intrinsics/advice/)

@@ -259,15 +259,7 @@ assert_eq!(current.suffix, expected.suffix);
 
 ## Other types
 
-| Type | Definition | Description |
-|------|-----------|-------------|
-| `NoteIdx` | `{ inner: Felt }` | Index of an output note in the current transaction |
-| `Tag` | `{ inner: Felt }` | Note tag for filtering/routing |
-| `NoteType` | `{ inner: Felt }` | Note visibility (public or private) |
-| `Recipient` | `{ inner: Word }` | Computed note recipient (hash of serial number + script + inputs) |
-| `Digest` | `{ inner: Word }` | Cryptographic hash output (RPO256) |
-| `StorageSlotId` | `{ suffix: Felt, prefix: Felt }` | Identifies a storage slot |
-
+The SDK also provides `NoteIdx`, `Tag`, `NoteType`, `Recipient`, `Digest`, and `StorageSlotId`. See the [full API docs on docs.rs](https://docs.rs/miden/latest/miden/) for their definitions.
 ## Type conversion table
 
 | From | To | Method |
