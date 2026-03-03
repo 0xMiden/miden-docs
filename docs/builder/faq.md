@@ -4,11 +4,11 @@ How is privacy implemented in Miden?
 
 Miden leverages zero-knowledge proofs and client side execution and proving to provide security and privacy.
 
-## Does Miden support encrypted notes?
+Does Miden support encrypted notes?
 
 At the moment, Miden does not have support for encrypted notes but it is a planned feature.
 
-## Why does Miden have delegated proving?
+Why does Miden have delegated proving?
 
 Miden leverages delegated proving for a few technical and practical reasons:
 
@@ -45,7 +45,7 @@ What is the lifecycle of a transaction?
 
 - The current state relevant to the transaction is loaded
 - The Miden VM executes the transaction operations
-- **State Transition Computation**: The resulting state transitions are computed
+- State Transition Computation: The resulting state transitions are computed
 - An execution trace of the transaction is generated which captures all the computation
 
 5. Proof Generation
@@ -99,3 +99,70 @@ Miden does not yet have a fully operational bridge, work in progress.
 What does the gas fee model of Miden look like?
 
 Miden does not yet have a fully implemented fee model, work in progress.
+
+What is a note in Miden?
+
+A note is the primary mechanism for transferring assets and communicating between accounts in Miden. Unlike account-to-account transfers on most blockchains, Miden uses a note-based model where assets are wrapped in notes that are consumed by recipient accounts. Each note contains assets, a script that defines the conditions under which it can be consumed, and inputs that parameterize that script.
+
+What is the difference between a public and a private transaction?
+
+In a public transaction, the transaction details including inputs, outputs, and state changes are visible on-chain. In a private transaction, execution happens client-side and only a validity proof is submitted to the network. The network verifies the proof without learning the details of the transaction. This is one of Miden's core differentiators: privacy is not a layer added on top, but a property built into the transaction model itself.
+
+What programming languages can I use to build on Miden?
+
+Miden supports two primary development paths:
+
+- Rust: Using the Miden Rust Compiler, you can write smart contracts in Rust. The compiler transpiles Rust code into Miden Assembly (MASM) which runs on the Miden VM.
+- Miden Assembly (MASM): A low-level assembly language that runs directly on the Miden VM. MASM can be written manually for more fine-grained control.
+
+For interacting with the network programmatically, Miden provides:
+
+- Rust Client: A Rust library for backend developers
+- Web Client: A TypeScript library for frontend and browser-based applications
+
+What is the difference between the Rust Client and the Web Client?
+
+Both clients allow you to deploy accounts, create transactions, and interact with the Miden network but they are designed for different use cases:
+
+| Rust Client | Web Client |
+| Language | Rust | TypeScript |
+| Environment | Backend / native applications | Browser / frontend applications |
+| State storage | Local filesystem | Browser storage |
+| Best for | Programmatic interaction, scripts, server-side apps | Web applications, dApps |
+
+If you are building a backend service or running scripts, use the Rust Client. If you are building a browser-based application, use the Web Client.
+
+Is there a testnet? How do I connect to it?
+
+Yes, Miden has a public testnet. You can connect to it at:
+```rpc.testnet.miden.io:443```
+To get testnet tokens, visit the [Miden Faucet](https://faucet.testnet.miden.io/). To explore accounts and transactions on testnet, use [Miden Scan](https://testnet.midenscan.com/).
+
+Is Miden EVM-compatible?
+
+No. Miden uses its own virtual machine (the Miden VM) and its own assembly language (MASM). It is not EVM-compatible and does not run Solidity contracts. This is an intentional architectural decision the Miden VM is purpose-built for efficient STARK proof generation, which requires a different design than the EVM.
+
+How do I test my Miden smart contracts locally?
+
+Miden provides MockChain a local testing environment that simulates the Miden network without requiring a live node connection. MockChain allows you to write unit tests for your smart contracts, verify state transitions, and debug issues before deploying to testnet. See the [Testing with MockChain](/builder/develop/tutorials/rust-compiler/testing) guide for details.
+
+What is `midenup` and how do I install it?
+
+`midenup` is the official Miden toolchain installer, similar to `rustup` for Rust. It manages Miden toolchain versions and installs the `miden` CLI. To install it, follow the [Quick Start guide](/builder/quick-start/).
+
+> Note for Ubuntu/Linux users: After installation, you may need to add the Miden binaries to your PATH manually. If `miden --version` returns "command not found" after installing, run:
+> ```bash
+> echo 'export PATH="/home/YOUR_USERNAME/.local/share/midenup/bin:$PATH"' >> ~/.bashrc
+> source ~/.bashrc
+> ```
+> Replace `YOUR_USERNAME` with your actual username.
+
+Can I try Miden without installing anything?
+
+Yes. The [Miden Playground](https://playground.miden.xyz) is a browser-based environment where you can write and run MASM programs without any local setup. It is the recommended starting point for developers who want to explore Miden before committing to a full local installation.
+
+Where can I get help if I'm stuck?
+
+- [Build On Miden Telegram](https://t.me/BuildOnMiden) — the most active community channel for developer questions
+- [GitHub Issues](https://github.com/0xMiden/miden-docs/issues) — for documentation bugs or gaps
+- [Miden Docs](https://docs.miden.xyz) — full technical reference
