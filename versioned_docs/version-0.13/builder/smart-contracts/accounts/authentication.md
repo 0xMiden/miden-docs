@@ -85,7 +85,7 @@ let new_nonce: Felt = self.incr_nonce();
 
 The nonce is automatically included in the transaction's proof. If someone tries to replay a transaction, the nonce won't match and verification will fail.
 
-Auth components are typically called via [cross-component calls](../cross-component-calls) from note scripts or [transaction scripts](../transactions/transaction-scripts). For access control and security patterns, see [Patterns & Security](../patterns).
+Auth components are typically called via [cross-component calls](../cross-component-calls) from note scripts or [transaction scripts](../transactions/transaction-scripts). For access control and security patterns, see [Patterns](../patterns).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`rpo_falcon512_verify`)
@@ -95,4 +95,4 @@ Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`rpo_f
 
 - [Cryptography](./cryptography) — RPO-Falcon512 verification and hashing primitives
 - [Advice Provider](../transactions/advice-provider) — supplying auxiliary data during proof generation
-- [Patterns & Security](../patterns) — access control, rate limiting, and anti-patterns
+- [Patterns](../patterns) — access control, rate limiting, and anti-patterns

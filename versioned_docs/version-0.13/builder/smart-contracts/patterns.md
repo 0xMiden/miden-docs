@@ -1,10 +1,10 @@
 ---
-title: "Patterns & Security"
+title: "Patterns"
 sidebar_position: 6
 description: "Common patterns and security considerations for Miden smart contracts."
 ---
 
-# Patterns & Security
+# Patterns
 
 Security considerations and common patterns for Miden smart contracts. For runnable examples, see the [compiler examples directory](https://github.com/0xMiden/compiler/tree/next/examples) and the [Miden Bank Tutorial](../develop/tutorials/rust-compiler/miden-bank/).
 

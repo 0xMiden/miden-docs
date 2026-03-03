@@ -85,7 +85,7 @@ import DocCard from '@theme/DocCard';
       item={{
         type: 'link',
         href: './patterns',
-        label: 'Patterns & Security',
+        label: 'Patterns',
         description: 'Access control, rate limiting, spending limits, and anti-patterns.',
       }}
     />

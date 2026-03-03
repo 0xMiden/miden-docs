@@ -59,7 +59,7 @@ The expiration delta determines how many blocks after creation the transaction r
 
 Transaction scripts use the `#[tx_script]` macro to define a top-level entry point for the transaction. See [Transaction Scripts](./transaction-scripts) for the full `#[tx_script]` API and examples.
 
-For signature verification using the transaction context, see [Authentication](../accounts/authentication). For time-based patterns using `tx::get_block_number()`, see [Patterns & Security — Rate limiting](../patterns#rate-limiting).
+For signature verification using the transaction context, see [Authentication](../accounts/authentication). For time-based patterns using `tx::get_block_number()`, see [Patterns — Rate limiting](../patterns#rate-limiting).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden::tx`](https://docs.rs/miden/latest/miden/tx/)
