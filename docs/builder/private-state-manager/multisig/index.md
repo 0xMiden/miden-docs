@@ -15,17 +15,57 @@ Miden multisig accounts store their authentication logic on-chain, but **their s
 2. **Sign**: Other authorized cosigners fetch the pending proposal from PSM, verify the transaction details locally, and submit their signatures.
 3. **Execute**: Once the threshold is met, any cosigner builds the final transaction using all collected signatures plus the PSM acknowledgement, and submits it on-chain.
 
-```text
-Signer A (proposer)         PSM Server           Signer B (cosigner)
-        │                       │                        │
-        ├── propose tx ────────►│                        │
-        │                       │◄── fetch proposals ────┤
-        │                       │                        │
-        │                       │◄── sign proposal ──────┤
-        │                       │                        │
-        ├── execute tx ────────►│                        │
-        │   (all signatures)    │                        │
+```mermaid
+sequenceDiagram
+    participant A as Signer A (proposer)
+    participant PSM as PSM Server
+    participant B as Signer B (cosigner)
+    participant Chain as Miden Network
+
+    A->>A: Build transaction locally
+    A->>PSM: Push delta proposal<br/>(tx_summary + signature)
+    PSM->>PSM: Validate against state & network
+
+    B->>PSM: Fetch pending proposals
+    PSM-->>B: Return proposal details
+    B->>B: Verify transaction locally
+    B->>PSM: Sign proposal
+
+    Note over PSM: Threshold met (2-of-3)
+
+    A->>PSM: Push delta<br/>(with all signatures)
+    PSM-->>A: Acknowledged delta
+    A->>Chain: Submit ZK proof
+    Chain-->>PSM: Commitment confirmed
+    PSM->>PSM: Mark canonical
 ```
+
+## Key architecture: 2-of-3 non-custodial setup
+
+A common multisig configuration uses a 2-of-3 threshold:
+
+| Key | Holder | Purpose |
+|---|---|---|
+| **Key 1** | User hot key | Daily transactions |
+| **Key 2** | User cold key | Recovery and emergency override |
+| **Key 3** | PSM service key | Co-signing and policy enforcement |
+
+```mermaid
+graph TD
+    subgraph "Normal operation (Hot + PSM)"
+        Hot["User Hot Key"] --> TX["Transaction"]
+        PSMKey["PSM Service Key"] --> TX
+    end
+
+    subgraph "Emergency override (Hot + Cold)"
+        Hot2["User Hot Key"] --> Override["Rotate PSM<br/>Adjust policies<br/>Switch providers"]
+        Cold["User Cold Key"] --> Override
+    end
+```
+
+- **Normal operations**: The hot key plus PSM's co-signature are sufficient. PSM verifies the signer is working from the latest state and checks any configured policies.
+- **Emergency override**: The hot and cold keys alone can rotate out PSM, adjust policies, or switch providers — ensuring the user always retains ultimate control.
+- **PSM alone cannot move funds**: It holds only one key and needs the user's key to co-sign any transaction.
 
 ## Transaction types
 
@@ -43,6 +83,24 @@ The multisig SDKs support these transaction types:
 ## Offline fallback
 
 If the PSM server is unreachable, the SDKs support offline workflows:
+
+```mermaid
+sequenceDiagram
+    participant A as Signer A
+    participant File as JSON File<br/>(side channel)
+    participant B as Signer B
+
+    A->>A: Create proposal offline
+    A->>File: Export proposal.json
+
+    File-->>B: Share via email, chat, etc.
+    B->>B: Sign proposal locally
+    B->>File: Export signed proposal
+
+    File-->>A: Return signed file
+    A->>A: Collect enough signatures
+    A->>A: Execute transaction on-chain
+```
 
 1. Create a proposal locally and export it as a JSON file.
 2. Share the file with cosigners through any side channel.

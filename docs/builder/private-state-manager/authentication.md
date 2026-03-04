@@ -49,11 +49,28 @@ Each account is configured with an authentication policy that specifies which pu
 }
 ```
 
-When a request arrives, the server:
+When a request arrives, the server verifies the credentials:
 
-1. Derives the commitment from the supplied public key.
-2. Checks that the commitment is in the account's allowlist.
-3. Verifies the Falcon signature over the `(account_id, timestamp)` digest.
+```mermaid
+sequenceDiagram
+    participant Client
+    participant PSM as PSM Server
+
+    Client->>PSM: Request + x-pubkey, x-signature, x-timestamp
+
+    PSM->>PSM: 1. Derive commitment from public key
+    PSM->>PSM: 2. Check commitment is in account allowlist
+    PSM->>PSM: 3. Verify timestamp within 300s window
+    PSM->>PSM: 4. Check timestamp > last_auth_timestamp
+    PSM->>PSM: 5. Verify Falcon signature over<br/>(account_id, timestamp) digest
+
+    alt All checks pass
+        PSM->>PSM: Update last_auth_timestamp (CAS)
+        PSM-->>Client: Process request
+    else Any check fails
+        PSM-->>Client: 400 AuthenticationFailed
+    end
+```
 
 Only requests from keys in the allowlist are accepted.
 

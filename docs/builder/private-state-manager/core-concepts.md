@@ -40,6 +40,8 @@ A **delta** represents a set of changes applied to a state. Deltas are append-on
 }
 ```
 
+One useful mental model: a delta is a compact, replayable description of "what changed" in an account's local state. Deltas can be used to sync, back up, and reconstruct state without shipping full snapshots.
+
 Key properties of deltas:
 
 - **Ordered**: Each delta has a nonce that determines its position in the chain.
@@ -47,9 +49,18 @@ Key properties of deltas:
 - **Validated**: The server verifies each delta against the Miden network before accepting it.
 - **Acknowledged**: Once accepted, the server signs the delta's new commitment, providing cryptographic proof that it was processed.
 
-### Delta status
+### Delta lifecycle
 
-Each delta goes through a lifecycle:
+Each delta goes through a state machine:
+
+```mermaid
+stateDiagram-v2
+    [*] --> candidate : push_delta
+    candidate --> canonical : On-chain commitment matches
+    candidate --> discarded : On-chain commitment mismatch
+    canonical --> [*]
+    discarded --> [*]
+```
 
 | Status | Meaning |
 |---|---|
@@ -67,16 +78,26 @@ A **delta proposal** is a coordination mechanism for multi-party accounts. When 
 2. **Sign**: Other authorized cosigners fetch the pending proposal, verify it locally, and submit their signatures to PSM.
 3. **Execute**: Once enough signatures are collected (meeting the account's threshold), any cosigner can promote the proposal to a canonical delta by calling `push_delta` with the collected signatures.
 
-```text
-Proposer                    PSM                     Cosigner
-   │                         │                         │
-   ├── push_delta_proposal ─►│                         │
-   │                         │◄── get_delta_proposals ─┤
-   │                         │                         │
-   │                         │◄── sign_delta_proposal ─┤
-   │                         │                         │
-   ├── push_delta ──────────►│  (with all signatures)  │
-   │                         │                         │
+```mermaid
+sequenceDiagram
+    participant P as Proposer
+    participant PSM as PSM Server
+    participant C as Cosigner
+
+    P->>PSM: push_delta_proposal<br/>(tx_summary + initial signature)
+    PSM->>PSM: Validate against current state
+    PSM-->>P: Return proposal with commitment
+
+    C->>PSM: get_delta_proposals
+    PSM-->>C: Return pending proposals
+
+    C->>C: Verify proposal details locally
+    C->>PSM: sign_delta_proposal<br/>(commitment + signature)
+    PSM-->>C: Updated proposal with signatures
+
+    P->>PSM: push_delta<br/>(with all collected signatures)
+    PSM->>PSM: Validate & acknowledge
+    PSM-->>P: Canonical delta
 ```
 
 Proposals remain in `pending` status until promoted or deleted. Once the corresponding delta becomes canonical, the proposal is automatically cleaned up.
@@ -84,6 +105,13 @@ Proposals remain in `pending` status until promoted or deleted. Once the corresp
 ## Commitments
 
 A **commitment** is a cryptographic hash that uniquely identifies a particular version of an account's state. Commitments serve as the integrity backbone of PSM:
+
+```mermaid
+graph LR
+    S0["State₀<br/>commitment₀"] -->|"Delta₁<br/>prev: commitment₀"| S1["State₁<br/>commitment₁"]
+    S1 -->|"Delta₂<br/>prev: commitment₁"| S2["State₂<br/>commitment₂"]
+    S2 -->|"Delta₃<br/>prev: commitment₂"| S3["State₃<br/>commitment₃"]
+```
 
 - Each state snapshot has a commitment.
 - Each delta includes a `prev_commitment` (the state it was applied to) and produces a `new_commitment` (the resulting state).
@@ -94,6 +122,33 @@ The commitment chain ensures that any tampering with state history — inserting
 ## Canonicalization
 
 **Canonicalization** is the background process that promotes candidate deltas to canonical status by verifying them against the Miden network.
+
+```mermaid
+sequenceDiagram
+    participant Timer as Timer
+    participant Worker as Canonicalization Worker
+    participant Storage as Storage
+    participant Network as Miden Network
+
+    Timer->>Worker: tick (every check_interval)
+
+    loop For each account with candidates
+        Worker->>Storage: Pull candidate deltas<br/>(older than delay_seconds)
+        Worker->>Storage: Pull current state
+
+        loop For each ready candidate (nonce order)
+            Worker->>Worker: Apply delta locally<br/>Compute expected state
+            Worker->>Network: Verify on-chain commitment
+            alt Commitments match
+                Worker->>Storage: Persist new state
+                Worker->>Storage: Mark delta "canonical"
+                Worker->>Storage: Delete matching proposal
+            else Commitments don't match
+                Worker->>Storage: Mark delta "discarded"
+            end
+        end
+    end
+```
 
 When canonicalization is enabled:
 
