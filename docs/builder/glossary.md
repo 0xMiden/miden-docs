@@ -44,9 +44,17 @@ A Batch allows multiple transactions to be grouped together, these batches will 
 
 A Block is a fundamental data structure which groups multiple batches together and forms the blockchain's state.
 
+## Canonicalization
+
+The background process by which the [Private State Manager](./private-state-manager/) promotes candidate deltas to canonical status by verifying them against the Miden network.
+
 ## Delta
 
 A Delta represents the changes between two states `s` and `s'`. Applying a Delta `d` to `s` would result in `s'`.
+
+## Delta Proposal
+
+A coordination mechanism in the [Private State Manager](./private-state-manager/) that allows multiple signers to propose, review, and co-sign state changes before they are promoted to a canonical delta.
 
 ## Felt
 
@@ -59,6 +67,10 @@ A fundamental module of the MidenVM that acts as a base layer by providing core 
 ## Miden Assembly
 
 An assembly language specifically designed for the Miden VM. It's a low-level programming language with specialized instructions optimized for zero-knowledge proof generation.
+
+## MultiSig
+
+A multi-signature account on Miden that requires a configurable threshold (N-of-M) of authorized signers to approve transactions before execution. MultiSig workflows are coordinated through the [Private State Manager](./private-state-manager/).
 
 ## Note
 
@@ -80,9 +92,17 @@ Note ID is a unique identifier assigned to each note to distinguish it from othe
 
 A nullifier is a cryptographic commitment that marks a note as spent, preventing it from being consumed again.
 
+## Private State Manager
+
+Infrastructure built by OpenZeppelin for managing private account state on Miden. PSM provides a server and client SDKs for backing up, syncing, and coordinating state across devices and parties without trust assumptions. See the [Private State Manager documentation](./private-state-manager/).
+
 ## Prover
 
 A Prover is responsible for generating zero-knowledge proofs that attest to the correctness of the execution of a program without revealing the underlying data.
+
+## Threshold Signature
+
+A cryptographic scheme where a minimum number of signers (the threshold) out of a total group must sign for a transaction to be valid. Used in Miden's MultiSig accounts.
 
 ## Word
 

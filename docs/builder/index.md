@@ -83,12 +83,25 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
+        href: './private-state-manager',
+        label: 'Private State Manager',
+        description: 'Backup, sync, and coordinate private account state with PSM.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
         href: './tools',
         label: 'Tools',
         description: 'Miden Client libraries, CLI, and developer tooling.',
       }}
     />
   </div>
+</div>
+
+<div className="row">
   <div className="col col--6">
     <DocCard
       item={{
