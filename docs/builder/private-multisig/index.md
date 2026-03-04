@@ -1,0 +1,102 @@
+---
+title: Private Multisig
+sidebar_position: 0
+---
+
+# Private Multisig
+
+Private multisig on Miden allows multiple parties to collectively control an account, requiring a configurable threshold of signatures (N-of-M) to execute transactions — all while keeping account state private.
+
+## The problem
+
+On public chains, multisig coordination is straightforward: every signer can read the same on-chain state and build their next action on top of it. Safe-style multisigs work because the ledger is transparent.
+
+In Miden's private account model, account state lives client-side. The chain stores only cryptographic commitments. This means:
+
+- Signers can't independently observe the latest state from the chain.
+- Proposals and signatures need an off-chain coordination surface.
+- Without a shared state view, participants risk divergent state or stale approvals.
+
+The [Private State Manager (PSM)](../private-state-manager/) solves this by acting as the coordination server for multisig accounts — keeping signers synchronized, managing proposal workflows, and ensuring all parties work from the same canonical state.
+
+## How it works
+
+Miden multisig accounts store their authentication logic on-chain, but **their state — signers, metadata, proposals — is kept private**. PSM coordinates the workflow:
+
+1. **Propose**: A signer pushes a delta proposal (containing a `TransactionSummary`) to PSM. PSM validates the proposal against the current account state and the Miden network.
+2. **Sign**: Other authorized cosigners fetch the pending proposal from PSM, verify the transaction details locally, and submit their signatures.
+3. **Ready**: Once enough signatures are collected (meeting the threshold), PSM emits an acknowledgment.
+4. **Execute**: Any cosigner builds the final transaction using all signatures plus the PSM acknowledgment, and submits it on-chain.
+5. **Sync**: All participants fetch the latest canonical state from PSM.
+
+```mermaid
+sequenceDiagram
+    participant A as Signer A (proposer)
+    participant PSM as PSM Server
+    participant B as Signer B (cosigner)
+    participant Chain as Miden Network
+
+    A->>A: Build transaction locally
+    A->>PSM: Push delta proposal<br/>(tx_summary + signature)
+    PSM->>PSM: Validate against state & network
+
+    B->>PSM: Fetch pending proposals
+    PSM-->>B: Return proposal details
+    B->>B: Verify transaction locally
+    B->>PSM: Sign proposal
+
+    Note over PSM: Threshold met (2-of-3)
+
+    A->>PSM: Push delta<br/>(with all signatures + PSM ack)
+    PSM-->>A: Acknowledged delta
+    A->>Chain: Submit ZK proof
+    Chain-->>PSM: Commitment confirmed
+    PSM->>PSM: Mark canonical
+```
+
+import DocCard from '@theme/DocCard';
+
+## Learn more
+
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './core-concepts',
+        label: 'Core Concepts',
+        description: 'Transaction lifecycle, key architecture, and offline fallback.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './rust-sdk',
+        label: 'Rust SDK',
+        description: 'miden-multisig-client — Rust SDK for multisig workflows.',
+      }}
+    />
+  </div>
+</div>
+
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './typescript-sdk',
+        label: 'TypeScript SDK',
+        description: '@openzeppelin/miden-multisig-client — TypeScript SDK.',
+      }}
+    />
+  </div>
+</div>
+
+## Repositories
+
+| Repository | Description |
+|---|---|
+| [private-state-manager](https://github.com/OpenZeppelin/private-state-manager) | PSM server, PSM client SDKs, and multisig client libraries |
+| [MultiSig](https://github.com/OpenZeppelin/MultiSig) | MultiSig reference application (Next.js frontend + coordinator) |
