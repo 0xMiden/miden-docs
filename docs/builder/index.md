@@ -93,15 +93,25 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './tools',
-        label: 'Tools',
-        description: 'Miden Client libraries, CLI, and developer tooling.',
+        href: './private-multisig',
+        label: 'Private Multisig',
+        description: 'Multi-party threshold signature workflows on Miden.',
       }}
     />
   </div>
 </div>
 
 <div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './tools',
+        label: 'Tools',
+        description: 'Miden Client libraries, CLI, and developer tooling.',
+      }}
+    />
+  </div>
   <div className="col col--6">
     <DocCard
       item={{
