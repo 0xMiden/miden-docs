@@ -112,18 +112,23 @@ const config: Config = {
             redirects.push(existingPath.replace("/builder/tools", "/miden-client"));
           }
 
-          // Design section: redirect old root-level paths to new /design/ paths
-          if (existingPath.startsWith("/design/miden-base")) {
-            redirects.push(existingPath.replace("/design/miden-base", "/miden-base"));
+          // Core Concepts section: redirect old root-level paths to new /core-concepts/ paths
+          if (existingPath.startsWith("/core-concepts/miden-base")) {
+            redirects.push(existingPath.replace("/core-concepts/miden-base", "/miden-base"));
           }
-          if (existingPath.startsWith("/design/miden-vm")) {
-            redirects.push(existingPath.replace("/design/miden-vm", "/miden-vm"));
+          if (existingPath.startsWith("/core-concepts/miden-vm")) {
+            redirects.push(existingPath.replace("/core-concepts/miden-vm", "/miden-vm"));
           }
-          if (existingPath.startsWith("/design/compiler")) {
-            redirects.push(existingPath.replace("/design/compiler", "/compiler"));
+          if (existingPath.startsWith("/core-concepts/compiler")) {
+            redirects.push(existingPath.replace("/core-concepts/compiler", "/compiler"));
           }
-          if (existingPath.startsWith("/design/miden-node")) {
-            redirects.push(existingPath.replace("/design/miden-node", "/miden-node"));
+          if (existingPath.startsWith("/core-concepts/miden-node")) {
+            redirects.push(existingPath.replace("/core-concepts/miden-node", "/miden-node"));
+          }
+
+          // Redirect old /design/ paths to /core-concepts/
+          if (existingPath.startsWith("/core-concepts")) {
+            redirects.push(existingPath.replace("/core-concepts", "/design"));
           }
 
           return redirects.length > 0 ? redirects : undefined;
@@ -221,8 +226,8 @@ const config: Config = {
           },
           {
             type: "docSidebar",
-            sidebarId: "designSidebar",
-            label: "Design",
+            sidebarId: "coreConceptsSidebar",
+            label: "Core Concepts",
             position: "left",
           },
 
