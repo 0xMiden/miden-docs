@@ -63,9 +63,9 @@
 
 - [Migration Guide](https://docs.miden.xyz/builder/migration/): Guide for migrating between Miden versions
 
-## Design & Architecture
+## Core Concepts & Architecture
 
-- [Design Overview](https://docs.miden.xyz/design/): Protocol internals and architecture documentation
+- [Core Concepts](https://docs.miden.xyz/core-concepts/): Protocol internals and architecture documentation
 
 ## Resources
 
