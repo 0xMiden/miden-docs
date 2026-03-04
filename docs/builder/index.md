@@ -83,7 +83,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './private-state-manager',
+        href: './solutions/private-state-manager',
         label: 'Private State Manager',
         description: 'Backup, sync, and coordinate private account state with PSM.',
       }}
@@ -93,7 +93,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './private-multisig',
+        href: './solutions/private-multisig',
         label: 'Private Multisig',
         description: 'Multi-party threshold signature workflows on Miden.',
       }}
