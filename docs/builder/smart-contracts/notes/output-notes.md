@@ -18,11 +18,6 @@ use miden::{output_note, Asset, NoteIdx, Tag, NoteType, Recipient};
 let note_idx: NoteIdx = output_note::create(tag, note_type, recipient);
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `tag` | `Tag` | Routing/filtering tag — used by the network for note discovery and delivery |
-| `note_type` | `NoteType` | Visibility: `NoteType::Public` (stored on-chain) or `NoteType::Private` (only commitment on-chain) |
-| `recipient` | `Recipient` | Cryptographic hash identifying who can consume the note (see [Computing a Recipient](#computing-a-recipient)) |
 
 To construct a tag targeting a specific account, use `NoteTag::with_account_target(account_id)` from `miden_protocol::note`.
 
@@ -76,11 +71,6 @@ output_note::set_word_attachment(note_idx, attachment_scheme, word_data);
 output_note::set_array_attachment(note_idx, attachment_scheme, commitment_word);
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `attachment_scheme` | `Felt` | Identifies the encoding/interpretation scheme for the attachment data |
-| `attachment_kind` | `Felt` | Discriminant for the attachment variant (None, Word, or Array) |
-| `attachment_word` | `Word` | The attachment payload — either inline data or a commitment |
 
 **Word attachments** store data directly in the note. **Array attachments** store a commitment (hash) to larger data that lives in the advice map — the consumer must have access to the corresponding advice map entries to read the full data.
 

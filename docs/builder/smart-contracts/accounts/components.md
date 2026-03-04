@@ -6,14 +6,14 @@ description: "Define Miden account components using the #[component] macro — s
 
 # Components
 
-Components are the building blocks of Miden accounts. Each component defines a [storage](./storage) layout, exposes public methods through a WIT interface, and can be composed with other components on the same account — for example, a wallet component + an auth component + custom logic. This modularity lets you reuse a wallet component across many accounts and test or upgrade components independently.
+Components are the building blocks of Miden accounts. Each component defines a [storage](./storage) layout, exposes public methods, and can be composed with other components on the same account — for example, a wallet component + an auth component + custom logic. This modularity lets you reuse a wallet component across many accounts and test or upgrade components independently.
 
 ## The `#[component]` macro
 
 Apply `#[component]` to both a struct definition and its impl block:
 
 ```rust
-use miden::{component, felt, Felt, StorageMap, StorageMapAccess, Word};
+use miden::{component, felt, Felt, StorageMap, Word};
 
 #[component]
 struct CounterContract {
@@ -40,9 +40,9 @@ impl CounterContract {
 
 The macro generates:
 
-1. **WIT interface definition** describing the component's public API
+1. **Public API exports** describing the component's callable methods
 2. **Storage metadata** mapping slot names to slot IDs (derived from the component package + field name)
-3. **Export bindings** for the Miden runtime
+3. **Runtime bindings** for the Miden execution environment
 
 ## Struct definition
 
@@ -102,7 +102,7 @@ Read methods (`&self`) produce proofs that don't include state transitions. Writ
 
 ### Private methods
 
-Methods without `pub` are private — they can be called from other methods in the same component but are not exported in the WIT interface:
+Methods without `pub` are private — they can be called from other methods in the same component but are not exported:
 
 ```rust
 fn require_initialized(&self) {
@@ -118,22 +118,13 @@ pub fn do_something(&mut self) {
 
 ### Supported parameter and return types
 
-Public methods can use these types in their signatures:
-
-| Type | As parameter | As return |
-|------|-------------|-----------|
-| `Felt` | Yes | Yes |
-| `Word` | Yes | Yes |
-| `Asset` | Yes | Yes |
-| `AccountId` | Yes | Yes |
-| `NoteIdx` | Yes | Yes |
-| Custom types with `#[export_type]` | Yes | Yes |
+Public methods can use SDK types (`Felt`, `Word`, `Asset`, `AccountId`, `NoteIdx`) and custom types annotated with [`#[export_type]`](./custom-types).
 
 ## Auto-generated methods
 
-The `#[component]` macro automatically provides methods on `self` through the `NativeAccount` and `ActiveAccount` traits.
+The `#[component]` macro automatically provides methods on `self` for account operations.
 
-### Always available (via `NativeAccount` trait)
+### Mutation methods (`&mut self`)
 
 ```rust
 // Add an asset to the account vault
@@ -152,7 +143,7 @@ self.compute_delta_commitment() -> Word
 self.was_procedure_called(proc_root: Word) -> bool
 ```
 
-### Always available (via `ActiveAccount` trait on `&self`)
+### Read-only methods (`&self`)
 
 ```rust
 // Get the account ID
@@ -174,7 +165,7 @@ self.compute_storage_commitment() -> Word
 // ... and more (see API Reference)
 ```
 
-For the full list of auto-generated methods, see the [Cheatsheet](../api-reference). To export your own types for use in public method signatures, see [Custom Types](./custom-types). For the complete account and vault query API, see [Account Operations](./account-operations).
+For the full list of auto-generated methods, see [Account Operations](./account-operations). To export your own types for use in public method signatures, see [Custom Types](./custom-types).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (top-level — `#[component]` macro)
