@@ -158,7 +158,7 @@ npm run dev
 ```
 
 :::tip
-For detailed frontend setup guidance, see the [Tutorials section](../develop/tutorials/rust-compiler/).
+For detailed frontend setup guidance, see the [Tutorials section](../tutorials/rust-compiler/).
 :::
 
 ## Creating Accounts Programmatically

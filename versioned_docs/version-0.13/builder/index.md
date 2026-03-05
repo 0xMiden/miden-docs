@@ -60,7 +60,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './develop',
+        href: './tutorials',
         label: 'Tutorials',
         description: 'Step-by-step guides for building applications on Miden.',
       }}
