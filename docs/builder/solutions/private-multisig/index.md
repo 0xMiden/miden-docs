@@ -17,7 +17,7 @@ In Miden's private account model, account state lives client-side. The chain sto
 - Proposals and signatures need an off-chain coordination surface.
 - Without a shared state view, participants risk divergent state or stale approvals.
 
-The [Miden Guardian](../miden-guardian/) solves this by acting as the coordination server for multisig accounts — keeping signers synchronized, managing proposal workflows, and ensuring all parties work from the same canonical state.
+The [Miden Guardian](../../miden-guardian/) solves this by acting as the coordination server for multisig accounts — keeping signers synchronized, managing proposal workflows, and ensuring all parties work from the same canonical state.
 
 ## How it works
 

@@ -83,7 +83,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './solutions/miden-guardian',
+        href: './miden-guardian',
         label: 'Miden Guardian',
         description: 'Backup, sync, and coordinate private account state with Guardian.',
       }}

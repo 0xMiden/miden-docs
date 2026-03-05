@@ -46,7 +46,7 @@ A Block is a fundamental data structure which groups multiple batches together a
 
 ## Canonicalization
 
-The background process by which [Miden Guardian](./solutions/miden-guardian/) promotes candidate deltas to canonical status by verifying them against the Miden network.
+The background process by which [Miden Guardian](./miden-guardian/) promotes candidate deltas to canonical status by verifying them against the Miden network.
 
 ## Delta
 
@@ -54,7 +54,7 @@ A Delta represents the changes between two states `s` and `s'`. Applying a Delta
 
 ## Delta Proposal
 
-A coordination mechanism in [Miden Guardian](./solutions/miden-guardian/) that allows multiple signers to propose, review, and co-sign state changes before they are promoted to a canonical delta.
+A coordination mechanism in [Miden Guardian](./miden-guardian/) that allows multiple signers to propose, review, and co-sign state changes before they are promoted to a canonical delta.
 
 ## Felt
 
@@ -70,11 +70,11 @@ An assembly language specifically designed for the Miden VM. It's a low-level pr
 
 ## Miden Guardian
 
-Infrastructure built by OpenZeppelin for managing private account state on Miden. Guardian provides a server and client SDKs for backing up, syncing, and coordinating state across devices and parties without trust assumptions. See the [Miden Guardian documentation](./solutions/miden-guardian/).
+Infrastructure built by OpenZeppelin for managing private account state on Miden. Guardian provides a server and client SDKs for backing up, syncing, and coordinating state across devices and parties without trust assumptions. See the [Miden Guardian documentation](./miden-guardian/).
 
 ## MultiSig
 
-A multi-signature account on Miden that requires a configurable threshold (N-of-M) of authorized signers to approve transactions before execution. MultiSig workflows are coordinated through [Miden Guardian](./solutions/miden-guardian/).
+A multi-signature account on Miden that requires a configurable threshold (N-of-M) of authorized signers to approve transactions before execution. MultiSig workflows are coordinated through [Miden Guardian](./miden-guardian/).
 
 ## Note
 
