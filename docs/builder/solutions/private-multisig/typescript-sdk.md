@@ -29,7 +29,7 @@ const webClient = await WebClient.createClient('https://rpc.testnet.miden.io:443
 const secretKey = AuthSecretKey.rpoFalconWithRNG(undefined);
 const signer = new FalconSigner(secretKey);
 
-// Create the multisig client and fetch PSM info
+// Create the multisig client and fetch Guardian info
 const client = new MultisigClient(webClient, {
   psmEndpoint: 'http://localhost:3000',
 });
@@ -49,7 +49,7 @@ const config = {
 const multisig = await client.create(config, signer);
 console.log('Account ID:', multisig.accountId);
 
-// Register on PSM
+// Register on Guardian
 await multisig.registerOnPsm();
 ```
 

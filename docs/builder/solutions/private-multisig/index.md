@@ -23,35 +23,35 @@ The [Miden Guardian](../miden-guardian/) solves this by acting as the coordinati
 
 Miden multisigs can be fully private (code, signers, metadata, etc. are not visible). Guardian coordinates the workflow:
 
-1. **Propose**: A signer pushes a delta proposal (containing a `TransactionSummary`) to PSM. PSM validates the proposal against the current account state and the Miden network.
-2. **Sign**: Other authorized cosigners fetch the pending proposal from PSM, verify the transaction details locally, and submit their signatures.
-3. **Ready**: Once enough signatures are collected (meeting the threshold), PSM emits an acknowledgment.
-4. **Execute**: Any cosigner builds the final transaction using all signatures plus the PSM acknowledgment, and submits it on-chain.
-5. **Sync**: All participants fetch the latest canonical state from PSM.
+1. **Propose**: A signer pushes a delta proposal (containing a `TransactionSummary`) to Guardian. Guardian validates the proposal against the current account state and the Miden network.
+2. **Sign**: Other authorized cosigners fetch the pending proposal from Guardian, verify the transaction details locally, and submit their signatures.
+3. **Ready**: Once enough signatures are collected (meeting the threshold), Guardian emits an acknowledgment.
+4. **Execute**: Any cosigner builds the final transaction using all signatures plus the Guardian acknowledgment, and submits it on-chain.
+5. **Sync**: All participants fetch the latest canonical state from Guardian.
 
 ```mermaid
 sequenceDiagram
     participant A as Signer A (proposer)
-    participant PSM as PSM Server
+    participant Guardian as Guardian Server
     participant B as Signer B (cosigner)
     participant Chain as Miden Network
 
     A->>A: Build transaction locally
-    A->>PSM: Push delta proposal<br/>(tx_summary + signature)
-    PSM->>PSM: Validate against state & network
+    A->>Guardian: Push delta proposal<br/>(tx_summary + signature)
+    Guardian->>Guardian: Validate against state & network
 
-    B->>PSM: Fetch pending proposals
-    PSM-->>B: Return proposal details
+    B->>Guardian: Fetch pending proposals
+    Guardian-->>B: Return proposal details
     B->>B: Verify transaction locally
-    B->>PSM: Sign proposal
+    B->>Guardian: Sign proposal
 
-    Note over PSM: Threshold met (2-of-3)
+    Note over Guardian: Threshold met (2-of-3)
 
-    A->>PSM: Push delta<br/>(with all signatures + PSM ack)
-    PSM-->>A: Acknowledged delta
+    A->>Guardian: Push delta<br/>(with all signatures + Guardian ack)
+    Guardian-->>A: Acknowledged delta
     A->>Chain: Submit ZK proof
-    Chain-->>PSM: Commitment confirmed
-    PSM->>PSM: Mark canonical
+    Chain-->>Guardian: Commitment confirmed
+    Guardian->>Guardian: Mark canonical
 ```
 
 import DocCard from '@theme/DocCard';
@@ -98,5 +98,5 @@ import DocCard from '@theme/DocCard';
 
 | Repository | Description |
 |---|---|
-| [private-state-manager](https://github.com/OpenZeppelin/private-state-manager) | PSM server, PSM client SDKs, and multisig client libraries |
+| [private-state-manager](https://github.com/OpenZeppelin/private-state-manager) | Guardian server, client SDKs, and multisig client libraries |
 | [MultiSig](https://github.com/OpenZeppelin/MultiSig) | MultiSig reference application (Next.js frontend + coordinator) |

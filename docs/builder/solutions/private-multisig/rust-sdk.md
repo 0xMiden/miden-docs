@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # Rust Multisig SDK
 
-The `miden-multisig-client` crate provides a high-level Rust SDK for private multisig workflows on Miden. It wraps the on-chain multisig contracts and PSM coordination into a single API.
+The `miden-multisig-client` crate provides a high-level Rust SDK for private multisig workflows on Miden. It wraps the on-chain multisig contracts and Guardian coordination into a single API.
 
 **Source**: [`crates/miden-multisig-client`](https://github.com/OpenZeppelin/private-state-manager/tree/main/crates/miden-multisig-client)
 
@@ -38,7 +38,7 @@ let mut client = MultisigClient::builder()
 ## Creating a multisig account
 
 ```rust
-// Create a 2-of-2 multisig account and register it on PSM
+// Create a 2-of-2 multisig account and register it on Guardian
 let account = client.create_account(2, vec![signer1, signer2]).await?;
 ```
 
@@ -52,7 +52,7 @@ let recipient = AccountId::from_hex("0x...")?;
 let faucet = AccountId::from_hex("0x...")?;
 let tx = TransactionType::transfer(recipient, faucet, 1_000);
 
-// Proposer creates the transaction proposal on PSM
+// Proposer creates the transaction proposal on Guardian
 let proposal = client.propose_transaction(tx).await?;
 
 // Cosigner lists and signs the proposal
@@ -66,7 +66,7 @@ client.execute_proposal(&proposal.id).await?;
 
 ## Offline fallback
 
-If PSM is unavailable, the SDK automatically produces an offline proposal:
+If Guardian is unavailable, the SDK automatically produces an offline proposal:
 
 ```rust
 use miden_multisig_client::{ProposalResult, TransactionType};
@@ -74,7 +74,7 @@ use miden_multisig_client::{ProposalResult, TransactionType};
 let tx = TransactionType::consume_notes(vec![note_id]);
 match client.propose_with_fallback(tx).await? {
     ProposalResult::Online(p) => {
-        println!("Proposal {} is live on PSM", p.id);
+        println!("Proposal {} is live on Guardian", p.id);
     }
     ProposalResult::Offline(exported) => {
         std::fs::write("proposal.json", exported.to_json()?)?;

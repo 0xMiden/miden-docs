@@ -12,35 +12,35 @@ Every multisig transaction follows the same lifecycle: propose, sign, execute, s
 ```mermaid
 sequenceDiagram
     participant P as Proposer
-    participant PSM as PSM Server
+    participant Guardian as Guardian Server
     participant C1 as Cosigner 1
     participant C2 as Cosigner 2
 
     P->>P: Build TransactionSummary locally
-    P->>PSM: push_delta_proposal<br/>(tx_summary + proposer signature)
-    PSM->>PSM: Validate against current state
+    P->>Guardian: push_delta_proposal<br/>(tx_summary + proposer signature)
+    Guardian->>Guardian: Validate against current state
 
-    C1->>PSM: get_delta_proposals
-    PSM-->>C1: Pending proposals
+    C1->>Guardian: get_delta_proposals
+    Guardian-->>C1: Pending proposals
     C1->>C1: Verify locally
-    C1->>PSM: sign_delta_proposal
+    C1->>Guardian: sign_delta_proposal
 
-    C2->>PSM: get_delta_proposals
-    PSM-->>C2: Pending proposals
+    C2->>Guardian: get_delta_proposals
+    Guardian-->>C2: Pending proposals
     C2->>C2: Verify locally
-    C2->>PSM: sign_delta_proposal
+    C2->>Guardian: sign_delta_proposal
 
-    Note over PSM: Threshold met
+    Note over Guardian: Threshold met
 
-    P->>PSM: push_delta (with all signatures)
-    PSM-->>P: Canonical delta with ack_sig
+    P->>Guardian: push_delta (with all signatures)
+    Guardian-->>P: Canonical delta with ack_sig
     P->>P: Execute on-chain with ZK proof
 ```
 
-1. **Propose**: The proposer builds a `TransactionSummary` locally, signs it, and pushes it to PSM as a delta proposal.
+1. **Propose**: The proposer builds a `TransactionSummary` locally, signs it, and pushes it to Guardian as a delta proposal.
 2. **Sign**: Each cosigner fetches pending proposals, verifies the transaction details against their local state, and submits their signature.
-3. **Execute**: Once the threshold is met, any participant pushes the final delta (with all signatures). PSM returns the acknowledged delta. The executor builds and submits the on-chain transaction.
-4. **Sync**: All participants fetch the latest state from PSM to stay synchronized.
+3. **Execute**: Once the threshold is met, any participant pushes the final delta (with all signatures). Guardian returns the acknowledged delta. The executor builds and submits the on-chain transaction.
+4. **Sync**: All participants fetch the latest state from Guardian to stay synchronized.
 
 ## Key architecture: 2-of-3 setup
 
@@ -50,24 +50,24 @@ A common configuration uses a 2-of-3 threshold:
 |---|---|---|
 | **Key 1** | User hot key | Daily transactions |
 | **Key 2** | User cold key | Recovery and emergency override |
-| **Key 3** | PSM service key | Co-signing and policy enforcement |
+| **Key 3** | Guardian service key | Co-signing and policy enforcement |
 
 ```mermaid
 graph TD
-    subgraph "Normal operation (Hot + PSM)"
+    subgraph "Normal operation (Hot + Guardian)"
         Hot["User Hot Key"] --> TX["Transaction"]
-        PSMKey["PSM Service Key"] --> TX
+        GuardianKey["Guardian Service Key"] --> TX
     end
 
     subgraph "Emergency override (Hot + Cold)"
-        Hot2["User Hot Key"] --> Override["Rotate PSM / Adjust policies<br/>Switch providers"]
+        Hot2["User Hot Key"] --> Override["Rotate Guardian / Adjust policies<br/>Switch providers"]
         Cold["User Cold Key"] --> Override
     end
 ```
 
-- **Normal operations**: Hot key + PSM's co-signature are sufficient.
-- **Emergency override**: Hot + cold keys alone can rotate out PSM or switch providers.
-- **PSM alone cannot move funds**: It holds only one key in the threshold.
+- **Normal operations**: Hot key + Guardian's co-signature are sufficient.
+- **Emergency override**: Hot + cold keys alone can rotate out Guardian or switch providers.
+- **Guardian alone cannot move funds**: It holds only one key in the threshold.
 
 ## Transaction types
 
@@ -78,7 +78,7 @@ graph TD
 | **Add signer** | Add a new cosigner to the multisig account |
 | **Remove signer** | Remove a cosigner |
 | **Change threshold** | Update the required signature count |
-| **Switch PSM** | Change the PSM provider endpoint |
+| **Switch Guardian** | Change the Guardian provider endpoint |
 
 ## Signer types
 
@@ -93,7 +93,7 @@ The TypeScript SDK supports multiple signer backends:
 
 ## Offline fallback
 
-If PSM is unreachable, the SDKs support fully offline workflows:
+If Guardian is unreachable, the SDKs support fully offline workflows:
 
 ```mermaid
 sequenceDiagram
@@ -118,4 +118,4 @@ sequenceDiagram
 3. Each cosigner signs offline and returns the signed file.
 4. Once the threshold is met, execute the transaction on-chain.
 
-This ensures multisig operations remain functional even without PSM connectivity.
+This ensures multisig operations remain functional even without Guardian connectivity.
