@@ -70,7 +70,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './develop',
+        href: './tutorials/rust-compiler',
         label: 'Tutorials',
         description: 'Step-by-step guides for building applications on Miden.',
       }}

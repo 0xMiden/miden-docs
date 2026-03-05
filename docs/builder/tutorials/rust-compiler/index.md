@@ -37,7 +37,7 @@ If you're new to the Miden Rust compiler, start with the **Miden Bank Tutorial**
 
 ## Rust Smart Contract Reference
 
-For detailed reference documentation on the Miden Rust SDK — types, macros, storage, APIs, and more — see the **[Rust Smart Contract Reference](../../../smart-contracts/)**.
+For detailed reference documentation on the Miden Rust SDK — types, macros, storage, APIs, and more — see the **[Rust Smart Contract Reference](../../smart-contracts/)**.
 
 ## Supplementary Guides
 
@@ -57,6 +57,6 @@ The complete source code for the Miden Bank example is available at:
 
 Before starting, ensure you have:
 
-- Completed the [Quick Start guide](../../../quick-start/)
+- Completed the [Quick Start guide](../../quick-start/)
 - Basic familiarity with Rust programming
 - Understanding of Miden concepts (accounts, notes, transactions)
