@@ -83,9 +83,9 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './solutions/private-state-manager',
-        label: 'Private State Manager',
-        description: 'Backup, sync, and coordinate private account state with PSM.',
+        href: './solutions/miden-guardian',
+        label: 'Miden Guardian',
+        description: 'Backup, sync, and coordinate private account state with Guardian.',
       }}
     />
   </div>

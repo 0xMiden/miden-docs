@@ -28,4 +28,4 @@ The Miden client has three main components:
 
 - **Playground** - Interactive environment for testing Miden assembly
 - **Explorer** - Block explorer for the Miden network
-- **[Private State Manager](../solutions/private-state-manager/)** - Server and SDKs for backing up, syncing, and coordinating private account state (built by OpenZeppelin)
+- **[Miden Guardian](../solutions/miden-guardian/)** - Server and SDKs for backing up, syncing, and coordinating private account state (built by OpenZeppelin)
