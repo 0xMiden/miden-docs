@@ -24,6 +24,7 @@ const sidebars: SidebarsConfig = {
       type: "html",
       value: '<span class="sidebar-section">Getting Started</span>',
     },
+    { type: "doc", id: "builder/index" },
     {
       type: "category",
       label: "Quick Start",

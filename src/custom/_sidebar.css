@@ -321,7 +321,7 @@ aside[class*="docSidebarContainer"] .menu__caret {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--ifm-color-emphasis-700);
+  color: var(--ifm-color-emphasis-600);
   padding: 16px 0 4px;
   display: block;
 }
