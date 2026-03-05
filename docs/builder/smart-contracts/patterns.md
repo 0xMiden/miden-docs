@@ -1,7 +1,6 @@
 ---
 title: "Patterns & Security"
 sidebar_position: 6
-draft: true
 description: "Common patterns for access control, rate limiting, spending limits, and security in Miden Rust contracts."
 ---
 
@@ -38,7 +37,7 @@ impl Wallet {
 ```
 
 :::note
-All Miden contracts require `#![no_std]`. The remaining examples on this page omit the preamble (`#![no_std]`, `#![feature(alloc_error_handler)]`) for brevity. See [Toolchain & Project Structure](./getting-started#no_std-environment) for the full setup.
+All Miden contracts require `#![no_std]`. The remaining examples on this page omit the preamble (`#![no_std]`, `#![feature(alloc_error_handler)]`) for brevity. See [Toolchain & Project Structure](./getting-started#common-no_std-patterns) for the full setup.
 :::
 
 ### Counter
