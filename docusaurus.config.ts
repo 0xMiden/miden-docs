@@ -105,6 +105,10 @@ const config: Config = {
           if (existingPath === "/builder/glossary") {
             redirects.push("/glossary");
           }
+          if (existingPath.startsWith("/builder/tutorials")) {
+            redirects.push(existingPath.replace("/builder/tutorials", "/miden-tutorials"));
+          }
+          // Legacy redirect: old develop/tutorials paths
           if (existingPath.startsWith("/builder/develop/tutorials")) {
             redirects.push(existingPath.replace("/builder/develop/tutorials", "/miden-tutorials"));
           }

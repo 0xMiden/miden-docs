@@ -182,7 +182,7 @@ The `.github/workflows/deploy-docs.yml` workflow:
 1. Checks out this repository and all external source repos
 2. Ingests external docs into v0.4 IA structure:
    - Core Concepts docs → `docs/core-concepts/miden-base/`, `miden-vm/`, `compiler/`, `miden-node/`
-   - Builder docs → `docs/builder/develop/tutorials/`, `docs/builder/tools/client/`
+   - Builder docs → `docs/builder/tutorials/`, `docs/builder/tools/client/`
 3. Runs `npm run build` to generate the static site
 4. Deploys to GitHub Pages at `docs.miden.xyz`
 
