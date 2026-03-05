@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Troubleshooting
 
-Common issues when operating a PSM server and how to resolve them.
+Common issues when operating a Guardian server and how to resolve them.
 
 ## Server won't start
 
@@ -71,4 +71,4 @@ Common issues when operating a PSM server and how to resolve them.
 ## Links
 
 - [Server README](https://github.com/OpenZeppelin/private-state-manager/tree/main/crates/server) — full server documentation
-- [PSM Specification](https://github.com/OpenZeppelin/private-state-manager/tree/main/spec) — protocol specification
+- [Guardian Specification](https://github.com/OpenZeppelin/private-state-manager/tree/main/spec) — protocol specification

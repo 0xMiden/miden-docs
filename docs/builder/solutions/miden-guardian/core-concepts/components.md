@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Components
 
-The PSM server is composed of several pluggable components that handle different responsibilities.
+The Guardian server is composed of several pluggable components that handle different responsibilities.
 
 ## API
 
@@ -56,27 +56,27 @@ RPO256_hash([account_id_prefix, account_id_suffix, timestamp_ms, 0])
 ```mermaid
 sequenceDiagram
     participant Client
-    participant PSM as PSM Server
+    participant Guardian as Guardian Server
 
-    Client->>PSM: Request + x-pubkey, x-signature, x-timestamp
+    Client->>Guardian: Request + x-pubkey, x-signature, x-timestamp
 
-    PSM->>PSM: 1. Derive commitment from public key
-    PSM->>PSM: 2. Check commitment is in account allowlist
-    PSM->>PSM: 3. Verify timestamp within 300s window
-    PSM->>PSM: 4. Check timestamp > last_auth_timestamp
-    PSM->>PSM: 5. Verify Falcon signature over<br/>(account_id, timestamp) digest
+    Guardian->>Guardian: 1. Derive commitment from public key
+    Guardian->>Guardian: 2. Check commitment is in account allowlist
+    Guardian->>Guardian: 3. Verify timestamp within 300s window
+    Guardian->>Guardian: 4. Check timestamp > last_auth_timestamp
+    Guardian->>Guardian: 5. Verify Falcon signature over<br/>(account_id, timestamp) digest
 
     alt All checks pass
-        PSM->>PSM: Update last_auth_timestamp (CAS)
-        PSM-->>Client: Process request
+        Guardian->>Guardian: Update last_auth_timestamp (CAS)
+        Guardian-->>Client: Process request
     else Any check fails
-        PSM-->>Client: 400 AuthenticationFailed
+        Guardian-->>Client: 400 AuthenticationFailed
     end
 ```
 
 ### Replay protection
 
-PSM prevents replay attacks through two mechanisms:
+Guardian prevents replay attacks through two mechanisms:
 
 1. **Timestamp window**: The signed timestamp must be within **300 seconds** (5 minutes) of the server's current time.
 2. **Monotonic timestamps**: Each request's timestamp must be strictly greater than the account's `last_auth_timestamp`, enforced atomically via compare-and-swap.

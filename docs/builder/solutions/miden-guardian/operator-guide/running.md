@@ -5,7 +5,7 @@ sidebar_position: 1
 
 # How to Run
 
-This guide covers running a PSM server locally for development or testing.
+This guide covers running a Guardian server locally for development or testing.
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ This guide covers running a PSM server locally for development or testing.
 
 ## Docker Compose (recommended)
 
-The PSM repository includes a Docker Compose configuration with PostgreSQL:
+The repository includes a Docker Compose configuration with PostgreSQL:
 
 ```bash
 git clone https://github.com/OpenZeppelin/private-state-manager.git
@@ -26,8 +26,8 @@ This starts:
 
 | Service | Port | Description |
 |---|---|---|
-| PSM HTTP API | `localhost:3000` | REST endpoints |
-| PSM gRPC API | `localhost:50051` | gRPC service |
+| Guardian HTTP API | `localhost:3000` | REST endpoints |
+| Guardian gRPC API | `localhost:50051` | gRPC service |
 | PostgreSQL | `localhost:5432` | Metadata and state storage |
 
 View logs:

@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # How to Deploy
 
-This page covers PSM server configuration for production deployments.
+This page covers Guardian server configuration for production deployments.
 
 ## Environment variables
 
@@ -37,7 +37,7 @@ Requests exceeding this limit receive `413 Payload Too Large`.
 
 ## Storage backends
 
-PSM uses a single storage backend per instance.
+Guardian uses a single storage backend per instance.
 
 ### Filesystem (default)
 

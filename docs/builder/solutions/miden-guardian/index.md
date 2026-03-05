@@ -1,11 +1,11 @@
 ---
-title: Private State Manager
+title: Miden Guardian
 sidebar_position: 0
 ---
 
-# Private State Manager
+# Miden Guardian
 
-The Private State Manager (PSM) is a system built by [OpenZeppelin](https://www.openzeppelin.com/) that allows Miden accounts to back up and sync their private state securely without trust assumptions about other participants or the server operator.
+Miden Guardian is a system built by [OpenZeppelin](https://www.openzeppelin.com/) that allows Miden accounts to back up and sync their private state securely without trust assumptions about other participants or the server operator.
 
 ## The problem
 
@@ -17,16 +17,16 @@ Miden's execution model requires clients to manage their own private state — a
 
 On a public chain, the ledger is a universally readable source of truth — every device and every signer can independently observe the latest state. In Miden's private account model, the canonical state is defined by the on-chain commitment, but it isn't readable in a way that keeps devices and signers automatically up to date. The coordination surface moves off-chain.
 
-## What PSM provides
+## What Guardian provides
 
-PSM addresses these challenges by acting as an off-chain coordination layer:
+Guardian addresses these challenges by acting as an off-chain coordination layer:
 
-- **Backup and recovery** — Account state is stored on PSM, recoverable even if a device is lost.
-- **Multi-device sync** — Multiple devices push and pull state through PSM, staying in sync with the latest canonical state.
+- **Backup and recovery** — Account state is stored on Guardian, recoverable even if a device is lost.
+- **Multi-device sync** — Multiple devices push and pull state through Guardian, staying in sync with the latest canonical state.
 - **Multi-party coordination** — Shared accounts use delta proposals to coordinate threshold signing across participants.
 - **Integrity verification** — Every state change is validated against the Miden network and acknowledged with a cryptographic signature.
 
-PSM is non-custodial. The provider cannot move funds unilaterally — it stores state and coordinates changes, but users retain cryptographic control over their accounts at all times.
+Guardian is non-custodial. The provider cannot move funds unilaterally — it stores state and coordinates changes, but users retain cryptographic control over their accounts at all times.
 
 import DocCard from '@theme/DocCard';
 
@@ -39,7 +39,7 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: './core-concepts/architecture',
         label: 'Architecture',
-        description: 'How PSM fits between clients and the Miden network.',
+        description: 'How Guardian fits between clients and the Miden network.',
       }}
     />
   </div>
@@ -85,7 +85,7 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: './operator-guide/running',
         label: 'Operator Guide',
-        description: 'How to run, deploy, and troubleshoot a PSM server.',
+        description: 'How to run, deploy, and troubleshoot a Guardian server.',
       }}
     />
   </div>
@@ -95,7 +95,7 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: '../private-multisig/',
         label: 'Private Multisig',
-        description: 'Multi-party threshold signature workflows powered by PSM.',
+        description: 'Multi-party threshold signature workflows powered by Guardian.',
       }}
     />
   </div>
@@ -103,4 +103,4 @@ import DocCard from '@theme/DocCard';
 
 ## Repository
 
-- [private-state-manager](https://github.com/OpenZeppelin/private-state-manager) — PSM server, client SDKs, multisig client libraries, and specification
+- [private-state-manager](https://github.com/OpenZeppelin/private-state-manager) — Guardian server, client SDKs, multisig client libraries, and specification

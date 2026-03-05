@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # Data Structures
 
-PSM models account state as an append-only chain of snapshots and changes.
+Guardian models account state as an append-only chain of snapshots and changes.
 
 ## State
 
@@ -23,7 +23,7 @@ A **state** is a canonical snapshot of an account at a point in time. It include
 }
 ```
 
-When you first register an account with PSM, you provide an **initial state** — the baseline from which all subsequent changes are tracked.
+When you first register an account with Guardian, you provide an **initial state** — the baseline from which all subsequent changes are tracked.
 
 ## Delta
 
@@ -64,7 +64,7 @@ stateDiagram-v2
 
 | Status | Meaning |
 |---|---|
-| `candidate` | Accepted by PSM but not yet verified on-chain. Awaiting canonicalization. |
+| `candidate` | Accepted by Guardian but not yet verified on-chain. Awaiting canonicalization. |
 | `canonical` | Verified against the network and permanently recorded. |
 | `discarded` | Failed on-chain verification. Removed from the active delta chain. |
 
@@ -72,7 +72,7 @@ In **optimistic mode**, deltas skip the `candidate` stage and are immediately ma
 
 ## Commitments
 
-A **commitment** is a cryptographic hash that uniquely identifies a particular version of an account's state. Commitments are the integrity backbone of PSM:
+A **commitment** is a cryptographic hash that uniquely identifies a particular version of an account's state. Commitments are the integrity backbone of Guardian:
 
 ```mermaid
 graph LR
@@ -89,30 +89,30 @@ graph LR
 
 A **delta proposal** is a coordination mechanism for multi-party accounts. When multiple signers must agree on a transaction:
 
-1. **Propose**: One signer creates a delta proposal containing a `TransactionSummary`. PSM validates the proposal against the current account state.
+1. **Propose**: One signer creates a delta proposal containing a `TransactionSummary`. Guardian validates the proposal against the current account state.
 2. **Sign**: Other authorized cosigners fetch the pending proposal, verify it locally, and submit their signatures.
 3. **Execute**: Once enough signatures are collected (meeting the threshold), any cosigner can promote the proposal to a canonical delta via `push_delta`.
 
 ```mermaid
 sequenceDiagram
     participant P as Proposer
-    participant PSM as PSM Server
+    participant Guardian as Guardian Server
     participant C as Cosigner
 
-    P->>PSM: push_delta_proposal<br/>(tx_summary + initial signature)
-    PSM->>PSM: Validate against current state
-    PSM-->>P: Return proposal with commitment
+    P->>Guardian: push_delta_proposal<br/>(tx_summary + initial signature)
+    Guardian->>Guardian: Validate against current state
+    Guardian-->>P: Return proposal with commitment
 
-    C->>PSM: get_delta_proposals
-    PSM-->>C: Return pending proposals
+    C->>Guardian: get_delta_proposals
+    Guardian-->>C: Return pending proposals
 
     C->>C: Verify proposal details locally
-    C->>PSM: sign_delta_proposal<br/>(commitment + signature)
-    PSM-->>C: Updated proposal with signatures
+    C->>Guardian: sign_delta_proposal<br/>(commitment + signature)
+    Guardian-->>C: Updated proposal with signatures
 
-    P->>PSM: push_delta<br/>(with all collected signatures)
-    PSM->>PSM: Validate & acknowledge
-    PSM-->>P: Canonical delta
+    P->>Guardian: push_delta<br/>(with all collected signatures)
+    Guardian->>Guardian: Validate & acknowledge
+    Guardian-->>P: Canonical delta
 ```
 
 Proposals remain in `pending` status until promoted. Once the corresponding delta becomes canonical, the proposal is automatically cleaned up.
