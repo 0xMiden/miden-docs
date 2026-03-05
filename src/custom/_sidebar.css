@@ -313,7 +313,21 @@ aside[class*="docSidebarContainer"] .menu__caret {
 }
 
 /* ==========================================
-   4.4) MOBILE SIDEBAR ADJUSTMENTS
+   4.4) SIDEBAR SECTION HEADERS
+   ========================================== */
+
+.sidebar-section {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-emphasis-500);
+  padding: 12px 16px 4px;
+  display: block;
+}
+
+/* ==========================================
+   4.5) MOBILE SIDEBAR ADJUSTMENTS
    ========================================== */
 
 @media (max-width: 996px) {
