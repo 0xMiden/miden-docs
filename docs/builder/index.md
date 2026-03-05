@@ -93,7 +93,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './solutions/private-multisig',
+        href: './private-multisig',
         label: 'Private Multisig',
         description: 'Multi-party threshold signature workflows on Miden.',
       }}
