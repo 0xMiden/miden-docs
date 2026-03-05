@@ -61,7 +61,7 @@ flowchart TD
 
     %% External repos feed into both workflows
     MidenBase -->|"ingested @v0.12.3"| CutVersions
-    MidenVM -->|"ingested @v0.19.1"| CutVersions
+    MidenVM -->|"ingested @v0.20.0"| CutVersions
     MidenNode -->|"ingested @v0.12.3"| CutVersions
     Compiler -->|"ingested @0.5.1"| CutVersions
     MidenClient -->|"ingested @v0.12.3"| CutVersions
