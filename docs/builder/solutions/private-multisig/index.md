@@ -21,7 +21,7 @@ The [Private State Manager (PSM)](../private-state-manager/) solves this by acti
 
 ## How it works
 
-Miden multisig accounts store their authentication logic on-chain, but **their state — signers, metadata, proposals — is kept private**. PSM coordinates the workflow:
+Miden multisigs can be fully private (code, signers, metadata, etc. are not visible). Guardian coordinates the workflow:
 
 1. **Propose**: A signer pushes a delta proposal (containing a `TransactionSummary`) to PSM. PSM validates the proposal against the current account state and the Miden network.
 2. **Sign**: Other authorized cosigners fetch the pending proposal from PSM, verify the transaction details locally, and submit their signatures.

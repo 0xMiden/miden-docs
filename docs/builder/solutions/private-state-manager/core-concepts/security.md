@@ -82,17 +82,6 @@ graph TD
 
 **With PSM**: The remaining device already has the latest state (synced through PSM). The user initiates a hot key rotation using their cold key. The stolen device's keys become invalid. Recovery takes minutes.
 
-## Visibility modes
-
-PSM can operate in two modes:
-
-| Mode | Description | Trade-off |
-|---|---|---|
-| **Unencrypted** (default) | Deltas and state are stored in plaintext on the server. | Enables add-ons like compliance screening, risk rules, and monitoring. The operator can read state. |
-| **Encrypted** | Clients encrypt deltas before upload; PSM stores and relays ciphertext only. | Improves privacy against the operator, but limits what PSM can inspect or enforce. |
-
-In both modes, PSM cannot forge or tamper with state — the commitment chain and acknowledgment signatures remain verifiable regardless of encryption.
-
 ## Edge cases
 
 ### State divergence

@@ -108,8 +108,8 @@ Storage persists account snapshots, deltas, and delta proposals:
 - Backends are pluggable without altering API semantics.
 
 Available backends:
-- **Filesystem** (default): Stores data on disk. No external dependencies.
-- **PostgreSQL** (optional): Requires the `postgres` feature flag at build time. Migrations run automatically on startup.
+- **Filesystem** (default): Stores data on disk. Suitable for **testing and development**. No external dependencies.
+- **PostgreSQL** (optional): Recommended for **production** deployments. Requires the `postgres` feature flag at build time. Migrations run automatically on startup.
 
 ## Metadata
 
