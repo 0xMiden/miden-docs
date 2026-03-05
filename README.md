@@ -63,7 +63,7 @@ flowchart TD
     MidenBase -->|"ingested @v0.12.3"| CutVersions
     MidenVM -->|"ingested @v0.20.0"| CutVersions
     MidenNode -->|"ingested @v0.12.3"| CutVersions
-    Compiler -->|"ingested @0.5.1"| CutVersions
+    Compiler -->|"ingested @0.6.0"| CutVersions
     MidenClient -->|"ingested @v0.12.3"| CutVersions
     MidenTutorials -->|"ingested @main"| CutVersions
 
