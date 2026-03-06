@@ -57,6 +57,6 @@ The complete source code for the Miden Bank example is available at:
 
 Before starting, ensure you have:
 
-- Completed the [Quick Start guide](../../quick-start/)
+- Completed the [Get Started guide](../../get-started/)
 - Basic familiarity with Rust programming
 - Understanding of Miden concepts (accounts, notes, transactions)

@@ -183,5 +183,5 @@ The node exposes endpoints for:
 ## Further Reading
 
 - **[Build Documentation](../builder/)** – Practical guides for building on Miden
-- **[Quick Start](../builder/quick-start/)** – Get started with your first transaction
+- **[Get Started](../builder/get-started/)** – Get started with your first transaction
 - **[FAQ](../builder/faq)** – Common questions answered

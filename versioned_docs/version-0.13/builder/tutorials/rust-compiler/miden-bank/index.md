@@ -155,7 +155,7 @@ import DocCard from '@theme/DocCard';
 
 Before starting this tutorial, ensure you have:
 
-- Completed the [Quick Start guide](../../../quick-start/) (familiarity with `midenup`, `miden new`, basic tooling)
+- Completed the [Get Started guide](../../../get-started/) (familiarity with `midenup`, `miden new`, basic tooling)
 - Basic understanding of Miden concepts (accounts, notes, transactions)
 - Rust programming experience
 
