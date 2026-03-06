@@ -60,11 +60,11 @@ flowchart TD
     DeployDocs["CICD deploy-docs.yml<br/>(ingest + build)"]
 
     %% External repos feed into both workflows
-    MidenBase -->|"ingested @v0.12.3"| CutVersions
-    MidenVM -->|"ingested @v0.20.0"| CutVersions
-    MidenNode -->|"ingested @v0.12.3"| CutVersions
-    Compiler -->|"ingested @0.6.0"| CutVersions
-    MidenClient -->|"ingested @v0.12.3"| CutVersions
+    MidenBase -->|"ingested @<release-tag>"| CutVersions
+MidenVM -->|"ingested @<release-tag>"| CutVersions
+MidenNode -->|"ingested @<release-tag>"| CutVersions
+Compiler -->|"ingested @<release-tag>"| CutVersions
+MidenClient -->|"ingested @<release-tag>"| CutVersions
     MidenTutorials -->|"ingested @main"| CutVersions
 
     MidenBase -->|"ingested @next"| DeployDocs
