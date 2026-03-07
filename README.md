@@ -65,7 +65,7 @@ MidenVM -->|"ingested @<release-tag>"| CutVersions
 MidenNode -->|"ingested @<release-tag>"| CutVersions
 Compiler -->|"ingested @<release-tag>"| CutVersions
 MidenClient -->|"ingested @<release-tag>"| CutVersions
-    MidenTutorials -->|"ingested @main"| CutVersions
+    MidenTutorials -->|"ingested @<release-tag>"| CutVersions
 
     MidenBase -->|"ingested @next"| DeployDocs
     MidenVM -->|"ingested @next"| DeployDocs
