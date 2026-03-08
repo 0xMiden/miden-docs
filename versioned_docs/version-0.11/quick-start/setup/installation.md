@@ -113,16 +113,34 @@ Then add it to your shell configuration:
 **For Zsh (macOS default):**
 
 ```bash title="~/.zshrc"
-export PATH="/Users/$(whoami)/Library/Application Support/midenup/bin:$PATH"
+export MIDENUP_HOME="$HOME/Library/Application Support/midenup"
+export PATH="$MIDENUP_HOME/bin:$PATH"
+export PATH="$MIDENUP_HOME/opt:$PATH"
+```
+
+After editing, reload your shell:
+
+```bash title=">_ Terminal"
 source ~/.zshrc
 ```
 
-**For Bash:**
+**For Bash (Linux/Ubuntu):**
 
 ```bash title="~/.bashrc"
-export PATH="$XDG_DATA_DIR/midenup/bin:$PATH"
+export MIDENUP_HOME="$HOME/.local/share/midenup"
+export PATH="$MIDENUP_HOME/bin:$PATH"
+export PATH="$MIDENUP_HOME/opt:$PATH"
+```
+
+After editing, reload your shell:
+
+```bash title=">_ Terminal"
 source ~/.bashrc
 ```
+
+:::tip
+On Linux, `midenup` uses XDG Base Directory paths. If `$XDG_DATA_HOME` is set, midenup installs to `$XDG_DATA_HOME/midenup`. Otherwise, it defaults to `~/.local/share/midenup`.
+:::
 
 **Install Miden Toolchain**
 
@@ -170,8 +188,14 @@ which miden
 <details>
 <summary>Expected output</summary>
 
+**macOS:**
 ```text
 /Users/<USERNAME>/Library/Application Support/midenup/bin/miden
+```
+
+**Linux:**
+```text
+/home/<USERNAME>/.local/share/midenup/bin/miden
 ```
 
 </details>
@@ -188,12 +212,28 @@ If successful, you'll see a new directory with Miden project files.
 
 **"miden: command not found"**
 
-This means the PATH isn't configured correctly. Verify midenup's bin directory is in your PATH:
+This means the PATH isn't configured correctly. First, verify midenup installed successfully:
+
+```bash title=">_ Terminal"
+ls -la ~/.local/share/midenup/bin/  # Linux
+ls -la ~/Library/Application\ Support/midenup/bin/  # macOS
+```
+
+You should see the `miden` executable. Then verify your PATH includes the midenup bin directory:
 
 ```bash title=">_ Terminal"
 echo $PATH | grep midenup
 ```
 
-If missing, re-add the export command to your shell configuration and reload it.
+If missing, add the PATH configuration to your shell profile (see [Configure PATH](#configure-path) above) and reload it:
+
+```bash title=">_ Terminal"
+source ~/.bashrc  # Linux
+source ~/.zshrc   # macOS
+```
+
+**Installation takes too long**
+
+Building Miden components from source can take 30-60 minutes. This is normal for first-time installations.
 
 ---
