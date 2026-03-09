@@ -97,6 +97,7 @@ const config: Config = {
             redirects.push("/intro");
           }
           if (existingPath.startsWith("/builder/get-started")) {
+            // Redirect old quick-start paths to new get-started paths
             redirects.push(existingPath.replace("/builder/get-started", "/quick-start"));
             redirects.push(existingPath.replace("/builder/get-started", "/builder/quick-start"));
           }
