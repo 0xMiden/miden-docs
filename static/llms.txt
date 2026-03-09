@@ -8,12 +8,12 @@
 
 ## Getting Started
 
-- [Quick Start](https://docs.miden.xyz/builder/quick-start/): Installation, CLI basics, and first steps
-- [Installation](https://docs.miden.xyz/builder/quick-start/setup/installation): Install the Miden toolchain with midenup
-- [CLI Basics](https://docs.miden.xyz/builder/quick-start/setup/cli-basics): Core CLI commands for accounts, notes, and transactions
-- [Your First Smart Contract](https://docs.miden.xyz/builder/quick-start/your-first-smart-contract/): Create, deploy, and test a counter contract
-- [Accounts](https://docs.miden.xyz/builder/quick-start/accounts): Create and manage accounts
-- [Notes](https://docs.miden.xyz/builder/quick-start/notes): Send and receive assets with notes
+- [Get Started](https://docs.miden.xyz/builder/get-started/): Installation, CLI basics, and first steps
+- [Installation](https://docs.miden.xyz/builder/get-started/setup/installation): Install the Miden toolchain with midenup
+- [CLI Basics](https://docs.miden.xyz/builder/get-started/setup/cli-basics): Core CLI commands for accounts, notes, and transactions
+- [Your First Smart Contract](https://docs.miden.xyz/builder/get-started/your-first-smart-contract/): Create, deploy, and test a counter contract
+- [Accounts](https://docs.miden.xyz/builder/get-started/accounts): Create and manage accounts
+- [Notes](https://docs.miden.xyz/builder/get-started/notes): Send and receive assets with notes
 
 ## Smart Contracts (Rust SDK)
 

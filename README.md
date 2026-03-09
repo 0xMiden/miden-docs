@@ -15,7 +15,7 @@ flowchart TD
     subgraph ThisRepo["0xMiden/miden-docs"]
         subgraph DocsDir["docs/ (authored here)"]
             BuilderDir["builder/"]
-            BuilderQS["builder/quick-start/"]
+            BuilderQS["builder/get-started/"]
             BuilderCore["builder/core-concepts/"]
             BuilderSC["builder/smart-contracts/"]
             BuilderDev["builder/develop/"]
@@ -41,7 +41,7 @@ flowchart TD
                 V011Content["(same structure)"]
             end
             subgraph VFuture["version-0.13+ (future)"]
-                VFutureBuilder["builder/quick-start/"]
+                VFutureBuilder["builder/get-started/"]
                 VFutureExternal["(external content)"]
             end
         end
@@ -87,7 +87,7 @@ flowchart TD
 
 | Category | Location | Source | Example |
 |----------|----------|--------|---------|
-| **Authored** | `docs/builder/` | Written in this repo | `docs/builder/quick-start/`, `docs/builder/faq.md` |
+| **Authored** | `docs/builder/` | Written in this repo | `docs/builder/get-started/`, `docs/builder/faq.md` |
 | **Ingested (live)** | `docs/core-concepts/`, `docs/builder/` | External repos @ next | `docs/core-concepts/miden-base/`, `docs/builder/tutorials/` |
 | **Ingested (versioned)** | `versioned_docs/` | External repos @ release tags | `versioned_docs/version-0.12/miden-base/` |
 | **Snapshots** | `versioned_docs/` | Frozen via `docs:version` | All versioned content |
@@ -95,7 +95,7 @@ flowchart TD
 ### What Each Location Contains
 
 **`docs/` (current/next version)**
-- Quick Start guides (`docs/builder/quick-start/`)
+- Get Started guides (`docs/builder/get-started/`)
 - Core Concepts, Smart Contracts, Reference (placeholders)
 - FAQ and Glossary
 - Landing pages for Builder and Design
@@ -109,7 +109,7 @@ flowchart TD
 
 When `docusaurus docs:version X.Y` runs, it snapshots **everything in `docs/`** into `versioned_docs/version-X.Y/`. This is versioning, not duplication:
 
-- `docs/builder/quick-start/` → edited live, appears in "current/next"
+- `docs/builder/get-started/` → edited live, appears in "current/next"
 - `versioned_docs/version-0.12/quick-start/` → frozen snapshot from release 0.12
 
 **External content is never copied into `docs/`** because:
@@ -119,7 +119,7 @@ When `docusaurus docs:version X.Y` runs, it snapshots **everything in `docs/`** 
 
 ### Legacy Note
 
-Older versioned snapshots (0.11, 0.12) contain `quick-start/` at the root level. New versions will snapshot `builder/quick-start/` inside the builder directory.
+Older versioned snapshots (0.11, 0.12) contain `quick-start/` at the root level. New versions will snapshot `builder/get-started/` inside the builder directory.
 
 ---
 
@@ -130,7 +130,7 @@ Older versioned snapshots (0.11, 0.12) contain `quick-start/` at the root level.
 Cut a new documentation version when:
 - A new protocol release ships (miden-base, miden-vm, miden-node, compiler)
 - Client or tutorial content has significant updates
-- Authored content (Quick Start, FAQ, Glossary) needs to be frozen for a release
+- Authored content (Get Started, FAQ, Glossary) needs to be frozen for a release
 
 ### Steps to Cut a Release
 
@@ -200,7 +200,7 @@ The build uses:
 
 ### ✅ DO
 
-- Edit Quick Start content in `docs/builder/quick-start/`
+- Edit Get Started content in `docs/builder/get-started/`
 - Edit FAQ and Glossary in `docs/builder/`
 - Edit Protocol/VM/Compiler/Node docs **in their source repositories**
 - Cut a new version to publish external documentation changes
@@ -211,13 +211,13 @@ The build uses:
 - **Never** manually copy external content into `docs/` (use CI/CD ingestion)
 - **Never** create root-level `docs/miden-base/`, `docs/miden-vm/`, etc. (use nested paths in `docs/core-concepts/`)
 - **Never** edit `versioned_docs/` directly (snapshots are immutable)
-- **Never** create a root-level `docs/quick-start/` (Quick Start lives in `docs/builder/`)
+- **Never** create a root-level `docs/quick-start/` (Get Started lives in `docs/builder/`)
 
 ### Quick Reference
 
 | Task | Action |
 |------|--------|
-| Edit Quick Start | `docs/builder/quick-start/` |
+| Edit Get Started | `docs/builder/get-started/` |
 | Edit FAQ/Glossary | `docs/builder/faq.md`, `docs/builder/glossary.md` |
 | Edit Protocol docs | `0xMiden/miden-base` repo → cut new version |
 | Edit VM docs | `0xMiden/miden-vm` repo → cut new version |
@@ -253,6 +253,6 @@ The site uses **Simple Analytics** for privacy-first, cookie-less metrics.
 ### Updating llms.txt
 
 Edit `static/llms.txt` directly. Content should:
-- List canonical entry points (Quick Start, Builder, Design)
-- Use relative paths (`/builder/quick-start/`)
+- List canonical entry points (Get Started, Builder, Design)
+- Use relative paths (`/builder/get-started/`)
 - Avoid "Polygon Miden" branding (use "Miden" only)
