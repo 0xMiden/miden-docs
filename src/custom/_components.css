@@ -214,6 +214,164 @@
 .theme-doc-markdown .docusaurus-mermaid-container {
   margin-top: 3rem;
   margin-bottom: 3rem;
+  padding: 2rem 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in oklab, var(--ifm-color-primary) 15%, transparent);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--ifm-color-primary) 4%, var(--color-bg)) 0%,
+      var(--color-bg) 50%,
+      color-mix(in oklab, var(--ifm-color-primary) 3%, var(--color-bg)) 100%
+    );
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow-x: auto;
+}
+
+[data-theme="dark"] .theme-doc-markdown .docusaurus-mermaid-container {
+  border-color: color-mix(in oklab, var(--ifm-color-primary) 20%, transparent);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--ifm-color-primary) 6%, var(--color-bg)) 0%,
+      var(--color-bg) 50%,
+      color-mix(in oklab, var(--ifm-color-primary) 4%, var(--color-bg)) 100%
+    );
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Center the SVG and let it overflow for proper sizing */
+.theme-doc-markdown .docusaurus-mermaid-container svg {
+  display: block;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+/* ---- Mermaid node styling ---- */
+
+/* Default nodes — soft branded fill (no size/shape changes to avoid clipping) */
+.docusaurus-mermaid-container .node rect,
+.docusaurus-mermaid-container .node polygon,
+.docusaurus-mermaid-container .node circle {
+  fill: color-mix(in oklab, var(--ifm-color-primary) 8%, var(--color-surface)) !important;
+  stroke: color-mix(in oklab, var(--ifm-color-primary) 30%, transparent) !important;
+  stroke-width: 1.5px !important;
+}
+
+/* Subgraph clusters */
+.docusaurus-mermaid-container .cluster {
+  overflow: visible !important;
+}
+
+.docusaurus-mermaid-container .cluster rect {
+  fill: color-mix(in oklab, var(--ifm-color-primary) 4%, var(--color-bg)) !important;
+  stroke: color-mix(in oklab, var(--ifm-color-primary) 18%, transparent) !important;
+  stroke-width: 1px !important;
+  stroke-dasharray: none !important;
+}
+
+/* Cluster labels */
+.docusaurus-mermaid-container .cluster-label .nodeLabel {
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+}
+
+/* Edge lines */
+.docusaurus-mermaid-container .flowchart-link,
+.docusaurus-mermaid-container .edge-pattern-solid {
+  stroke: color-mix(in oklab, var(--ifm-color-primary) 40%, var(--color-muted)) !important;
+  stroke-width: 1.5px !important;
+}
+
+/* Edge labels — colors only, no size changes */
+.docusaurus-mermaid-container .edgeLabel {
+  background-color: var(--color-bg) !important;
+  color: var(--color-muted) !important;
+}
+
+.docusaurus-mermaid-container .edgeLabel .edgeLabel {
+  background-color: transparent !important;
+}
+
+[data-theme="dark"] .docusaurus-mermaid-container .edgeLabel {
+  background-color: var(--color-surface) !important;
+}
+
+/* Arrowheads */
+.docusaurus-mermaid-container .marker {
+  fill: color-mix(in oklab, var(--ifm-color-primary) 50%, var(--color-muted)) !important;
+  stroke: none !important;
+}
+
+/* Node text — colors only */
+.docusaurus-mermaid-container .nodeLabel {
+  color: var(--color-text) !important;
+}
+
+/* ---- Sequence diagrams ---- */
+
+/* Participant boxes */
+.docusaurus-mermaid-container .actor {
+  fill: color-mix(in oklab, var(--ifm-color-primary) 10%, var(--color-surface)) !important;
+  stroke: color-mix(in oklab, var(--ifm-color-primary) 30%, transparent) !important;
+  stroke-width: 1.5px !important;
+}
+
+/* Participant text */
+.docusaurus-mermaid-container text.actor {
+  fill: var(--color-text) !important;
+  font-weight: 600 !important;
+}
+
+/* Sequence lines */
+.docusaurus-mermaid-container .messageLine0,
+.docusaurus-mermaid-container .messageLine1 {
+  stroke: color-mix(in oklab, var(--ifm-color-primary) 35%, var(--color-muted)) !important;
+  stroke-width: 1.5px !important;
+}
+
+/* Sequence message text */
+.docusaurus-mermaid-container .messageText {
+  fill: var(--color-text) !important;
+}
+
+/* Sequence loop/alt boxes */
+.docusaurus-mermaid-container .loopLine {
+  stroke: color-mix(in oklab, var(--ifm-color-primary) 20%, transparent) !important;
+  stroke-dasharray: 4 4 !important;
+}
+
+/* Activation bars */
+.docusaurus-mermaid-container .activation0,
+.docusaurus-mermaid-container .activation1,
+.docusaurus-mermaid-container .activation2 {
+  fill: color-mix(in oklab, var(--ifm-color-primary) 12%, var(--color-surface)) !important;
+  stroke: color-mix(in oklab, var(--ifm-color-primary) 25%, transparent) !important;
+}
+
+/* ---- Dark mode overrides ---- */
+
+[data-theme="dark"] .docusaurus-mermaid-container .node rect,
+[data-theme="dark"] .docusaurus-mermaid-container .node polygon,
+[data-theme="dark"] .docusaurus-mermaid-container .node circle {
+  fill: color-mix(in oklab, var(--ifm-color-primary) 10%, var(--color-surface)) !important;
+  stroke: color-mix(in oklab, var(--ifm-color-primary) 35%, transparent) !important;
+}
+
+[data-theme="dark"] .docusaurus-mermaid-container .cluster rect {
+  fill: color-mix(in oklab, var(--ifm-color-primary) 6%, var(--color-bg)) !important;
+  stroke: color-mix(in oklab, var(--ifm-color-primary) 22%, transparent) !important;
+}
+
+[data-theme="dark"] .docusaurus-mermaid-container .actor {
+  fill: color-mix(in oklab, var(--ifm-color-primary) 12%, var(--color-surface)) !important;
+  stroke: color-mix(in oklab, var(--ifm-color-primary) 35%, transparent) !important;
 }
 
 /* ==========================================
