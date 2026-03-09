@@ -342,3 +342,51 @@ aside[class*="docSidebarContainer"] .menu__caret {
 .navbar-sidebar .menu__list-item-collapsible {
   border-radius: var(--radius-md);
 }
+
+/* ==========================================
+   4.6) SIDEBAR OVERFLOW HANDLING
+   Fixes #170 - long titles overflow in sidebar
+   ========================================== */
+
+/* Ensure sidebar container clips overflow */
+aside[class*="docSidebarContainer"] {
+  overflow-x: hidden;
+}
+
+/* Main menu element clips content */
+aside[class*="docSidebarContainer"] .menu {
+  overflow-x: hidden;
+}
+
+/* Menu links handle long text gracefully */
+.theme-doc-sidebar-menu .menu__link {
+  /* Allow natural word wrapping for better readability */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  /* Prevent horizontal overflow */
+  max-width: 100%;
+}
+
+/* Handle code elements within sidebar links */
+.theme-doc-sidebar-menu .menu__link code {
+  /* Prevent code from causing overflow */
+  word-break: break-all;
+  white-space: normal;
+  /* Reduce code styling in sidebar for compactness */
+  font-size: 0.9em;
+  padding: 0.1em 0.3em;
+}
+
+/* Category labels also need overflow handling */
+.menu__list-item-collapsible > .menu__link {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Single line truncation for category headers */
+  white-space: nowrap;
+}
+
+/* But leaf items (actual page links) can wrap to multiple lines */
+.theme-doc-sidebar-item-link .menu__link {
+  white-space: normal;
+}
