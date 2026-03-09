@@ -148,7 +148,8 @@ jobs:
           # Clean directories that will be re-synced (v0.4 nested paths)
           rm -rf docs/core-concepts/miden-base docs/core-concepts/miden-vm docs/core-concepts/miden-node docs/core-concepts/compiler
           rm -rf docs/builder/tools/client
-          # Note: docs/builder/tutorials is NOT fully cleaned to preserve local tutorials (e.g. miden-bank)
+          rm -rf docs/builder/tutorials/miden-bank docs/builder/tutorials/index.md
+          # Note: docs/builder/tutorials/rust-compiler/ is NOT cleaned to preserve local guides (testing, debugging, pitfalls)
 
           # Core Concepts docs → docs/core-concepts/*
           if [ -d "vendor/miden-base/docs/src" ]; then
