@@ -363,9 +363,17 @@
 .docusaurus-mermaid-container .cluster-label .nodeLabel {
   font-family: "Manrope", var(--font-sans) !important;
   font-weight: 400 !important;
+  font-style: normal !important;
   color: color-mix(in oklab, var(--_mermaid-glow) 75%, var(--color-text)) !important;
   letter-spacing: 0.06em !important;
   text-transform: none !important;
+}
+
+/* Ensure no italic on cluster title elements */
+.docusaurus-mermaid-container .cluster-label,
+.docusaurus-mermaid-container .cluster-label span,
+.docusaurus-mermaid-container .cluster-label p {
+  font-style: normal !important;
 }
 
 /* ---- Edges ---- */
@@ -385,7 +393,7 @@
   color: color-mix(in oklab, var(--_mermaid-glow) 60%, var(--color-muted)) !important;
   font-family: "Manrope", var(--font-sans) !important;
   font-weight: 300 !important;
-  font-style: italic !important;
+  font-style: normal !important;
   letter-spacing: -0.01em !important;
 }
 
