@@ -204,6 +204,13 @@ const config: Config = {
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:site", content: "@0xMiden" },
       ],
+      mermaid: {
+        theme: { light: "neutral", dark: "dark" },
+        options: {
+          fontFamily: '"Manrope", ui-sans-serif, system-ui, sans-serif',
+          fontSize: 14,
+        },
+      },
       colorMode: {
         defaultMode: "light",
         disableSwitch: false,

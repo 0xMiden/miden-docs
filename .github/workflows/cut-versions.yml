@@ -151,7 +151,7 @@ jobs:
 
           # Clean directories that will be re-synced (v0.4 nested paths)
           rm -rf docs/core-concepts/miden-base docs/core-concepts/miden-vm docs/core-concepts/miden-node docs/core-concepts/compiler
-          rm -rf docs/builder/tools/client
+          rm -rf docs/builder/tools/client docs/builder/client docs/builder/tools/cli
           # Note: docs/builder/tutorials is NOT fully cleaned to preserve local tutorials (e.g. miden-bank)
 
           # Core Concepts docs → docs/core-concepts/*
@@ -188,9 +188,15 @@ jobs:
           fi
 
           if [ -d "vendor/miden-client/docs/external/src" ]; then
-            mkdir -p docs/builder/tools/client
-            cp -r vendor/miden-client/docs/external/src/* docs/builder/tools/client/
-            echo "Synced miden-client → docs/builder/tools/client"
+            mkdir -p docs/builder/client
+            cp -r vendor/miden-client/docs/external/src/* docs/builder/client/
+            echo "Synced miden-client → docs/builder/client"
+
+            # Move CLI directory to Tools section
+            if [ -d "docs/builder/client/cli" ]; then
+              mv docs/builder/client/cli docs/builder/tools/cli
+              echo "Moved CLI docs → docs/builder/tools/cli"
+            fi
           fi
 
           echo "Content aggregation complete. Final docs structure:"
@@ -219,7 +225,8 @@ jobs:
           rm -rf docs/core-concepts/miden-vm
           rm -rf docs/core-concepts/miden-node
           rm -rf docs/core-concepts/compiler
-          rm -rf docs/builder/tools/client
+          rm -rf docs/builder/client
+          rm -rf docs/builder/tools/cli
           # Note: tutorials live in docs/builder/tutorials/ (authored content, not cleaned)
 
       - name: Commit snapshots

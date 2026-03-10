@@ -106,9 +106,9 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './tools',
-        label: 'Tools',
-        description: 'Miden Client libraries, CLI, and developer tooling.',
+        href: './client',
+        label: 'Client SDKs',
+        description: 'Rust, TypeScript, and React SDKs for building on Miden.',
       }}
     />
   </div>
