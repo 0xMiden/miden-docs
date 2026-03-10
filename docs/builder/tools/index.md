@@ -3,26 +3,11 @@ title: Tools
 sidebar_position: 1
 ---
 
-<!--
-ARCHITECTURE NOTE:
-Client documentation is canonical in versioned_docs/version-X.Y/miden-client/.
-This landing page exists only for the "current/next" version.
-Full client docs are available by selecting a released version.
--->
-
 # Tools
 
-:::info Version Note
-Full client documentation (Rust Client, Web Client, CLI reference) is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete client documentation.
-:::
+## CLI
 
-## Miden Client
-
-The Miden client has three main components:
-
-1. **Miden client library** - A Rust library for integrating with the Miden rollup
-2. **Miden client CLI** - Command-line interface for interacting with the network
-3. **Miden web client** - Browser-based interface for managing accounts and transactions
+The Miden CLI (`miden-client`) provides a command-line interface for interacting with the Miden network — creating accounts, executing transactions, syncing state, and managing notes. See the [CLI reference](./cli/index.md) for the full command list.
 
 ## Additional Tools
 
