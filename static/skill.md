@@ -2,8 +2,8 @@
 name: miden-architecture
 description: >
   Miden protocol architecture and ecosystem knowledge. Use when working on any
-  Miden repository (miden-base, miden-client, miden-node, miden-vm, compiler,
-  miden-docs). Covers the stack machine, transaction model, note system, state
+  Miden repository (protocol, miden-client, node, miden-vm, compiler,
+  docs). Covers the stack machine, transaction model, note system, state
   management, and Rust SDK programming model.
 compatibility: Designed for Claude Code and similar AI coding assistants.
 metadata:
@@ -73,4 +73,4 @@ Privacy is the default.
 - Full docs for LLMs: https://docs.miden.xyz/llms.txt
 - SDK API: https://docs.rs/miden/latest/miden/
 - GitHub: https://github.com/0xMiden
-- Core repos: miden-base (protocol), miden-vm (VM), miden-client (client), compiler (Rust->MASM)
+- Core repos: protocol, miden-vm (VM), miden-client (client), compiler (Rust->MASM)

@@ -20,7 +20,7 @@ const config: Config = {
   baseUrl: "",
 
   organizationName: "0xMiden",
-  projectName: "miden-docs",
+  projectName: "docs",
 
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
@@ -118,8 +118,9 @@ const config: Config = {
           }
 
           // Core Concepts section: redirect old root-level paths to new /core-concepts/ paths
-          if (existingPath.startsWith("/core-concepts/miden-base")) {
-            redirects.push(existingPath.replace("/core-concepts/miden-base", "/miden-base"));
+          if (existingPath.startsWith("/core-concepts/protocol")) {
+            redirects.push(existingPath.replace("/core-concepts/protocol", "/miden-base"));
+            redirects.push(existingPath.replace("/core-concepts/protocol", "/core-concepts/miden-base"));
           }
           if (existingPath.startsWith("/core-concepts/miden-vm")) {
             redirects.push(existingPath.replace("/core-concepts/miden-vm", "/miden-vm"));
@@ -127,8 +128,9 @@ const config: Config = {
           if (existingPath.startsWith("/core-concepts/compiler")) {
             redirects.push(existingPath.replace("/core-concepts/compiler", "/compiler"));
           }
-          if (existingPath.startsWith("/core-concepts/miden-node")) {
-            redirects.push(existingPath.replace("/core-concepts/miden-node", "/miden-node"));
+          if (existingPath.startsWith("/core-concepts/node")) {
+            redirects.push(existingPath.replace("/core-concepts/node", "/miden-node"));
+            redirects.push(existingPath.replace("/core-concepts/node", "/core-concepts/miden-node"));
           }
 
           // Redirect old /design/ paths to /core-concepts/

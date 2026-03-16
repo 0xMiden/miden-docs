@@ -9,7 +9,7 @@ import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
  *
  * - coreConceptsSidebar: Architecture/internals (protocol, VM, proving)
  *   Canonical source: Landing page in docs/core-concepts/index.md
- *   Ingested content: docs/core-concepts/miden-base/, miden-vm/, compiler/, miden-node/
+ *   Ingested content: docs/core-concepts/protocol/, miden-vm/, compiler/, node/
  *
  * ARCHITECTURE NOTE:
  * External docs are ingested at build time via deploy-docs.yml into:
