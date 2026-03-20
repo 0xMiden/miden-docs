@@ -48,12 +48,12 @@ flowchart TD
     end
 
     subgraph ExternalRepos["External Repositories (canonical sources)"]
-        MidenBase["0xMiden/miden-base"]
+        MidenBase["0xMiden/protocol"]
         MidenVM["0xMiden/miden-vm"]
-        MidenNode["0xMiden/miden-node"]
+        MidenNode["0xMiden/node"]
         Compiler["0xMiden/compiler"]
         MidenClient["0xMiden/miden-client"]
-        MidenTutorials["0xMiden/miden-tutorials"]
+        MidenTutorials["0xMiden/tutorials"]
     end
 
     CutVersions["CICD cut-versions.yml<br/>(ingest + snapshot)"]
@@ -88,8 +88,8 @@ flowchart TD
 | Category | Location | Source | Example |
 |----------|----------|--------|---------|
 | **Authored** | `docs/builder/` | Written in this repo | `docs/builder/get-started/`, `docs/builder/faq.md` |
-| **Ingested (live)** | `docs/core-concepts/`, `docs/builder/` | External repos @ next | `docs/core-concepts/miden-base/`, `docs/builder/tutorials/` |
-| **Ingested (versioned)** | `versioned_docs/` | External repos @ release tags | `versioned_docs/version-0.12/miden-base/` |
+| **Ingested (live)** | `docs/core-concepts/`, `docs/builder/` | External repos @ next | `docs/core-concepts/protocol/`, `docs/builder/tutorials/` |
+| **Ingested (versioned)** | `versioned_docs/` | External repos @ release tags | `versioned_docs/version-0.12/protocol/` |
 | **Snapshots** | `versioned_docs/` | Frozen via `docs:version` | All versioned content |
 
 ### What Each Location Contains
@@ -128,7 +128,7 @@ Older versioned snapshots (0.11, 0.12) contain `quick-start/` at the root level.
 ### When to Cut a New Version
 
 Cut a new documentation version when:
-- A new protocol release ships (miden-base, miden-vm, miden-node, compiler)
+- A new protocol release ships (protocol, miden-vm, node, compiler)
 - Client or tutorial content has significant updates
 - Authored content (Get Started, FAQ, Glossary) needs to be frozen for a release
 
@@ -142,12 +142,12 @@ Edit `.release/release-manifest.yml`:
 version: "0.13"  # New version label
 
 refs:
-  miden-base: v0.13.0      # Pin to release tag
+  protocol: v0.13.0       # Pin to release tag
   miden-vm: v0.20.0
-  miden-node: v0.13.0
+  node: v0.13.0
   compiler: 0.6.0
   miden-client: v0.13.0
-  miden-tutorials: main    # Or specific commit/tag
+  tutorials: main          # Or specific commit/tag
 ```
 
 #### 2. Run the Version Cut Workflow
@@ -160,7 +160,7 @@ Trigger `.github/workflows/cut-versions.yml` on a branch (manually via `workflow
 
 The workflow executes these steps:
 1. **Checkout external repos** at pinned refs
-2. **Aggregate docs temporarily** into `docs/` (miden-base/, miden-vm/, etc.)
+2. **Aggregate docs temporarily** into `docs/` (protocol/, miden-vm/, etc.)
 3. **Run `docusaurus docs:version X.Y`** to snapshot everything
 4. **Clean up `docs/`** — remove aggregated external content
 5. **Commit `versioned_docs/version-X.Y/`** to the repository
@@ -181,7 +181,7 @@ Deployment is **automatic** on push to `main`.
 The `.github/workflows/deploy-docs.yml` workflow:
 1. Checks out this repository and all external source repos
 2. Ingests external docs into v0.4 IA structure:
-   - Core Concepts docs → `docs/core-concepts/miden-base/`, `miden-vm/`, `compiler/`, `miden-node/`
+   - Core Concepts docs → `docs/core-concepts/protocol/`, `miden-vm/`, `compiler/`, `node/`
    - Builder docs → `docs/builder/tutorials/`, `docs/builder/tools/client/`
 3. Runs `npm run build` to generate the static site
 4. Deploys to GitHub Pages at `docs.miden.xyz`
@@ -209,7 +209,7 @@ The build uses:
 ### ❌ DON'T
 
 - **Never** manually copy external content into `docs/` (use CI/CD ingestion)
-- **Never** create root-level `docs/miden-base/`, `docs/miden-vm/`, etc. (use nested paths in `docs/core-concepts/`)
+- **Never** create root-level `docs/protocol/`, `docs/miden-vm/`, etc. (use nested paths in `docs/core-concepts/`)
 - **Never** edit `versioned_docs/` directly (snapshots are immutable)
 - **Never** create a root-level `docs/quick-start/` (Get Started lives in `docs/builder/`)
 
@@ -219,9 +219,9 @@ The build uses:
 |------|--------|
 | Edit Get Started | `docs/builder/get-started/` |
 | Edit FAQ/Glossary | `docs/builder/faq.md`, `docs/builder/glossary.md` |
-| Edit Protocol docs | `0xMiden/miden-base` repo → cut new version |
+| Edit Protocol docs | `0xMiden/protocol` repo → cut new version |
 | Edit VM docs | `0xMiden/miden-vm` repo → cut new version |
-| Edit Tutorials | `0xMiden/miden-tutorials` repo → cut new version |
+| Edit Tutorials | `0xMiden/tutorials` repo → cut new version |
 | Edit Client docs | `0xMiden/miden-client` repo → cut new version |
 | Create new release | Update `.release/release-manifest.yml` → run `cut-versions.yml` |
 

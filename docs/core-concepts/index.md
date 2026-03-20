@@ -40,7 +40,7 @@ Miden is a zero-knowledge rollup that fundamentally rethinks blockchain architec
 
 ---
 
-## Protocol (miden-base)
+## Protocol
 
 The protocol layer defines Miden's data structures, state model, and transaction semantics.
 
@@ -157,7 +157,7 @@ The compiler supports:
 
 ---
 
-## Node (miden-node)
+## Node
 
 The node is the network infrastructure that receives transactions and produces blocks.
 
