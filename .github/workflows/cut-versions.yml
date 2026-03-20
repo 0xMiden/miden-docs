@@ -3,8 +3,8 @@
 # This workflow ingests external repos and creates versioned snapshots.
 #
 # v0.4 Information Architecture:
-#   - Core Concepts docs (miden-base, miden-vm, compiler, miden-node) → docs/core-concepts/
-#   - Builder docs (miden-tutorials, miden-client) → docs/builder/tutorials/, docs/builder/tools/client/
+#   - Core Concepts docs (protocol, miden-vm, compiler, node) → docs/core-concepts/
+#   - Builder docs (tutorials, miden-client) → docs/builder/tutorials/, docs/builder/tools/client/
 #
 # Workflow responsibilities:
 #   1. Check out external repos at pinned refs
@@ -47,12 +47,12 @@ jobs:
   cut:
     runs-on: ubuntu-latest
     env:
-      REPO_NODE: 0xMiden/miden-node
+      REPO_NODE: 0xMiden/node
       REPO_VM: 0xMiden/miden-vm
-      REPO_BASE: 0xMiden/miden-base
+      REPO_BASE: 0xMiden/protocol
       REPO_CLIENT: 0xMiden/miden-client
       REPO_COMPILER: 0xMiden/compiler
-      REPO_TUTORIALS: 0xMiden/miden-tutorials
+      REPO_TUTORIALS: 0xMiden/tutorials
     steps:
       - name: Checkout aggregator
         uses: actions/checkout@v4
@@ -88,12 +88,12 @@ jobs:
           // Build outputs
           const out = {
             version_label: inputs.version_label || (m.version || '').trim(),
-            miden_node_ref:      getRef(process.env.INPUT_MIDEN_NODE_REF,      refs['miden-node']),
+            miden_node_ref:      getRef(process.env.INPUT_MIDEN_NODE_REF,      refs['node']),
             miden_vm_ref:        getRef(process.env.INPUT_MIDEN_VM_REF,        refs['miden-vm']),
-            miden_base_ref:      getRef(process.env.INPUT_MIDEN_BASE_REF,      refs['miden-base']),
+            miden_base_ref:      getRef(process.env.INPUT_MIDEN_BASE_REF,      refs['protocol']),
             miden_client_ref:    getRef(process.env.INPUT_MIDEN_CLIENT_REF,    refs['miden-client']),
             compiler_ref:  getRef(process.env.INPUT_COMPILER_REF,  refs['compiler']),
-            miden_tutorials_ref: getRef(process.env.INPUT_MIDEN_TUTORIALS_REF, refs['miden-tutorials']),
+            miden_tutorials_ref: getRef(process.env.INPUT_MIDEN_TUTORIALS_REF, refs['tutorials']),
           };
 
           if (!out.version_label) {
@@ -134,12 +134,12 @@ jobs:
             git clone "https://github.com/$repo" "$path"
             (cd "$path" && git fetch --depth 1 origin "$ref" && git checkout "$ref")
           }
-          checkout_ref "${REPO_NODE}"      "${{ steps.manifest.outputs.miden_node_ref }}"      vendor/miden-node
+          checkout_ref "${REPO_NODE}"      "${{ steps.manifest.outputs.miden_node_ref }}"      vendor/node
           checkout_ref "${REPO_VM}"        "${{ steps.manifest.outputs.miden_vm_ref }}"        vendor/miden-vm
-          checkout_ref "${REPO_BASE}"      "${{ steps.manifest.outputs.miden_base_ref }}"      vendor/miden-base
+          checkout_ref "${REPO_BASE}"      "${{ steps.manifest.outputs.miden_base_ref }}"      vendor/protocol
           checkout_ref "${REPO_CLIENT}"    "${{ steps.manifest.outputs.miden_client_ref }}"    vendor/miden-client
           checkout_ref "${REPO_COMPILER}"  "${{ steps.manifest.outputs.compiler_ref }}"  vendor/compiler
-          checkout_ref "${REPO_TUTORIALS}" "${{ steps.manifest.outputs.miden_tutorials_ref }}" vendor/miden-tutorials
+          checkout_ref "${REPO_TUTORIALS}" "${{ steps.manifest.outputs.miden_tutorials_ref }}" vendor/tutorials
 
       # ============================================================
       # v0.4 IA: Aggregate into nested structure (TEMPORARY)
@@ -150,16 +150,16 @@ jobs:
           echo "Aggregating vendor docs into v0.4 IA structure..."
 
           # Clean directories that will be re-synced (v0.4 nested paths)
-          rm -rf docs/core-concepts/miden-base docs/core-concepts/miden-vm docs/core-concepts/miden-node docs/core-concepts/compiler
+          rm -rf docs/core-concepts/protocol docs/core-concepts/miden-vm docs/core-concepts/node docs/core-concepts/compiler
           rm -rf docs/builder/tools/client
           rm -rf docs/builder/tutorials/miden-bank docs/builder/tutorials/index.md
           # Note: docs/builder/tutorials/rust-compiler/ is NOT cleaned to preserve local guides (testing, debugging, pitfalls)
 
           # Core Concepts docs → docs/core-concepts/*
-          if [ -d "vendor/miden-base/docs/src" ]; then
-            mkdir -p docs/core-concepts/miden-base
-            cp -r vendor/miden-base/docs/src/* docs/core-concepts/miden-base/
-            echo "Synced miden-base → docs/core-concepts/miden-base"
+          if [ -d "vendor/protocol/docs/src" ]; then
+            mkdir -p docs/core-concepts/protocol
+            cp -r vendor/protocol/docs/src/* docs/core-concepts/protocol/
+            echo "Synced protocol → docs/core-concepts/protocol"
           fi
 
           if [ -d "vendor/miden-vm/docs/src" ]; then
@@ -168,10 +168,10 @@ jobs:
             echo "Synced miden-vm → docs/core-concepts/miden-vm"
           fi
 
-          if [ -d "vendor/miden-node/docs/external/src" ]; then
-            mkdir -p docs/core-concepts/miden-node
-            cp -r vendor/miden-node/docs/external/src/* docs/core-concepts/miden-node/
-            echo "Synced miden-node → docs/core-concepts/miden-node"
+          if [ -d "vendor/node/docs/external/src" ]; then
+            mkdir -p docs/core-concepts/node
+            cp -r vendor/node/docs/external/src/* docs/core-concepts/node/
+            echo "Synced node → docs/core-concepts/node"
           fi
 
           if [ -d "vendor/compiler/docs/external/src" ]; then
@@ -181,11 +181,11 @@ jobs:
           fi
 
           # Builder docs → docs/builder/*
-          # Sync miden-tutorials into tutorials (local tutorials are preserved)
-          if [ -d "vendor/miden-tutorials/docs/src" ]; then
+          # Sync tutorials into tutorials (local tutorials are preserved)
+          if [ -d "vendor/tutorials/docs/src" ]; then
             mkdir -p docs/builder/tutorials
-            cp -r vendor/miden-tutorials/docs/src/* docs/builder/tutorials/
-            echo "Synced miden-tutorials → docs/builder/tutorials"
+            cp -r vendor/tutorials/docs/src/* docs/builder/tutorials/
+            echo "Synced tutorials → docs/builder/tutorials"
           fi
 
           if [ -d "vendor/miden-client/docs/external/src" ]; then
@@ -216,9 +216,9 @@ jobs:
         run: |
           rm -rf vendor
           # Clean v0.4 nested paths
-          rm -rf docs/core-concepts/miden-base
+          rm -rf docs/core-concepts/protocol
           rm -rf docs/core-concepts/miden-vm
-          rm -rf docs/core-concepts/miden-node
+          rm -rf docs/core-concepts/node
           rm -rf docs/core-concepts/compiler
           rm -rf docs/builder/tools/client
           rm -rf docs/builder/tutorials/miden-bank docs/builder/tutorials/index.md
