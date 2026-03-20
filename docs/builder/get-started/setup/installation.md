@@ -72,8 +72,8 @@ node --version && yarn --version
 <summary>Expected output</summary>
 
 ```text
-v20.11.0
-1.22.19
+v22.x.x  # or higher
+1.22.x   # or higher
 ```
 
 </details>
@@ -124,6 +124,10 @@ Install the latest stable Miden components:
 midenup install stable
 ```
 
+:::note
+You may see `No artifact found. Proceeding to install from source` during installation. This is expected — it means pre-built binaries aren't available for your platform, so midenup compiles components from source. This can take 15-30 minutes.
+:::
+
 ### Verify Installation
 
 Check that everything is working correctly:
@@ -157,6 +161,15 @@ Ensure `$CARGO_HOME/bin` (typically `~/.cargo/bin/`) is in your PATH. This shoul
 
 ```bash title=">_ Terminal"
 echo $PATH | tr ':' '\n' | grep cargo
+```
+
+**"config error: missing field" when running `miden client` commands**
+
+If you have config files from a previous Miden installation, they may be incompatible with the current version. Delete the old config and database, then re-initialize:
+
+```bash title=">_ Terminal"
+rm -f miden-client.toml store.sqlite3
+miden client init
 ```
 
 ---
