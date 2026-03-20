@@ -120,6 +120,10 @@ const config: Config = {
           if (existingPath.startsWith("/builder/tools")) {
             redirects.push(existingPath.replace("/builder/tools", "/miden-client"));
           }
+          // Redirect old client path to new clients path
+          if (existingPath.startsWith("/builder/tools/clients")) {
+            redirects.push(existingPath.replace("/builder/tools/clients", "/builder/tools/client"));
+          }
 
           // Core Concepts section: redirect old root-level paths to new /core-concepts/ paths
           if (existingPath.startsWith("/core-concepts/protocol")) {
