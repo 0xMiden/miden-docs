@@ -108,7 +108,7 @@ import DocCard from '@theme/DocCard';
         type: 'link',
         href: './tools',
         label: 'Tools',
-        description: 'Miden Client libraries, CLI, and developer tooling.',
+        description: 'Client SDKs, CLI, playground, and block explorer.',
       }}
     />
   </div>
