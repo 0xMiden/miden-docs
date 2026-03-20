@@ -2,6 +2,7 @@
 title: "Miden Smart Contracts"
 sidebar_position: 0
 description: "Reference documentation for building Miden smart contracts in Rust using the Miden SDK."
+pagination_prev: null
 ---
 
 # Miden Smart Contracts
