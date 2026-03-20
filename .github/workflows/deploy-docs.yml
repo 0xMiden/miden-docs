@@ -7,16 +7,16 @@ on:
     inputs:
       # optional per-repo overrides (branch/ref/SHA); leave empty to use defaults
       miden_base_ref:
-        description: "Ref for 0xMiden/miden-base"
+        description: "Ref for 0xMiden/protocol"
         required: false
       miden_tutorials_ref:
-        description: "Ref for 0xMiden/miden-tutorials"
+        description: "Ref for 0xMiden/tutorials"
         required: false
       miden_client_ref:
         description: "Ref for 0xMiden/miden-client"
         required: false
       miden_node_ref:
-        description: "Ref for 0xMiden/miden-node"
+        description: "Ref for 0xMiden/node"
         required: false
       miden_vm_ref:
         description: "Ref for 0xMiden/miden-vm"
@@ -86,27 +86,27 @@ jobs:
           echo "COMPILER_REF=$compiler_ref" >> $GITHUB_OUTPUT
 
           echo "Resolved refs:"
-          echo "  miden-base:       $base_ref"
-          echo "  miden-tutorials:  $tutorials_ref"
+          echo "  protocol:         $base_ref"
+          echo "  tutorials:        $tutorials_ref"
           echo "  miden-client:     $client_ref"
-          echo "  miden-node:       $node_ref"
+          echo "  node:             $node_ref"
           echo "  miden-vm:         $vm_ref"
           echo "  compiler:         $compiler_ref"
 
       # Check out each source repo into vendor/*
-      - name: Checkout 0xMiden/miden-base
+      - name: Checkout 0xMiden/protocol
         uses: actions/checkout@v4
         with:
-          repository: 0xMiden/miden-base
+          repository: 0xMiden/protocol
           ref: ${{ steps.refs.outputs.MIDEN_BASE_REF }}
-          path: vendor/miden-base
+          path: vendor/protocol
 
-      - name: Checkout 0xMiden/miden-tutorials
+      - name: Checkout 0xMiden/tutorials
         uses: actions/checkout@v4
         with:
-          repository: 0xMiden/miden-tutorials
+          repository: 0xMiden/tutorials
           ref: ${{ steps.refs.outputs.MIDEN_TUTORIALS_REF }}
-          path: vendor/miden-tutorials
+          path: vendor/tutorials
 
       - name: Checkout 0xMiden/miden-client
         uses: actions/checkout@v4
@@ -115,12 +115,12 @@ jobs:
           ref: ${{ steps.refs.outputs.MIDEN_CLIENT_REF }}
           path: vendor/miden-client
 
-      - name: Checkout 0xMiden/miden-node
+      - name: Checkout 0xMiden/node
         uses: actions/checkout@v4
         with:
-          repository: 0xMiden/miden-node
+          repository: 0xMiden/node
           ref: ${{ steps.refs.outputs.MIDEN_NODE_REF }}
-          path: vendor/miden-node
+          path: vendor/node
 
       - name: Checkout 0xMiden/miden-vm
         uses: actions/checkout@v4
@@ -138,24 +138,24 @@ jobs:
 
       # ============================================================
       # v0.4 IA: Aggregate into nested structure
-      #   - Core Concepts docs (miden-base, miden-vm, compiler, miden-node) → docs/core-concepts/
-      #   - Builder docs (miden-tutorials, miden-client) → docs/builder/
+      #   - Core Concepts docs (protocol, miden-vm, compiler, node) → docs/core-concepts/
+      #   - Builder docs (tutorials, miden-client) → docs/builder/
       # ============================================================
       - name: Aggregate docs into single docs tree
         run: |
           echo "Aggregating vendor docs into v0.4 IA structure..."
 
           # Clean directories that will be re-synced (v0.4 nested paths)
-          rm -rf docs/core-concepts/miden-base docs/core-concepts/miden-vm docs/core-concepts/miden-node docs/core-concepts/compiler
+          rm -rf docs/core-concepts/protocol docs/core-concepts/miden-vm docs/core-concepts/node docs/core-concepts/compiler
           rm -rf docs/builder/tools/client
           rm -rf docs/builder/tutorials/miden-bank docs/builder/tutorials/index.md
           # Note: docs/builder/tutorials/rust-compiler/ is NOT cleaned to preserve local guides (testing, debugging, pitfalls)
 
           # Core Concepts docs → docs/core-concepts/*
-          if [ -d "vendor/miden-base/docs/src" ]; then
-            mkdir -p docs/core-concepts/miden-base
-            cp -r vendor/miden-base/docs/src/* docs/core-concepts/miden-base/
-            echo "Synced miden-base → docs/core-concepts/miden-base"
+          if [ -d "vendor/protocol/docs/src" ]; then
+            mkdir -p docs/core-concepts/protocol
+            cp -r vendor/protocol/docs/src/* docs/core-concepts/protocol/
+            echo "Synced protocol → docs/core-concepts/protocol"
           fi
 
           if [ -d "vendor/miden-vm/docs/src" ]; then
@@ -164,10 +164,10 @@ jobs:
             echo "Synced miden-vm → docs/core-concepts/miden-vm"
           fi
 
-          if [ -d "vendor/miden-node/docs/external/src" ]; then
-            mkdir -p docs/core-concepts/miden-node
-            cp -r vendor/miden-node/docs/external/src/* docs/core-concepts/miden-node/
-            echo "Synced miden-node → docs/core-concepts/miden-node"
+          if [ -d "vendor/node/docs/external/src" ]; then
+            mkdir -p docs/core-concepts/node
+            cp -r vendor/node/docs/external/src/* docs/core-concepts/node/
+            echo "Synced node → docs/core-concepts/node"
           fi
 
           if [ -d "vendor/compiler/docs/external/src" ]; then
@@ -177,11 +177,11 @@ jobs:
           fi
 
           # Builder docs → docs/builder/*
-          # Sync miden-tutorials into tutorials (local tutorials are preserved)
-          if [ -d "vendor/miden-tutorials/docs/src" ]; then
+          # Sync tutorials into tutorials (local tutorials are preserved)
+          if [ -d "vendor/tutorials/docs/src" ]; then
             mkdir -p docs/builder/tutorials
-            cp -r vendor/miden-tutorials/docs/src/* docs/builder/tutorials/
-            echo "Synced miden-tutorials → docs/builder/tutorials"
+            cp -r vendor/tutorials/docs/src/* docs/builder/tutorials/
+            echo "Synced tutorials → docs/builder/tutorials"
           fi
 
           if [ -d "vendor/miden-client/docs/external/src" ]; then
