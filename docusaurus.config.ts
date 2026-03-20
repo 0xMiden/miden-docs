@@ -106,6 +106,10 @@ const config: Config = {
           if (existingPath === "/builder/glossary") {
             redirects.push("/glossary");
           }
+          if (existingPath.startsWith("/builder/tutorials/miden-bank")) {
+            redirects.push(existingPath.replace("/builder/tutorials/miden-bank", "/builder/tutorials/rust-compiler/miden-bank"));
+            redirects.push(existingPath.replace("/builder/tutorials/miden-bank", "/builder/develop/tutorials/rust-compiler/miden-bank"));
+          }
           if (existingPath.startsWith("/builder/tutorials")) {
             redirects.push(existingPath.replace("/builder/tutorials", "/miden-tutorials"));
           }

@@ -29,7 +29,7 @@ If you're new to the Miden Rust compiler, start with the **Miden Bank Tutorial**
         </ul>
       </div>
       <div className="card__footer">
-        <a className="button button--primary button--block" href="./miden-bank/">Start Tutorial</a>
+        <a className="button button--primary button--block" href="../miden-bank/">Start Tutorial</a>
       </div>
     </div>
   </div>
