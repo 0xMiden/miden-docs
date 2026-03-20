@@ -43,9 +43,9 @@ For detailed reference documentation on the Miden Rust SDK — types, macros, st
 
 | Guide | Description |
 |-------|-------------|
-| [Testing with MockChain](./testing) | Learn to test your contracts using MockChain for local blockchain simulation |
-| [Debugging Guide](./debugging) | Interpret errors and debug common issues |
-| [Common Pitfalls](./pitfalls) | Avoid known issues and limitations |
+| [Testing with MockChain](../../guides/testing) | Learn to test your contracts using MockChain for local blockchain simulation |
+| [Debugging Guide](../../guides/debugging) | Interpret errors and debug common issues |
+| [Common Pitfalls](../../guides/pitfalls) | Avoid known issues and limitations |
 
 ## Source Code
 
