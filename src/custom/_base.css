@@ -55,7 +55,8 @@ main a:hover {
 .menu__link,
 .breadcrumbs__link,
 .pagination-nav__link,
-.table-of-contents a {
+.table-of-contents a,
+.card {
   text-decoration: none !important;
 }
 
@@ -65,7 +66,8 @@ main a:hover {
 .menu__link:hover,
 .breadcrumbs__link:hover,
 .pagination-nav__link:hover,
-.table-of-contents a:hover {
+.table-of-contents a:hover,
+.card:hover {
   text-decoration: none !important;
 }
 
