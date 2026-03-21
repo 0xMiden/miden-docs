@@ -26,7 +26,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: '#protocol-miden-base',
+        href: '#protocol',
         label: 'Protocol',
         description: 'Accounts, notes, state model, and transaction semantics.',
       }}
@@ -59,7 +59,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: '#node-miden-node',
+        href: '#node',
         label: 'Node',
         description: 'Network infrastructure, gRPC API, and block production.',
       }}
