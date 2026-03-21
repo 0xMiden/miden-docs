@@ -128,7 +128,7 @@ These imports provide:
 - **`StorageMapAccess`**: Needed for reading storage values (`get_count` function)
 
 :::note[`felt` vs `Felt`]
-`felt` is a macro (`felt!(1)`) for creating `Felt` values from compile-time constants, while `Felt` is the actual field element type used at runtime. Think of `felt!` as shorthand for creating `Felt` values.
+`Felt` is the field element type representing values in the Goldilocks prime field (p = 2^64 - 2^32 + 1). `felt!(1)` is a compile-time macro that creates `Felt` values from integer literals with compile-time range validation. Currently `felt!` only accepts values up to 2^32 (compiler limitation); for larger values use `Felt::from_u64_unchecked()`.
 :::
 
 #### Contract Structure Definition
