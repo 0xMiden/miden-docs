@@ -110,10 +110,11 @@ miden client account --default <ACCOUNT_ID>
 
 ### Deploy Your Account
 
-To make your account visible on-chain, deploy it using:
+The `miden client new-wallet` command above already deploys your account on-chain automatically. You can verify your account is deployed by syncing and checking its status:
 
 ```bash title=">_ Terminal"
-miden client new-wallet
+miden client sync
+miden client account
 ```
 
 ## Mint Your First Tokens
@@ -135,9 +136,7 @@ miden client account -s <ACCOUNT_ID>
 
 ## Create a New Project
 
-**Rust workspace template**: Designed for developing, testing, and deploying Miden smart contracts using Rust
-
-**Frontend project template**: Provides a simple starting point for building web applications that interact with deployed contracts on the Miden Testnet, including publishing and consuming notes.
+If you already created a project during [installation](./installation.md) (e.g., `my-test-project`), you can continue using it. Otherwise, create a new one:
 
 **Rust Workspace:**
 
@@ -145,7 +144,7 @@ miden client account -s <ACCOUNT_ID>
 miden new my-project
 ```
 
-Creates a **Rust workspace** for writing, testing and deploying Miden smart contracts.
+Creates a **Rust workspace** for developing, testing, and deploying Miden smart contracts using Rust.
 
 **Vite Frontend Project:**
 
