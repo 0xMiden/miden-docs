@@ -1,6 +1,7 @@
 ---
 sidebar_label: Introduction
 sidebar_position: 0
+pagination_next: null
 ---
 
 # Miden Documentation
@@ -10,7 +11,7 @@ sidebar_position: 0
 Miden is a zero-knowledge rollup for high-throughput, private applications. Build payments, DeFi, and asset management apps secured by Ethereum and Agglayer.
 
 :::note
-Miden is currently on **v0.13** – approaching mainnet readiness for the 2026 launch. Breaking changes may still occur in some components.
+Miden is on **v0.13** — approaching mainnet readiness for the 2026 launch.
 :::
 
 ### Why Miden?
@@ -154,6 +155,17 @@ import DocCard from '@theme/DocCard';
 - [Telegram](https://t.me/BuildOnMiden) – Join the technical discussion
 - [GitHub](https://github.com/0xMiden) – Explore the source code
 - [Roadmap](https://miden.xyz/roadmap) – See what's coming next
+
+import SectionLinks from '@site/src/components/SectionLinks';
+
+<SectionLinks
+  title="Explore Core Concepts"
+  links={[
+    { href: '../core-concepts', label: 'Architecture Overview', description: 'Actor model, state design, and protocol fundamentals' },
+    { href: '../core-concepts#protocol-miden-base', label: 'Protocol Reference', description: 'Accounts, notes, state model, and transaction semantics' },
+    { href: '../core-concepts#virtual-machine-miden-vm', label: 'Virtual Machine', description: 'STARK-based VM, chiplets, and Miden Assembly' },
+  ]}
+/>
 
 ---
 
