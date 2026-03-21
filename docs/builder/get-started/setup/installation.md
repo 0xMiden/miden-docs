@@ -98,31 +98,23 @@ Until published to crates.io, install using: `cargo install --git https://github
 midenup init
 ```
 
-This creates the `$MIDENUP_HOME` directory and sets up symlinks for the `miden` command.
+This creates the `$MIDENUP_HOME` directory and sets up the `miden` command by creating a symlink in your Cargo bin directory (`$CARGO_HOME/bin/`, typically `~/.cargo/bin/`). Since Rust users already have this directory in their PATH, no additional PATH configuration is needed.
 
-**Configure PATH**
-
-Add the midenup bin directory to your PATH. First, check your current `$MIDENUP_HOME`:
+Verify it works:
 
 ```bash title=">_ Terminal"
-midenup show home
+which miden
 ```
 
-Then add it to your shell configuration:
+<details>
+<summary>Expected output</summary>
 
-**For Zsh (macOS default):**
-
-```bash title="~/.zshrc"
-export PATH="/Users/$(whoami)/Library/Application Support/midenup/bin:$PATH"
-source ~/.zshrc
+```text
+/Users/<USERNAME>/.cargo/bin/miden    # macOS
+/home/<USERNAME>/.cargo/bin/miden     # Linux
 ```
 
-**For Bash:**
-
-```bash title="~/.bashrc"
-export PATH="$XDG_DATA_DIR/midenup/bin:$PATH"
-source ~/.bashrc
-```
+</details>
 
 **Install Miden Toolchain**
 
@@ -149,19 +141,6 @@ stable
 
 </details>
 
-```bash title=">_ Terminal"
-which miden
-```
-
-<details>
-<summary>Expected output</summary>
-
-```text
-/Users/<USERNAME>/Library/Application Support/midenup/bin/miden
-```
-
-</details>
-
 Test by creating a new project:
 
 ```bash title=">_ Terminal"
@@ -174,12 +153,10 @@ If successful, you'll see a new directory with Miden project files.
 
 **"miden: command not found"**
 
-This means the PATH isn't configured correctly. Verify midenup's bin directory is in your PATH:
+Ensure `$CARGO_HOME/bin` (typically `~/.cargo/bin/`) is in your PATH. This should already be configured if you installed Rust via rustup. Verify with:
 
 ```bash title=">_ Terminal"
-echo $PATH | grep midenup
+echo $PATH | tr ':' '\n' | grep cargo
 ```
-
-If missing, re-add the export command to your shell configuration and reload it.
 
 ---
