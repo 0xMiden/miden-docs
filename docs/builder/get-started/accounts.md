@@ -115,7 +115,7 @@ To run the code examples in this guide, you'll need to set up a development envi
 
 ### Rust Environment
 
-Create a new Miden Rust project:
+If you already created `my-test-project` during [installation](./setup/installation), you can reuse it. Otherwise, create a new project:
 
 ```bash title=">_ Terminal"
 miden new my-project
