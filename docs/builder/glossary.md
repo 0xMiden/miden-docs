@@ -56,9 +56,21 @@ A Felt or Field Element is a data type used for cryptographic operations. It rep
 
 A fundamental module of the MidenVM that acts as a base layer by providing core functionality and security guarantees for the protocol.
 
+## Local Transaction
+
+A Local Transaction is a transaction that is executed and proven locally on the user's device using the Miden client. The resulting proof is then submitted to the network for verification.
+
 ## Miden Assembly
 
 An assembly language specifically designed for the Miden VM. It's a low-level programming language with specialized instructions optimized for zero-knowledge proof generation.
+
+## Midenup
+
+Midenup is the official Miden toolchain manager. It is used to install and manage Miden development components, including the Miden client and CLI.
+
+## Network Transaction
+
+A Network Transaction is a transaction where execution and proof generation are delegated to a Miden network operator rather than performed locally by the user.
 
 ## Note
 
@@ -79,6 +91,10 @@ Note ID is a unique identifier assigned to each note to distinguish it from othe
 ## Nullifier
 
 A nullifier is a cryptographic commitment that marks a note as spent, preventing it from being consumed again.
+
+## Transaction
+
+A Transaction in Miden represents a state change of a single account. During a transaction, an account can consume input notes and produce output notes, and a STARK-based proof is generated attesting to the correctness of execution.
 
 ## Prover
 
