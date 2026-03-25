@@ -1,100 +1,64 @@
-Miden Learning Path
+# Learning Path for New Developers
 
-New to Miden? This page gives you a clear, structured path from complete beginner to active builder so you always know exactly what to do next.
+This page is designed to help you navigate the Miden documentation from complete beginner to active builder. Follow the levels in order, or jump to the level that matches your current experience.
 
-The path is divided into four levels. Each level builds on the previous one. You don't need to complete every item before moving forward, but the order is intentional.
+---
 
-Level 1 — Understand (No Setup Required)
+## Level 1: Understand
 
-Start here if you're new to Miden or ZK-based blockchains. No installation needed everything in this level runs in your browser or requires only reading.
+Start here if you are new to Miden or to ZK rollups in general. The goal is to build a mental model of what Miden is and how it works before writing any code.
 
-Goal: Understand what Miden is, why it exists, and how it works at a high level.
+- **[What is Miden?](https://docs.miden.xyz/)**: Read the overview to understand Miden's purpose and architecture.
+- **[Key Concepts](https://docs.miden.xyz/concepts/)**: Learn the core primitives: accounts, notes, assets, and transactions.
+- **[FAQ](./faq.md)**: Read through the FAQ to get answers to common questions about privacy, proving, and bridging.
 
-Resource | What You'll Learn 
-[Introduction](/builder/) | What Miden is and what makes it different 
-[Core Concepts](/core-concepts/) | Accounts, notes, transactions, and the actor model 
-[Miden Smart Contracts](/builder/smart-contracts/) | How contracts work on Miden vs other chains 
-[Glossary](/builder/glossary) | Key terms used throughout the documentation 
+By the end of this level you should be able to explain what a note is, what client-side proving means, and why Miden is different from EVM chains.
 
-Level 2 — Experiment (Browser Only)
+---
 
-Once you understand the concepts, explore them hands-on. The Miden Playground requires no installation everything runs in your browser.
+## Level 2: Experiment
 
-Goal: Write and run your first Miden programs without any local setup.
+Start interacting with Miden without setting up a full local environment.
 
-Resource | What You'll Learn 
-[Miden Playground](https://playground.miden.xyz) | Interactive environment for writing MASM programs 
-[Miden Wallet](https://chromewebstore.google.com/detail/miden-wallet/ablmompanofnodfdkgchkpmphailefpb) | Experience client-side proving in the browser 
-[Miden Faucet](https://faucet.testnet.miden.io/) | Get testnet tokens 
-[Miden Scan](https://testnet.midenscan.com/) | Explore accounts and transactions on testnet 
-[FAQ](/builder/faq) | Answers to common questions 
+- **[Miden Playground](https://playground.miden.xyz/)**: Write and run MASM programs directly in your browser.
+- **[MASM Basics](https://docs.miden.xyz/masm/)**: Learn the basics of Miden Assembly: the language used to write smart contracts and programs on Miden.
 
-Level 3 — Build Locally
+By the end of this level you should be able to write and execute a simple MASM program in the playground.
 
-When the browser playground isn't enough, set up a full local development environment. This level requires installing Rust and the Miden toolchain on your machine.
+---
 
-Goal: Run Miden locally, connect to testnet, and submit real transactions.
-Step 1 — Install the toolchain
+## Level 3: Build Locally
 
-Follow the [Quick Start guide](/builder/quick-start/) to install Rust and midenup.
+Set up your local development environment and start building real programs.
 
-> **Ubuntu/Linux users:** After running `midenup install stable`, you may need to add the Miden binaries to your PATH manually. If `miden --version` returns "command not found", run:
+- **[Install the Miden Toolchain](https://docs.miden.xyz/install/)**: Install `midenup` and the Miden toolchain on your machine.
+- **[Rust Client Quickstart](https://docs.miden.xyz/rust-client/)**: Use the Miden Rust Client to create accounts, mint assets, and send notes locally using `MockChain`.
+- **[Web Client Quickstart](https://docs.miden.xyz/web-client/)**: Use the Miden Web Client if you are building a browser-based application.
+
+> **Tip:** If you are on Ubuntu or Linux and `miden` is not found after installation, add the binary path to your shell:
 > ```bash
-> echo 'export PATH="/home/YOUR_USERNAME/.local/share/midenup/bin:$PATH"' >> ~/.bashrc
+> echo 'export PATH="$HOME/.local/share/midenup/bin:$PATH"' >> ~/.bashrc
 > source ~/.bashrc
 > ```
-> Replace `YOUR_USERNAME` with your actual username.
 
-Step 2 — Connect to a node
+By the end of this level you should be able to run a local transaction using MockChain and understand the full transaction lifecycle.
 
-You have two options:
+---
 
-- Testnet (recommended for beginners): Connect directly to `rpc.testnet.miden.io:443` — no setup required
-- Local node (optional, for development): Follow the [Miden Node Setup](/builder/develop/tutorials/miden_node_setup) tutorial to run a node on your own machine
+## Level 4: Build Seriously
 
-Most users should start with testnet.
+You are ready to build production-ready applications and contribute to the ecosystem.
 
-Step 3 — Interact via client
+- **[Miden Rollup Architecture](https://docs.miden.xyz/architecture/)**: Deep dive into how the sequencer, prover, and operator work together.
+- **[Account Interfaces](https://docs.miden.xyz/accounts/)**: Learn how to design custom account types and note scripts.
+- **[Connect to Testnet](https://docs.miden.xyz/testnet/)**: Deploy and test your application on the Miden public testnet.
+- **[Contribute to Miden](https://github.com/0xMiden/docs/blob/main/CONTRIBUTING.md)**: Fix bugs, improve docs, or build open-source tooling for the ecosystem.
 
-Choose your preferred interface:
+By the end of this level you should be able to build and deploy a complete application on Miden testnet.
 
-Interface | Best For 
-[Rust Client](/builder/develop/tutorials/rust-client/) | Backend developers, programmatic interaction via Rust 
-[Web Client](/builder/develop/tutorials/web-client/) | Frontend developers, browser-based applications (TypeScript) 
+---
 
-Level 4 — Build Seriously
+## Still Stuck?
 
-Ready to write real smart contracts? This level covers the Miden Rust compiler and a full end-to-end application.
-
-Goal: Write, test, and deploy Miden smart contracts in Rust.
-
-Prerequisites for this level
-- Completed Level 3
-- Basic Rust programming experience
-
-Start here
-
-Resource | What You'll Learn 
-[Rust Compiler Overview](/builder/develop/tutorials/rust-compiler/) | How the Miden Rust compiler works 
-[Miden Bank Tutorial](/builder/develop/tutorials/rust-compiler/miden-bank/) | Build a complete banking application end-to-end 
-[Testing with MockChain](/builder/develop/tutorials/rust-compiler/testing) | How to test your contracts locally 
-[Debugging Guide](/builder/develop/tutorials/rust-compiler/debugging) | Troubleshoot issues in your contracts 
-[Common Pitfalls](/builder/develop/tutorials/rust-compiler/pitfalls) | Avoid known mistakes 
-
-How to Contribute
-
-Once you've explored Miden, consider contributing back:
-
-- Non-technical: Fix typos in docs, help in [Telegram](https://t.me/BuildOnMiden), give feedback
-- Some technical: Build projects in the playground, create MASM templates, submit GitHub Issues for bugs you encounter
-- Technical: Contribute to the Rust Client, Web Client, or Miden VM
-
-See the [contributing guidelines](https://github.com/0xMiden/.github/blob/main/CONTRIBUTING.md) for details.
-
-Get Help
-
-Stuck at any level? Here's where to go:
-
-- [Miden Docs](https://docs.miden.xyz) — full technical reference
-- [Build On Miden Telegram](https://t.me/BuildOnMiden) — community support
-- [GitHub Issues](https://github.com/0xMiden/miden-docs/issues) — report documentation bugs and gaps
+- Join the **[BuildOnMiden Telegram](https://t.me/BuildOnMiden)** community.
+- Open a **[GitHub Discussion](https://github.com/0xMiden/docs/discussions)**.
