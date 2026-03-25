@@ -149,9 +149,10 @@ Test by creating a new project:
 
 ```bash title=">_ Terminal"
 miden new my-test-project
+cd my-test-project
 ```
 
-If successful, you'll see a new directory with Miden project files.
+If successful, you'll see a new directory with Miden project files. The `cd` command enters the project directory, which you'll need for the following guides.
 
 ### Troubleshooting
 

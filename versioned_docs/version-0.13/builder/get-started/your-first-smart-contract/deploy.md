@@ -93,7 +93,7 @@ Account delta: AccountDelta { account_id: V0(AccountIdV0 { prefix: 7255964780328
 
 </details>
 
-Congratulations, you have successfully deployed the Counter Contract to the Miden Testnet, and incremented its count by one!
+Congratulations, you have successfully deployed the Counter Contract to the Miden Testnet, and incremented its count by one! You can view your account on the [Miden Testnet Explorer](https://testnet.midenscan.com).
 
 ### What Happens During Execution
 
@@ -149,8 +149,8 @@ let note_package = Arc::new(
 The `build_project_in_dir()` function:
 
 - Takes the path to your contract's Rust source code
-- Compiles the Rust code into Miden assembly
-- Generates a package containing the compiled contract bytecode and metadata
+- Compiles the Rust code into a Miden package (`.masp` file)
+- The package contains the compiled contract bytecode and metadata
 - This is equivalent to manually running `miden build` in each contract directory
 
 These packages contain all the information needed to deploy and interact with your contracts on the Miden network.
