@@ -64,6 +64,10 @@ A Felt or Field Element is a data type used for cryptographic operations. It rep
 
 A fundamental module of the MidenVM that acts as a base layer by providing core functionality and security guarantees for the protocol.
 
+## Local Transaction
+
+A Local Transaction is a transaction that is executed and proven locally on the user's device using the Miden client. The resulting proof is then submitted to the network for verification.
+
 ## Miden Assembly
 
 An assembly language specifically designed for the Miden VM. It's a low-level programming language with specialized instructions optimized for zero-knowledge proof generation.
@@ -72,38 +76,18 @@ An assembly language specifically designed for the Miden VM. It's a low-level pr
 
 Infrastructure built by OpenZeppelin for managing private account state on Miden. Guardian provides a server and client SDKs for backing up, syncing, and coordinating state across devices and parties without trust assumptions. See the [Miden Guardian documentation](./miden-guardian/).
 
+## midenup
+
+midenup is the official Miden toolchain manager. It is used to install and manage Miden development components, including the Miden client and CLI.
+
 ## MultiSig
 
 A multi-signature account on Miden that requires a configurable threshold (N-of-M) of authorized signers to approve transactions before execution. MultiSig workflows are coordinated through [Miden Guardian](./miden-guardian/).
 
+## Network Transaction
+
+A Network Transaction is a transaction where execution and proof generation are delegated to a Miden network operator rather than performed locally by the user.
+
 ## Note
 
-A Note is a fundamental data structure that represents an offchain asset or a piece of information that can be transferred between accounts. Miden's UTXO-like (Unspent Transaction Output) model is designed around the concept of notes. There are output notes which are new notes created by the transaction and input notes which are consumed (spent) by the transaction.
-
-## Note script
-
-A Note script is a program that defines the rules and conditions under which a note can be consumed.
-
-## Note tag
-
-A Note tag is an identifier or metadata associated with notes that provide additional filtering capabilities.
-
-## Note ID
-
-Note ID is a unique identifier assigned to each note to distinguish it from other notes.
-
-## Nullifier
-
-A nullifier is a cryptographic commitment that marks a note as spent, preventing it from being consumed again.
-
-## Prover
-
-A Prover is responsible for generating zero-knowledge proofs that attest to the correctness of the execution of a program without revealing the underlying data.
-
-## Threshold Signature
-
-A cryptographic scheme where a minimum number of signers (the threshold) out of a total group must sign for a transaction to be valid. Used in Miden's MultiSig accounts.
-
-## Word
-
-A Word is a data structure that represents the basic unit of computation and storage in Miden, it is composed or four Felt's.
+A Note is a fundamental data structure that represents an offchain asset or a piece of information that can be transferred between accounts. Miden's UTXO-like (Unspen
