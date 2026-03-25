@@ -1,6 +1,7 @@
 ---
 sidebar_label: Introduction
 sidebar_position: 0
+pagination_next: null
 ---
 
 # Miden Documentation
@@ -10,7 +11,7 @@ sidebar_position: 0
 Miden is a zero-knowledge rollup for high-throughput, private applications. Build payments, DeFi, and asset management apps secured by Ethereum and Agglayer.
 
 :::note
-Miden is currently on **v0.13** – approaching mainnet readiness for the 2026 launch. Breaking changes may still occur in some components.
+Miden is on **v0.13** — approaching mainnet readiness for the 2026 launch.
 :::
 
 ### Why Miden?
@@ -35,8 +36,8 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './quick-start',
-        label: 'Quick Start',
+        href: './get-started',
+        label: 'Get Started',
         description: 'Install Miden tools, create your first wallet, and build your first transaction.',
       }}
     />
@@ -45,7 +46,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './quick-start/setup/installation',
+        href: './get-started/setup/installation',
         label: 'Installation',
         description: 'Set up your development environment with the midenup toolchain.',
       }}
@@ -70,7 +71,7 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
-        href: './develop',
+        href: './tutorials/rust-compiler',
         label: 'Tutorials',
         description: 'Step-by-step guides for building applications on Miden.',
       }}
@@ -83,9 +84,45 @@ import DocCard from '@theme/DocCard';
     <DocCard
       item={{
         type: 'link',
+        href: './guides',
+        label: 'Guides',
+        description: 'Testing, debugging, and common pitfalls for Miden development.',
+      }}
+    />
+  </div>
+</div>
+
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './miden-guardian',
+        label: 'Miden Guardian',
+        description: 'Backup, sync, and coordinate private account state with Guardian.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: './private-multisig',
+        label: 'Private Multisig',
+        description: 'Multi-party threshold signature workflows on Miden.',
+      }}
+    />
+  </div>
+</div>
+
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
         href: './tools',
         label: 'Tools',
-        description: 'Miden Client libraries, CLI, and developer tooling.',
+        description: 'Client SDKs, CLI, playground, and block explorer.',
       }}
     />
   </div>
@@ -131,6 +168,17 @@ import DocCard from '@theme/DocCard';
 - [Telegram](https://t.me/BuildOnMiden) – Join the technical discussion
 - [GitHub](https://github.com/0xMiden) – Explore the source code
 - [Roadmap](https://miden.xyz/roadmap) – See what's coming next
+
+import SectionLinks from '@site/src/components/SectionLinks';
+
+<SectionLinks
+  title="Explore Core Concepts"
+  links={[
+    { href: '../core-concepts', label: 'Architecture Overview', description: 'Actor model, state design, and protocol fundamentals' },
+    { href: '../core-concepts#protocol-miden-base', label: 'Protocol Reference', description: 'Accounts, notes, state model, and transaction semantics' },
+    { href: '../core-concepts#virtual-machine-miden-vm', label: 'Virtual Machine', description: 'STARK-based VM, chiplets, and Miden Assembly' },
+  ]}
+/>
 
 ---
 

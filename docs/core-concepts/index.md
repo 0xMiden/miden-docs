@@ -1,6 +1,8 @@
 ---
 sidebar_label: Introduction
 sidebar_position: 0
+pagination_next: null
+pagination_prev: null
 ---
 
 <!--
@@ -15,9 +17,57 @@ DO NOT add protocol documentation files here.
 
 This section provides a comprehensive technical reference for the Miden architecture, covering the protocol design, virtual machine, compiler toolchain, and node infrastructure.
 
-:::info Version Note
-Full Core Concepts documentation is available in **released versions only**. Please select a version from the dropdown (e.g., 0.12, 0.11) to access the complete documentation.
-:::
+## Explore by Topic
+
+import DocCard from '@theme/DocCard';
+
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '#protocol',
+        label: 'Protocol',
+        description: 'Accounts, notes, state model, and transaction semantics.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '#virtual-machine-miden-vm',
+        label: 'Virtual Machine',
+        description: 'STARK-based VM architecture, chiplets, and Miden Assembly.',
+      }}
+    />
+  </div>
+</div>
+
+<div className="row">
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '#compiler',
+        label: 'Compiler',
+        description: 'Rust-to-MASM compilation pipeline and toolchain.',
+      }}
+    />
+  </div>
+  <div className="col col--6">
+    <DocCard
+      item={{
+        type: 'link',
+        href: '#node',
+        label: 'Node',
+        description: 'Network infrastructure, gRPC API, and block production.',
+      }}
+    />
+  </div>
+</div>
+
+---
 
 ## Architecture Overview
 
@@ -40,7 +90,7 @@ Miden is a zero-knowledge rollup that fundamentally rethinks blockchain architec
 
 ---
 
-## Protocol (miden-base)
+## Protocol
 
 The protocol layer defines Miden's data structures, state model, and transaction semantics.
 
@@ -157,7 +207,7 @@ The compiler supports:
 
 ---
 
-## Node (miden-node)
+## Node
 
 The node is the network infrastructure that receives transactions and produces blocks.
 
@@ -180,8 +230,13 @@ The node exposes endpoints for:
 
 ---
 
-## Further Reading
+import SectionLinks from '@site/src/components/SectionLinks';
 
-- **[Build Documentation](../builder/)** – Practical guides for building on Miden
-- **[Quick Start](../builder/quick-start/)** – Get started with your first transaction
-- **[FAQ](../builder/faq)** – Common questions answered
+<SectionLinks
+  title="Build on Miden"
+  links={[
+    { href: '../builder/get-started', label: 'Get Started', description: 'Install tools, create a wallet, and run your first transaction' },
+    { href: '../builder/smart-contracts', label: 'Smart Contracts', description: 'Reference for building contracts in Rust with the Miden SDK' },
+    { href: '../builder/', label: 'Builder Documentation', description: 'Tutorials, tools, and guides for developers' },
+  ]}
+/>

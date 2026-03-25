@@ -18,6 +18,9 @@
   /* ---- Neutral & Surfaces ---- */
   --color-bg: #ffffff;
   --color-surface: #f9f9f9;
+  --color-surface-hover: #ffffff;
+  --color-card-bg: #ffffff;
+  --color-card-bg-hover: #fafafa;
   --color-elevated: color-mix(in oklab, #000 5%, transparent);
   --color-border: color-mix(in oklab, #000 20%, transparent);
   --color-text: #363636;
@@ -38,6 +41,16 @@
   --radius-md: 0.357rem;
   --radius-lg: 0.357rem;
   --radius-xl: 0.357rem;
+  --radius-card: 1rem;  /* 16px — premium card radius */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-card:
+    0 0 0 1px rgba(0, 0, 0, 0.03),
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 12px 24px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover:
+    0 0 0 1px rgba(0, 0, 0, 0.03),
+    0 4px 8px rgba(0, 0, 0, 0.04),
+    0 24px 48px rgba(0, 0, 0, 0.08);
 
   /* Design system spacing - rem values based on 14px base */
   --space-4px: 0.286rem; /* Inline code padding */
@@ -131,7 +144,7 @@
   /* Component radii (Infima) */
   --ifm-breadcrumb-border-radius: var(--radius-md);
   --ifm-button-border-radius: var(--radius-md);
-  --ifm-card-border-radius: var(--radius-md);
+  --ifm-card-border-radius: var(--radius-card);
   --ifm-alert-border-radius: var(--radius-md);
   --ifm-badge-border-radius: var(--radius-md);
   --ifm-tabs-border-radius: var(--radius-md);
@@ -146,7 +159,7 @@
 
   /* Borders & shadows */
   --ifm-border-color: var(--color-border);
-  --ifm-card-box-shadow: var(--shadow-md);
+  --ifm-card-box-shadow: var(--shadow-sm);
   --ifm-global-shadow-lw: var(--shadow-sm);
   --ifm-global-shadow-md: var(--shadow-md);
   --ifm-global-shadow-tl: var(--shadow-lg);
@@ -172,6 +185,17 @@
   --color-surface: #232323;
   --color-elevated: #3f3f3f99;
   --color-border: color-mix(in oklab, #ffffff 22%, transparent);
+  --color-surface-hover: #2a2a2a;
+  --color-card-bg: #232323;
+  --color-card-bg-hover: #2a2a2a;
+  --shadow-card:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 8px 16px rgba(0, 0, 0, 0.2);
+  --shadow-card-hover:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 16px 32px rgba(0, 0, 0, 0.3);
   --color-text: #e6e6e6;
   --color-muted: color-mix(in oklab, #e6e6e6 65%, transparent);
   --color-link: var(--color-brand);

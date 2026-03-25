@@ -63,7 +63,7 @@ Notes come in two visibility modes:
 
 Private notes provide stronger privacy guarantees — the network can't even see what assets a note carries — but they require the sender and recipient to have a communication channel outside the protocol.
 
-Miden provides built-in note patterns (P2ID, P2IDE, SWAP) for common transfer scenarios — see [Note Types](./note-types.md). You can also write fully custom note scripts for arbitrary consumption logic.
+Miden provides built-in note patterns (P2ID, P2IDE, SWAP) for common transfer scenarios — see [Standard Note Types](./note-types). You can also write fully custom note scripts for arbitrary consumption logic.
 
 ## How notes differ from EVM transfers
 

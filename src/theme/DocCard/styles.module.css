@@ -1,36 +1,43 @@
-/* Custom DocCard styling - fix underlines and internal spacing */
+/* Ejected DocCard styles — premium card typography.
+   Surface/hover/shadow effects live in _components.css (.card). */
 
-.customCard {
-  display: block;
-  margin-top: 0 !important;
-  margin-bottom: 1rem;
-  padding-top: 0 !important;
-}
+.cardContainer {
+  --ifm-link-color: var(--ifm-color-emphasis-800);
+  --ifm-link-hover-color: var(--ifm-color-emphasis-700);
+  --ifm-link-hover-decoration: none;
 
-/* Fix internal card padding */
-.customCard :global(.card__header) {
-  padding: 1rem 1rem 0.5rem 1rem !important;
-}
-
-.customCard :global(.card__body) {
-  padding: 0.5rem 1rem 1rem 1rem !important;
-}
-
-/* Remove any top margin/padding from card title */
-.customCard :global(.card__title),
-.customCard :global(.card__header h2),
-.customCard :global(.card__header h3) {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Remove underlines from all card links */
-.customCard :global(a),
-.customCard :global(.card__header a),
-.customCard :global(.card__body a),
-.customCard :global(h2 a),
-.customCard :global(h3 a),
-.customCard :global(p a) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 1.25rem 1.5rem;
   text-decoration: none !important;
 }
 
+.cardContainer *:last-child {
+  margin-bottom: 0;
+}
+
+/* Title — premium heading, not link-looking */
+.cardTitle {
+  color: var(--ifm-color-emphasis-1000);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.375rem;
+}
+
+/* Description — clearly subordinate to title */
+.cardDescription {
+  color: var(--ifm-color-emphasis-500);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 996px) {
+  .cardContainer {
+    padding: 1rem 1.25rem;
+  }
+}
