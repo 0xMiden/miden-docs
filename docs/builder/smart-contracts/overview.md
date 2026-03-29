@@ -148,4 +148,4 @@ Miden supports several account types, configured in `Cargo.toml`:
 | [Cross-Component Calls](./cross-component-calls) | Inter-component communication | WIT bindings, `generate!()` |
 | [Types](./types) | Felt, Word, Asset — the VM's native types | Field arithmetic |
 
-Ready to start building? Follow the [Miden Bank Tutorial](../tutorials/miden-bank/) for a hands-on walkthrough.
+Ready to start building? Follow the [Miden Bank Tutorial](../tutorials/rust-compiler/miden-bank/) for a hands-on walkthrough.
