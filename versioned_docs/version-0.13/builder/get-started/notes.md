@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 title: Notes & Transactions
-description: Learn Miden's unique note-based transaction model for private asset transfers.
+description: Learn Miden's unique note-based transaction model for asset transfers between accounts.
 ---
 
 import { CodeTabs } from '@site/src/components';
@@ -30,6 +30,8 @@ Traditional blockchains move tokens directly between account balances. Miden use
 
 ## The Two-Transaction Model
 
+A core principle of Miden is that **a transaction is the state transition of a single account**. This means each transaction only modifies one account's state, which enables parallel execution and strong privacy guarantees.
+
 Miden uses a **two-transaction model** for asset transfers that provides enhanced privacy and scalability:
 
 ### Transaction 1: Sender Creates Note
@@ -41,7 +43,7 @@ Miden uses a **two-transaction model** for asset transfers that provides enhance
 
 ### Transaction 2: Recipient Consumes Note
 
-- **Bob's account** discovers the note (addressed to his ID)
+- **Bob's client** discovers the note (addressed to his ID)
 - Bob creates a transaction to consume the note
 - Tokens move from the note into Bob's vault
 - Bob's balance increases, note is nullified
@@ -294,6 +296,10 @@ After minting creates a P2ID note containing tokens, the recipient must **consum
 
 Here's how to consume notes programmatically:
 
+:::tip
+This is a complete, self-contained example that includes the setup and minting steps from the previous section. **The new consume logic starts at the `CONSUMING P2ID NOTES` comment.**
+:::
+
 <CodeTabs
 tsFilename="src/lib/consume.ts"
 rustFilename="integration/src/bin/consume.rs"
@@ -422,6 +428,8 @@ async fn main() -> anyhow::Result<()> {
     // CONSUMING P2ID NOTES
     //------------------------------------------------------------
 
+    // Public notes must be committed to a block before they can be consumed.
+    // Poll until the network includes our mint note in a block.
     loop {
         // Sync state to get the latest block
         client.sync_state().await?;
@@ -532,6 +540,8 @@ export async function demo() {
 
     await client.syncState();
 
+    // Public notes must be committed to a block before they can be consumed.
+    // Poll until the network includes our mint note in a block.
     let consumableNotes: ConsumableNoteRecord[] = [];
     while (consumableNotes.length === 0) {
         // Find consumable notes
@@ -599,6 +609,10 @@ Sending tokens between accounts follows the same note-based pattern. The sender 
 This approach means Alice and Bob's transactions are completely separate and unlinkable, providing strong privacy guarantees.
 
 Let's implement the complete flow - mint, consume, then send:
+
+:::tip
+This is a complete, self-contained example that includes all previous steps. **The new send logic starts at the `SENDING TOKENS TO BOB` comment.**
+:::
 
 <CodeTabs
 tsFilename="src/lib/send.ts"
@@ -728,6 +742,8 @@ async fn main() -> anyhow::Result<()> {
     // CONSUMING P2ID NOTES
     //------------------------------------------------------------
 
+    // Public notes must be committed to a block before they can be consumed.
+    // Poll until the network includes our mint note in a block.
     loop {
         // Sync state to get the latest block
         client.sync_state().await?;
@@ -872,6 +888,8 @@ export async function demo() {
 
     await client.syncState();
 
+    // Public notes must be committed to a block before they can be consumed.
+    // Poll until the network includes our mint note in a block.
     let consumableNotes: ConsumableNoteRecord[] = [];
     while (consumableNotes.length === 0) {
         // Find consumable notes
@@ -946,7 +964,7 @@ Send 100 tokens to Bob note transaction ID: "0x51ac27474ade3a54adadd50db6c2b9a2e
 
 **Miden's Note-Based Transaction Model:**
 
-- **Notes** enable private asset transfers between accounts
+- **Notes** enable asset transfers between accounts (both public and private)
 - **Two-transaction model** provides privacy and parallelization benefits
 - **Zero-knowledge proofs** validate transaction execution without revealing details
 - **P2ID notes** target specific recipients using their account IDs
