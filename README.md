@@ -211,7 +211,7 @@ The build uses:
 - **Never** manually copy external content into `docs/` (use CI/CD ingestion)
 - **Never** create root-level `docs/protocol/`, `docs/miden-vm/`, etc. (use nested paths in `docs/core-concepts/`)
 - **Never** edit `versioned_docs/` directly (snapshots are immutable)
-- **Never** create a root-level `docs/quick-start/` (Get Started lives in `docs/builder/`)
+- **Never** create a root-level `docs/quick-start/` or `docs/get-started/` (Get Started lives in `docs/builder/`)
 
 ### Quick Reference
 
@@ -253,6 +253,6 @@ The site uses **Simple Analytics** for privacy-first, cookie-less metrics.
 ### Updating llms.txt
 
 Edit `static/llms.txt` directly. Content should:
-- List canonical entry points (Get Started, Builder, Design)
+- List canonical entry points (Get Started, Builder, Core Concepts)
 - Use relative paths (`/builder/get-started/`)
 - Avoid "Polygon Miden" branding (use "Miden" only)
