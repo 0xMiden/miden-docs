@@ -1,122 +1,114 @@
 ---
 sidebar_position: 1
 title: "Imports & Dependencies"
-description: "Crate renames and dependency changes in v0.13"
+description: "Crate version bumps, import relocations, and MSRV changes in v0.14"
 ---
 
 # Imports & Dependencies
 
 :::warning Breaking Change
-The `miden-objects` and `miden-lib` crates have been renamed. All imports must be updated.
+Miden VM dependencies move from 0.20 to 0.22 and `miden-crypto` from 0.19 to 0.23. Several types have been relocated across crates, and `Felt::as_int()` has been renamed.
 :::
 
 ## Quick Fix
 
 ```toml title="Cargo.toml"
-# Remove these
-miden-objects = "0.12"
-miden-lib = "0.12"
-
-# Add these
-miden-protocol = "0.13"
+# Replace these
+miden-protocol  = "0.13"
 miden-standards = "0.13"
+miden-assembly  = "0.20"
+miden-core      = "0.20"
+miden-processor = "0.20"
+miden-prover    = "0.20"
+miden-crypto    = "0.19"
+
+# With these
+miden-protocol  = "0.14"
+miden-standards = "0.14"
+miden-assembly  = "0.22"
+miden-core      = "0.22"
+miden-processor = "0.22"
+miden-prover    = "0.22"
+miden-crypto    = "0.23"
 ```
 
 ---
 
-## Crate Renames
+## Version Bumps
 
-Core types have moved from `miden-objects` and `miden-lib` to new packages.
+| Crate | v0.13 | v0.14 |
+|-------|-------|-------|
+| `miden-protocol` | 0.13 | 0.14 |
+| `miden-standards` | 0.13 | 0.14 |
+| `miden-assembly` | 0.20 | 0.22 |
+| `miden-core` | 0.20 | 0.22 |
+| `miden-core-lib` | 0.20 | 0.22 |
+| `miden-processor` | 0.20 | 0.22 |
+| `miden-prover` | 0.20 | 0.22 |
+| `miden-crypto` | 0.19 | 0.23 |
 
-| Old Package | New Package | Contains |
-|-------------|-------------|----------|
-| `miden-objects` | `miden-protocol` | Core protocol types |
-| `miden-lib` | `miden-standards` | Standard library |
+---
 
-### Cargo.toml
+## `ExecutionOptions`, `ProvingOptions`, `ExecutionProof` Relocated
 
-```diff title="Cargo.toml"
-# Before
-- miden-objects = "0.12"
-- miden-lib = "0.12"
+These types moved out of `miden-air` into their respective crates:
 
-# After
-+ miden-protocol = "0.13"
-+ miden-standards = "0.13"
+```rust
+// Before (0.13)
+use miden_air::{ExecutionOptions, ProvingOptions, ExecutionProof};
+
+// After (0.14)
+use miden_processor::ExecutionOptions;
+use miden_prover::ProvingOptions;
+use miden_core::ExecutionProof;
 ```
 
-### Rust Imports
+---
 
-```diff title="src/lib.rs"
-# Before
-- use miden_objects::{Account, Note, Transaction};
-- use miden_lib::StdLibrary;
+## `Felt::as_int()` → `Felt::as_canonical_u64()`
 
-# After
-+ use miden_protocol::{Account, Note, Transaction};
-+ use miden_standards::CoreLibrary;
+The `Felt::as_int()` method has been renamed to `Felt::as_canonical_u64()` for clarity:
+
+```rust
+// Before (0.13)
+let value: u64 = felt.as_int();
+
+// After (0.14)
+let value: u64 = felt.as_canonical_u64();
 ```
 
-:::tip Helper Script
-Use your IDE's find-and-replace to update all imports at once:
-- Find: `miden_objects` → Replace: `miden_protocol`
-- Find: `miden_lib` → Replace: `miden_standards`
+:::tip
+Use find-and-replace across your codebase: `as_int()` → `as_canonical_u64()`.
 :::
 
 ---
 
-## Miden VM and Crypto Updates
+## MSRV (Minimum Supported Rust Version)
 
-Update Miden VM to 0.20 and `miden-crypto` to 0.19:
+If you depend on `miden-client`, update your `rust-toolchain.toml` to Rust **1.91**:
 
-```toml title="Cargo.toml"
-miden-vm = "0.20"
-miden-crypto = "0.19"
-```
-
----
-
-## Core Library Rename
-
-The standard library has been renamed from `StdLibrary` to `CoreLibrary`.
-
-### Rust
-
-```diff title="src/lib.rs"
-- use miden_lib::StdLibrary;
-- let stdlib = StdLibrary::default();
-
-+ use miden_standards::CoreLibrary;
-+ let corelib = CoreLibrary::default();
-```
-
-### MASM Imports
-
-```diff title="src/contract.masm"
-# Before
-- use.std::crypto::hashes
-
-# After
-+ use.miden::core::crypto::hashes
+```toml title="rust-toolchain.toml"
+[toolchain]
+channel = "1.91"
 ```
 
 ---
 
 ## Migration Steps
 
-1. Update `Cargo.toml` with new package names and versions
-2. Run `cargo update` to fetch new packages
-3. Find and replace old import paths throughout your codebase
-4. Rename `StdLibrary` to `CoreLibrary`
-5. Update MASM imports from `std::` to `miden::core::`
-6. Compile and fix any remaining import errors
+1. Bump every Miden crate version in `Cargo.toml` per the table above.
+2. Move imports of `ExecutionOptions`, `ProvingOptions`, `ExecutionProof` to their new homes.
+3. Replace all `Felt::as_int()` calls with `Felt::as_canonical_u64()`.
+4. If you depend on `miden-client`, update your `rust-toolchain.toml` to Rust 1.91.
+5. Run `cargo update` to pull the new versions.
+6. Run `cargo build` and fix any remaining import errors.
 
 ---
 
 ## Common Errors
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `unresolved import 'miden_objects'` | Old package name | Change to `miden_protocol` |
-| `cannot find 'StdLibrary' in 'miden_lib'` | Renamed to CoreLibrary | Use `miden_standards::CoreLibrary` |
-| `unresolved import 'std::crypto'` | MASM namespace change | Use `miden::core::crypto` |
+| Error Message | Cause | Solution |
+| --- | --- | --- |
+| `unresolved import miden_air::ExecutionOptions` | Type moved | Import from `miden_processor::ExecutionOptions`. |
+| `no method named as_int found for Felt` | Method renamed | Use `Felt::as_canonical_u64()`. |
+| `package requires rustc 1.91` | MSRV bumped | Update toolchain. |
