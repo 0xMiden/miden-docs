@@ -206,7 +206,7 @@ async fn main() -> anyhow::Result<()> {
   typescript: {
     code:`import { useCreateWallet, useCreateFaucet, useMint } from "@miden-sdk/react";
 
-// Mount inside <MidenProvider> in App.tsx.
+// Import and render inside src/components/AppContent.tsx.
 // See setup/installation#set-up-react-app.
 export function MintTokens() {
     const { createWallet } = useCreateWallet();
@@ -480,7 +480,7 @@ async fn main() -> anyhow::Result<()> {
     useMidenClient,
 } from "@miden-sdk/react";
 
-// Mount inside <MidenProvider> in App.tsx.
+// Import and render inside src/components/AppContent.tsx.
 // See setup/installation#set-up-react-app.
 export function ConsumeNote() {
     const client = useMidenClient();
@@ -819,7 +819,7 @@ async fn main() -> anyhow::Result<()> {
     useMidenClient,
 } from "@miden-sdk/react";
 
-// Mount inside <MidenProvider> in App.tsx.
+// Import and render inside src/components/AppContent.tsx.
 // See setup/installation#set-up-react-app.
 export function SendTokens() {
     const client = useMidenClient();

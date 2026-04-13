@@ -136,9 +136,9 @@ cargo run --bin demo --release
 
 ### TypeScript Environment
 
-The TypeScript examples use the [`@miden-sdk/react`](https://www.npmjs.com/package/@miden-sdk/react) hooks library. If you haven't already, follow [Set Up React App](./setup/installation#set-up-react-app) to scaffold a project and wire up `MidenProvider`.
+The TypeScript examples use the [`@miden-sdk/react`](https://www.npmjs.com/package/@miden-sdk/react) hooks library. If you haven't already, follow [Set Up React App](./setup/installation#set-up-react-app) to scaffold a project with `yarn create-miden-app` — `MidenProvider` is pre-wired in the template.
 
-For each TypeScript example below, create a component file under `src/components/` (e.g. `src/components/CreateWallet.tsx`), paste the snippet, then import and render it inside `<MidenProvider>` in `src/App.tsx`. Run `yarn dev` and trigger the example from the browser.
+For each TypeScript example below, create a new file under `src/components/` (e.g. `src/components/CreateWallet.tsx`), paste the snippet, then import and render it inside `src/components/AppContent.tsx`. Run `yarn dev` and trigger the example from the browser.
 
 :::tip
 For detailed frontend setup guidance, see the [Tutorials section](../tutorials/rust-compiler/).
@@ -222,7 +222,7 @@ async fn main() -> anyhow::Result<()> {
   typescript: {
     code:`import { useCreateWallet } from "@miden-sdk/react";
 
-// Mount inside <MidenProvider> in App.tsx.
+// Import and render inside src/components/AppContent.tsx.
 // See setup/installation#set-up-react-app.
 export function CreateWallet() {
     const { createWallet, wallet, isCreating, error } = useCreateWallet();
@@ -350,7 +350,7 @@ async fn main() -> anyhow::Result<()> {
   typescript: {
     code:`import { useCreateFaucet } from "@miden-sdk/react";
 
-// Mount inside <MidenProvider> in App.tsx.
+// Import and render inside src/components/AppContent.tsx.
 // See setup/installation#set-up-react-app.
 export function CreateFaucet() {
     const { createFaucet, faucet, isCreating, error } = useCreateFaucet();

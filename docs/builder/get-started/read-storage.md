@@ -110,7 +110,7 @@ async fn main() -> anyhow::Result<()> {
     code:`import { useMidenClient } from "@miden-sdk/react";
 import { AccountId, Word } from "@miden-sdk/miden-sdk";
 
-// Mount inside <MidenProvider> in App.tsx.
+// Import and render inside src/components/AppContent.tsx.
 // See setup/installation#set-up-react-app.
 export function ReadCount() {
     const client = useMidenClient();
@@ -222,7 +222,7 @@ async fn main() -> anyhow::Result<()> {
     code:`import { useMidenClient } from "@miden-sdk/react";
 import { AccountId } from "@miden-sdk/miden-sdk";
 
-// Mount inside <MidenProvider> in App.tsx.
+// Import and render inside src/components/AppContent.tsx.
 // See setup/installation#set-up-react-app.
 export function ReadBalance() {
     const client = useMidenClient();

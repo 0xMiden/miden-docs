@@ -175,38 +175,23 @@ miden client init
 
 ## Set Up React App
 
-The TypeScript examples in this Quick Start use the [`@miden-sdk/react`](https://www.npmjs.com/package/@miden-sdk/react) hooks library. You wire up the Miden client once with `MidenProvider`, then every later snippet is a small React component you mount under it.
-
-**Scaffold a new app:**
+The TypeScript examples in this Quick Start use the [`@miden-sdk/react`](https://www.npmjs.com/package/@miden-sdk/react) hooks library. Scaffold a new project with:
 
 ```bash title=">_ Terminal"
 yarn create-miden-app
 cd miden-app/
-```
-
-**Wire up `MidenProvider` in `src/App.tsx`:**
-
-```tsx title="src/App.tsx"
-import { MidenProvider } from "@miden-sdk/react";
-
-export default function App() {
-  return (
-    <MidenProvider config={{ rpcUrl: "testnet" }}>
-      {/* Mount the components from the following pages here.
-          Example: <CreateWallet /> */}
-    </MidenProvider>
-  );
-}
-```
-
-`rpcUrl` accepts the `"testnet"` / `"devnet"` shortcuts or a full RPC URL for custom nodes. See the [`@miden-sdk/react` README](https://github.com/0xMiden/miden-client/blob/main/packages/react-sdk/README.md) for the full list of provider options.
-
-**Run the dev server:**
-
-```bash title=">_ Terminal"
+yarn install
 yarn dev
 ```
 
-For each TypeScript snippet in the following pages, create a file under `src/components/` (e.g. `src/components/CreateWallet.tsx`), paste the component, import it into `App.tsx`, and render it inside `<MidenProvider>`.
+The generated project already has `MidenProvider` wired up in `src/providers.tsx`, so you can start using the hooks immediately — no additional provider setup needed. The RPC endpoint is read from `src/config.ts` (`MIDEN_RPC_URL`), which defaults to `"testnet"` and can be overridden with the `VITE_MIDEN_RPC_URL` environment variable if you want to point at a custom node or devnet.
+
+For each TypeScript snippet in the following pages:
+
+1. Create a new file under `src/components/` (for example `src/components/CreateWallet.tsx`) and paste the snippet.
+2. Open `src/components/AppContent.tsx`, import the component, and render it inside the existing component tree.
+3. `yarn dev` reloads automatically — trigger the example from the browser.
+
+See the [`@miden-sdk/react` README](https://github.com/0xMiden/miden-client/blob/main/packages/react-sdk/README.md) for the full list of provider options (`rpcUrl`, `autoSyncInterval`, `prover`, etc.).
 
 ---
