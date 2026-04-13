@@ -136,9 +136,29 @@ cargo run --bin demo --release
 
 ### TypeScript Environment
 
-The TypeScript examples use the [`@miden-sdk/react`](https://www.npmjs.com/package/@miden-sdk/react) hooks library. If you haven't already, follow [Set Up React App](./setup/installation#set-up-react-app) to scaffold a project with `yarn create-miden-app` — `MidenProvider` is pre-wired in the template.
+The TypeScript examples use the [`@miden-sdk/react`](https://www.npmjs.com/package/@miden-sdk/react) hooks library. If you already created `miden-app` during [installation](./setup/installation#set-up-react-app), you can reuse it. Otherwise, scaffold a new project:
 
-For each TypeScript example below, create a new file under `src/components/` (e.g. `src/components/CreateWallet.tsx`), paste the snippet, then import and render it inside `src/components/AppContent.tsx`. Run `yarn dev` and trigger the example from the browser.
+```bash title=">_ Terminal"
+yarn create-miden-app
+cd miden-app/
+yarn install
+```
+
+The generated project already has `MidenProvider` wired up in `src/providers.tsx`, so the hooks work out of the box. The RPC endpoint is read from `src/config.ts` (`MIDEN_RPC_URL`, defaults to `"testnet"`; override with `VITE_MIDEN_RPC_URL` for custom nodes or devnet).
+
+For each code example, create a new component file under `src/components/`:
+
+```bash title=">_ Terminal"
+touch src/components/CreateWallet.tsx
+```
+
+Copy the TypeScript code into the file, then import and render it inside `src/components/AppContent.tsx`. Run the dev server:
+
+```bash title=">_ Terminal"
+yarn dev
+```
+
+`yarn dev` hot-reloads on save — trigger the example from the browser.
 
 :::tip
 For detailed frontend setup guidance, see the [Tutorials section](../tutorials/rust-compiler/).
