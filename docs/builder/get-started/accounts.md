@@ -136,26 +136,9 @@ cargo run --bin demo --release
 
 ### TypeScript Environment
 
-Create a new Miden frontend project:
+The TypeScript examples use the [`@miden-sdk/react`](https://www.npmjs.com/package/@miden-sdk/react) hooks library. If you haven't already, follow [Set Up React App](./setup/installation#set-up-react-app) to scaffold a project and wire up `MidenProvider`.
 
-```bash title=">_ Terminal"
-yarn create-miden-app
-cd miden-app/
-```
-
-For each code example, create a demo file:
-
-```bash title=">_ Terminal"
-touch src/lib/demo.ts
-```
-
-Copy the TypeScript code into the file, then import and call the `demo()` function in your `App.tsx`. Run the project:
-
-```bash title=">_ Terminal"
-yarn dev
-# or
-npm run dev
-```
+For each TypeScript example below, create a component file under `src/components/` (e.g. `src/components/CreateWallet.tsx`), paste the snippet, then import and render it inside `<MidenProvider>` in `src/App.tsx`. Run `yarn dev` and trigger the example from the browser.
 
 :::tip
 For detailed frontend setup guidance, see the [Tutorials section](../tutorials/rust-compiler/).
@@ -166,7 +149,7 @@ For detailed frontend setup guidance, see the [Tutorials section](../tutorials/r
 Let's start by creating accounts using the Miden client libraries:
 
 <CodeTabs
-tsFilename="src/lib/account.ts"
+tsFilename="src/components/CreateWallet.tsx"
 rustFilename="integration/src/bin/account.rs"
 example={{
 rust: {
@@ -237,29 +220,33 @@ async fn main() -> anyhow::Result<()> {
 }
 ` },
   typescript: {
-    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
+    code:`import { useCreateWallet } from "@miden-sdk/react";
 
-export async function demo() {
-    // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+// Mount inside <MidenProvider> in App.tsx.
+// See setup/installation#set-up-react-app.
+export function CreateWallet() {
+    const { createWallet, wallet, isCreating, error } = useCreateWallet();
 
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
+    const handleCreate = async () => {
+        // Create a new wallet account.
+        const account = await createWallet({
+            storageMode: "public", // Public: account state is visible onchain
+            mutable: true,         // Account code can be upgraded later
+            authScheme: 0,         // 0 = Falcon (default)
+        });
 
-    // Create new wallet account
-    const account = await client.newWallet(
-        AccountStorageMode.public(), // Public: account state is visible onchain
-        true, // Mutable: account code can be upgraded later
-        AuthScheme.AuthRpoFalcon512 // Authentication scheme
-    );
+        console.log("Account ID:", account.id().toString());
+        console.log(
+            "No Assets in Vault:",
+            account.vault().fungibleAssets().length === 0,
+        );
+    };
 
-    console.log("Account ID:", account.id().toString());
-    console.log(
-        "No Assets in Vault:",
-        account.vault().fungibleAssets().length === 0
+    if (error) return <div>Error: {error.message}</div>;
+    return (
+        <button onClick={handleCreate} disabled={isCreating}>
+            {isCreating ? "Creating..." : "Create Wallet"}
+        </button>
     );
 }
 `
@@ -282,7 +269,7 @@ No Assets in Vault: true
 Before we can work with tokens, we need a source of tokens. Let's create a fungible token faucet:
 
 <CodeTabs
-tsFilename="src/lib/faucet.ts"
+tsFilename="src/components/CreateFaucet.tsx"
 rustFilename="integration/src/bin/faucet.rs"
 example={{
 rust: {
@@ -361,32 +348,34 @@ async fn main() -> anyhow::Result<()> {
 }
 `},
   typescript: {
-    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
+    code:`import { useCreateFaucet } from "@miden-sdk/react";
 
-export async function demo() {
-    // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+// Mount inside <MidenProvider> in App.tsx.
+// See setup/installation#set-up-react-app.
+export function CreateFaucet() {
+    const { createFaucet, faucet, isCreating, error } = useCreateFaucet();
 
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
+    const handleCreate = async () => {
+        const decimals = 8;
+        const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
 
-    const symbol = "TEST";
-    const decimals = 8;
-    const initialSupply = BigInt(10_000_000 * 10 ** decimals);
+        const account = await createFaucet({
+            tokenSymbol: "TEST",
+            decimals,
+            maxSupply,
+            storageMode: "public",
+            authScheme: 0, // 0 = Falcon (default)
+        });
 
-    const faucet = await client.newFaucet(
-        AccountStorageMode.public(),
-        false,
-        symbol,
-        decimals,
-        initialSupply,
-        AuthScheme.AuthRpoFalcon512 // Authentication scheme
+        console.log("Faucet account ID:", account.id().toString());
+    };
+
+    if (error) return <div>Error: {error.message}</div>;
+    return (
+        <button onClick={handleCreate} disabled={isCreating}>
+            {isCreating ? "Creating..." : "Create Faucet"}
+        </button>
     );
-
-    console.log("Faucet account ID:", faucet.id().toString());
 }
 `
 }

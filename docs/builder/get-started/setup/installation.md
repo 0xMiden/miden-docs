@@ -173,4 +173,40 @@ rm -f miden-client.toml store.sqlite3
 miden client init
 ```
 
+## Set Up React App
+
+The TypeScript examples in this Quick Start use the [`@miden-sdk/react`](https://www.npmjs.com/package/@miden-sdk/react) hooks library. You wire up the Miden client once with `MidenProvider`, then every later snippet is a small React component you mount under it.
+
+**Scaffold a new app:**
+
+```bash title=">_ Terminal"
+yarn create-miden-app
+cd miden-app/
+```
+
+**Wire up `MidenProvider` in `src/App.tsx`:**
+
+```tsx title="src/App.tsx"
+import { MidenProvider } from "@miden-sdk/react";
+
+export default function App() {
+  return (
+    <MidenProvider config={{ rpcUrl: "testnet" }}>
+      {/* Mount the components from the following pages here.
+          Example: <CreateWallet /> */}
+    </MidenProvider>
+  );
+}
+```
+
+`rpcUrl` accepts the `"testnet"` / `"devnet"` shortcuts or a full RPC URL for custom nodes. See the [`@miden-sdk/react` README](https://github.com/0xMiden/miden-client/blob/main/packages/react-sdk/README.md) for the full list of provider options.
+
+**Run the dev server:**
+
+```bash title=">_ Terminal"
+yarn dev
+```
+
+For each TypeScript snippet in the following pages, create a file under `src/components/` (e.g. `src/components/CreateWallet.tsx`), paste the component, import it into `App.tsx`, and render it inside `<MidenProvider>`.
+
 ---

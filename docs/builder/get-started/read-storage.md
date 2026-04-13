@@ -37,7 +37,7 @@ Let's interact with a counter contract deployed on the Miden testnet. This contr
 ### Reading the Count of a Counter contract
 
 <CodeTabs
-tsFilename="src/lib/read-count.ts"
+tsFilename="src/components/ReadCount.tsx"
 rustFilename="integration/src/bin/read-count.rs"
 example={{
 rust: {
@@ -107,33 +107,33 @@ async fn main() -> anyhow::Result<()> {
 }
 ` },
   typescript: {
-    code:`import { WebClient, AccountId, Word } from "@miden-sdk/miden-sdk";
+    code:`import { useMidenClient } from "@miden-sdk/react";
+import { AccountId, Word } from "@miden-sdk/miden-sdk";
 
-export async function demo() {
-    // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+// Mount inside <MidenProvider> in App.tsx.
+// See setup/installation#set-up-react-app.
+export function ReadCount() {
+    const client = useMidenClient();
 
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
+    const handleRead = async () => {
+        const accountId = AccountId.fromHex("0x224a96d294e10d006aef3d4f1b0876");
 
-    const accountId = AccountId.fromHex("0x224a96d294e10d006aef3d4f1b0876");
+        // Import the account into the client's database
+        await client.importAccountById(accountId);
+        const counter = await client.getAccount(accountId);
 
-    // Import the account into the client's database
-    await client.importAccountById(accountId);
-    const counter = await client.getAccount(accountId);
+        // Get the count from the counter account by querying its storage map
+        // using the named storage slot and counter key.
+        const slotName = "miden::component::miden_counter_account::count_map";
+        const counterKey = new Word(BigUint64Array.from([0n, 0n, 0n, 1n]));
+        const count = counter?.storage().getMapItem(slotName, counterKey);
 
-    // Get the count from the counter account by querying its storage map
-    // using the named storage slot and counter key.
-    const slotName = "miden::component::miden_counter_account::count_map";
-    const counterKey = new Word(BigUint64Array.from([0n, 0n, 0n, 1n]));
-    const count = counter?.storage().getMapItem(slotName, counterKey);
+        // The count value is a WORD (array of 4 u64 values).
+        // The 4th value is the counter number.
+        console.log("Count:", Number(count?.toU64s()[3]));
+    };
 
-    // The count value is a WORD (array of 4 u64 values).
-    // The 4th value is the counter number.
-    console.log("Count:", Number(count?.toU64s()[3]));
+    return <button onClick={handleRead}>Read count</button>;
 }
 `
 }
@@ -154,7 +154,7 @@ Count: 1
 You can also query the assets (tokens) held by an account:
 
 <CodeTabs
-tsFilename="src/lib/token-balance.ts"
+tsFilename="src/components/ReadBalance.tsx"
 rustFilename="integration/src/bin/token-balance.rs"
 example={{
 rust: {
@@ -219,27 +219,27 @@ async fn main() -> anyhow::Result<()> {
 }
 `},
   typescript: {
-    code:`import { WebClient, AccountId } from "@miden-sdk/miden-sdk";
+    code:`import { useMidenClient } from "@miden-sdk/react";
+import { AccountId } from "@miden-sdk/miden-sdk";
 
-export async function demo() {
-    // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+// Mount inside <MidenProvider> in App.tsx.
+// See setup/installation#set-up-react-app.
+export function ReadBalance() {
+    const client = useMidenClient();
 
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
+    const handleRead = async () => {
+        const aliceId = AccountId.fromHex("0x5b2840a923dedc102ea67e0c1eba3c");
+        const faucetId = AccountId.fromHex("0x29dd1dc628d2842032e751ed1b5da7");
 
-    const aliceId = AccountId.fromHex("0x5b2840a923dedc102ea67e0c1eba3c");
-    const faucetId = AccountId.fromHex("0x29dd1dc628d2842032e751ed1b5da7");
+        // Import the account into the client's database
+        await client.importAccountById(aliceId);
+        const aliceAccount = await client.getAccount(aliceId);
 
-    // Import the account into the client's database
-    await client.importAccountById(aliceId);
-    const aliceAccount = await client.getAccount(aliceId);
+        const balance = aliceAccount?.vault().getBalance(faucetId);
+        console.log("Alice's TEST token balance:", Number(balance));
+    };
 
-    const balance = aliceAccount?.vault().getBalance(faucetId);
-    console.log("Alice's TEST token balance:", Number(balance));
+    return <button onClick={handleRead}>Read balance</button>;
 }
 `
 }
