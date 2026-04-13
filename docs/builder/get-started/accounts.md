@@ -4,8 +4,6 @@ title: Accounts
 description: Learn how to create and manage Miden accounts programmatically using Rust and TypeScript.
 ---
 
-import { CodeTabs } from '@site/src/components';
-
 # Accounts
 
 Miden's account model is fundamentally different from traditional blockchains. Let's explore how to create and manage accounts programmatically.
@@ -115,7 +113,7 @@ To run the code examples in this guide, you'll need to set up a development envi
 
 ### Rust Environment
 
-If you already created `my-test-project` during [installation](./setup/installation), you can reuse it. Otherwise, create a new project:
+If you already created `my-test-project` during [installation](./setup/installation#rust-project), you can reuse it. Otherwise, create a new project:
 
 ```bash title=">_ Terminal"
 miden new my-project
@@ -136,41 +134,46 @@ cargo run --bin demo --release
 
 ### TypeScript Environment
 
-Create a new Miden frontend project:
+If you already created `miden-app` during [installation](./setup/installation#typescript-project), you can reuse it. Otherwise, scaffold a new Vite vanilla-ts project:
 
 ```bash title=">_ Terminal"
-yarn create-miden-app
-cd miden-app/
+npm create vite@latest miden-app -- --template vanilla-ts
+cd miden-app
+npm install @miden-sdk/miden-sdk
 ```
 
-For each code example, create a demo file:
+For each code example, save the TypeScript snippet as `src/demo.ts` (overwriting the previous one as you progress):
 
 ```bash title=">_ Terminal"
-touch src/lib/demo.ts
+touch src/demo.ts
 ```
 
-Copy the TypeScript code into the file, then import and call the `demo()` function in your `App.tsx`. Run the project:
+Wire it into the entry point once (`src/main.ts`):
+
+```ts title="src/main.ts"
+import { demo } from "./demo";
+
+demo().catch(console.error);
+```
+
+Run the dev server:
 
 ```bash title=">_ Terminal"
-yarn dev
-# or
 npm run dev
 ```
 
+Open the dev-server URL in the browser and watch the devtools console for output.
+
 :::tip
-For detailed frontend setup guidance, see the [Tutorials section](../tutorials/rust-compiler/).
+For detailed frontend setup guidance (React, wallets, UI), see the [Tutorials section](../tutorials/rust-compiler/).
 :::
 
 ## Creating Accounts Programmatically
 
 Let's start by creating accounts using the Miden client libraries:
 
-<CodeTabs
-tsFilename="src/lib/account.ts"
-rustFilename="integration/src/bin/account.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/account.rs"
+use miden_client::{
     account::{
         component::BasicWallet,
         AccountBuilder, AccountStorageMode, AccountType,
@@ -235,37 +238,30 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-` },
-  typescript: {
-    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await MidenClient.createTestnet();
 
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
+    // Create a new wallet account.
+    const wallet = await client.accounts.create({
+        type: "MutableWallet", // Standard wallet with upgradeable code
+        storage: "public",     // Public: account state is visible onchain
+    });
 
-    // Create new wallet account
-    const account = await client.newWallet(
-        AccountStorageMode.public(), // Public: account state is visible onchain
-        true, // Mutable: account code can be upgraded later
-        AuthScheme.AuthRpoFalcon512 // Authentication scheme
-    );
-
-    console.log("Account ID:", account.id().toString());
+    console.log("Account ID:", wallet.id().toString());
     console.log(
         "No Assets in Vault:",
-        account.vault().fungibleAssets().length === 0
+        wallet.vault().fungibleAssets().length === 0,
     );
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>
@@ -281,12 +277,8 @@ No Assets in Vault: true
 
 Before we can work with tokens, we need a source of tokens. Let's create a fungible token faucet:
 
-<CodeTabs
-tsFilename="src/lib/faucet.ts"
-rustFilename="integration/src/bin/faucet.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/faucet.rs"
+use miden_client::{
     account::{
         component::BasicFungibleFaucet,
         AccountBuilder, AccountStorageMode, AccountType,
@@ -359,39 +351,31 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-`},
-  typescript: {
-    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await MidenClient.createTestnet();
 
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
-
-    const symbol = "TEST";
+    // Faucet parameters
     const decimals = 8;
-    const initialSupply = BigInt(10_000_000 * 10 ** decimals);
+    const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
 
-    const faucet = await client.newFaucet(
-        AccountStorageMode.public(),
-        false,
-        symbol,
+    // Create a fungible token faucet.
+    const faucet = await client.accounts.create({
+        type: "FungibleFaucet",
+        symbol: "TEST",
         decimals,
-        initialSupply,
-        AuthScheme.AuthRpoFalcon512 // Authentication scheme
-    );
+        maxSupply,
+        storage: "public",
+    });
 
     console.log("Faucet account ID:", faucet.id().toString());
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>
