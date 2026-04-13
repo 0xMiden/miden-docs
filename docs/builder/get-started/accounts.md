@@ -136,32 +136,38 @@ cargo run --bin demo --release
 
 ### TypeScript Environment
 
-The TypeScript examples use the [`@miden-sdk/react`](https://www.npmjs.com/package/@miden-sdk/react) hooks library. If you already created `miden-app` during [installation](./setup/installation#set-up-react-app), you can reuse it. Otherwise, scaffold a new project:
+If you already created `miden-app` during [installation](./setup/installation#set-up-typescript-project), you can reuse it. Otherwise, scaffold a new Vite vanilla-ts project:
 
 ```bash title=">_ Terminal"
-yarn create-miden-app
-cd miden-app/
-yarn install
+npm create vite@latest miden-app -- --template vanilla-ts
+cd miden-app
+npm install @miden-sdk/miden-sdk
 ```
 
-The generated project already has `MidenProvider` wired up in `src/providers.tsx`, so the hooks work out of the box. The RPC endpoint is read from `src/config.ts` (`MIDEN_RPC_URL`, defaults to `"testnet"`; override with `VITE_MIDEN_RPC_URL` for custom nodes or devnet).
-
-For each code example, create a new component file under `src/components/`:
+For each code example, save the TypeScript snippet as `src/demo.ts` (overwriting the previous one as you progress):
 
 ```bash title=">_ Terminal"
-touch src/components/CreateWallet.tsx
+touch src/demo.ts
 ```
 
-Copy the TypeScript code into the file, then import and render it inside `src/components/AppContent.tsx`. Run the dev server:
+Wire it into the entry point once (`src/main.ts`):
+
+```ts title="src/main.ts"
+import { demo } from "./demo";
+
+demo().catch(console.error);
+```
+
+Run the dev server:
 
 ```bash title=">_ Terminal"
-yarn dev
+npm run dev
 ```
 
-`yarn dev` hot-reloads on save — trigger the example from the browser.
+Open the dev-server URL in the browser and watch the devtools console for output.
 
 :::tip
-For detailed frontend setup guidance, see the [Tutorials section](../tutorials/rust-compiler/).
+For detailed frontend setup guidance (React, wallets, UI), see the [Tutorials section](../tutorials/rust-compiler/).
 :::
 
 ## Creating Accounts Programmatically
@@ -169,7 +175,7 @@ For detailed frontend setup guidance, see the [Tutorials section](../tutorials/r
 Let's start by creating accounts using the Miden client libraries:
 
 <CodeTabs
-tsFilename="src/components/CreateWallet.tsx"
+tsFilename="src/demo.ts"
 rustFilename="integration/src/bin/account.rs"
 example={{
 rust: {
@@ -240,33 +246,24 @@ async fn main() -> anyhow::Result<()> {
 }
 ` },
   typescript: {
-    code:`import { useCreateWallet } from "@miden-sdk/react";
+    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
 
-// Import and render inside src/components/AppContent.tsx.
-// See setup/installation#set-up-react-app.
-export function CreateWallet() {
-    const { createWallet, wallet, isCreating, error } = useCreateWallet();
+export async function demo() {
+    // Initialize client to connect with the Miden Testnet.
+    // NOTE: The client is our entry point to the Miden network.
+    // All interactions with the network go through the client.
+    const client = await MidenClient.createTestnet();
 
-    const handleCreate = async () => {
-        // Create a new wallet account.
-        const account = await createWallet({
-            storageMode: "public", // Public: account state is visible onchain
-            mutable: true,         // Account code can be upgraded later
-            authScheme: 0,         // 0 = Falcon (default)
-        });
+    // Create a new wallet account.
+    const wallet = await client.accounts.create({
+        type: "MutableWallet", // Standard wallet with upgradeable code
+        storage: "public",     // Public: account state is visible onchain
+    });
 
-        console.log("Account ID:", account.id().toString());
-        console.log(
-            "No Assets in Vault:",
-            account.vault().fungibleAssets().length === 0,
-        );
-    };
-
-    if (error) return <div>Error: {error.message}</div>;
-    return (
-        <button onClick={handleCreate} disabled={isCreating}>
-            {isCreating ? "Creating..." : "Create Wallet"}
-        </button>
+    console.log("Account ID:", wallet.id().toString());
+    console.log(
+        "No Assets in Vault:",
+        wallet.vault().fungibleAssets().length === 0,
     );
 }
 `
@@ -289,7 +286,7 @@ No Assets in Vault: true
 Before we can work with tokens, we need a source of tokens. Let's create a fungible token faucet:
 
 <CodeTabs
-tsFilename="src/components/CreateFaucet.tsx"
+tsFilename="src/demo.ts"
 rustFilename="integration/src/bin/faucet.rs"
 example={{
 rust: {
@@ -368,34 +365,26 @@ async fn main() -> anyhow::Result<()> {
 }
 `},
   typescript: {
-    code:`import { useCreateFaucet } from "@miden-sdk/react";
+    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
 
-// Import and render inside src/components/AppContent.tsx.
-// See setup/installation#set-up-react-app.
-export function CreateFaucet() {
-    const { createFaucet, faucet, isCreating, error } = useCreateFaucet();
+export async function demo() {
+    // Initialize client to connect with the Miden Testnet.
+    const client = await MidenClient.createTestnet();
 
-    const handleCreate = async () => {
-        const decimals = 8;
-        const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
+    // Faucet parameters
+    const decimals = 8;
+    const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
 
-        const account = await createFaucet({
-            tokenSymbol: "TEST",
-            decimals,
-            maxSupply,
-            storageMode: "public",
-            authScheme: 0, // 0 = Falcon (default)
-        });
+    // Create a fungible token faucet.
+    const faucet = await client.accounts.create({
+        type: "FungibleFaucet",
+        symbol: "TEST",
+        decimals,
+        maxSupply,
+        storage: "public",
+    });
 
-        console.log("Faucet account ID:", account.id().toString());
-    };
-
-    if (error) return <div>Error: {error.message}</div>;
-    return (
-        <button onClick={handleCreate} disabled={isCreating}>
-            {isCreating ? "Creating..." : "Create Faucet"}
-        </button>
-    );
+    console.log("Faucet account ID:", faucet.id().toString());
 }
 `
 }

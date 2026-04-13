@@ -173,25 +173,30 @@ rm -f miden-client.toml store.sqlite3
 miden client init
 ```
 
-## Set Up React App
+## Set Up TypeScript Project
 
-The TypeScript examples in this Quick Start use the [`@miden-sdk/react`](https://www.npmjs.com/package/@miden-sdk/react) hooks library. Scaffold a new project with:
+The TypeScript examples in this Quick Start use the [`@miden-sdk/miden-sdk`](https://www.npmjs.com/package/@miden-sdk/miden-sdk) package and its `MidenClient` API. The SDK ships WebAssembly that runs in the browser, so the simplest runnable setup is a minimal Vite project:
 
 ```bash title=">_ Terminal"
-yarn create-miden-app
-cd miden-app/
-yarn install
-yarn dev
+npm create vite@latest miden-app -- --template vanilla-ts
+cd miden-app
+npm install @miden-sdk/miden-sdk
 ```
 
-The generated project already has `MidenProvider` wired up in `src/providers.tsx`, so you can start using the hooks immediately — no additional provider setup needed. The RPC endpoint is read from `src/config.ts` (`MIDEN_RPC_URL`), which defaults to `"testnet"` and can be overridden with the `VITE_MIDEN_RPC_URL` environment variable if you want to point at a custom node or devnet.
+Open `src/main.ts` and replace its contents with a simple entry point that calls your demo:
 
-For each TypeScript snippet in the following pages:
+```ts title="src/main.ts"
+import { demo } from "./demo";
 
-1. Create a new file under `src/components/` (for example `src/components/CreateWallet.tsx`) and paste the snippet.
-2. Open `src/components/AppContent.tsx`, import the component, and render it inside the existing component tree.
-3. `yarn dev` reloads automatically — trigger the example from the browser.
+demo().catch(console.error);
+```
 
-See the [`@miden-sdk/react` README](https://github.com/0xMiden/miden-client/blob/main/packages/react-sdk/README.md) for the full list of provider options (`rpcUrl`, `autoSyncInterval`, `prover`, etc.).
+For each TypeScript snippet in the following pages, save it as `src/demo.ts` (or another name imported from `main.ts`) and run:
+
+```bash title=">_ Terminal"
+npm run dev
+```
+
+The SDK initialises WebAssembly on first use; open the Vite dev server URL in your browser and watch the devtools console for output.
 
 ---

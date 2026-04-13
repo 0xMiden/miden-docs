@@ -37,7 +37,7 @@ Let's interact with a counter contract deployed on the Miden testnet. This contr
 ### Reading the Count of a Counter contract
 
 <CodeTabs
-tsFilename="src/components/ReadCount.tsx"
+tsFilename="src/demo.ts"
 rustFilename="integration/src/bin/read-count.rs"
 example={{
 rust: {
@@ -107,33 +107,26 @@ async fn main() -> anyhow::Result<()> {
 }
 ` },
   typescript: {
-    code:`import { useMidenClient } from "@miden-sdk/react";
-import { AccountId, Word } from "@miden-sdk/miden-sdk";
+    code:`import { MidenClient, Word } from "@miden-sdk/miden-sdk";
 
-// Import and render inside src/components/AppContent.tsx.
-// See setup/installation#set-up-react-app.
-export function ReadCount() {
-    const client = useMidenClient();
+export async function demo() {
+    // Initialize client to connect with the Miden Testnet.
+    const client = await MidenClient.createTestnet();
 
-    const handleRead = async () => {
-        const accountId = AccountId.fromHex("0x224a96d294e10d006aef3d4f1b0876");
+    const counterAccountId = "0x224a96d294e10d006aef3d4f1b0876";
 
-        // Import the account into the client's database
-        await client.importAccountById(accountId);
-        const counter = await client.getAccount(accountId);
+    // Fetch the counter account (imports it into the local store if needed).
+    const counter = await client.accounts.getOrImport(counterAccountId);
 
-        // Get the count from the counter account by querying its storage map
-        // using the named storage slot and counter key.
-        const slotName = "miden::component::miden_counter_account::count_map";
-        const counterKey = new Word(BigUint64Array.from([0n, 0n, 0n, 1n]));
-        const count = counter?.storage().getMapItem(slotName, counterKey);
+    // Get the count from the counter account by querying its storage map
+    // using the named storage slot and counter key.
+    const slotName = "miden::component::miden_counter_account::count_map";
+    const counterKey = new Word(BigUint64Array.from([0n, 0n, 0n, 1n]));
+    const count = counter.storage().getMapItem(slotName, counterKey);
 
-        // The count value is a WORD (array of 4 u64 values).
-        // The 4th value is the counter number.
-        console.log("Count:", Number(count?.toU64s()[3]));
-    };
-
-    return <button onClick={handleRead}>Read count</button>;
+    // The count value is a WORD (array of 4 u64 values).
+    // The 4th value is the counter number.
+    console.log("Count:", Number(count?.toU64s()[3]));
 }
 `
 }
@@ -154,7 +147,7 @@ Count: 1
 You can also query the assets (tokens) held by an account:
 
 <CodeTabs
-tsFilename="src/components/ReadBalance.tsx"
+tsFilename="src/demo.ts"
 rustFilename="integration/src/bin/token-balance.rs"
 example={{
 rust: {
@@ -219,27 +212,21 @@ async fn main() -> anyhow::Result<()> {
 }
 `},
   typescript: {
-    code:`import { useMidenClient } from "@miden-sdk/react";
-import { AccountId } from "@miden-sdk/miden-sdk";
+    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
 
-// Import and render inside src/components/AppContent.tsx.
-// See setup/installation#set-up-react-app.
-export function ReadBalance() {
-    const client = useMidenClient();
+export async function demo() {
+    // Initialize client to connect with the Miden Testnet.
+    const client = await MidenClient.createTestnet();
 
-    const handleRead = async () => {
-        const aliceId = AccountId.fromHex("0x5b2840a923dedc102ea67e0c1eba3c");
-        const faucetId = AccountId.fromHex("0x29dd1dc628d2842032e751ed1b5da7");
+    const aliceId = "0x5b2840a923dedc102ea67e0c1eba3c";
+    const faucetId = "0x29dd1dc628d2842032e751ed1b5da7";
 
-        // Import the account into the client's database
-        await client.importAccountById(aliceId);
-        const aliceAccount = await client.getAccount(aliceId);
+    // Fetch Alice's account (imports it into the local store if needed)
+    // and query her balance for the faucet's token.
+    await client.accounts.getOrImport(aliceId);
+    const balance = await client.accounts.getBalance(aliceId, faucetId);
 
-        const balance = aliceAccount?.vault().getBalance(faucetId);
-        console.log("Alice's TEST token balance:", Number(balance));
-    };
-
-    return <button onClick={handleRead}>Read balance</button>;
+    console.log("Alice's TEST token balance:", Number(balance));
 }
 `
 }

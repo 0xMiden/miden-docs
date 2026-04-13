@@ -22,7 +22,7 @@ The monolithic `WebClient` god-object has been replaced by `MidenClient` with de
 
 ```typescript
 // Before (0.13)
-import { WebClient } from "@miden/sdk";
+import { WebClient } from "@miden-sdk/miden-sdk";
 
 const client = new WebClient();
 await client.createClient({
@@ -33,7 +33,7 @@ await client.createClient({
 
 ```typescript
 // After (0.14)
-import { MidenClient } from "@miden/sdk";
+import { MidenClient } from "@miden-sdk/miden-sdk";
 
 const client = await MidenClient.create({
   rpcUrl: "https://rpc.testnet.miden.io",
@@ -42,24 +42,36 @@ const client = await MidenClient.create({
 });
 
 // Or use the testnet convenience constructor
-const client = MidenClient.createTestnet();
+const client = await MidenClient.createTestnet();
 ```
 
 #### Account creation
 
 ```typescript
 // Before (0.13)
-const account = await client.newWallet(
-  StorageMode.Private,
-  true // mutable
+const wallet = await client.newWallet(
+  AccountStorageMode.private(),
+  true,
+  undefined,
+);
+const faucet = await client.newFaucet(
+  AccountStorageMode.public(),
+  false,
+  "DAG",
+  8,
+  BigInt(10_000_000),
 );
 ```
 
 ```typescript
 // After (0.14)
-const account = await client.accounts.create({
-  type: "MutableWallet",
-  storageMode: "private",
+const wallet = await client.accounts.create(); // mutable, private wallet (defaults)
+const faucet = await client.accounts.create({
+  type: "FungibleFaucet",
+  symbol: "DAG",
+  decimals: 8,
+  maxSupply: 10_000_000n,
+  storage: "public",
 });
 ```
 
@@ -67,24 +79,26 @@ const account = await client.accounts.create({
 
 ```typescript
 // Before (0.13)
-const txRequest = await client.newSendTransactionRequest(
-  senderAccountId,
-  recipientAccountId,
-  faucetId,
-  NoteType.Private,
-  amount
+const request = client.newSendTransactionRequest(
+  wallet.id(),
+  AccountId.fromHex(targetHex),
+  faucet.id(),
+  NoteType.private(),
+  BigInt(100),
+  null,
+  null,
 );
-const result = await client.submitTransaction(txRequest);
+const tx = await client.submitNewTransaction(wallet.id(), request);
 ```
 
 ```typescript
 // After (0.14)
-const result = await client.transactions.send({
-  from: senderAccountId,
-  to: recipientAccountId,
-  faucetId: faucetId,
-  noteType: "private",
-  amount: amount,
+const { txId } = await client.transactions.send({
+  account: wallet,        // string hex ID, AccountId, or Account all accepted
+  to: targetHex,
+  token: faucet,          // faucet account that minted the asset
+  amount: 100n,
+  waitForConfirmation: true,
 });
 ```
 
@@ -92,12 +106,20 @@ const result = await client.transactions.send({
 
 ```typescript
 // Before (0.13)
-const notes = await client.getConsumableNotes(accountId);
+const notes = await client.getConsumableNotes(wallet.id());
+const req = client.newConsumeTransactionRequest(
+  [notes[0].inputNoteRecord().id().toString()],
+);
+await client.submitNewTransaction(wallet.id(), req);
 ```
 
 ```typescript
 // After (0.14)
-const notes = await client.notes.listAvailable({ account: accountId });
+const notes = await client.notes.listAvailable({ account: wallet });
+await client.transactions.consume({ account: wallet, notes: [notes[0]] });
+
+// Or consume every available note in one call:
+await client.transactions.consumeAll({ account: wallet });
 ```
 
 #### Listing accounts
@@ -119,21 +141,23 @@ The new API adds first-class support for deploying custom smart contracts:
 ```typescript
 // After (0.14) — compile and deploy a custom contract
 const component = await client.compile.component({
-  sourceCode: contractMasm,
-  accountId: undefined, // not yet deployed
+  source: contractMasm,
+  storageSlots: [],
 });
 
 const contract = await client.accounts.create({
   type: "MutableContract",
-  storageMode: "private",
+  seed: new Uint8Array(32),
+  auth: secretKey,
   components: [component],
 });
 
-// Execute a custom transaction against the contract
-const result = await client.transactions.execute({
-  account: contract.id,
-  script: transactionScriptMasm,
+// Compile a transaction script and execute it against the contract.
+const script = await client.compile.txScript({
+  source: scriptMasm,
+  libraries: "dynamic",
 });
+await client.transactions.execute({ account: contract, script });
 ```
 
 ---
@@ -162,7 +186,7 @@ Top-level keystore functions have been consolidated into the `client.keystore` n
 
 ```typescript
 // Before (0.13)
-import { addAccountSecretKeyToWebStore, getAccountSecretKeyFromWebStore } from "@miden/sdk";
+import { addAccountSecretKeyToWebStore, getAccountSecretKeyFromWebStore } from "@miden-sdk/miden-sdk";
 
 await addAccountSecretKeyToWebStore(accountId, secretKey);
 const key = await getAccountSecretKeyFromWebStore(accountId);
@@ -171,9 +195,9 @@ const key = await getAccountSecretKeyFromWebStore(accountId);
 ```typescript
 // After (0.14)
 await client.keystore.insert(accountId, secretKey);
-const key = await client.keystore.get(accountId);
-const commitments = await client.keystore.getCommitments();
-const id = await client.keystore.getAccountId(commitment);
+const key = await client.keystore.get(pubKeyCommitment);       // takes a Word commitment
+const commitments = await client.keystore.getCommitments(accountId);
+const id = await client.keystore.getAccountId(pubKeyCommitment);
 ```
 
 ---

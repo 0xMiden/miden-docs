@@ -78,7 +78,7 @@ Minting in Miden creates new tokens and packages them into a **P2ID note** (Pay-
 Let's see this in action:
 
 <CodeTabs
-tsFilename="src/components/MintTokens.tsx"
+tsFilename="src/demo.ts"
 rustFilename="integration/src/bin/mint.rs"
 example={{
 rust: {
@@ -204,53 +204,42 @@ async fn main() -> anyhow::Result<()> {
 }
 `},
   typescript: {
-    code:`import { useCreateWallet, useCreateFaucet, useMint } from "@miden-sdk/react";
+    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
 
-// Import and render inside src/components/AppContent.tsx.
-// See setup/installation#set-up-react-app.
-export function MintTokens() {
-    const { createWallet } = useCreateWallet();
-    const { createFaucet } = useCreateFaucet();
-    const { mint, isLoading, stage, error } = useMint();
+export async function demo() {
+    // Initialize client to connect with the Miden Testnet.
+    const client = await MidenClient.createTestnet();
 
-    const handleMintDemo = async () => {
-        // Creating Alice's account
-        const alice = await createWallet({
-            storageMode: "public", // Public: account state is visible on-chain
-            mutable: true,
-        });
-        console.log("Alice's account ID:", alice.id().toString());
+    // Creating Alice's account
+    const alice = await client.accounts.create({
+        type: "MutableWallet",
+        storage: "public", // Public: account state is visible on-chain
+    });
+    console.log("Alice's account ID:", alice.id().toString());
 
-        // Creating a faucet account
-        const decimals = 8;
-        const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
-        const faucet = await createFaucet({
-            tokenSymbol: "TEST",
-            decimals,
-            maxSupply,
-            storageMode: "public",
-        });
-        console.log("Faucet account ID:", faucet.id().toString());
+    // Creating a faucet account
+    const decimals = 8;
+    const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
+    const faucet = await client.accounts.create({
+        type: "FungibleFaucet",
+        symbol: "TEST",
+        decimals,
+        maxSupply,
+        storage: "public",
+    });
+    console.log("Faucet account ID:", faucet.id().toString());
 
-        // Mint 1000 tokens to Alice.
-        // This creates a P2ID note containing the asset; Alice consumes it
-        // to actually receive the tokens in her vault (see the next section).
-        console.log("Minting 1000 tokens to Alice...");
-        const { transactionId } = await mint({
-            faucetId: faucet.id().toString(),
-            targetAccountId: alice.id().toString(),
-            amount: 1000n,
-            noteType: "public", // 'public' | 'private'
-        });
-        console.log("Mint transaction submitted successfully, ID:", transactionId);
-    };
-
-    if (error) return <div>Error: {error.message}</div>;
-    return (
-        <button onClick={handleMintDemo} disabled={isLoading}>
-            {isLoading ? \`Running (\${stage})...\` : "Run mint demo"}
-        </button>
-    );
+    // Mint 1000 tokens to Alice.
+    // This creates a P2ID note containing the asset; Alice consumes it
+    // to actually receive the tokens in her vault (see the next section).
+    console.log("Minting 1000 tokens to Alice...");
+    const { txId } = await client.transactions.mint({
+        account: faucet, // faucet is the executing account
+        to: alice,
+        amount: 1000n,
+        type: "public",  // note visibility
+    });
+    console.log("Mint transaction submitted successfully, ID:", txId.toString());
 }
 `
 }
@@ -291,7 +280,7 @@ This is a complete, self-contained example that includes the setup and minting s
 :::
 
 <CodeTabs
-tsFilename="src/components/ConsumeNote.tsx"
+tsFilename="src/demo.ts"
 rustFilename="integration/src/bin/consume.rs"
 example={{
 rust: {
@@ -471,89 +460,60 @@ async fn main() -> anyhow::Result<()> {
 }
 `},
   typescript: {
-    code:`import {
-    useCreateWallet,
-    useCreateFaucet,
-    useMint,
-    useWaitForNotes,
-    useConsume,
-    useMidenClient,
-} from "@miden-sdk/react";
+    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
 
-// Import and render inside src/components/AppContent.tsx.
-// See setup/installation#set-up-react-app.
-export function ConsumeNote() {
-    const client = useMidenClient();
-    const { createWallet } = useCreateWallet();
-    const { createFaucet } = useCreateFaucet();
-    const { mint } = useMint();
-    const { waitForConsumableNotes } = useWaitForNotes();
-    const { consume, isLoading, stage, error } = useConsume();
+export async function demo() {
+    // Initialize client to connect with the Miden Testnet.
+    const client = await MidenClient.createTestnet();
 
-    const handleConsumeDemo = async () => {
-        // Creating Alice's account
-        const alice = await createWallet({
-            storageMode: "public",
-            mutable: true,
-        });
-        console.log("Alice's account ID:", alice.id().toString());
+    // Creating Alice's account
+    const alice = await client.accounts.create({
+        type: "MutableWallet",
+        storage: "public",
+    });
+    console.log("Alice's account ID:", alice.id().toString());
 
-        // Creating a faucet account
-        const decimals = 8;
-        const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
-        const faucet = await createFaucet({
-            tokenSymbol: "TEST",
-            decimals,
-            maxSupply,
-            storageMode: "public",
-        });
-        console.log("Faucet account ID:", faucet.id().toString());
+    // Creating a faucet account
+    const decimals = 8;
+    const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
+    const faucet = await client.accounts.create({
+        type: "FungibleFaucet",
+        symbol: "TEST",
+        decimals,
+        maxSupply,
+        storage: "public",
+    });
+    console.log("Faucet account ID:", faucet.id().toString());
 
-        // Mint 1000 tokens to Alice. Creates a P2ID note that she'll consume.
-        console.log("Minting 1000 tokens to Alice...");
-        const mintResult = await mint({
-            faucetId: faucet.id().toString(),
-            targetAccountId: alice.id().toString(),
-            amount: 1000n,
-            noteType: "public",
-        });
-        console.log(
-            "Mint transaction submitted successfully, ID:",
-            mintResult.transactionId,
-        );
-
-        // Public notes must be committed to a block before they can be consumed.
-        // waitForConsumableNotes polls the client and returns once the note is ready.
-        console.log("Waiting for note to be consumable...");
-        const notes = await waitForConsumableNotes({
-            accountId: alice.id().toString(),
-            minCount: 1,
-        });
-
-        // Consume the note — tokens move into Alice's vault.
-        const { transactionId } = await consume({
-            accountId: alice.id().toString(),
-            notes,
-        });
-        console.log(
-            "Consume transaction submitted successfully, ID:",
-            transactionId,
-        );
-
-        // Read Alice's TEST token balance.
-        const aliceAccount = await client.getAccount(alice.id());
-        console.log(
-            "Alice's TEST token balance:",
-            Number(aliceAccount!.vault().getBalance(faucet.id())),
-        );
-    };
-
-    if (error) return <div>Error: {error.message}</div>;
-    return (
-        <button onClick={handleConsumeDemo} disabled={isLoading}>
-            {isLoading ? \`Running (\${stage})...\` : "Run consume demo"}
-        </button>
+    // Mint 1000 tokens to Alice. Creates a P2ID note that she'll consume.
+    console.log("Minting 1000 tokens to Alice...");
+    const mintResult = await client.transactions.mint({
+        account: faucet,
+        to: alice,
+        amount: 1000n,
+        type: "public",
+        waitForConfirmation: true,
+    });
+    console.log(
+        "Mint transaction submitted successfully, ID:",
+        mintResult.txId.toString(),
     );
+
+    // List notes available to Alice and consume them — tokens move into her vault.
+    const notes = await client.notes.listAvailable({ account: alice });
+    const consumeResult = await client.transactions.consume({
+        account: alice,
+        notes: [notes[0]],
+        waitForConfirmation: true,
+    });
+    console.log(
+        "Consume transaction submitted successfully, ID:",
+        consumeResult.txId.toString(),
+    );
+
+    // Read Alice's TEST token balance directly via the accounts resource.
+    const balance = await client.accounts.getBalance(alice, faucet);
+    console.log("Alice's TEST token balance:", Number(balance));
 }
 `
 }
@@ -596,7 +556,7 @@ This is a complete, self-contained example that includes all previous steps. **T
 :::
 
 <CodeTabs
-tsFilename="src/components/SendTokens.tsx"
+tsFilename="src/demo.ts"
 rustFilename="integration/src/bin/send.rs"
 example={{
 rust: {
@@ -809,97 +769,70 @@ async fn main() -> anyhow::Result<()> {
 }
 `},
   typescript: {
-    code:`import {
-    useCreateWallet,
-    useCreateFaucet,
-    useMint,
-    useWaitForNotes,
-    useConsume,
-    useSend,
-    useMidenClient,
-} from "@miden-sdk/react";
+    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
 
-// Import and render inside src/components/AppContent.tsx.
-// See setup/installation#set-up-react-app.
-export function SendTokens() {
-    const client = useMidenClient();
-    const { createWallet } = useCreateWallet();
-    const { createFaucet } = useCreateFaucet();
-    const { mint } = useMint();
-    const { waitForConsumableNotes } = useWaitForNotes();
-    const { consume } = useConsume();
-    const { send, isLoading, stage, error } = useSend();
+export async function demo() {
+    // Initialize client to connect with the Miden Testnet.
+    const client = await MidenClient.createTestnet();
 
-    const handleSendDemo = async () => {
-        // Create Alice's account and a faucet.
-        const alice = await createWallet({
-            storageMode: "public",
-            mutable: true,
-        });
-        console.log("Alice's account ID:", alice.id().toString());
+    // Create Alice's account and a faucet.
+    const alice = await client.accounts.create({
+        type: "MutableWallet",
+        storage: "public",
+    });
+    console.log("Alice's account ID:", alice.id().toString());
 
-        const decimals = 8;
-        const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
-        const faucet = await createFaucet({
-            tokenSymbol: "TEST",
-            decimals,
-            maxSupply,
-            storageMode: "public",
-        });
-        console.log("Faucet account ID:", faucet.id().toString());
+    const decimals = 8;
+    const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
+    const faucet = await client.accounts.create({
+        type: "FungibleFaucet",
+        symbol: "TEST",
+        decimals,
+        maxSupply,
+        storage: "public",
+    });
+    console.log("Faucet account ID:", faucet.id().toString());
 
-        // Mint 1000 tokens to Alice and consume the resulting P2ID note.
-        console.log("Minting 1000 tokens to Alice...");
-        const mintResult = await mint({
-            faucetId: faucet.id().toString(),
-            targetAccountId: alice.id().toString(),
-            amount: 1000n,
-            noteType: "public",
-        });
-        console.log(
-            "Mint transaction submitted successfully, ID:",
-            mintResult.transactionId,
-        );
-
-        console.log("Waiting for note to be consumable...");
-        const notes = await waitForConsumableNotes({
-            accountId: alice.id().toString(),
-            minCount: 1,
-        });
-        const consumeResult = await consume({
-            accountId: alice.id().toString(),
-            notes,
-        });
-        console.log(
-            "Consume transaction submitted successfully, ID:",
-            consumeResult.transactionId,
-        );
-
-        const aliceAccount = await client.getAccount(alice.id());
-        console.log(
-            "Alice's TEST token balance:",
-            Number(aliceAccount!.vault().getBalance(faucet.id())),
-        );
-
-        // Send 100 tokens from Alice to Bob.
-        const bobAccountId = "0x103f8a1ad4b983104aec0412ab0b0d";
-        console.log("Sending 100 tokens to Bob...");
-        const { transactionId } = await send({
-            from: alice.id().toString(),
-            to: bobAccountId,
-            assetId: faucet.id().toString(),
-            amount: 100n,
-            noteType: "public",
-        });
-        console.log("Send transaction submitted successfully, ID:", transactionId);
-    };
-
-    if (error) return <div>Error: {error.message}</div>;
-    return (
-        <button onClick={handleSendDemo} disabled={isLoading}>
-            {isLoading ? \`Running (\${stage})...\` : "Run send demo"}
-        </button>
+    // Mint 1000 tokens to Alice and consume the resulting P2ID note.
+    console.log("Minting 1000 tokens to Alice...");
+    const mintResult = await client.transactions.mint({
+        account: faucet,
+        to: alice,
+        amount: 1000n,
+        type: "public",
+        waitForConfirmation: true,
+    });
+    console.log(
+        "Mint transaction submitted successfully, ID:",
+        mintResult.txId.toString(),
     );
+
+    const notes = await client.notes.listAvailable({ account: alice });
+    const consumeResult = await client.transactions.consume({
+        account: alice,
+        notes: [notes[0]],
+        waitForConfirmation: true,
+    });
+    console.log(
+        "Consume transaction submitted successfully, ID:",
+        consumeResult.txId.toString(),
+    );
+
+    const balance = await client.accounts.getBalance(alice, faucet);
+    console.log("Alice's TEST token balance:", Number(balance));
+
+    // Send 100 tokens from Alice to Bob.
+    const bobAccountId = "0x103f8a1ad4b983104aec0412ab0b0d";
+    console.log("Sending 100 tokens to Bob...");
+    const { txId } = await client.transactions.send({
+        account: alice,
+        to: bobAccountId,
+        token: faucet,
+        amount: 100n,
+        type: "public",
+        waitForConfirmation: true,
+    });
+    console.log("Send transaction submitted successfully, ID:", txId.toString());
 }
 `
 }
