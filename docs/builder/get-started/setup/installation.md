@@ -145,15 +145,6 @@ stable
 
 </details>
 
-Test by creating a new project:
-
-```bash title=">_ Terminal"
-miden new my-test-project
-cd my-test-project
-```
-
-If successful, you'll see a new directory with Miden project files. The `cd` command enters the project directory, which you'll need for the following guides.
-
 ### Troubleshooting
 
 **"miden: command not found"**
@@ -173,9 +164,22 @@ rm -f miden-client.toml store.sqlite3
 miden client init
 ```
 
-## Set Up TypeScript Project
+## Set Up a Project
 
-The TypeScript examples in this Quick Start use the [`@miden-sdk/miden-sdk`](https://www.npmjs.com/package/@miden-sdk/miden-sdk) package and its `MidenClient` API. The SDK ships WebAssembly that runs in the browser, so the simplest runnable setup is a minimal Vite project:
+The Quick Start guides let you follow along in either Rust or TypeScript. Scaffold whichever language you prefer — the two tabs in every later code example map 1:1 to the files below.
+
+### Rust Project
+
+```bash title=">_ Terminal"
+miden new my-test-project
+cd my-test-project
+```
+
+If successful, you'll see a new directory with Miden project files. For each Rust code example in the following pages, add a new binary under `integration/src/bin/` and run it with `cargo run --bin <name> --release`.
+
+### TypeScript Project
+
+The TypeScript examples use the [`@miden-sdk/miden-sdk`](https://www.npmjs.com/package/@miden-sdk/miden-sdk) package and its `MidenClient` API. The SDK ships WebAssembly that runs in the browser, so the simplest runnable setup is a minimal Vite project:
 
 ```bash title=">_ Terminal"
 npm create vite@latest miden-app -- --template vanilla-ts

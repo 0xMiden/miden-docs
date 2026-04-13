@@ -115,7 +115,7 @@ To run the code examples in this guide, you'll need to set up a development envi
 
 ### Rust Environment
 
-If you already created `my-test-project` during [installation](./setup/installation), you can reuse it. Otherwise, create a new project:
+If you already created `my-test-project` during [installation](./setup/installation#rust-project), you can reuse it. Otherwise, create a new project:
 
 ```bash title=">_ Terminal"
 miden new my-project
@@ -136,7 +136,7 @@ cargo run --bin demo --release
 
 ### TypeScript Environment
 
-If you already created `miden-app` during [installation](./setup/installation#set-up-typescript-project), you can reuse it. Otherwise, scaffold a new Vite vanilla-ts project:
+If you already created `miden-app` during [installation](./setup/installation#typescript-project), you can reuse it. Otherwise, scaffold a new Vite vanilla-ts project:
 
 ```bash title=">_ Terminal"
 npm create vite@latest miden-app -- --template vanilla-ts
