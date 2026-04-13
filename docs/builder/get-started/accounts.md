@@ -4,8 +4,6 @@ title: Accounts
 description: Learn how to create and manage Miden accounts programmatically using Rust and TypeScript.
 ---
 
-import { CodeTabs } from '@site/src/components';
-
 # Accounts
 
 Miden's account model is fundamentally different from traditional blockchains. Let's explore how to create and manage accounts programmatically.
@@ -174,12 +172,8 @@ For detailed frontend setup guidance (React, wallets, UI), see the [Tutorials se
 
 Let's start by creating accounts using the Miden client libraries:
 
-<CodeTabs
-tsFilename="src/demo.ts"
-rustFilename="integration/src/bin/account.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/account.rs"
+use miden_client::{
     account::{
         component::BasicWallet,
         AccountBuilder, AccountStorageMode, AccountType,
@@ -244,9 +238,10 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-` },
-  typescript: {
-    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -266,10 +261,7 @@ export async function demo() {
         wallet.vault().fungibleAssets().length === 0,
     );
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>
@@ -285,12 +277,8 @@ No Assets in Vault: true
 
 Before we can work with tokens, we need a source of tokens. Let's create a fungible token faucet:
 
-<CodeTabs
-tsFilename="src/demo.ts"
-rustFilename="integration/src/bin/faucet.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/faucet.rs"
+use miden_client::{
     account::{
         component::BasicFungibleFaucet,
         AccountBuilder, AccountStorageMode, AccountType,
@@ -363,9 +351,10 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-`},
-  typescript: {
-    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -386,10 +375,7 @@ export async function demo() {
 
     console.log("Faucet account ID:", faucet.id().toString());
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>

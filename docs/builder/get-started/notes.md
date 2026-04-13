@@ -4,8 +4,6 @@ title: Notes & Transactions
 description: Learn Miden's unique note-based transaction model for asset transfers between accounts.
 ---
 
-import { CodeTabs } from '@site/src/components';
-
 # Notes & Transactions
 
 Miden's transaction model is uniquely powerful, combining private asset transfers through notes with zero-knowledge proofs. Let's explore how to mint, consume, and send tokens using this innovative approach.
@@ -77,12 +75,8 @@ Minting in Miden creates new tokens and packages them into a **P2ID note** (Pay-
 
 Let's see this in action:
 
-<CodeTabs
-tsFilename="src/demo.ts"
-rustFilename="integration/src/bin/mint.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/mint.rs"
+use miden_client::{
     account::{
         component::{BasicFungibleFaucet, BasicWallet},
         AccountBuilder, AccountStorageMode, AccountType,
@@ -202,9 +196,10 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-`},
-  typescript: {
-    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -241,10 +236,7 @@ export async function demo() {
     });
     console.log("Mint transaction submitted successfully, ID:", txId.toString());
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>
@@ -279,12 +271,8 @@ Here's how to consume notes programmatically:
 This is a complete, self-contained example that includes the setup and minting steps from the previous section. **The new consume logic starts at the `CONSUMING P2ID NOTES` comment.**
 :::
 
-<CodeTabs
-tsFilename="src/demo.ts"
-rustFilename="integration/src/bin/consume.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/consume.rs"
+use miden_client::{
     account::{
         component::{BasicFungibleFaucet, BasicWallet},
         Account, AccountBuilder, AccountStorageMode, AccountType,
@@ -458,9 +446,10 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-`},
-  typescript: {
-    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -515,10 +504,7 @@ export async function demo() {
     const balance = await client.accounts.getBalance(alice, faucet);
     console.log("Alice's TEST token balance:", Number(balance));
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>
@@ -555,12 +541,8 @@ Let's implement the complete flow - mint, consume, then send:
 This is a complete, self-contained example that includes all previous steps. **The new send logic starts at the `SENDING TOKENS TO BOB` comment.**
 :::
 
-<CodeTabs
-tsFilename="src/demo.ts"
-rustFilename="integration/src/bin/send.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/send.rs"
+use miden_client::{
     account::{
         component::{BasicFungibleFaucet, BasicWallet},
         Account, AccountBuilder, AccountId, AccountStorageMode, AccountType,
@@ -767,9 +749,10 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-`},
-  typescript: {
-    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -834,10 +817,7 @@ export async function demo() {
     });
     console.log("Send transaction submitted successfully, ID:", txId.toString());
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>

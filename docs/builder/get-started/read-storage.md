@@ -4,8 +4,6 @@ title: Read Storage Values
 description: Learn how to query account storage data and interact with deployed smart contracts.
 ---
 
-import { CodeTabs } from '@site/src/components';
-
 # Read Storage Values
 
 Let's explore how to interact with public accounts and retrieve their storage data.
@@ -36,12 +34,8 @@ Let's interact with a counter contract deployed on the Miden testnet. This contr
 
 ### Reading the Count of a Counter contract
 
-<CodeTabs
-tsFilename="src/demo.ts"
-rustFilename="integration/src/bin/read-count.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/read-count.rs"
+use miden_client::{
     account::{Account, AccountId, StorageSlotName},
     builder::ClientBuilder,
     keystore::FilesystemKeyStore,
@@ -105,9 +99,10 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-` },
-  typescript: {
-    code:`import { MidenClient, Word } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient, Word } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -128,10 +123,7 @@ export async function demo() {
     // The 4th value is the counter number.
     console.log("Count:", Number(count?.toU64s()[3]));
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>
@@ -146,12 +138,8 @@ Count: 1
 
 You can also query the assets (tokens) held by an account:
 
-<CodeTabs
-tsFilename="src/demo.ts"
-rustFilename="integration/src/bin/token-balance.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/token-balance.rs"
+use miden_client::{
     account::{Account, AccountId},
     builder::ClientBuilder,
     keystore::FilesystemKeyStore,
@@ -210,9 +198,10 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-`},
-  typescript: {
-    code:`import { MidenClient } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -228,10 +217,7 @@ export async function demo() {
 
     console.log("Alice's TEST token balance:", Number(balance));
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>
