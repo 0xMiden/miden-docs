@@ -250,7 +250,7 @@ let storage = account.storage();
 let reader = client.account_reader(account_id);
 let (header, status) = reader.header().await?;
 let balance = reader.get_balance(faucet_id).await?;
-let storage_item = reader.get_storage_item(slot_index).await?;
+let storage_item = reader.get_storage_item(slot_name).await?;
 // plus reader.nonce(), vault_root(), storage_commitment(), code_commitment()
 ```
 
