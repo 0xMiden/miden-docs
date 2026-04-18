@@ -557,7 +557,7 @@ use miden_client::{
     keystore::{FilesystemKeyStore, Keystore},
     note::{NoteAttachment, NoteType, P2idNote},
     rpc::{Endpoint, GrpcClient},
-    transaction::{OutputNote, TransactionRequestBuilder},
+    transaction::TransactionRequestBuilder,
     Felt,
 };
 use miden_client_sqlite_store::ClientBuilderSqliteExt;
@@ -739,7 +739,7 @@ async fn main() -> anyhow::Result<()> {
 
     // Create transaction request to send P2ID note to Bob
     let send_p2id_note_transaction_request = TransactionRequestBuilder::new()
-        .own_output_notes(vec![OutputNote::Full(p2id_note)])
+        .own_output_notes(vec![p2id_note])
         .build()?;
 
     // Create transaction and submit it to send P2ID note to Bob

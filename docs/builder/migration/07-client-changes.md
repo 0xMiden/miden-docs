@@ -94,8 +94,8 @@ const tx = await client.submitNewTransaction(wallet.id(), request);
 ```typescript
 // After (0.14)
 const { txId } = await client.transactions.send({
-  account: wallet,        // string hex ID, AccountId, or Account all accepted
-  to: targetHex,
+  account: wallet,        // executing (sender) account
+  to: targetHex,          // string hex ID, AccountId, or Account all accepted
   token: faucet,          // faucet account that minted the asset
   amount: 100n,
   waitForConfirmation: true,
@@ -240,22 +240,26 @@ Lazy readers allow you to access account and note data without loading everythin
 
 ```rust
 // Before (0.13) — loads the full Account object
-let account = client.get_account(account_id).await?;
+let account = client.get_account(account_id).await?.unwrap();
 let vault = account.vault();
 let storage = account.storage();
-
-// After (0.14) — lazy reader for header, vault, and storage
-let reader = client.account_reader(account_id);
-let header = reader.header().await?;
-let vault = reader.vault().await?;
-let storage = reader.storage().await?;
 ```
 
 ```rust
-// After (0.14) — lazy note iteration
-let note_reader = client.input_note_reader(note_id);
-let metadata = note_reader.metadata().await?;
-let inputs = note_reader.inputs().await?;
+// After (0.14) — lazy reader exposes commitments, balances, and storage items
+let reader = client.account_reader(account_id);
+let (header, status) = reader.header().await?;
+let balance = reader.get_balance(faucet_id).await?;
+let storage_item = reader.get_storage_item(slot_index).await?;
+// plus reader.nonce(), vault_root(), storage_commitment(), code_commitment()
+```
+
+```rust
+// After (0.14) — lazy, iterator-style traversal of notes consumable by an account
+let mut notes = client.input_note_reader(consumer_account_id);
+while let Some(note) = notes.next().await? {
+    // process each InputNoteRecord
+}
 ```
 
 ---
