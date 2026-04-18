@@ -113,7 +113,7 @@ end
 | `emit.event("...")` inline           |       —       |      yes       |
 | Inline `word("...")` in `push.`      |      no       |       —        |
 
-`emit.CONST` is only accepted when `CONST` was declared with `event("...")`. A constant declared with `word("...")` or a plain integer will be rejected by the assembler.
+`emit.CONST` is accepted when `CONST` resolves (directly or via an alias chain) to an `event("...")` hash. A constant declared with `word("...")` or a plain integer will be rejected by the assembler.
 
 ## Why prefer literal hashing?
 
