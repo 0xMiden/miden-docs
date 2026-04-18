@@ -67,10 +67,10 @@ use integration::helpers::{
 };
 
 use miden_client::{
-    account::{StorageMap, StorageSlot, StorageSlotName},
-    transaction::OutputNote,
+    account::{component::AuthScheme, StorageMap, StorageMapKey, StorageSlot, StorageSlotName},
     Felt, Word,
 };
+use miden_protocol::transaction::RawOutputNote;
 use miden_testing::{Auth, MockChain};
 use std::{path::Path, sync::Arc};
 
@@ -79,8 +79,10 @@ async fn counter_test() -> anyhow::Result<()> {
     // Test that after executing the increment note, the counter value is incremented by 1
     let mut builder = MockChain::builder();
 
-    // Crate note sender account
-    let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
+    // Create note sender account
+    let sender = builder.add_existing_wallet(Auth::BasicAuth {
+        auth_scheme: AuthScheme::Falcon512Poseidon2,
+    })?;
 
     // Build contracts
     let contract_package = Arc::new(build_project_in_dir(
@@ -102,7 +104,7 @@ async fn counter_test() -> anyhow::Result<()> {
         StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
     let storage_slots = vec![StorageSlot::with_map(
         counter_storage_slot.clone(),
-        StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
+        StorageMap::with_entries([(StorageMapKey::new(count_storage_key), initial_count)]).unwrap(),
     )];
     let counter_cfg = AccountCreationConfig {
         storage_slots,
@@ -122,7 +124,7 @@ async fn counter_test() -> anyhow::Result<()> {
 
     // add counter account and note to mockchain
     builder.add_account(counter_account.clone())?;
-    builder.add_output_note(OutputNote::Full(counter_note.clone()));
+    builder.add_output_note(RawOutputNote::Full(counter_note.clone()));
 
     // Build the mock chain
     let mut mock_chain = builder.build()?;
@@ -169,7 +171,9 @@ Let's break down this test step by step to understand how Mockchain testing work
 
 ```rust
 let mut builder = MockChain::builder();
-let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
+let sender = builder.add_existing_wallet(Auth::BasicAuth {
+    auth_scheme: AuthScheme::Falcon512Poseidon2,
+})?;
 ```
 
 **What's happening:**
@@ -208,7 +212,7 @@ let counter_storage_slot =
     StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
 let storage_slots = vec![StorageSlot::with_map(
     counter_storage_slot.clone(),
-    StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
+    StorageMap::with_entries([(StorageMapKey::new(count_storage_key), initial_count)]).unwrap(),
 )];
 let counter_cfg = AccountCreationConfig {
     storage_slots,
@@ -235,7 +239,7 @@ let counter_note = create_testing_note_from_package(
 
 ```rust
 builder.add_account(counter_account.clone())?;
-builder.add_output_note(OutputNote::Full(counter_note.clone()));
+builder.add_output_note(RawOutputNote::Full(counter_note.clone()));
 let mut mock_chain = builder.build()?;
 ```
 
