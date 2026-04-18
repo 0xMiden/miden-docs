@@ -176,9 +176,9 @@ fn process(
 }
 ```
 
-**2. Use note inputs for passing data:**
+**2. Use note storage for passing data:**
 
-For note scripts, pass complex data via `active_note::get_inputs()`:
+For note scripts, pass complex data via `active_note::get_storage()`:
 
 ```rust
 #[note]
@@ -188,11 +188,11 @@ struct MyNote;
 impl MyNote {
     #[note_script]
     fn run(self, _arg: Word) {
-        let inputs = active_note::get_inputs();
-        // Inputs can hold many Felts without function argument limits
-        let param1 = inputs[0];
-        let param2 = inputs[1];
-        // ... access up to the full input capacity
+        let storage = active_note::get_storage();
+        // Storage can hold many Felts without function argument limits
+        let param1 = storage[0];
+        let param2 = storage[1];
+        // ... access up to the full storage capacity
     }
 }
 ```
@@ -447,27 +447,36 @@ let note_type = Felt::new(2);  // Private note
 
 ### Problem
 
-When creating P2ID (Pay-to-ID) output notes, you need the correct script root digest, which is a constant value from miden-base.
+When creating P2ID (Pay-to-ID) output notes, you need the script's MAST root. The v0.13 pattern of hardcoding the digest is fragile — it hashes under RPO, which v0.14 replaced with Poseidon2, and any future change to the P2ID script invalidates the constant silently.
 
-### Solution
+### Solution (v0.14)
 
-Use the hardcoded P2ID script root:
+Carry the P2ID script root on the initiating note's storage and read it at runtime instead of hardcoding a value. This is the pattern used in the v0.14 `miden-bank` example:
 
 ```rust title="contracts/bank-account/src/lib.rs"
-/// Get the P2ID note script root digest.
-/// This is a constant from miden-standards that identifies the P2ID script.
-fn p2id_note_root() -> Digest {
-    Digest::from_word(Word::new([
-        Felt::from_u64_unchecked(13362761878458161062),
-        Felt::from_u64_unchecked(15090726097241769395),
-        Felt::from_u64_unchecked(444910447169617901),
-        Felt::from_u64_unchecked(3558201871398422326),
-    ]))
-}
+// The withdraw-request note encodes the P2ID script root at storage slots
+// 10..14 (4 felts = 1 Word). The Poseidon2-hashed digest of the P2ID note
+// script is injected by the caller when the note is created.
+let storage = active_note::get_storage();
+let script_root = Word::from([
+    storage[10], storage[11], storage[12], storage[13],
+]);
+
+// Pass the script root through to the P2ID-note constructor
+self.create_p2id_note(serial_num, &asset, depositor, tag, note_type, script_root);
 ```
 
-:::info Where This Comes From
-This digest is computed from the P2ID note script in miden-standards. If the P2ID script changes in a future version, this value will need to be updated.
+On the client side, compute the script root dynamically from the standard P2ID note script instead of hardcoding it:
+
+```rust
+use miden_client::note::P2idNote;
+
+// v0.14: ask miden-standards for the current P2ID script, take its MAST root.
+let p2id_script_root: Word = P2idNote::script().root();
+```
+
+:::info Why Not Hardcode
+The native hash function changed from RPO to Poseidon2 in v0.14, so every MAST root — including the P2ID script's — is different from v0.13. Any hardcoded digest from v0.13 will fail a script-root check against v0.14. Reading the root from `P2idNote::script().root()` (or the active note's storage for on-chain code) keeps the contract resilient to future script changes.
 :::
 
 ---
