@@ -13,27 +13,27 @@ Miden provides two modules for reading note data, each for a different execution
 
 ## `active_note` — the executing note
 
-When a note script runs, `active_note` provides access to the current note's inputs, assets, and metadata:
+When a note script runs, `active_note` provides access to the current note's storage, assets, and metadata:
 
 ```rust
 use miden::active_note;
 ```
 
-### Inputs
+### Storage
 
-Note inputs are custom `Felt` values set by the note creator (e.g., a target account ID, an expiration block height). The recommended way to access inputs is through the `#[note]` struct — fields are automatically deserialized from inputs:
+Note storage is a sequence of `Felt` values set by the note creator (e.g., a target account ID, an expiration block height). The recommended way to access it is through the `#[note]` struct — fields are automatically deserialized from the note's storage:
 
 ```rust
 #[note]
 struct MyNote {
-    target_account_id: AccountId,  // Deserialized from note inputs automatically
+    target_account_id: AccountId,  // Deserialized from note storage automatically
 }
 ```
 
-See [Note Scripts](./note-scripts) for the full `#[note]` pattern. The low-level `active_note::get_inputs()` function is also available for advanced use cases:
+See [Note Scripts](./note-scripts) for the full `#[note]` pattern. The low-level `active_note::get_storage()` function is also available for advanced use cases:
 
 ```rust
-let inputs: Vec<Felt> = active_note::get_inputs();
+let storage: Vec<Felt> = active_note::get_storage();
 ```
 
 ### Assets
@@ -94,17 +94,17 @@ let script_root: Word = input_note::get_script_root(note_idx);
 let serial_num: Word = input_note::get_serial_number(note_idx);
 ```
 
-### Inputs
+### Storage
 
 ```rust
-let inputs_info: InputNoteInputsInfo = input_note::get_inputs_info(note_idx);
+let storage_info: InputNoteStorageInfo = input_note::get_storage_info(note_idx);
 ```
 
 :::note
-Unlike `active_note::get_inputs()` which returns the full `Vec<Felt>` of input values, `input_note` only exposes the inputs commitment and count — not the actual values. The transaction kernel only has commitments for input notes that are not currently executing. To read actual input values, use `active_note::get_inputs()` inside the note script itself.
+Unlike `active_note::get_storage()` which returns the full `Vec<Felt>` of storage values, `input_note` only exposes the storage commitment and count — not the actual values. The transaction kernel only has commitments for input notes that are not currently executing. To read actual storage values, use `active_note::get_storage()` inside the note script itself.
 :::
 
-`InputNoteInputsInfo` contains `commitment: Word` and `num_inputs: Felt`.
+`InputNoteStorageInfo` contains `commitment: Word` and `num_storage_items: Felt`.
 
 ### Note metadata
 
@@ -116,9 +116,9 @@ let metadata: NoteMetadata = input_note::get_metadata(note_idx);
 
 ## Examples
 
-### Reading inputs in a note script
+### Reading storage in a note script
 
-A note script that reads the target account ID from inputs and verifies the consumer:
+A note script that reads the target account ID from storage and verifies the consumer:
 
 ```rust
 use miden::{AccountId, Word, active_note, note};

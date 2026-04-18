@@ -20,13 +20,13 @@ Every note has four parts:
 |------|-------------|
 | **Assets** | The fungible or non-fungible tokens the note carries |
 | **Script** | Code that executes when the note is consumed — determines who can claim it and what side effects occur |
-| **Inputs** | Custom data the script can read at consumption time (e.g., a target account ID, an expiration block) |
+| **Storage** | Custom data stored with the note that the script can read at consumption time (e.g., a target account ID, an expiration block) |
 | **Metadata** | Sender ID, note tag (for discovery routing), and auxiliary data |
 
-The **recipient** is a cryptographic hash that encodes who can consume the note. When creating notes programmatically (via [`output_note::create`](./output-notes#create-a-note)), you compute a `Recipient` from the note's serial number, script hash, and inputs:
+The **recipient** is a cryptographic hash that encodes who can consume the note. When creating notes programmatically (via [`output_note::create`](./output-notes#create-a-note)), you compute a `Recipient` from the note's serial number, script root, and storage commitment:
 
 ```
-recipient = hash(hash(hash(serial_num, [0;4]), script_root), inputs_commitment)
+recipient = hash(hash(hash(serial_num, [0;4]), script_root), storage_commitment)
 ```
 
 Only someone who knows these values can construct a valid consumption proof. See [Computing a Recipient](./output-notes#computing-a-recipient) for the SDK API.
@@ -58,7 +58,7 @@ Notes come in two visibility modes:
 
 | Mode | Description |
 |------|-------------|
-| **Public** | The note's full data (assets, script, inputs) is stored by the Miden network and visible on-chain. Anyone can discover and attempt to consume it. |
+| **Public** | The note's full data (assets, script, storage) is stored by the Miden network and visible on-chain. Anyone can discover and attempt to consume it. |
 | **Private** | Only a commitment (hash) is stored on-chain. The actual note data must be communicated off-chain between sender and recipient. |
 
 Private notes provide stronger privacy guarantees — the network can't even see what assets a note carries — but they require the sender and recipient to have a communication channel outside the protocol.
