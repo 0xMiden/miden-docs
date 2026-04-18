@@ -68,9 +68,9 @@ use integration::helpers::{
 
 use miden_client::{
     account::{component::AuthScheme, StorageMap, StorageMapKey, StorageSlot, StorageSlotName},
-    Felt, Word,
+    transaction::RawOutputNote,
+    Word,
 };
-use miden_protocol::transaction::RawOutputNote;
 use miden_testing::{Auth, MockChain};
 use std::{path::Path, sync::Arc};
 
@@ -95,8 +95,8 @@ async fn counter_test() -> anyhow::Result<()> {
     )?);
 
     // Create the counter account with initial storage and no-auth auth component
-    let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
-    let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
+    let count_storage_key = Word::from([0u32, 0, 0, 1]);
+    let initial_count = Word::default();
 
     // The slot name is constructed as
     // `miden::component::[to_underscore(Cargo.toml:package.metadata.component.package)]::[field_name]`
@@ -152,7 +152,7 @@ async fn counter_test() -> anyhow::Result<()> {
     // Assert that the count value is equal to 1 after executing the transaction
     assert_eq!(
         count,
-        Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]),
+        Word::from([0u32, 0, 0, 1]),
         "Count value is not equal to 1"
     );
 
@@ -205,8 +205,8 @@ let note_package = Arc::new(build_project_in_dir(
 
 ```rust
 // Create the counter account with initial storage and no-auth auth component
-let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
-let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
+let count_storage_key = Word::from([0u32, 0, 0, 1]);
+let initial_count = Word::default();
 
 let counter_storage_slot =
     StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
@@ -220,7 +220,7 @@ let counter_cfg = AccountCreationConfig {
 };
 
 // Create testing entities
-let counter_account = create_testing_account_from_package(contract_package.clone(), counter_cfg).await?;
+let mut counter_account = create_testing_account_from_package(contract_package.clone(), counter_cfg).await?;
 let counter_note = create_testing_note_from_package(
     note_package.clone(),
     sender.id(),
@@ -283,7 +283,7 @@ let count = counter_account
 // Assert that the count value is equal to 1 after executing the transaction
 assert_eq!(
     count,
-    Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]),
+    Word::from([0u32, 0, 0, 1]),
     "Count value is not equal to 1"
 );
 ```
