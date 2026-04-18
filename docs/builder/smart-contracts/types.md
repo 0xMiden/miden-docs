@@ -33,15 +33,16 @@ let answer = felt!(42);
 // From u32 (always safe)
 let f = Felt::from_u32(255);
 
-// From u64 without range check (caller ensures value < p)
-let f = Felt::from_u64_unchecked(1_000_000_000);
+// From u64 (infallible — values are reduced into canonical form internally)
+let f = Felt::new(1_000_000_000);
 
-// From u64 with validation (returns Result)
-let f = Felt::new(999).unwrap();
+// Built-in zero / one constants
+let z = Felt::ZERO;
+let o = Felt::ONE;
 ```
 
 :::info `felt!()` range limitation
-The `felt!()` macro currently only accepts values up to `u32::MAX` (4,294,967,295). For larger values, use `Felt::from_u64_unchecked()`. This limitation may be lifted in a future release.
+The `felt!()` macro currently only accepts values up to `u32::MAX` (4,294,967,295). For larger values, use `Felt::new()`. This limitation may be lifted in a future release.
 :::
 
 ### Arithmetic
@@ -67,7 +68,7 @@ x *= felt!(2);          // x is now felt!(12)
 ```
 
 :::note For business logic, prefer u64
-For computing amounts, balances, counters, or any value where overflow/underflow behavior matters, convert to `u64` first, perform the arithmetic, then convert back with `Felt::from_u64_unchecked()`.
+For computing amounts, balances, counters, or any value where overflow/underflow behavior matters, convert to `u64` first, perform the arithmetic, then convert back with `Felt::new()`.
 :::
 
 ### Comparison and conversion
@@ -97,7 +98,7 @@ let a: u64 = felt_a.as_u64();
 let b: u64 = felt_b.as_u64();
 let sum = a.saturating_add(b); // safe addition
 let diff = a.saturating_sub(b); // no underflow
-let result = Felt::from_u64_unchecked(sum);
+let result = Felt::new(sum);
 ```
 :::
 
@@ -116,14 +117,17 @@ let result = f.exp(felt!(3));  // 7^3 mod p = 343
 let power = felt!(10).pow2();  // 2^10 = 1024 (panics if self > 63)
 ```
 
-## Word — Four-element tuples
+## Word — Four field elements
 
-A `Word` is a tuple of four `Felt` values. It's the standard unit for storage, hashing, and data passing in Miden.
+A `Word` holds four `Felt` values. It's the standard unit for storage, hashing, and data passing in Miden.
 
 ```rust
-#[repr(C, align(16))]
+#[repr(C)]
 pub struct Word {
-    pub inner: (Felt, Felt, Felt, Felt),
+    pub a: Felt,
+    pub b: Felt,
+    pub c: Felt,
+    pub d: Felt,
 }
 ```
 
@@ -135,37 +139,29 @@ use miden::{felt, Felt, Word};
 // From an array of 4 Felts
 let w = Word::new([felt!(1), felt!(2), felt!(3), felt!(4)]);
 
-// Shorthand from array (via From trait)
-let w = Word::from([felt!(1), felt!(2), felt!(3), felt!(4)]);
+// Shorthand via `From<[Felt; 4]>`
+let w: Word = [felt!(1), felt!(2), felt!(3), felt!(4)].into();
 
-// From 4 u64 values (unchecked)
-let w = Word::from_u64_unchecked(1, 2, 3, 4);
+// Shorthand via `From<[u32; 4]>` (or [u8; 4] / [u16; 4] / [bool; 4])
+let w = Word::from([1u32, 2, 3, 4]);
 
-// From a single Felt (placed in position [3], positions [0]–[2] zeroed)
-let w = Word::from(felt!(42));  // [felt!(0), felt!(0), felt!(0), felt!(42)]
-
-// From a tuple
-let w = Word::from((felt!(1), felt!(2), felt!(3), felt!(4)));
+// All-zero word
+let z = Word::empty();            // same as Word::default()
 ```
 
 ### Indexing
 
 ```rust
-let w = Word::from([felt!(10), felt!(20), felt!(30), felt!(40)]);
+let w = Word::new([felt!(10), felt!(20), felt!(30), felt!(40)]);
 
-// Read by index
-let first: Felt = w[0];   // felt!(10)
-let last: Felt = w[3];    // felt!(40)
-
-// Mutable indexing
-let mut w = Word::from([felt!(0), felt!(0), felt!(0), felt!(0)]);
-w[0] = felt!(99);
+// Named fields
+let a: Felt = w.a;                // felt!(10)
+let d: Felt = w.d;                // felt!(40)
 
 // Convert to array
-let arr: [Felt; 4] = w.into();
-
-// Convert to tuple
-let tup: (Felt, Felt, Felt, Felt) = w.into();
+let arr: [Felt; 4] = w.into_elements();
+// or via the `From<Word> for [Felt; 4]` impl
+let arr2: [Felt; 4] = w.into();
 ```
 
 ### Packing data into Words
@@ -174,25 +170,26 @@ Since each storage slot holds one `Word`, you'll often pack multiple values:
 
 ```rust
 // Pack two u64 values into a Word
-let config = Word::from([
-    Felt::from_u64_unchecked(max_amount),    // [0]: max amount
-    Felt::from_u64_unchecked(cooldown),      // [1]: cooldown blocks
-    felt!(0),                                 // [2]: unused
-    felt!(0),                                 // [3]: unused
+let config = Word::new([
+    Felt::new(max_amount),    // a: max amount
+    Felt::new(cooldown),      // b: cooldown blocks
+    felt!(0),                 // c: unused
+    felt!(0),                 // d: unused
 ]);
 
-// Unpack
-let max_amount = config[0].as_u64();
-let cooldown = config[1].as_u64();
+// Unpack via named fields
+let max_amount = config.a.as_u64();
+let cooldown = config.b.as_u64();
 ```
 
 ## Asset
 
-`Asset` wraps a `Word` and represents either a fungible or non-fungible asset.
+`Asset` represents either a fungible or non-fungible asset. In v0.14 it is **two words** — a `key` (identifies the asset class) and a `value` (encodes the fungible amount or non-fungible data).
 
 ```rust
 pub struct Asset {
-    pub inner: Word,
+    pub key: Word,
+    pub value: Word,
 }
 ```
 
@@ -200,40 +197,54 @@ pub struct Asset {
 
 **Fungible assets** (tokens):
 
-| Index | Content |
-|-------|---------|
-| `inner[0]` | Amount |
-| `inner[1]` | `0` |
-| `inner[2]` | Faucet ID suffix |
-| `inner[3]` | Faucet ID prefix |
+| Word     | Field | Content |
+|----------|-------|---------|
+| `key`    | `a`   | `0` |
+| `key`    | `b`   | `0` |
+| `key`    | `c`   | Faucet ID suffix |
+| `key`    | `d`   | Faucet ID prefix |
+| `value`  | `a`   | Amount |
+| `value`  | `b`   | `0` |
+| `value`  | `c`   | `0` |
+| `value`  | `d`   | `0` |
 
 **Non-fungible assets** (NFTs):
 
-| Index | Content |
-|-------|---------|
-| `inner[0]` | Data hash element 0 |
-| `inner[1]` | Data hash element 1 |
-| `inner[2]` | Data hash element 2 |
-| `inner[3]` | Faucet ID prefix |
+| Word     | Field | Content |
+|----------|-------|---------|
+| `key`    | `a`   | Data hash element 0 |
+| `key`    | `b`   | Data hash element 1 |
+| `key`    | `c`   | Faucet ID suffix |
+| `key`    | `d`   | Faucet ID prefix |
+| `value`  | `a..d`| Data payload (implementation-defined) |
 
 ### Working with assets
 
 ```rust
-use miden::Asset;
+use miden::{Asset, Word, felt};
 
-// Create from a Word
-let asset = Asset::new([felt!(100), felt!(0), faucet_suffix, faucet_prefix]);
+// Build a fungible asset from key + value words.
+// Fungible key = [0, 0, faucet_suffix, faucet_prefix],
+// fungible value = [amount, 0, 0, 0].
+let asset = Asset::new(
+    Word::from([felt!(0), felt!(0), faucet_suffix, faucet_prefix]),
+    Word::from([felt!(100), felt!(0), felt!(0), felt!(0)]),
+);
 
-// Read the amount (fungible)
-let amount: u64 = asset.inner[0].as_u64();
+// Read the amount (fungible): first limb of `value`.
+let amount: u64 = asset.value.a.as_u64();
 
-// Build a fungible asset from faucet ID and amount
+// Build a fungible asset from faucet ID + amount via the SDK helper.
 use miden::asset;
-let asset = asset::build_fungible_asset(faucet_id, felt!(1000));
+let asset = asset::create_fungible_asset(faucet_id, felt!(1000));
 
-// Build a non-fungible asset
-let nft = asset::build_non_fungible_asset(faucet_id, data_hash);
+// Build a non-fungible asset.
+let nft = asset::create_non_fungible_asset(faucet_id, data_hash);
 ```
+
+:::note Asset on the host side
+On the client / host side, `Asset` is an enum (`Asset::Fungible(_) | Asset::NonFungible(_)`) exposed from `miden-protocol`, with `to_key_word()` / `to_value_word()` / `from_key_value_words()` helpers. Inside a Rust contract the SDK exposes the two-word `Asset` struct shown above.
+:::
 
 ## AccountId
 
@@ -265,16 +276,12 @@ The SDK also provides `NoteIdx`, `Tag`, `NoteType`, `Recipient`, `Digest`, and `
 | From | To | Method |
 |------|----|--------|
 | `u32` | `Felt` | `Felt::from_u32(n)` |
-| `u64` | `Felt` | `Felt::from_u64_unchecked(n)` or `Felt::new(n)?` |
+| `u64` | `Felt` | `Felt::new(n)` |
 | literal | `Felt` | `felt!(n)` |
 | `Felt` | `u64` | `f.as_u64()` |
-| `Felt` | `Word` | `Word::from(f)` — fills position 3, rest zeroed |
-| `Word` | `Felt` | `let f: Felt = w.into()` — extracts position 3 |
-| `[Felt; 4]` | `Word` | `Word::from(arr)` |
-| `Word` | `[Felt; 4]` | `let arr: [Felt; 4] = w.into()` |
-| `(Felt, Felt, Felt, Felt)` | `Word` | `Word::from(tuple)` |
-| `Word` | `Digest` | `Digest::from_word(w)` |
-| `Digest` | `Word` | `let w: Word = d.into()` |
+| `[Felt; 4]` | `Word` | `Word::new(arr)` or `Word::from(arr)` |
+| `[u32; 4]` / `[u16; 4]` / `[u8; 4]` / `[bool; 4]` | `Word` | `Word::from(arr)` |
+| `Word` | `[Felt; 4]` | `w.into_elements()` or `let arr: [Felt; 4] = w.into()` |
 
 Use these types in [component definitions](./accounts/components), store and retrieve Words from [persistent storage](./accounts/storage), or define your own types for public APIs with [`#[export_type]`](./accounts/custom-types).
 

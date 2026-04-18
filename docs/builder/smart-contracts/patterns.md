@@ -72,5 +72,5 @@ All Miden contracts run without the standard library:
 | `std::collections::HashMap` | Use `BTreeMap` from `alloc`, or `StorageMap` for persistent account storage |
 | `std::string::String` | Use `alloc::string::String` |
 | `std::vec::Vec` | Use `alloc::vec::Vec` |
-| `println!()` / `eprintln!()` | Use `miden::intrinsics::debug::breakpoint()` |
+| `println!()` / `eprintln!()` | No direct equivalent — run the transaction under the Mockchain and inspect outputs, or use the external debugger |
 | Error strings in `assert!()` | Use `assert!(condition)` without messages |
