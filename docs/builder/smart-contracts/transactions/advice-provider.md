@@ -59,7 +59,7 @@ let num_felts: Felt = adv_push_mapvaln(key);
 Loads a preimage from the advice provider given a commitment and expected word count. This is useful when a note or transaction script needs to retrieve data that was hashed and stored by the sender.
 
 ```rust
-use miden::stdlib::mem::adv_load_preimage;
+use miden::adv_load_preimage;
 
 // Load `num_words` Words whose hash matches `commitment`.
 let felts: Vec<Felt> = adv_load_preimage(num_words, commitment);
@@ -71,14 +71,15 @@ let felts: Vec<Felt> = adv_load_preimage(num_words, commitment);
 The canonical pattern (used in `basic-wallet-tx-script`) combines `adv_push_mapvaln` with `adv_load_preimage` to retrieve structured data encoded as a preimage:
 
 ```rust
-use miden::intrinsics::advice::adv_push_mapvaln;
-use miden::stdlib::mem::adv_load_preimage;
+use miden::{intrinsics::advice::adv_push_mapvaln, *};
 
 // 1. Look up the key — returns the number of Felts stored there
 let num_felts = adv_push_mapvaln(key);
 
-// 2. Load the preimage (num_felts must be word-aligned)
-let num_words = Felt::from_u64_unchecked(num_felts.as_u64() / 4);
+// 2. Convert to a Felt count of words and load the preimage (length must be word-aligned)
+let num_felts_u64 = num_felts.as_canonical_u64();
+assert_eq(Felt::from_u32((num_felts_u64 % 4) as u32), felt!(0));
+let num_words = Felt::new(num_felts_u64 / 4);
 let data: Vec<Felt> = adv_load_preimage(num_words, key);
 
 // 3. Index into the data by field position
@@ -105,11 +106,13 @@ adv_insert(key, values);
 
 ### `adv_insert_mem`
 
-Inserts a range of memory into the advice map. The VM reads `Word`s from addresses `[start_addr, end_addr)` and stores them under the key.
+Inserts a range of memory into the advice map. The VM reads `Word`s from addresses `[start_addr, end_addr)` and stores them under the key. Both address arguments are `u32`.
 
 ```rust
 use miden::intrinsics::advice::adv_insert_mem;
 
+let start_addr: u32 = 0;
+let end_addr: u32 = 8;
 adv_insert_mem(key, start_addr, end_addr);
 ```
 
@@ -132,6 +135,6 @@ Full API docs on docs.rs: [`miden::intrinsics::advice`](https://docs.rs/miden/la
 
 ## Related
 
-- [Authentication](../accounts/authentication) — RPO-Falcon512 signature verification and nonce management
+- [Authentication](../accounts/authentication) — Falcon512 signature verification (over Poseidon2) and nonce management
 - [Transaction Scripts](./transaction-scripts) — executing logic in the transaction context
 - [Transaction Context](./transaction-context) — overview of transaction execution
