@@ -62,7 +62,7 @@ Your project includes a comprehensive test file at `integration/tests/counter_te
 
 ```rust title="integration/tests/counter_test.rs"
 use integration::helpers::{
-    build_project_in_dir, create_testing_component_from_package, create_testing_note_from_package,
+    build_project_in_dir, create_testing_account_from_package, create_testing_note_from_package,
     AccountCreationConfig, NoteCreationConfig,
 };
 
@@ -111,9 +111,9 @@ async fn counter_test() -> anyhow::Result<()> {
         ..Default::default()
     };
 
-    // create the counter account component from the compiled package
-    let counter_component =
-        create_testing_component_from_package(contract_package.clone(), counter_cfg).await?;
+    // create testing counter account
+    let mut counter_account =
+        create_testing_account_from_package(contract_package.clone(), counter_cfg).await?;
 
     // create testing increment note
     let counter_note = create_testing_note_from_package(
@@ -122,13 +122,8 @@ async fn counter_test() -> anyhow::Result<()> {
         NoteCreationConfig::default(),
     )?;
 
-    // Add the counter account and note to the mockchain. Using
-    // `add_existing_account_from_components` (rather than the legacy
-    // `add_account`) registers a mock authenticator for the account —
-    // required for `build_tx_context` to work on auth-bearing accounts.
-    // `Auth::Noop` is the no-auth variant for test-only components.
-    let mut counter_account = builder
-        .add_existing_account_from_components(Auth::Noop, [counter_component])?;
+    // add counter account and note to mockchain
+    builder.add_account(counter_account.clone())?;
     builder.add_output_note(RawOutputNote::Full(counter_note.clone()));
 
     // Build the mock chain
@@ -225,7 +220,7 @@ let counter_cfg = AccountCreationConfig {
 };
 
 // Create testing entities
-let counter_component = create_testing_component_from_package(contract_package.clone(), counter_cfg).await?;
+let mut counter_account = create_testing_account_from_package(contract_package.clone(), counter_cfg).await?;
 let counter_note = create_testing_note_from_package(
     note_package.clone(),
     sender.id(),
@@ -236,23 +231,21 @@ let counter_note = create_testing_note_from_package(
 **What's happening:**
 
 - We configure the **counter account's initial storage** with count = 0 at storage key `[0, 0, 0, 1]`
-- We create the **counter account component** from the compiled package using `create_testing_component_from_package()` — it returns an `AccountComponent` rather than a pre-built account, so we can attach a mock authenticator via the MockChain builder
+- We create the **testing counter account** from the compiled package using `create_testing_account_from_package()`
 - We create the **testing increment note** using `create_testing_note_from_package()`
 - These helper functions create test-specific versions optimized for the Mockchain environment
 
 ### 4. Adding Components to the Mockchain
 
 ```rust
-let mut counter_account = builder
-    .add_existing_account_from_components(Auth::Noop, [counter_component])?;
+builder.add_account(counter_account.clone())?;
 builder.add_output_note(RawOutputNote::Full(counter_note.clone()));
 let mut mock_chain = builder.build()?;
 ```
 
 **What's happening:**
 
-- We call **`add_existing_account_from_components`** — the v0.14 safer API that (per `chain_builder.rs`) builds the account, attaches the authenticator for the `Auth::Noop` variant, and registers it so `build_tx_context` works correctly. Prefer this over the legacy `add_account(account)` method, which skips authenticator registration
-- We use **`Auth::Noop`** for a no-auth test-only authenticator; swap it for `Auth::BasicAuth { auth_scheme: AuthScheme::Falcon512Poseidon2 }` to test with a real Falcon signer
+- We **add the counter account** to the mockchain builder
 - We **add the increment note** as a full output note to the mockchain
 - We **build the mockchain** - now we have a complete testing environment ready to use
 
