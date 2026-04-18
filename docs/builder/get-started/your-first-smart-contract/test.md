@@ -67,9 +67,10 @@ use integration::helpers::{
 };
 
 use miden_client::{
-    account::{StorageMap, StorageSlot, StorageSlotName},
-    transaction::OutputNote,
-    Felt, Word,
+    account::{StorageMap, StorageMapKey, StorageSlot, StorageSlotName},
+    auth::AuthSchemeId,
+    transaction::RawOutputNote,
+    Word,
 };
 use miden_testing::{Auth, MockChain};
 use std::{path::Path, sync::Arc};
@@ -79,8 +80,10 @@ async fn counter_test() -> anyhow::Result<()> {
     // Test that after executing the increment note, the counter value is incremented by 1
     let mut builder = MockChain::builder();
 
-    // Crate note sender account
-    let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
+    // Create note sender account
+    let sender = builder.add_existing_wallet(Auth::BasicAuth {
+        auth_scheme: AuthSchemeId::Falcon512Poseidon2,
+    })?;
 
     // Build contracts
     let contract_package = Arc::new(build_project_in_dir(
@@ -93,8 +96,8 @@ async fn counter_test() -> anyhow::Result<()> {
     )?);
 
     // Create the counter account with initial storage and no-auth auth component
-    let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
-    let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
+    let count_storage_key = Word::from([0u32, 0, 0, 1]);
+    let initial_count = Word::default();
 
     // The slot name is constructed as
     // `miden::component::[to_underscore(Cargo.toml:package.metadata.component.package)]::[field_name]`
@@ -102,7 +105,7 @@ async fn counter_test() -> anyhow::Result<()> {
         StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
     let storage_slots = vec![StorageSlot::with_map(
         counter_storage_slot.clone(),
-        StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
+        StorageMap::with_entries([(StorageMapKey::new(count_storage_key), initial_count)]).unwrap(),
     )];
     let counter_cfg = AccountCreationConfig {
         storage_slots,
@@ -122,7 +125,7 @@ async fn counter_test() -> anyhow::Result<()> {
 
     // add counter account and note to mockchain
     builder.add_account(counter_account.clone())?;
-    builder.add_output_note(OutputNote::Full(counter_note.clone()));
+    builder.add_output_note(RawOutputNote::Full(counter_note.clone()));
 
     // Build the mock chain
     let mut mock_chain = builder.build()?;
@@ -150,7 +153,7 @@ async fn counter_test() -> anyhow::Result<()> {
     // Assert that the count value is equal to 1 after executing the transaction
     assert_eq!(
         count,
-        Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]),
+        Word::from([0u32, 0, 0, 1]),
         "Count value is not equal to 1"
     );
 
@@ -169,7 +172,9 @@ Let's break down this test step by step to understand how Mockchain testing work
 
 ```rust
 let mut builder = MockChain::builder();
-let sender = builder.add_existing_wallet(Auth::BasicAuth)?;
+let sender = builder.add_existing_wallet(Auth::BasicAuth {
+    auth_scheme: AuthSchemeId::Falcon512Poseidon2,
+})?;
 ```
 
 **What's happening:**
@@ -201,14 +206,14 @@ let note_package = Arc::new(build_project_in_dir(
 
 ```rust
 // Create the counter account with initial storage and no-auth auth component
-let count_storage_key = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]);
-let initial_count = Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(0)]);
+let count_storage_key = Word::from([0u32, 0, 0, 1]);
+let initial_count = Word::default();
 
 let counter_storage_slot =
     StorageSlotName::new("miden::component::miden_counter_account::count_map").unwrap();
 let storage_slots = vec![StorageSlot::with_map(
     counter_storage_slot.clone(),
-    StorageMap::with_entries([(count_storage_key, initial_count)]).unwrap(),
+    StorageMap::with_entries([(StorageMapKey::new(count_storage_key), initial_count)]).unwrap(),
 )];
 let counter_cfg = AccountCreationConfig {
     storage_slots,
@@ -216,7 +221,7 @@ let counter_cfg = AccountCreationConfig {
 };
 
 // Create testing entities
-let counter_account = create_testing_account_from_package(contract_package.clone(), counter_cfg).await?;
+let mut counter_account = create_testing_account_from_package(contract_package.clone(), counter_cfg).await?;
 let counter_note = create_testing_note_from_package(
     note_package.clone(),
     sender.id(),
@@ -235,7 +240,7 @@ let counter_note = create_testing_note_from_package(
 
 ```rust
 builder.add_account(counter_account.clone())?;
-builder.add_output_note(OutputNote::Full(counter_note.clone()));
+builder.add_output_note(RawOutputNote::Full(counter_note.clone()));
 let mut mock_chain = builder.build()?;
 ```
 
@@ -279,7 +284,7 @@ let count = counter_account
 // Assert that the count value is equal to 1 after executing the transaction
 assert_eq!(
     count,
-    Word::from([Felt::new(0), Felt::new(0), Felt::new(0), Felt::new(1)]),
+    Word::from([0u32, 0, 0, 1]),
     "Count value is not equal to 1"
 );
 ```
