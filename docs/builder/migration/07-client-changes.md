@@ -33,7 +33,7 @@ await client.createClient({
 
 ```typescript
 // After (0.14)
-import { MidenClient } from "@miden-sdk/miden-sdk";
+import { MidenClient, AccountType } from "@miden-sdk/miden-sdk";
 
 const client = await MidenClient.create({
   rpcUrl: "https://rpc.testnet.miden.io",
@@ -67,7 +67,7 @@ const faucet = await client.newFaucet(
 // After (0.14)
 const wallet = await client.accounts.create(); // mutable, private wallet (defaults)
 const faucet = await client.accounts.create({
-  type: "FungibleFaucet",
+  type: AccountType.FungibleFaucet,
   symbol: "DAG",
   decimals: 8,
   maxSupply: 10_000_000n,
@@ -141,12 +141,12 @@ The new API adds first-class support for deploying custom smart contracts:
 ```typescript
 // After (0.14) — compile and deploy a custom contract
 const component = await client.compile.component({
-  source: contractMasm,
-  storageSlots: [],
+  code: contractMasm,
+  slots: [],
 });
 
 const contract = await client.accounts.create({
-  type: "MutableContract",
+  type: AccountType.MutableContract,
   seed: new Uint8Array(32),
   auth: secretKey,
   components: [component],
@@ -154,8 +154,7 @@ const contract = await client.accounts.create({
 
 // Compile a transaction script and execute it against the contract.
 const script = await client.compile.txScript({
-  source: scriptMasm,
-  libraries: "dynamic",
+  code: scriptMasm,
 });
 await client.transactions.execute({ account: contract, script });
 ```
@@ -296,16 +295,18 @@ use miden_objects::accounts::StorageMapKey;
 let key: StorageMapKey = [felt0, felt1, felt2, felt3]; // Was just a Word alias
 
 // After (0.14)
-use miden_objects::accounts::StorageMapKey;
-let key = StorageMapKey::from([felt0, felt1, felt2, felt3]);
-// LexicographicWord is no longer needed — StorageMapKey handles ordering
+use miden_protocol::account::StorageMapKey;
+use miden_protocol::Word;
+let key = StorageMapKey::new(Word::from([felt0, felt1, felt2, felt3]));
+// LexicographicWord is no longer needed — StorageMapKey handles ordering.
+// For sequential u32 keys, use the StorageMapKey::from_index(idx) shortcut.
 ```
 
 ---
 
-### StateSync API takes &mut PartialMmr and SyncStateInputs
+### `sync_state()` no longer takes arguments; `StateSyncInput` now internal
 
-State sync parameters have been bundled into a `SyncStateInputs` struct. The API now takes `&mut PartialMmr` directly and supports optional nullifier syncing.
+`Client::sync_state()` builds its own `StateSyncInput` from the current store state — you no longer pass `account_ids`, `note_tags`, or `nullifiers` by hand. For custom sync scenarios, construct a `StateSyncInput` explicitly via `Client::build_sync_input()` and use the lower-level `StateSync` type.
 
 ```rust
 // Before (0.13)
@@ -319,25 +320,24 @@ client.sync_state(
 
 ```rust
 // After (0.14)
-use miden_client::SyncStateInputs;
+let summary = client.sync_state().await?;
 
-let inputs = SyncStateInputs {
-    account_ids,
-    note_tags,
-    nullifiers: Some(nullifiers), // now optional
-};
-client.sync_state(&mut partial_mmr, inputs).await?;
+// For custom sync scenarios, build the input manually:
+use miden_client::sync::StateSyncInput;
+let input: StateSyncInput = client.build_sync_input().await?;
+// …tweak `input.note_tags`, `input.input_notes`, etc. and drive
+// a `StateSync` instance directly.
 ```
 
 ---
 
-### MSRV 1.91
+### MSRV 1.93
 
-The minimum supported Rust version is now **1.91**. Update your toolchain:
+The minimum supported Rust version is now **1.93**. Update your toolchain:
 
 ```toml title="rust-toolchain.toml"
 [toolchain]
-channel = "1.91"
+channel = "1.93"
 ```
 
 ---

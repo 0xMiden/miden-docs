@@ -78,13 +78,13 @@ Let's see this in action:
 ```rust title="integration/src/bin/mint.rs"
 use miden_client::{
     account::{
-        component::{BasicFungibleFaucet, BasicWallet},
+        component::{AuthScheme, AuthSingleSig, BasicFungibleFaucet, BasicWallet},
         AccountBuilder, AccountStorageMode, AccountType,
     },
     asset::{FungibleAsset, TokenSymbol},
-    auth::{AuthFalcon512Rpo, AuthSecretKey},
+    auth::AuthSecretKey,
     builder::ClientBuilder,
-    keystore::FilesystemKeyStore,
+    keystore::{FilesystemKeyStore, Keystore},
     note::NoteType,
     rpc::{Endpoint, GrpcClient},
     transaction::TransactionRequestBuilder,
@@ -135,15 +135,16 @@ async fn main() -> anyhow::Result<()> {
     let max_supply = Felt::new(1_000_000);
 
     // Generate key pair
-    let alice_key_pair = AuthSecretKey::new_falcon512_rpo();
-    let faucet_key_pair = AuthSecretKey::new_falcon512_rpo();
+    let alice_key_pair = AuthSecretKey::new_falcon512_poseidon2();
+    let faucet_key_pair = AuthSecretKey::new_falcon512_poseidon2();
 
     // Build the account
     let account_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthFalcon512Rpo::new(
+        .with_auth_component(AuthSingleSig::new(
             alice_key_pair.public_key().to_commitment(),
+            AuthScheme::Falcon512Poseidon2,
         ))
         .with_component(BasicWallet);
 
@@ -151,8 +152,9 @@ async fn main() -> anyhow::Result<()> {
     let faucet_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthFalcon512Rpo::new(
+        .with_auth_component(AuthSingleSig::new(
             faucet_key_pair.public_key().to_commitment(),
+            AuthScheme::Falcon512Poseidon2,
         ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
@@ -167,8 +169,8 @@ async fn main() -> anyhow::Result<()> {
     client.add_account(&faucet_account, false).await?;
 
     // Add keys to keystore
-    keystore.add_key(&alice_key_pair)?;
-    keystore.add_key(&faucet_key_pair)?;
+    keystore.add_key(&alice_key_pair, alice_account.id()).await?;
+    keystore.add_key(&faucet_key_pair, faucet_account.id()).await?;
 
     let amount: u64 = 1000;
     let fungible_asset = FungibleAsset::new(faucet_account.id(), amount)?;
@@ -199,7 +201,7 @@ async fn main() -> anyhow::Result<()> {
 ```
 
 ```typescript title="src/demo.ts"
-import { MidenClient } from "@miden-sdk/miden-sdk";
+import { MidenClient, AccountType } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -207,7 +209,7 @@ export async function demo() {
 
     // Creating Alice's account
     const alice = await client.accounts.create({
-        type: "MutableWallet",
+        type: AccountType.MutableWallet,
         storage: "public", // Public: account state is visible on-chain
     });
     console.log("Alice's account ID:", alice.id().toString());
@@ -216,7 +218,7 @@ export async function demo() {
     const decimals = 8;
     const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
     const faucet = await client.accounts.create({
-        type: "FungibleFaucet",
+        type: AccountType.FungibleFaucet,
         symbol: "TEST",
         decimals,
         maxSupply,
@@ -274,13 +276,13 @@ This is a complete, self-contained example that includes the setup and minting s
 ```rust title="integration/src/bin/consume.rs"
 use miden_client::{
     account::{
-        component::{BasicFungibleFaucet, BasicWallet},
+        component::{AuthScheme, AuthSingleSig, BasicFungibleFaucet, BasicWallet},
         Account, AccountBuilder, AccountStorageMode, AccountType,
     },
     asset::{FungibleAsset, TokenSymbol},
-    auth::{AuthFalcon512Rpo, AuthSecretKey},
+    auth::AuthSecretKey,
     builder::ClientBuilder,
-    keystore::FilesystemKeyStore,
+    keystore::{FilesystemKeyStore, Keystore},
     note::NoteType,
     rpc::{Endpoint, GrpcClient},
     transaction::TransactionRequestBuilder,
@@ -332,15 +334,16 @@ async fn main() -> anyhow::Result<()> {
     let max_supply = Felt::new(1_000_000);
 
     // Generate key pair
-    let alice_key_pair = AuthSecretKey::new_falcon512_rpo();
-    let faucet_key_pair = AuthSecretKey::new_falcon512_rpo();
+    let alice_key_pair = AuthSecretKey::new_falcon512_poseidon2();
+    let faucet_key_pair = AuthSecretKey::new_falcon512_poseidon2();
 
     // Build the account
     let account_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthFalcon512Rpo::new(
+        .with_auth_component(AuthSingleSig::new(
             alice_key_pair.public_key().to_commitment(),
+            AuthScheme::Falcon512Poseidon2,
         ))
         .with_component(BasicWallet);
 
@@ -348,8 +351,9 @@ async fn main() -> anyhow::Result<()> {
     let faucet_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthFalcon512Rpo::new(
+        .with_auth_component(AuthSingleSig::new(
             faucet_key_pair.public_key().to_commitment(),
+            AuthScheme::Falcon512Poseidon2,
         ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
@@ -364,8 +368,8 @@ async fn main() -> anyhow::Result<()> {
     client.add_account(&faucet_account, false).await?;
 
     // Add keys to keystore
-    keystore.add_key(&alice_key_pair)?;
-    keystore.add_key(&faucet_key_pair)?;
+    keystore.add_key(&alice_key_pair, alice_account.id()).await?;
+    keystore.add_key(&faucet_key_pair, faucet_account.id()).await?;
 
     let amount: u64 = 1000;
     let fungible_asset = FungibleAsset::new(faucet_account.id(), amount)?;
@@ -449,7 +453,7 @@ async fn main() -> anyhow::Result<()> {
 ```
 
 ```typescript title="src/demo.ts"
-import { MidenClient } from "@miden-sdk/miden-sdk";
+import { MidenClient, AccountType } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -457,7 +461,7 @@ export async function demo() {
 
     // Creating Alice's account
     const alice = await client.accounts.create({
-        type: "MutableWallet",
+        type: AccountType.MutableWallet,
         storage: "public",
     });
     console.log("Alice's account ID:", alice.id().toString());
@@ -466,7 +470,7 @@ export async function demo() {
     const decimals = 8;
     const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
     const faucet = await client.accounts.create({
-        type: "FungibleFaucet",
+        type: AccountType.FungibleFaucet,
         symbol: "TEST",
         decimals,
         maxSupply,
@@ -544,14 +548,14 @@ This is a complete, self-contained example that includes all previous steps. **T
 ```rust title="integration/src/bin/send.rs"
 use miden_client::{
     account::{
-        component::{BasicFungibleFaucet, BasicWallet},
+        component::{AuthScheme, AuthSingleSig, BasicFungibleFaucet, BasicWallet},
         Account, AccountBuilder, AccountId, AccountStorageMode, AccountType,
     },
     asset::{FungibleAsset, TokenSymbol},
-    auth::{AuthFalcon512Rpo, AuthSecretKey},
+    auth::AuthSecretKey,
     builder::ClientBuilder,
-    keystore::FilesystemKeyStore,
-    note::{create_p2id_note, NoteAttachment, NoteType},
+    keystore::{FilesystemKeyStore, Keystore},
+    note::{NoteAttachment, NoteType, P2idNote},
     rpc::{Endpoint, GrpcClient},
     transaction::{OutputNote, TransactionRequestBuilder},
     Felt,
@@ -602,15 +606,16 @@ async fn main() -> anyhow::Result<()> {
     let max_supply = Felt::new(1_000_000);
 
     // Generate key pair
-    let alice_key_pair = AuthSecretKey::new_falcon512_rpo();
-    let faucet_key_pair = AuthSecretKey::new_falcon512_rpo();
+    let alice_key_pair = AuthSecretKey::new_falcon512_poseidon2();
+    let faucet_key_pair = AuthSecretKey::new_falcon512_poseidon2();
 
     // Build the account
     let account_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthFalcon512Rpo::new(
+        .with_auth_component(AuthSingleSig::new(
             alice_key_pair.public_key().to_commitment(),
+            AuthScheme::Falcon512Poseidon2,
         ))
         .with_component(BasicWallet);
 
@@ -618,8 +623,9 @@ async fn main() -> anyhow::Result<()> {
     let faucet_builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthFalcon512Rpo::new(
+        .with_auth_component(AuthSingleSig::new(
             faucet_key_pair.public_key().to_commitment(),
+            AuthScheme::Falcon512Poseidon2,
         ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
@@ -634,8 +640,8 @@ async fn main() -> anyhow::Result<()> {
     client.add_account(&faucet_account, false).await?;
 
     // Add keys to keystore
-    keystore.add_key(&alice_key_pair)?;
-    keystore.add_key(&faucet_key_pair)?;
+    keystore.add_key(&alice_key_pair, alice_account.id()).await?;
+    keystore.add_key(&faucet_key_pair, faucet_account.id()).await?;
 
     let amount: u64 = 1000;
     let fungible_asset = FungibleAsset::new(faucet_account.id(), amount)?;
@@ -722,7 +728,7 @@ async fn main() -> anyhow::Result<()> {
     let send_amount = 100;
     let fungible_asset_to_send = FungibleAsset::new(faucet_account.id(), send_amount)?;
 
-    let p2id_note = create_p2id_note(
+    let p2id_note = P2idNote::create(
         alice_account.id(),
         bob_account_id,
         vec![fungible_asset_to_send.into()],
@@ -752,7 +758,7 @@ async fn main() -> anyhow::Result<()> {
 ```
 
 ```typescript title="src/demo.ts"
-import { MidenClient } from "@miden-sdk/miden-sdk";
+import { MidenClient, AccountType } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
@@ -760,7 +766,7 @@ export async function demo() {
 
     // Create Alice's account and a faucet.
     const alice = await client.accounts.create({
-        type: "MutableWallet",
+        type: AccountType.MutableWallet,
         storage: "public",
     });
     console.log("Alice's account ID:", alice.id().toString());
@@ -768,7 +774,7 @@ export async function demo() {
     const decimals = 8;
     const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
     const faucet = await client.accounts.create({
-        type: "FungibleFaucet",
+        type: AccountType.FungibleFaucet,
         symbol: "TEST",
         decimals,
         maxSupply,
