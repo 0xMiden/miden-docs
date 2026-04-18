@@ -4,8 +4,6 @@ title: Read Storage Values
 description: Learn how to query account storage data and interact with deployed smart contracts.
 ---
 
-import { CodeTabs } from '@site/src/components';
-
 # Read Storage Values
 
 Let's explore how to interact with public accounts and retrieve their storage data.
@@ -36,12 +34,8 @@ Let's interact with a counter contract deployed on the Miden testnet. This contr
 
 ### Reading the Count of a Counter contract
 
-<CodeTabs
-tsFilename="src/lib/read-count.ts"
-rustFilename="integration/src/bin/read-count.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/read-count.rs"
+use miden_client::{
     account::{Account, AccountId, StorageSlotName},
     builder::ClientBuilder,
     keystore::FilesystemKeyStore,
@@ -105,40 +99,31 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-` },
-  typescript: {
-    code:`import { WebClient, AccountId, Word } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient, Word } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await MidenClient.createTestnet();
 
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
+    const counterAccountId = "0x224a96d294e10d006aef3d4f1b0876";
 
-    const accountId = AccountId.fromHex("0x224a96d294e10d006aef3d4f1b0876");
-
-    // Import the account into the client's database
-    await client.importAccountById(accountId);
-    const counter = await client.getAccount(accountId);
+    // Fetch the counter account (imports it into the local store if needed).
+    const counter = await client.accounts.getOrImport(counterAccountId);
 
     // Get the count from the counter account by querying its storage map
     // using the named storage slot and counter key.
     const slotName = "miden::component::miden_counter_account::count_map";
     const counterKey = new Word(BigUint64Array.from([0n, 0n, 0n, 1n]));
-    const count = counter?.storage().getMapItem(slotName, counterKey);
+    const count = counter.storage().getMapItem(slotName, counterKey);
 
     // The count value is a WORD (array of 4 u64 values).
     // The 4th value is the counter number.
     console.log("Count:", Number(count?.toU64s()[3]));
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>
@@ -153,12 +138,8 @@ Count: 1
 
 You can also query the assets (tokens) held by an account:
 
-<CodeTabs
-tsFilename="src/lib/token-balance.ts"
-rustFilename="integration/src/bin/token-balance.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/token-balance.rs"
+use miden_client::{
     account::{Account, AccountId},
     builder::ClientBuilder,
     keystore::FilesystemKeyStore,
@@ -217,34 +198,26 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
-`},
-  typescript: {
-    code:`import { WebClient, AccountId } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await MidenClient.createTestnet();
 
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
+    const aliceId = "0x5b2840a923dedc102ea67e0c1eba3c";
+    const faucetId = "0x29dd1dc628d2842032e751ed1b5da7";
 
-    const aliceId = AccountId.fromHex("0x5b2840a923dedc102ea67e0c1eba3c");
-    const faucetId = AccountId.fromHex("0x29dd1dc628d2842032e751ed1b5da7");
+    // Fetch Alice's account (imports it into the local store if needed)
+    // and query her balance for the faucet's token.
+    await client.accounts.getOrImport(aliceId);
+    const balance = await client.accounts.getBalance(aliceId, faucetId);
 
-    // Import the account into the client's database
-    await client.importAccountById(aliceId);
-    const aliceAccount = await client.getAccount(aliceId);
-
-    const balance = aliceAccount?.vault().getBalance(faucetId);
     console.log("Alice's TEST token balance:", Number(balance));
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>

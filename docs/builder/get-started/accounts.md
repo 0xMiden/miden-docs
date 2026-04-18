@@ -4,8 +4,6 @@ title: Accounts
 description: Learn how to create and manage Miden accounts programmatically using Rust and TypeScript.
 ---
 
-import { CodeTabs } from '@site/src/components';
-
 # Accounts
 
 Miden's account model is fundamentally different from traditional blockchains. Let's explore how to create and manage accounts programmatically.
@@ -115,7 +113,7 @@ To run the code examples in this guide, you'll need to set up a development envi
 
 ### Rust Environment
 
-If you already created `my-test-project` during [installation](./setup/installation), you can reuse it. Otherwise, create a new project:
+If you already created `my-test-project` during [installation](./setup/installation#rust-project), you can reuse it. Otherwise, create a new project:
 
 ```bash title=">_ Terminal"
 miden new my-project
@@ -136,48 +134,53 @@ cargo run --bin demo --release
 
 ### TypeScript Environment
 
-Create a new Miden frontend project:
+If you already created `miden-app` during [installation](./setup/installation#typescript-project), you can reuse it. Otherwise, scaffold a new Vite vanilla-ts project:
 
 ```bash title=">_ Terminal"
-yarn create-miden-app
-cd miden-app/
+npm create vite@latest miden-app -- --template vanilla-ts
+cd miden-app
+npm install @miden-sdk/miden-sdk
 ```
 
-For each code example, create a demo file:
+For each code example, save the TypeScript snippet as `src/demo.ts` (overwriting the previous one as you progress):
 
 ```bash title=">_ Terminal"
-touch src/lib/demo.ts
+touch src/demo.ts
 ```
 
-Copy the TypeScript code into the file, then import and call the `demo()` function in your `App.tsx`. Run the project:
+Wire it into the entry point once (`src/main.ts`):
+
+```ts title="src/main.ts"
+import { demo } from "./demo";
+
+demo().catch(console.error);
+```
+
+Run the dev server:
 
 ```bash title=">_ Terminal"
-yarn dev
-# or
 npm run dev
 ```
 
+Open the dev-server URL in the browser and watch the devtools console for output.
+
 :::tip
-For detailed frontend setup guidance, see the [Tutorials section](../tutorials/rust-compiler/).
+For detailed frontend setup guidance (React, wallets, UI), see the [Tutorials section](../tutorials/rust-compiler/).
 :::
 
 ## Creating Accounts Programmatically
 
 Let's start by creating accounts using the Miden client libraries:
 
-<CodeTabs
-tsFilename="src/lib/account.ts"
-rustFilename="integration/src/bin/account.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/account.rs"
+use miden_client::{
     account::{
-        component::BasicWallet,
+        component::{AuthScheme, AuthSingleSig, BasicWallet},
         AccountBuilder, AccountStorageMode, AccountType,
     },
-    auth::{AuthFalcon512Rpo, AuthSecretKey},
+    auth::AuthSecretKey,
     builder::ClientBuilder,
-    keystore::FilesystemKeyStore,
+    keystore::{FilesystemKeyStore, Keystore},
     rpc::{Endpoint, GrpcClient},
 };
 use miden_client_sqlite_store::ClientBuilderSqliteExt;
@@ -214,13 +217,14 @@ async fn main() -> anyhow::Result<()> {
     let mut init_seed = [0_u8; 32];
     client.rng().fill_bytes(&mut init_seed);
 
-    let key_pair = AuthSecretKey::new_falcon512_rpo();
+    let key_pair = AuthSecretKey::new_falcon512_poseidon2();
 
     let builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::RegularAccountUpdatableCode)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthFalcon512Rpo::new(
+        .with_auth_component(AuthSingleSig::new(
             key_pair.public_key().to_commitment(),
+            AuthScheme::Falcon512Poseidon2,
         ))
         .with_component(BasicWallet);
 
@@ -228,44 +232,37 @@ async fn main() -> anyhow::Result<()> {
 
     client.add_account(&account, false).await?;
 
-    keystore.add_key(&key_pair)?;
+    keystore.add_key(&key_pair, account.id()).await?;
 
     println!("Account ID: {}", account.id());
     println!("No assets in Vault: {:?}", account.vault().is_empty());
 
     Ok(())
 }
-` },
-  typescript: {
-    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient, AccountType } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
     // NOTE: The client is our entry point to the Miden network.
     // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await MidenClient.createTestnet();
 
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
+    // Create a new wallet account.
+    const wallet = await client.accounts.create({
+        type: AccountType.MutableWallet, // Standard wallet with upgradeable code
+        storage: "public",               // Public: account state is visible onchain
+    });
 
-    // Create new wallet account
-    const account = await client.newWallet(
-        AccountStorageMode.public(), // Public: account state is visible onchain
-        true, // Mutable: account code can be upgraded later
-        AuthScheme.AuthRpoFalcon512 // Authentication scheme
-    );
-
-    console.log("Account ID:", account.id().toString());
+    console.log("Account ID:", wallet.id().toString());
     console.log(
         "No Assets in Vault:",
-        account.vault().fungibleAssets().length === 0
+        wallet.vault().fungibleAssets().length === 0,
     );
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>
@@ -281,20 +278,16 @@ No Assets in Vault: true
 
 Before we can work with tokens, we need a source of tokens. Let's create a fungible token faucet:
 
-<CodeTabs
-tsFilename="src/lib/faucet.ts"
-rustFilename="integration/src/bin/faucet.rs"
-example={{
-rust: {
-code: `use miden_client::{
+```rust title="integration/src/bin/faucet.rs"
+use miden_client::{
     account::{
-        component::BasicFungibleFaucet,
+        component::{AuthScheme, AuthSingleSig, BasicFungibleFaucet},
         AccountBuilder, AccountStorageMode, AccountType,
     },
     asset::TokenSymbol,
-    auth::{AuthFalcon512Rpo, AuthSecretKey},
+    auth::AuthSecretKey,
     builder::ClientBuilder,
-    keystore::FilesystemKeyStore,
+    keystore::{FilesystemKeyStore, Keystore},
     rpc::{Endpoint, GrpcClient},
     Felt,
 };
@@ -339,59 +332,52 @@ async fn main() -> anyhow::Result<()> {
     let max_supply = Felt::new(1_000_000);
 
     // Generate key pair
-    let key_pair = AuthSecretKey::new_falcon512_rpo();
+    let key_pair = AuthSecretKey::new_falcon512_poseidon2();
 
     // Build the account
     let builder = AccountBuilder::new(init_seed)
         .account_type(AccountType::FungibleFaucet)
         .storage_mode(AccountStorageMode::Public)
-        .with_auth_component(AuthFalcon512Rpo::new(
+        .with_auth_component(AuthSingleSig::new(
             key_pair.public_key().to_commitment(),
+            AuthScheme::Falcon512Poseidon2,
         ))
         .with_component(BasicFungibleFaucet::new(symbol, decimals, max_supply)?);
 
     let faucet_account = builder.build()?;
 
     client.add_account(&faucet_account, false).await?;
-    keystore.add_key(&key_pair)?;
+    keystore.add_key(&key_pair, faucet_account.id()).await?;
 
     println!("Faucet account ID: {}", faucet_account.id());
 
     Ok(())
 }
-`},
-  typescript: {
-    code:`import { WebClient, AccountStorageMode, AuthScheme } from "@miden-sdk/miden-sdk";
+```
+
+```typescript title="src/demo.ts"
+import { MidenClient, AccountType } from "@miden-sdk/miden-sdk";
 
 export async function demo() {
     // Initialize client to connect with the Miden Testnet.
-    // NOTE: The client is our entry point to the Miden network.
-    // All interactions with the network go through the client.
-    const nodeEndpoint = "https://rpc.testnet.miden.io:443";
+    const client = await MidenClient.createTestnet();
 
-    // Initialize client
-    const client = await WebClient.createClient(nodeEndpoint);
-    await client.syncState();
-
-    const symbol = "TEST";
+    // Faucet parameters
     const decimals = 8;
-    const initialSupply = BigInt(10_000_000 * 10 ** decimals);
+    const maxSupply = 10_000_000n * 10n ** BigInt(decimals);
 
-    const faucet = await client.newFaucet(
-        AccountStorageMode.public(),
-        false,
-        symbol,
+    // Create a fungible token faucet.
+    const faucet = await client.accounts.create({
+        type: AccountType.FungibleFaucet,
+        symbol: "TEST",
         decimals,
-        initialSupply,
-        AuthScheme.AuthRpoFalcon512 // Authentication scheme
-    );
+        maxSupply,
+        storage: "public",
+    });
 
     console.log("Faucet account ID:", faucet.id().toString());
 }
-`
-}
-}}
-/>
+```
 
 <details>
 <summary>Expected output</summary>
@@ -418,7 +404,7 @@ Faucet account ID: 0xde0ba31282f7522046d3d4af40722b
 
 - **BasicWallet**: Provides asset management functionality
 - **BasicFungibleFaucet**: Enables token minting capabilities
-- **AuthFalcon512Rpo**: Handles cryptographic authentication
+- **AuthSingleSig**: Handles cryptographic authentication (Falcon512 or ECDSA via the `AuthScheme` enum)
 
 Now that you understand how to create accounts and faucets, you're ready to learn about Miden's unique transaction model. Continue to [Notes & Transactions](./notes) to explore how assets move between accounts using notes.
 

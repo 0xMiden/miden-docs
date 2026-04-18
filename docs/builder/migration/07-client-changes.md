@@ -22,7 +22,7 @@ The monolithic `WebClient` god-object has been replaced by `MidenClient` with de
 
 ```typescript
 // Before (0.13)
-import { WebClient } from "@miden/sdk";
+import { WebClient } from "@miden-sdk/miden-sdk";
 
 const client = new WebClient();
 await client.createClient({
@@ -33,7 +33,7 @@ await client.createClient({
 
 ```typescript
 // After (0.14)
-import { MidenClient } from "@miden/sdk";
+import { MidenClient, AccountType } from "@miden-sdk/miden-sdk";
 
 const client = await MidenClient.create({
   rpcUrl: "https://rpc.testnet.miden.io",
@@ -42,24 +42,36 @@ const client = await MidenClient.create({
 });
 
 // Or use the testnet convenience constructor
-const client = MidenClient.createTestnet();
+const client = await MidenClient.createTestnet();
 ```
 
 #### Account creation
 
 ```typescript
 // Before (0.13)
-const account = await client.newWallet(
-  StorageMode.Private,
-  true // mutable
+const wallet = await client.newWallet(
+  AccountStorageMode.private(),
+  true,
+  undefined,
+);
+const faucet = await client.newFaucet(
+  AccountStorageMode.public(),
+  false,
+  "DAG",
+  8,
+  BigInt(10_000_000),
 );
 ```
 
 ```typescript
 // After (0.14)
-const account = await client.accounts.create({
-  type: "MutableWallet",
-  storageMode: "private",
+const wallet = await client.accounts.create(); // mutable, private wallet (defaults)
+const faucet = await client.accounts.create({
+  type: AccountType.FungibleFaucet,
+  symbol: "DAG",
+  decimals: 8,
+  maxSupply: 10_000_000n,
+  storage: "public",
 });
 ```
 
@@ -67,24 +79,26 @@ const account = await client.accounts.create({
 
 ```typescript
 // Before (0.13)
-const txRequest = await client.newSendTransactionRequest(
-  senderAccountId,
-  recipientAccountId,
-  faucetId,
-  NoteType.Private,
-  amount
+const request = client.newSendTransactionRequest(
+  wallet.id(),
+  AccountId.fromHex(targetHex),
+  faucet.id(),
+  NoteType.private(),
+  BigInt(100),
+  null,
+  null,
 );
-const result = await client.submitTransaction(txRequest);
+const tx = await client.submitNewTransaction(wallet.id(), request);
 ```
 
 ```typescript
 // After (0.14)
-const result = await client.transactions.send({
-  from: senderAccountId,
-  to: recipientAccountId,
-  faucetId: faucetId,
-  noteType: "private",
-  amount: amount,
+const { txId } = await client.transactions.send({
+  account: wallet,        // executing (sender) account
+  to: targetHex,          // string hex ID, AccountId, or Account all accepted
+  token: faucet,          // faucet account that minted the asset
+  amount: 100n,
+  waitForConfirmation: true,
 });
 ```
 
@@ -92,12 +106,20 @@ const result = await client.transactions.send({
 
 ```typescript
 // Before (0.13)
-const notes = await client.getConsumableNotes(accountId);
+const notes = await client.getConsumableNotes(wallet.id());
+const req = client.newConsumeTransactionRequest(
+  [notes[0].inputNoteRecord().id().toString()],
+);
+await client.submitNewTransaction(wallet.id(), req);
 ```
 
 ```typescript
 // After (0.14)
-const notes = await client.notes.listAvailable({ account: accountId });
+const notes = await client.notes.listAvailable({ account: wallet });
+await client.transactions.consume({ account: wallet, notes: [notes[0]] });
+
+// Or consume every available note in one call:
+await client.transactions.consumeAll({ account: wallet });
 ```
 
 #### Listing accounts
@@ -119,21 +141,22 @@ The new API adds first-class support for deploying custom smart contracts:
 ```typescript
 // After (0.14) — compile and deploy a custom contract
 const component = await client.compile.component({
-  sourceCode: contractMasm,
-  accountId: undefined, // not yet deployed
+  code: contractMasm,
+  slots: [],
 });
 
 const contract = await client.accounts.create({
-  type: "MutableContract",
-  storageMode: "private",
+  type: AccountType.MutableContract,
+  seed: new Uint8Array(32),
+  auth: secretKey,
   components: [component],
 });
 
-// Execute a custom transaction against the contract
-const result = await client.transactions.execute({
-  account: contract.id,
-  script: transactionScriptMasm,
+// Compile a transaction script and execute it against the contract.
+const script = await client.compile.txScript({
+  code: scriptMasm,
 });
+await client.transactions.execute({ account: contract, script });
 ```
 
 ---
@@ -162,7 +185,7 @@ Top-level keystore functions have been consolidated into the `client.keystore` n
 
 ```typescript
 // Before (0.13)
-import { addAccountSecretKeyToWebStore, getAccountSecretKeyFromWebStore } from "@miden/sdk";
+import { addAccountSecretKeyToWebStore, getAccountSecretKeyFromWebStore } from "@miden-sdk/miden-sdk";
 
 await addAccountSecretKeyToWebStore(accountId, secretKey);
 const key = await getAccountSecretKeyFromWebStore(accountId);
@@ -171,9 +194,9 @@ const key = await getAccountSecretKeyFromWebStore(accountId);
 ```typescript
 // After (0.14)
 await client.keystore.insert(accountId, secretKey);
-const key = await client.keystore.get(accountId);
-const commitments = await client.keystore.getCommitments();
-const id = await client.keystore.getAccountId(commitment);
+const key = await client.keystore.get(pubKeyCommitment);       // takes a Word commitment
+const commitments = await client.keystore.getCommitments(accountId);
+const id = await client.keystore.getAccountId(pubKeyCommitment);
 ```
 
 ---
@@ -217,22 +240,26 @@ Lazy readers allow you to access account and note data without loading everythin
 
 ```rust
 // Before (0.13) — loads the full Account object
-let account = client.get_account(account_id).await?;
+let account = client.get_account(account_id).await?.unwrap();
 let vault = account.vault();
 let storage = account.storage();
-
-// After (0.14) — lazy reader for header, vault, and storage
-let reader = client.account_reader(account_id);
-let header = reader.header().await?;
-let vault = reader.vault().await?;
-let storage = reader.storage().await?;
 ```
 
 ```rust
-// After (0.14) — lazy note iteration
-let note_reader = client.input_note_reader(note_id);
-let metadata = note_reader.metadata().await?;
-let inputs = note_reader.inputs().await?;
+// After (0.14) — lazy reader exposes commitments, balances, and storage items
+let reader = client.account_reader(account_id);
+let (header, status) = reader.header().await?;
+let balance = reader.get_balance(faucet_id).await?;
+let storage_item = reader.get_storage_item(slot_name).await?;
+// plus reader.nonce(), vault_root(), storage_commitment(), code_commitment()
+```
+
+```rust
+// After (0.14) — lazy, iterator-style traversal of notes consumable by an account
+let mut notes = client.input_note_reader(consumer_account_id);
+while let Some(note) = notes.next().await? {
+    // process each InputNoteRecord
+}
 ```
 
 ---
@@ -272,16 +299,18 @@ use miden_objects::accounts::StorageMapKey;
 let key: StorageMapKey = [felt0, felt1, felt2, felt3]; // Was just a Word alias
 
 // After (0.14)
-use miden_objects::accounts::StorageMapKey;
-let key = StorageMapKey::from([felt0, felt1, felt2, felt3]);
-// LexicographicWord is no longer needed — StorageMapKey handles ordering
+use miden_protocol::account::StorageMapKey;
+use miden_protocol::Word;
+let key = StorageMapKey::new(Word::from([felt0, felt1, felt2, felt3]));
+// LexicographicWord is no longer needed — StorageMapKey handles ordering.
+// For sequential u32 keys, use the StorageMapKey::from_index(idx) shortcut.
 ```
 
 ---
 
-### StateSync API takes &mut PartialMmr and SyncStateInputs
+### `sync_state()` no longer takes arguments; `StateSyncInput` now internal
 
-State sync parameters have been bundled into a `SyncStateInputs` struct. The API now takes `&mut PartialMmr` directly and supports optional nullifier syncing.
+`Client::sync_state()` builds its own `StateSyncInput` from the current store state — you no longer pass `account_ids`, `note_tags`, or `nullifiers` by hand. For custom sync scenarios, construct a `StateSyncInput` explicitly via `Client::build_sync_input()` and use the lower-level `StateSync` type.
 
 ```rust
 // Before (0.13)
@@ -295,25 +324,24 @@ client.sync_state(
 
 ```rust
 // After (0.14)
-use miden_client::SyncStateInputs;
+let summary = client.sync_state().await?;
 
-let inputs = SyncStateInputs {
-    account_ids,
-    note_tags,
-    nullifiers: Some(nullifiers), // now optional
-};
-client.sync_state(&mut partial_mmr, inputs).await?;
+// For custom sync scenarios, build the input manually:
+use miden_client::sync::StateSyncInput;
+let input: StateSyncInput = client.build_sync_input().await?;
+// …tweak `input.note_tags`, `input.input_notes`, etc. and drive
+// a `StateSync` instance directly.
 ```
 
 ---
 
-### MSRV 1.91
+### MSRV 1.93
 
-The minimum supported Rust version is now **1.91**. Update your toolchain:
+The minimum supported Rust version is now **1.93**. Update your toolchain:
 
 ```toml title="rust-toolchain.toml"
 [toolchain]
-channel = "1.91"
+channel = "1.93"
 ```
 
 ---
