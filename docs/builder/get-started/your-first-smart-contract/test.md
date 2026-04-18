@@ -67,7 +67,8 @@ use integration::helpers::{
 };
 
 use miden_client::{
-    account::{component::AuthScheme, StorageMap, StorageMapKey, StorageSlot, StorageSlotName},
+    account::{StorageMap, StorageMapKey, StorageSlot, StorageSlotName},
+    auth::AuthSchemeId,
     transaction::RawOutputNote,
     Word,
 };
@@ -81,7 +82,7 @@ async fn counter_test() -> anyhow::Result<()> {
 
     // Create note sender account
     let sender = builder.add_existing_wallet(Auth::BasicAuth {
-        auth_scheme: AuthScheme::Falcon512Poseidon2,
+        auth_scheme: AuthSchemeId::Falcon512Poseidon2,
     })?;
 
     // Build contracts
@@ -172,7 +173,7 @@ Let's break down this test step by step to understand how Mockchain testing work
 ```rust
 let mut builder = MockChain::builder();
 let sender = builder.add_existing_wallet(Auth::BasicAuth {
-    auth_scheme: AuthScheme::Falcon512Poseidon2,
+    auth_scheme: AuthSchemeId::Falcon512Poseidon2,
 })?;
 ```
 
