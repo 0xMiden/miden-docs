@@ -20,21 +20,25 @@ npm install @openzeppelin/miden-multisig-client @miden-sdk/miden-sdk
 
 ```typescript
 import { MultisigClient, FalconSigner } from '@openzeppelin/miden-multisig-client';
-import { WebClient, AuthSecretKey } from '@miden-sdk/miden-sdk';
+import { MidenClient, AuthSecretKey } from '@miden-sdk/miden-sdk';
 
-// Initialize the Miden WebClient
-const webClient = await WebClient.createClient('https://rpc.testnet.miden.io:443');
+// Initialize the Miden SDK client
+const midenClient = await MidenClient.createTestnet();
 
 // Create a Falcon signer
 const secretKey = AuthSecretKey.rpoFalconWithRNG(undefined);
 const signer = new FalconSigner(secretKey);
 
 // Create the multisig client and fetch Guardian info
-const client = new MultisigClient(webClient, {
+const client = new MultisigClient(midenClient, {
   psmEndpoint: 'http://localhost:3000',
 });
 const { psmCommitment } = await client.initialize();
 ```
+
+:::note
+The multisig client accepts any `MidenClient` instance, so `createTestnet()` / `createDevnet()` / `create({ rpcUrl })` all work. See the [Web SDK setup guide](../tools/clients/web-client/setup.md) for the full factory list.
+:::
 
 ## Creating a multisig account
 
