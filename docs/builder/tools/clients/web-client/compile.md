@@ -57,22 +57,27 @@ Options:
 
 - `code` — the MASM source for the component.
 - `slots` — initial storage slots. Use the `StorageSlot` helpers (`emptyValue`, etc.).
-- `supportAllTypes` — defaults to `true`. When `true`, the compiler injects `exec.auth::auth_tx_rpo_falcon512` so the component accepts all input types for Falcon-signed transactions. Set to `false` if your component already invokes an auth kernel procedure itself, or intentionally omits one.
+- `supportAllTypes` — defaults to `true`. When `true`, the compiler auto-injects an auth-kernel invocation so the component accepts the standard set of input types for authenticated transactions. Set to `false` if your component already invokes an auth kernel procedure itself, or intentionally omits one.
 
 ## Transaction scripts
 
 ### Without libraries
 
+A script with no `libraries` entry can only reference procedures that exist in the transaction kernel and the standard library — no custom external contracts:
+
 ```typescript
 const script = await client.compile.txScript({
   code: `
-    use external_contract::counter_contract
+    use miden::core::sys
     begin
-      call.counter_contract::increment_count
+      push.0
+      exec.sys::truncate_stack
     end
   `,
 });
 ```
+
+If your script needs to call into an external contract (as in the FPI section below), you must pass that contract's code through `libraries` — the compiler only links what you explicitly provide.
 
 ### With inline libraries
 
