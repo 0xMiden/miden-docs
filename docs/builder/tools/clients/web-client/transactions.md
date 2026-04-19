@@ -27,7 +27,7 @@ const { txId } = await client.transactions.send({
   reclaimAfter: 100,     // optional: block number after which sender can reclaim
   timelockUntil: 90,     // optional: block number until which note is timelocked
 });
-console.log("Send tx:", txId.toString());
+console.log("Send tx:", txId.toHex());
 ```
 
 Set `returnNote: true` to receive the created `Note` in the result (useful when you need the note body — for QR delivery, for example):
@@ -54,7 +54,7 @@ const { txId } = await client.transactions.mint({
   amount: 1000n,
   type: "private",    // optional, default "public"
 });
-console.log("Mint tx:", txId.toString());
+console.log("Mint tx:", txId.toHex());
 ```
 
 ### `consume`
@@ -81,7 +81,7 @@ Consumes every available note for an account, up to an optional limit. Useful fo
 const result = await client.transactions.consumeAll({ account: wallet });
 console.log(`Consumed ${result.consumed}, ${result.remaining} remaining`);
 if (result.txId) {
-  console.log("Tx:", result.txId.toString());
+  console.log("Tx:", result.txId.toHex());
 }
 
 // Cap the number of notes consumed in one transaction
@@ -287,7 +287,7 @@ const request = new TransactionRequestBuilder()
   .build();
 
 const { txId } = await client.transactions.submit(wallet, request);
-console.log("Tx:", txId.toString());
+console.log("Tx:", txId.toHex());
 ```
 
 Expected-note hints are also available:
@@ -351,8 +351,8 @@ Each record exposes:
 
 ```typescript
 for (const tx of all) {
-  tx.id().toString();
-  tx.accountId().toString();
+  tx.id().toHex();
+  tx.accountId().toString(); // AccountId.toString() returns canonical hex
   tx.blockNum().toString();
 
   const status = tx.transactionStatus();
