@@ -52,17 +52,33 @@ All factories are async — the SDK has to load its WebAssembly module and spin 
 
 ## `ClientOptions` reference
 
-`MidenClient.create()`, `createTestnet()`, and `createDevnet()` all accept the same options object. The network factories just pre-fill sensible defaults for `rpcUrl`, `proverUrl`, `noteTransportUrl`, and `autoSync`.
+All four factories accept the same `ClientOptions` shape. The differences are in what each factory pre-fills before the options are applied.
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `rpcUrl` | `"testnet" \| "devnet" \| "localhost" \| "local" \| string` | SDK testnet RPC | Node RPC endpoint. Shorthands expand to the hosted Miden endpoints; any other string is treated as a raw URL. |
-| `noteTransportUrl` | `"testnet" \| "devnet" \| string` | — | Note transport service endpoint (required for private-note `sendPrivate` / `fetchPrivate`). |
-| `proverUrl` | `"local" \| "devnet" \| "testnet" \| string` | `"local"` | Default prover for transactions. `"local"` runs the prover in the browser; the other shorthands and URLs route to a remote/delegated prover. |
-| `autoSync` | `boolean` | `false` for `create`, `true` for network factories | When `true`, the client runs one sync pass before the promise resolves. |
-| `seed` | `string \| Uint8Array` | random | Seed for deterministic RNG. Strings are hashed to 32 bytes via SHA-256. |
-| `storeName` | `string` | per-build default | Store isolation key (IndexedDB database name in browsers). Set this to keep multiple clients' data separate in the same origin. |
-| `keystore` | `{ getKey, insertKey, sign }` | built-in keystore | External keystore callbacks. Leave unset to use the built-in keystore. |
+### Field reference
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `rpcUrl` | `"testnet" \| "devnet" \| "localhost" \| "local" \| string` | Node RPC endpoint. Shorthands expand to the hosted Miden endpoints; any other string is treated as a raw URL. |
+| `noteTransportUrl` | `"testnet" \| "devnet" \| string` | Note transport service endpoint. Required for private-note `sendPrivate` / `fetchPrivate`. |
+| `proverUrl` | `"local" \| "devnet" \| "testnet" \| string` | Default prover for transactions. `"local"` runs in the browser; remote shorthands and URLs route to a remote / delegated prover. |
+| `autoSync` | `boolean` | When `true`, the client runs one sync pass before the promise resolves. |
+| `seed` | `string \| Uint8Array` | Seed for deterministic RNG. Strings are hashed to 32 bytes via SHA-256. |
+| `storeName` | `string` | Store isolation key (IndexedDB database name in browsers). Set this to keep multiple clients' data separate in the same origin. |
+| `keystore` | `{ getKey, insertKey, sign }` | External keystore callbacks. Leave unset to use the built-in keystore. |
+
+### Factory defaults
+
+Any option not passed falls back to the factory default, then to an SDK default.
+
+| Factory | `rpcUrl` | `proverUrl` | `noteTransportUrl` | `autoSync` |
+| --- | --- | --- | --- | --- |
+| `createTestnet(opts?)` | `"testnet"` | `"testnet"` | `"testnet"` | `true` |
+| `createDevnet(opts?)` | `"devnet"` | `"devnet"` | `"devnet"` | `true` |
+| `create(opts?)` **with** `rpcUrl` | your value | `"local"` | _none_ | `false` |
+| `create(opts?)` **without** `rpcUrl` | _delegates to `createTestnet(opts)`_ | ← | ← | ← |
+| `createMock(opts?)` | _(no network)_ | _(dummy proving)_ | _(in-memory)_ | _(manual)_ |
+
+`create()` without an `rpcUrl` is not a separate "custom" client — it forwards its options to `createTestnet()`. If you want a no-prover, no-autosync client against localhost, pass `rpcUrl: "localhost"` explicitly.
 
 ### Testnet with an in-browser prover
 
