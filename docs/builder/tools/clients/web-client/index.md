@@ -75,4 +75,4 @@ After `terminate()`, every subsequent method call throws `Error("Client terminat
 
 ## Migrating from `WebClient`
 
-The v0.13 flat `WebClient` class is deprecated. v0.14 introduces `MidenClient` with resource-based namespaces (`client.accounts`, `client.transactions`, …). See the [v0.13 → v0.14 Web SDK migration guide](../../../migration/client-changes.md) for the full delta.
+The v0.13 flat `WebClient` class is deprecated. v0.14 introduces `MidenClient` with resource-based namespaces (`client.accounts`, `client.transactions`, …). See the [v0.13 → v0.14 Web SDK migration guide](../../../migration/07-client-changes.md) for the full delta.

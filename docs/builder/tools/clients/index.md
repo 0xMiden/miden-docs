@@ -9,10 +9,12 @@ The Miden client is the user-facing entry point to the Miden network. It manages
 
 | Surface | Package | Best for |
 | --- | --- | --- |
-| [**Rust library**](./rust-client/library.md) | `miden-client` crate | Native services, proving infrastructure, tests |
-| [**Rust CLI**](./rust-client/cli/index.md) | `miden-client` binary | Scripting, local exploration, ops workflows |
-| [**Web SDK**](./web-client/index.md) | `@miden-sdk/miden-sdk` (npm) | Browser and Node apps, Electron, service workers |
-| [**React SDK**](./react-sdk/index.md) | `@miden-sdk/react` (npm) | React / Next.js / React Native dApps |
+| **Rust library** | `miden-client` crate | Native services, proving infrastructure, tests |
+| **Rust CLI** | `miden-client` binary | Scripting, local exploration, ops workflows |
+| **Web SDK** | `@miden-sdk/miden-sdk` (npm) | Browser and Node apps, Electron, service workers |
+| **React SDK** | `@miden-sdk/react` (npm) | React / Next.js / React Native dApps |
+
+Navigate to each surface via the sidebar on the left.
 
 ## How the surfaces relate
 
@@ -25,4 +27,4 @@ Pick whichever surface matches your application — each section documents the f
 
 ## Common topics
 
-Errors, diagnostics, and other behaviour that is shared across all surfaces is documented once in [Common errors](./common-errors.md).
+Errors, diagnostics, and other behaviour that is shared across all surfaces is documented once under **Common errors** in the sidebar.
