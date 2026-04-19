@@ -204,12 +204,6 @@ jobs:
               [ -f "$src" ] && cp "$src" docs/builder/tools/clients/
             done
             echo "Synced miden-client (rust-client, img, theme, common-errors, _category_) → docs/builder/tools/clients"
-
-            # Move CLI to its own section under tools (historical top-level layout)
-            if [ -d "docs/builder/tools/clients/cli" ]; then
-              mv docs/builder/tools/clients/cli docs/builder/tools/cli
-              echo "Moved CLI → docs/builder/tools/cli"
-            fi
           fi
 
           echo "Content aggregation complete. Final docs structure:"
