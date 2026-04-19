@@ -45,6 +45,10 @@ const { txId, note } = await client.transactions.send({
 
 `reclaimAfter` and `timelockUntil` are **block numbers**, not wall-clock times.
 
+:::note
+The `returnNote: true` branch is a separate overload: it does not accept `reclaimAfter` or `timelockUntil`. If you need either of those, use the default branch (without `returnNote`) and retrieve the note through `client.notes.listSent()` instead.
+:::
+
 ### `mint`
 
 ```typescript
@@ -306,7 +310,7 @@ const request = new TransactionRequestBuilder()
 await client.transactions.submit(wallet, request);
 ```
 
-`withExpirationDelta()` is for builder flows where the script is auto-derived. It can't be combined with `withCustomScript()` — for custom scripts, set expiration inside the script itself.
+`withExpirationDelta()` composes with `withCustomScript()` — the builder applies the expiration at the request level regardless of how the script was provided. You can still set expiration inside the script itself when you need a different rule; the two paths don't interact.
 
 ## Remote proving
 
