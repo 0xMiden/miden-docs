@@ -146,51 +146,58 @@ Return type (`NotesResult`):
 
 `noteSummaries` is the pragmatic choice for UIs — it pre-extracts asset info and runs metadata resolution.
 
-## `useNoteStream(options)`
+## `useNoteStream(options?)`
 
 Temporal note tracking with first-seen timestamps and per-stream filtering. Useful for notification UIs that want to highlight new arrivals.
 
 ```tsx
 import { useNoteStream } from "@miden-sdk/react";
 
-function NewNotesToast({ account }: { account: string }) {
-  const { notes, markAllHandled } = useNoteStream({
-    accountId: account,
-    since: "now",            // only notes seen after this component mounted
+function NewNotesToast() {
+  const { notes, latest, markHandled, markAllHandled } = useNoteStream({
+    status: "committed",       // default "committed"
+    since: Date.now(),         // numeric timestamp; drop notes seen earlier
+    amountFilter: (amount) => amount > 0n,
   });
 
   return (
     <>
+      {latest && <p>New: {latest.id}</p>}
       {notes.map((n) => (
-        <div key={n.id}>New note at {new Date(n.firstSeen).toISOString()}</div>
+        <div key={n.id}>
+          {n.id} at {new Date(n.firstSeen).toISOString()}
+          <button onClick={() => markHandled(n.id)}>dismiss</button>
+        </div>
       ))}
-      <button onClick={markAllHandled}>Dismiss</button>
+      <button onClick={markAllHandled}>Dismiss all</button>
     </>
   );
 }
 ```
 
-See the SDK types for the full `UseNoteStreamOptions` / `UseNoteStreamReturn` shape — each streamed note carries `{ id, firstSeen, ...summary }`.
+`UseNoteStreamOptions` fields: `status`, `sender`, `since` (numeric timestamp), `excludeIds` (`Set<string>` or `string[]`), and `amountFilter` for predicate-based filtering. The stream also exposes `snapshot()` for passing state across unmount / remount boundaries.
 
 ## `useTransactionHistory(options?)`
 
-Transaction records for an account, with optional filters by ID or status.
+Transaction records, with optional filters for specific IDs or a custom `TransactionFilter`.
 
 ```tsx
 import { useTransactionHistory } from "@miden-sdk/react";
 
-function HistoryTable({ account }: { account: string }) {
-  const { transactions, isLoading } = useTransactionHistory({ accountId: account });
+function HistoryTable() {
+  const { records, isLoading } = useTransactionHistory();
   if (isLoading) return <p>Loading…</p>;
 
   return (
     <table>
-      {transactions.map((tx) => (
-        <tr key={tx.id().toHex()}>
-          <td>{tx.id().toHex()}</td>
-          <td>{tx.blockNum().toString()}</td>
-        </tr>
-      ))}
+      <tbody>
+        {records.map((tx) => (
+          <tr key={tx.id().toHex()}>
+            <td>{tx.id().toHex()}</td>
+            <td>{tx.blockNum().toString()}</td>
+          </tr>
+        ))}
+      </tbody>
     </table>
   );
 }
@@ -200,12 +207,25 @@ Options:
 
 | Field | Description |
 | --- | --- |
-| `id` | Single transaction ID lookup — returns just that record |
+| `id` | Single transaction ID lookup |
 | `ids` | List of transaction IDs |
-| `accountId` | All transactions for an account |
-| `status` | `"pending" \| "committed" \| "discarded"` |
+| `filter` | Custom `TransactionFilter` (overrides `id` / `ids`) |
+| `refreshOnSync` | Re-fetch after every auto-sync (default `true`) |
 
-Return includes `status` as a convenience when a single `id` was provided.
+Result (`TransactionHistoryResult`):
+
+```ts
+{
+  records: TransactionRecord[];
+  record: TransactionRecord | null;   // convenience when a single id was provided
+  status: TransactionStatus | null;   // convenience when a single id was provided
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+}
+```
+
+For account-scoped history use a `TransactionFilter` that targets the account — see the `@miden-sdk/miden-sdk` `TransactionFilter` API.
 
 ## `useSyncState`
 
@@ -227,21 +247,33 @@ function SyncBadge() {
 
 Manual `sync()` composes with the auto-sync loop (configured via `autoSyncInterval` on `MidenProvider`) — call it when you want to force an immediate refresh.
 
-## `useAssetMetadata(assetId | assetId[])`
+## `useAssetMetadata(assetIds?)`
 
-Symbol + decimals lookup for one or many asset IDs.
+Symbol + decimals lookup for a batch of asset IDs. The argument is an optional `string[]`; pass an empty array (or nothing) to read the global cache without triggering new fetches.
 
 ```tsx
 import { useAssetMetadata } from "@miden-sdk/react";
 
 function TokenChip({ assetId }: { assetId: string }) {
-  const { assetMetadata } = useAssetMetadata(assetId);
+  const { assetMetadata } = useAssetMetadata([assetId]);
   const meta = assetMetadata.get(assetId);
   return <span>{meta?.symbol ?? assetId}</span>;
 }
+
+function TokenLegend({ ids }: { ids: string[] }) {
+  const { assetMetadata } = useAssetMetadata(ids);
+  return (
+    <>
+      {ids.map((id) => {
+        const m = assetMetadata.get(id);
+        return <span key={id}>{m?.symbol ?? id}</span>;
+      })}
+    </>
+  );
+}
 ```
 
-`assetMetadata` is a `Map<string, AssetMetadata>` keyed by asset ID. Pass an array for batch lookups; the hook dedupes and caches internally so components sharing metadata share cost.
+`assetMetadata` is a `Map<string, AssetMetadata>` keyed by asset ID. The hook dedupes and caches across components, so siblings that ask for overlapping IDs share cost.
 
 ## Next
 

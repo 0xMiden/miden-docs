@@ -5,11 +5,15 @@ sidebar_position: 4
 
 # Mutation hooks
 
-Mutation hooks own the full transaction lifecycle — execute, prove, submit — and serialize under the Web SDK's concurrency lock so two components can't corrupt the WASM state. Every mutation hook returns:
+Mutation hooks own the full transaction lifecycle — execute, prove, submit — and serialize under the Web SDK's concurrency lock so two components can't corrupt the WASM state.
+
+Two result-shape families show up across this page:
+
+**Transaction-producing hooks** (`useSend`, `useMultiSend`, `useMint`, `useConsume`, `useSwap`, `useTransaction`):
 
 ```ts
 {
-  [action]: (options) => Promise<Result>;  // `send`, `mint`, `consume`, ...
+  [action]: (options) => Promise<Result>;  // send, sendMany, mint, ...
   result: Result | null;
   isLoading: boolean;
   stage: TransactionStage;
@@ -18,18 +22,31 @@ Mutation hooks own the full transaction lifecycle — execute, prove, submit —
 }
 ```
 
-See [setup](./setup.md#hook-result-conventions) for the `TransactionStage` progression and general pattern.
+**Account-creation hooks** (`useCreateWallet`, `useCreateFaucet`, `useImportAccount`) don't go through the prove/submit pipeline, so they expose `isCreating` / `isImporting` instead of `isLoading` + `stage`:
+
+```ts
+{
+  createWallet: (opts?) => Promise<Account>;
+  wallet: Account | null;
+  isCreating: boolean;     // or `isImporting` for useImportAccount
+  error: Error | null;
+  reset: () => void;
+}
+```
+
+Polling helpers (`useWaitForCommit`, `useWaitForNotes`) are simpler still — they expose just the action. Per-hook exact shapes are called out below.
+
+See [setup](./setup.md#hook-result-conventions) for the `TransactionStage` progression.
 
 ## `useCreateWallet`
 
 Creates a new wallet account. Returns the `Account` object.
 
 ```tsx
-import { useCreateWallet } from "@miden-sdk/react";
-import { AuthScheme } from "@miden-sdk/react";
+import { useCreateWallet, AuthScheme } from "@miden-sdk/react";
 
 function NewWalletButton() {
-  const { createWallet, isLoading, error } = useCreateWallet();
+  const { createWallet, wallet, isCreating, error } = useCreateWallet();
 
   const handleCreate = async () => {
     const account = await createWallet({
@@ -40,7 +57,9 @@ function NewWalletButton() {
     console.log("Created:", account.bech32id());
   };
 
-  return <button onClick={handleCreate} disabled={isLoading}>Create wallet</button>;
+  return (
+    <button onClick={handleCreate} disabled={isCreating}>Create wallet</button>
+  );
 }
 ```
 
@@ -61,19 +80,21 @@ Creates a fungible-token faucet.
 import { useCreateFaucet } from "@miden-sdk/react";
 
 function NewFaucetButton() {
-  const { createFaucet, isLoading } = useCreateFaucet();
+  const { createFaucet, faucet, isCreating } = useCreateFaucet();
 
   const handleCreate = async () => {
-    const faucet = await createFaucet({
+    const created = await createFaucet({
       tokenSymbol: "TEST",
       decimals: 8,             // default 8
       maxSupply: 10_000_000n,  // number | bigint
       storageMode: "public",   // default "private"; public allows FPI reads
     });
-    console.log("Faucet:", faucet.bech32id());
+    console.log("Faucet:", created.bech32id());
   };
 
-  return <button onClick={handleCreate} disabled={isLoading}>Create faucet</button>;
+  return (
+    <button onClick={handleCreate} disabled={isCreating}>Create faucet</button>
+  );
 }
 ```
 
@@ -136,14 +157,14 @@ function SendForm({ from, to, usdcFaucetId }: Props) {
 
 ## `useMultiSend`
 
-Batches multiple recipients into one transaction. All outputs must share the same sender and asset.
+Batches multiple recipients into one transaction. All outputs must share the same sender and asset. The action function is named `sendMany`.
 
 ```tsx
 import { useMultiSend } from "@miden-sdk/react";
 
-const { multiSend, isLoading } = useMultiSend();
+const { sendMany, isLoading } = useMultiSend();
 
-await multiSend({
+await sendMany({
   from: senderAccountId,
   assetId: faucetId,
   recipients: [
@@ -239,10 +260,9 @@ await swap({
 Imports an account by ID (fetches from network), by previously-exported file, or by seed.
 
 ```tsx
-import { useImportAccount } from "@miden-sdk/react";
-import { AuthScheme } from "@miden-sdk/react";
+import { useImportAccount, AuthScheme } from "@miden-sdk/react";
 
-const { importAccount } = useImportAccount();
+const { importAccount, account, isImporting, error } = useImportAccount();
 
 // By ID — public accounts only
 const imported = await importAccount({
@@ -269,27 +289,39 @@ The `type` discriminant is required. For private accounts, use the `"file"` vari
 
 ## `useWaitForCommit` / `useWaitForNotes`
 
-Poll helpers for transaction confirmation and note inbox arrivals.
+Polling helpers for transaction confirmation and note inbox arrivals. Both are minimal hooks — they only expose the action function.
+
+### `useWaitForCommit`
+
+Signature: `waitForCommit(txId, options?)` — `txId` is positional (hex string or `TransactionId`), `options` are merged with defaults.
 
 ```tsx
-import { useWaitForCommit, useWaitForNotes } from "@miden-sdk/react";
+import { useWaitForCommit } from "@miden-sdk/react";
 
 const { waitForCommit } = useWaitForCommit();
-await waitForCommit({
-  transactionId: result.transactionId,
+await waitForCommit(result.txId, {
   timeoutMs: 30_000,  // default 10_000
   intervalMs: 1_000,  // default 1_000
 });
+```
 
-const { waitForNotes } = useWaitForNotes();
-await waitForNotes({
+### `useWaitForNotes`
+
+Exposes `waitForConsumableNotes(options)` and returns the matching `ConsumableNoteRecord[]` when the threshold is reached.
+
+```tsx
+import { useWaitForNotes } from "@miden-sdk/react";
+
+const { waitForConsumableNotes } = useWaitForNotes();
+
+const notes = await waitForConsumableNotes({
   accountId: recipient,
-  minCount: 1,      // default 1
+  minCount: 1,     // default 1
   timeoutMs: 30_000,
 });
 ```
 
-Both reject on timeout — wrap them in a `try/catch` if you want a graceful fallback.
+Both reject on timeout — wrap them in `try/catch` when you want a graceful fallback.
 
 ## Next
 
