@@ -194,14 +194,14 @@ See [Mutation hooks](./mutation-hooks.md) for the full surface.
 Every hook accepts either form:
 
 ```tsx
-useAccount("0x1234567890abcdef");         // hex
-useAccount("miden1qy35...");              // bech32
+useAccount("0x1234567890abcdef");   // hex
+useAccount("mtst1qy35...");         // bech32 (testnet prefix)
 
 // Convert for display
-account.bech32id(); // "miden1qy35..."
+account.bech32id(); // "mtst1qy35..." on testnet
 ```
 
-The SDK normalises internally — you don't need to convert yourself.
+The SDK normalises internally — you don't need to convert yourself. Bech32 prefixes encode the network: `mtst1…` on testnet, `mdev1…` on devnet. The prefix is derived from the `rpcUrl` you configured on `MidenProvider`.
 
 ## Next
 

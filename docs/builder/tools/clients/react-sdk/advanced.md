@@ -61,14 +61,14 @@ const result = await execute({
   foreignAccounts: [counterAccount], // optional
 });
 
-// result is an ExecuteProgramResult — contains a 16-element stack
-const count = result.stack.get(0).asInt();
+// result.stack is a bigint[] — read indices directly
+const count: bigint = result.stack[0];
 console.log("Count:", count);
 ```
 
 `UseExecuteProgramResult` exposes `execute` (not `executeProgram`), plus `result`, `isLoading`, `error`, and `reset`. No `stage` — view calls don't prove or submit.
 
-See [`useCompile`](#usecompile) for producing the `TransactionScript`, and the [Web SDK transactions guide](../web-client/transactions.md#view-calls-executeprogram) for the shape of the returned `FeltArray`.
+The React hook flattens the 16-element stack into a plain `bigint[]`. `useMidenClient()` exposes the underlying WASM `WebClient` directly — its method is `client.executeProgram(...)` (not namespaced under `client.transactions`). See the [Web SDK transactions guide](../web-client/transactions.md#view-calls-executeprogram) for the imperative `MidenClient.transactions.executeProgram` equivalent and the `FeltArray` shape.
 
 ## `useCompile`
 
@@ -99,12 +99,15 @@ const script = await txScript({
   ],
 });
 
-// Note script
+// Note script — v0.14 uses the @note_script attribute on a library proc
 const attachScript = await noteScript({
   code: `
     use miden::protocol::active_note
     use miden::core::sys
-    begin
+
+    @note_script
+    pub proc on_consume
+      # body runs when the consuming account redeems this note
       exec.sys::truncate_stack
     end
   `,
@@ -153,22 +156,24 @@ Session state persists under the configurable `storagePrefix` (default `"miden-s
 
 ## `useExportStore` / `useImportStore`
 
-Back up and restore the entire local store as encrypted bytes. Handy for wallet backup/restore UIs.
+Back up and restore the entire local store as a JSON dump. Handy for wallet backup/restore UIs.
 
 ```tsx
-import { useExportStore, useImportStore } from "@miden-sdk/react";
+import { useExportStore, useImportStore, useMidenClient } from "@miden-sdk/react";
 
-// Export
+// Export — returns a JSON string
 const { exportStore } = useExportStore();
-const bytes = await exportStore();
-download(bytes, "wallet-backup.bin");
+const dump: string = await exportStore();
+download(new Blob([dump]), "wallet-backup.json");
 
-// Import (destructive — overwrites the current store)
+// Import (destructive — overwrites the target store)
+// Positional: (storeDump, storeName, options?)
 const { importStore } = useImportStore();
-await importStore({ data: uploadedBytes });
+const client = useMidenClient();
+await importStore(uploadedDump, client.storeIdentifier(), { skipSync: false });
 ```
 
-`ImportStoreOptions` accepts the raw bytes (`data`) and any optional password/derivation args the release supports. Check `UseImportStoreResult` exports for the current shape.
+`ImportStoreOptions` exposes `skipSync` (default `false`) so you can defer the post-import sync. There's no second "raw bytes" form — `importStore` takes the JSON dump string as its first argument and the target store name as its second.
 
 ## `useImportNote` / `useExportNote`
 
@@ -192,15 +197,15 @@ Pause and resume the auto-sync loop without dismounting `MidenProvider`. Useful 
 ```tsx
 import { useSyncControl } from "@miden-sdk/react";
 
-const { pause, resume, isPaused } = useSyncControl();
+const { pauseSync, resumeSync, isPaused } = useSyncControl();
 
 // Before a long sequence
-pause();
+pauseSync();
 // ... operations that need a stable snapshot ...
-resume();
+resumeSync();
 ```
 
-`pause()` stops the timer but doesn't cancel an in-flight sync — wait for `isSyncing` to settle if you need a truly quiescent state.
+`pauseSync()` stops the timer but doesn't cancel an in-flight sync — wait for `isSyncing` from `useSyncState()` to settle if you need a truly quiescent state.
 
 ## Next
 

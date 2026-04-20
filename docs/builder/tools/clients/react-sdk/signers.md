@@ -58,18 +58,26 @@ import { TurnkeySignerProvider } from "@miden-sdk/miden-turnkey-react";
 </TurnkeySignerProvider>
 ```
 
-Connect via passkey authentication:
+Connect via passkey authentication. `useSigner()` returns `SignerContextValue | null` (null when no signer provider is above the component), so always null-guard:
 
 ```tsx
 import { useSigner } from "@miden-sdk/react";
 import { useTurnkeySigner } from "@miden-sdk/miden-turnkey-react";
 
 function ConnectButton() {
-  const { isConnected, connect, disconnect } = useSigner();
-  if (!isConnected) return <button onClick={connect}>Connect</button>;
+  const signer = useSigner();
+  const turnkey = useTurnkeySigner(); // call unconditionally — rules of hooks
 
-  const { client, account, setAccount } = useTurnkeySigner();
-  return <button onClick={disconnect}>Disconnect ({account?.name})</button>;
+  if (!signer) return null; // no signer provider mounted
+
+  if (!signer.isConnected) {
+    return <button onClick={signer.connect}>Connect</button>;
+  }
+  return (
+    <button onClick={signer.disconnect}>
+      Disconnect ({turnkey.account?.name})
+    </button>
+  );
 }
 ```
 
@@ -87,16 +95,19 @@ import { MidenFiSignerProvider } from "@miden-sdk/wallet-adapter-react";
 
 ## Unified signer interface
 
-Every prebuilt provider exposes the same `useSigner` surface, so UI code that only cares about connect/disconnect stays signer-agnostic:
+Every prebuilt provider exposes the same `useSigner` surface, so UI code that only cares about connect/disconnect stays signer-agnostic. Note the return is `SignerContextValue | null`:
 
 ```tsx
 import { useSigner } from "@miden-sdk/react";
 
 function Header() {
-  const { isConnected, connect, disconnect, name } = useSigner();
+  const signer = useSigner();
+  if (!signer) return null; // no signer provider above
 
-  if (!isConnected) return <button onClick={connect}>Connect {name}</button>;
-  return <button onClick={disconnect}>Disconnect</button>;
+  if (!signer.isConnected) {
+    return <button onClick={signer.connect}>Connect {signer.name}</button>;
+  }
+  return <button onClick={signer.disconnect}>Disconnect</button>;
 }
 ```
 
@@ -163,30 +174,49 @@ Components are appended to the `AccountBuilder` after the default basic wallet c
 
 ## `MultiSignerProvider`
 
-For apps that need to swap between multiple signer providers at runtime (e.g. "connect with Para" or "connect with Turnkey"), use `MultiSignerProvider` and `SignerSlot`:
+For apps that need to swap between multiple signer providers at runtime (e.g. "connect with Para" or "connect with Turnkey"), use `MultiSignerProvider`. Each registered signer provider renders its own `<SignerSlot />` (the component takes no children — it registers the provider's current `SignerContext` with the multi-signer context) and `MidenProvider` sits as a sibling inside `MultiSignerProvider`:
 
 ```tsx
-import { MultiSignerProvider, SignerSlot } from "@miden-sdk/react";
+import { MultiSignerProvider, SignerSlot, MidenProvider } from "@miden-sdk/react";
 
-<MultiSignerProvider>
-  <SignerSlot id="para">
-    <ParaSignerProvider apiKey="...">{children}</ParaSignerProvider>
-  </SignerSlot>
+function App() {
+  return (
+    <MultiSignerProvider>
+      <ParaSignerProvider apiKey="...">
+        <SignerSlot />
+      </ParaSignerProvider>
+      <TurnkeySignerProvider>
+        <SignerSlot />
+      </TurnkeySignerProvider>
 
-  <SignerSlot id="turnkey">
-    <TurnkeySignerProvider>{children}</TurnkeySignerProvider>
-  </SignerSlot>
-</MultiSignerProvider>
+      <MidenProvider config={{ rpcUrl: "testnet" }}>
+        <YourApp />
+      </MidenProvider>
+    </MultiSignerProvider>
+  );
+}
 ```
 
-Switch the active signer via `useMultiSigner()`:
+Connect and disconnect by name via `useMultiSigner()`:
 
 ```tsx
 import { useMultiSigner } from "@miden-sdk/react";
 
-const { activeSigner, setActiveSigner } = useMultiSigner();
-// setActiveSigner("para" | "turnkey" | ...)
+function SignerPicker() {
+  const multi = useMultiSigner();
+  if (!multi) return null; // no MultiSignerProvider above
+
+  return (
+    <>
+      <button onClick={() => multi.connectSigner("Para")}>Connect Para</button>
+      <button onClick={() => multi.connectSigner("Turnkey")}>Connect Turnkey</button>
+      <button onClick={() => multi.disconnectSigner()}>Disconnect</button>
+    </>
+  );
+}
 ```
+
+`useMultiSigner()` returns `MultiSignerContextValue | null`; its `connectSigner(name)` / `disconnectSigner()` actions switch and clear the active signer respectively. The name passed to `connectSigner` matches the `name` field on each signer's `SignerContextValue`.
 
 ## Next
 
