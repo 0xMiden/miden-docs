@@ -15,16 +15,16 @@ General-purpose transaction runner that accepts either a prebuilt `TransactionRe
 import { useTransaction } from "@miden-sdk/react";
 import { TransactionRequestBuilder } from "@miden-sdk/miden-sdk";
 
-const { executeTransaction, isLoading, stage } = useTransaction();
+const { execute, isLoading, stage } = useTransaction();
 
 // Direct request
-await executeTransaction({
+await execute({
   accountId: contractAccount,
   request: prebuiltRequest,
 });
 
 // Builder callback — receives the raw WebClient
-await executeTransaction({
+await execute({
   accountId: contractAccount,
   request: (client) =>
     new TransactionRequestBuilder()
@@ -32,6 +32,8 @@ await executeTransaction({
       .build(),
 });
 ```
+
+`UseTransactionResult` exposes `execute` (not `executeTransaction`), plus `result`, `isLoading`, `stage`, `error`, and `reset`.
 
 `ExecuteTransactionOptions`:
 
@@ -51,18 +53,20 @@ View call — executes a transaction script locally and returns the stack output
 ```tsx
 import { useExecuteProgram } from "@miden-sdk/react";
 
-const { executeProgram, isLoading, error } = useExecuteProgram();
+const { execute, isLoading, error } = useExecuteProgram();
 
-const result = await executeProgram({
+const result = await execute({
   accountId: contractAccount,
   script: compiledTxScript,
   foreignAccounts: [counterAccount], // optional
 });
 
-// result is a FeltArray — 16-element final stack
+// result is an ExecuteProgramResult — contains a 16-element stack
 const count = result.stack.get(0).asInt();
 console.log("Count:", count);
 ```
+
+`UseExecuteProgramResult` exposes `execute` (not `executeProgram`), plus `result`, `isLoading`, `error`, and `reset`. No `stage` — view calls don't prove or submit.
 
 See [`useCompile`](#usecompile) for producing the `TransactionScript`, and the [Web SDK transactions guide](../web-client/transactions.md#view-calls-executeprogram) for the shape of the returned `FeltArray`.
 
@@ -74,7 +78,7 @@ Compiles Miden Assembly into `AccountComponent`, `TransactionScript`, or `NoteSc
 import { useCompile } from "@miden-sdk/react";
 import { StorageSlot } from "@miden-sdk/miden-sdk";
 
-const { component, txScript, noteScript, isLoading, error } = useCompile();
+const { component, txScript, noteScript, isReady } = useCompile();
 
 // Account component
 const counterComponent = await component({
@@ -107,27 +111,45 @@ const attachScript = await noteScript({
 });
 ```
 
-See the [Web SDK compile guide](../web-client/compile.md) for the full `CompileComponentOptions` / `CompileTxScriptOptions` / `CompileNoteScriptOptions` shapes — the React hook just wraps the underlying `client.compile.*` calls with loading/error state.
+`UseCompileResult` exposes the three compile methods plus `isReady`. Loading and error state are tracked internally per call — catch errors at the individual `await` site. See the [Web SDK compile guide](../web-client/compile.md) for the full `CompileComponentOptions` / `CompileTxScriptOptions` / `CompileNoteScriptOptions` shapes.
 
 ## `useSessionAccount`
 
-Drives the "session wallet" pattern — create a throw-away wallet, fund it from another account, consume some notes, then discard or archive it. Useful for one-off interactions that shouldn't touch a long-lived account.
+Drives the "session wallet" pattern — create a throw-away wallet, wait for a funding note, consume it, then hand control back to your app. Useful for one-off interactions that shouldn't touch a long-lived account.
 
 ```tsx
 import { useSessionAccount } from "@miden-sdk/react";
 
-const { start, step, account, isLoading, error } = useSessionAccount({
-  funder: mainWallet,
-  fundAmount: 100n,
-  fundAsset: usdcFaucetId,
-});
+const { initialize, sessionAccountId, isReady, step, error, reset } =
+  useSessionAccount({
+    // Called with the new session wallet's bech32 ID once it's created.
+    // Your code is responsible for actually sending funds to it — e.g. by
+    // triggering a send from a main wallet elsewhere in the app.
+    fund: async (sessionAccountId) => {
+      await sendFromMainWallet(sessionAccountId);
+    },
+    assetId: usdcFaucetId,      // optional
+    walletOptions: { storageMode: "private", mutable: true },
+    pollIntervalMs: 3_000,      // default 3_000
+    maxWaitMs: 60_000,          // default 60_000
+  });
 
-await start();
-
-// step progresses through: "idle" | "creating" | "funding" | "consuming" | "ready"
+await initialize();
+// step progresses: "idle" → "creating" → "funding" → "consuming" → "ready"
 ```
 
-Options and return shapes vary by release — check `UseSessionAccountOptions` / `UseSessionAccountReturn` in `@miden-sdk/react` exports for the canonical names.
+`UseSessionAccountReturn`:
+
+| Field | Description |
+| --- | --- |
+| `initialize()` | Kicks off the create → fund → consume flow |
+| `sessionAccountId` | bech32 ID of the session wallet once created |
+| `isReady` | `true` after the funding note has been consumed |
+| `step` | `SessionAccountStep` — one of the five states above |
+| `error` | Non-null if any step failed |
+| `reset()` | Clears session data (and any persisted state under `storagePrefix`) |
+
+Session state persists under the configurable `storagePrefix` (default `"miden-session"`) so page reloads can resume mid-flow.
 
 ## `useExportStore` / `useImportStore`
 

@@ -90,17 +90,25 @@ function BlockHeaderPeek() {
 Two user actions can fire in quick succession — a double-click on "Send", or a hook plus a manual button both wanting to sign. The React SDK exposes a lock:
 
 ```tsx
-import { useMiden } from "@miden-sdk/react";
+import { useMiden, useMidenClient } from "@miden-sdk/react";
 
-const { runExclusive } = useMiden();
+function CompoundFlow() {
+  const { runExclusive } = useMiden();
+  const client = useMidenClient();
 
-await runExclusive(async (client) => {
-  // Multiple client calls that must not interleave with other hooks'
-  // WASM work run here — the lock serialises them across the whole app.
-});
+  const run = () =>
+    runExclusive(async () => {
+      // Multiple client calls that must not interleave with other hooks'
+      // WASM work run here — the lock serialises them across the whole app.
+      await client.sync();
+      // ...
+    });
+
+  return <button onClick={run}>Run</button>;
+}
 ```
 
-Built-in mutations already use this lock internally; `runExclusive` is the escape hatch for your own compound flows.
+`runExclusive<T>(fn)` takes a zero-argument async function; reach for the client via `useMidenClient()` inside it. Built-in mutations already use this lock internally; `runExclusive` is the escape hatch for your own compound flows.
 
 ## Isolated clients for multi-wallet apps
 

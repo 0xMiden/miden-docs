@@ -101,7 +101,7 @@ function Status() {
 - `isInitializing` — `true` during the first load.
 - `error` — non-null if init failed.
 - `sync()` — trigger a manual sync pass outside the auto-sync loop.
-- `runExclusive(fn)` — serialize a block of client calls under the internal lock (see [race conditions](./recipes.md#prevent-race-conditions)).
+- `runExclusive<T>(fn: () => Promise<T>): Promise<T>` — serialize a block of async work under the internal lock. `fn` takes no arguments; reach for the client via `useMidenClient()` if you need one inside. See [race conditions](./recipes.md#prevent-race-conditions).
 
 `useMidenClient()` is a shortcut that returns the ready `WebClient` directly, throwing if the provider isn't ready yet:
 
