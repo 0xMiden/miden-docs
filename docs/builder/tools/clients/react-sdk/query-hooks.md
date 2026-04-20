@@ -127,7 +127,7 @@ Filter options (`NotesFilter`):
 | --- | --- | --- |
 | `status` | `"all" \| "consumed" \| "committed" \| "expected" \| "processing"` | Filter by note lifecycle state |
 | `accountId` | `AccountRef` | Only notes relevant to this account |
-| `sender` | `AccountRef` (any format) | Only notes from this sender — normalised internally |
+| `sender` | `string` | Account ID in any accepted format (hex or bech32) — normalised internally |
 | `excludeIds` | `string[]` | Skip these note IDs (useful for hiding notes your UI already rendered elsewhere) |
 
 Return type (`NotesResult`):
@@ -165,7 +165,7 @@ function NewNotesToast() {
       {latest && <p>New: {latest.id}</p>}
       {notes.map((n) => (
         <div key={n.id}>
-          {n.id} at {new Date(n.firstSeen).toISOString()}
+          {n.id} at {new Date(n.firstSeenAt).toISOString()}
           <button onClick={() => markHandled(n.id)}>dismiss</button>
         </div>
       ))}

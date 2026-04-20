@@ -68,7 +68,7 @@ const { send } = useSend();
 const { waitForCommit } = useWaitForCommit();
 
 const result = await send({ from, to, assetId, amount: 100n });
-await waitForCommit({ transactionId: result.txId });
+await waitForCommit(result.txId);
 ```
 
 ## Drop to the raw client
@@ -112,20 +112,9 @@ function CompoundFlow() {
 
 ## Isolated clients for multi-wallet apps
 
-Use a unique `storeName` (via `MidenProvider` config or a custom signer) per user account so their IndexedDB databases don't share storage:
+`MidenProvider`'s config does not accept a `storeName` directly. Per-user isolation flows through the active signer: each `SignerContext.Provider` supplies its own `storeName` field, and `MidenProvider` reads that when initialising the underlying client. See the [Signers](./signers.md#custom-signer-providers) guide for a custom signer that picks a unique store name per connected user (typically the wallet address or a hash of it).
 
-```tsx
-<MidenProvider
-  config={{
-    rpcUrl: "testnet",
-    seed: undefined,
-    // storeName is set via the active SignerContext in practice;
-    // see the Signers guide for the custom-signer path.
-  }}
->
-  <App />
-</MidenProvider>
-```
+If you just need two wallets side-by-side in a dev environment and don't want to wire a signer, mount two separate `MidenProvider`s in isolated subtrees backed by different signer contexts.
 
 ## Account IDs — hex and bech32 interchangeably
 
