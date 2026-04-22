@@ -247,40 +247,37 @@
    10) CARDS
    ========================================== */
 
+/* Match src/components/mdx/Card — hairline border, subtle shadow,
+   ember border + lift on hover. Applied to Docusaurus DocCard and any
+   other `.card`-class element so the aesthetic is consistent with the
+   MDX-authored <Card> grids. */
 .card {
-  border-radius: var(--ifm-card-border-radius);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
   background: var(--color-card-bg);
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
   transition:
-    box-shadow 200ms ease,
-    border-color 200ms ease,
-    background 200ms ease;
+    border-color var(--t-base) var(--ease-out-expo),
+    box-shadow var(--t-base) var(--ease-out-expo),
+    transform var(--t-base) var(--ease-out-expo),
+    background var(--t-base) var(--ease-out-expo);
 }
 
 .card:hover {
-  box-shadow: var(--shadow-card-hover);
-  border-color: color-mix(in oklab, var(--ifm-color-primary) 25%, rgba(0, 0, 0, 0.08));
+  border-color: var(--color-border-strong);
   background: var(--color-card-bg-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .card:focus-visible {
-  outline: 2px solid var(--ifm-color-primary);
-  outline-offset: 2px;
-  box-shadow: var(--shadow-card-hover);
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 .card:active {
-  box-shadow: var(--shadow-card);
-  transition-duration: 80ms;
-}
-
-[data-theme="dark"] .card {
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-[data-theme="dark"] .card:hover {
-  border-color: color-mix(in oklab, var(--ifm-color-primary) 20%, rgba(255, 255, 255, 0.12));
+  transform: translateY(0);
+  transition-duration: var(--t-fast);
 }
 
 /* ==========================================
