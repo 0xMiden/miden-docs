@@ -2,191 +2,195 @@ import React from "react";
 import styles from "./styles.module.css";
 
 /**
- * A stylized "proof lattice" — a bordered terminal-like frame containing:
- *   - an 8×8 grid of dots (the state space)
- *   - a merkle-tree pattern of 1.5px edges overlaid on the grid (the
- *     commitment structure)
- *   - three highlighted nodes that pulse in ember (the live computation)
- *   - an ember scan line that sweeps top→bottom, revealing the tree
- *   - a chromed "root hash" ticker at the bottom
+ * A stylized "private state → public commitment" visualization for the
+ * landing hero. Inside a terminal-like frame we render:
  *
- * Pure SVG + CSS. No canvas, no JS. Respects prefers-reduced-motion via
- * the global guard in _motion.css.
+ *   1. A stack of redacted bars of varying widths — the private account
+ *      state nobody but the user sees. Muted base color, subtle shimmer.
+ *   2. A padlock/seal mark centered on the stack — the privacy boundary.
+ *   3. An ember scan-line sweeps across, briefly highlighting bars in
+ *      ember as it passes (suggesting proof generation in progress).
+ *   4. A "commitment" strip below with a cycling hex hash — the single
+ *      piece of data actually published on-chain.
+ *
+ * Pure SVG + CSS. Respects prefers-reduced-motion via the global guard.
  */
 export default function HeroVisual(): JSX.Element {
-  const rows = 8;
-  const cols = 8;
-  const cell = 32;
-  const pad = 20;
-  const size = pad * 2 + (cols - 1) * cell;
+  const vbWidth = 300;
+  const vbHeight = 220;
 
-  const xy = (r: number, c: number) => ({
-    cx: pad + c * cell,
-    cy: pad + r * cell,
-  });
-
-  // --- Background dots (8x8 grid) ---
-  const dots: JSX.Element[] = [];
-  for (let r = 0; r < rows; r += 1) {
-    for (let c = 0; c < cols; c += 1) {
-      dots.push(
-        <circle
-          key={`dot-${r}-${c}`}
-          cx={pad + c * cell}
-          cy={pad + r * cell}
-          r={1.75}
-          className={styles.dot}
-        />,
-      );
-    }
-  }
-
-  // --- Merkle-tree overlay: 4 levels, 15 nodes, 14 edges ---
-  //        [root]
-  //       /      \
-  //    [L1a]    [L1b]
-  //    /  \     /   \
-  //  L2a L2b  L2c   L2d
-  //  / \ / \  / \   / \
-  //  …leaves at row 6…
-  //
-  // Positions chosen to occupy the grid cleanly; cols are even positions
-  // so the 4 leaves live on rows 6 and the root lives near top-center.
-  const treeNodes: Array<[number, number, "root" | "branch" | "leaf"]> = [
-    // root
-    [1, 3.5, "root"],
-    // level 1
-    [2.5, 1.5, "branch"],
-    [2.5, 5.5, "branch"],
-    // level 2
-    [4, 0.5, "branch"],
-    [4, 2.5, "branch"],
-    [4, 4.5, "branch"],
-    [4, 6.5, "branch"],
-    // leaves
-    [6, 0, "leaf"],
-    [6, 1, "leaf"],
-    [6, 2, "leaf"],
-    [6, 3, "leaf"],
-    [6, 4, "leaf"],
-    [6, 5, "leaf"],
-    [6, 6, "leaf"],
-    [6, 7, "leaf"],
-  ];
-
-  // Edges: (parent index, child index) relative to treeNodes order
-  const edges: Array<[number, number]> = [
-    [0, 1],
-    [0, 2],
-    [1, 3],
-    [1, 4],
-    [2, 5],
-    [2, 6],
-    [3, 7],
-    [3, 8],
-    [4, 9],
-    [4, 10],
-    [5, 11],
-    [5, 12],
-    [6, 13],
-    [6, 14],
+  // Redacted bars — the "private state" of the account, shown as
+  // ragged-right paragraph blocks. Each entry is [y-position, width%].
+  const bars: Array<{ y: number; w: number; delay: number }> = [
+    { y: 28, w: 78, delay: 0 },
+    { y: 46, w: 58, delay: 120 },
+    { y: 64, w: 84, delay: 240 },
+    { y: 82, w: 42, delay: 360 },
+    { y: 108, w: 68, delay: 520 },
+    { y: 126, w: 90, delay: 640 },
+    { y: 144, w: 52, delay: 760 },
+    { y: 162, w: 72, delay: 880 },
   ];
 
   return (
     <div className={styles.root} aria-hidden="true">
-      {/* frame chrome */}
       <div className={styles.frame}>
+        {/* top chrome row */}
         <div className={styles.chromeTop}>
-          <span className={styles.chromeLabel}>Proof lattice · RPO-256</span>
+          <svg
+            className={styles.lockIcon}
+            width="11"
+            height="11"
+            viewBox="0 0 14 14"
+            fill="none"
+            aria-hidden="true"
+          >
+            <rect
+              x="2.5"
+              y="6.5"
+              width="9"
+              height="6.5"
+              rx="1.25"
+              stroke="currentColor"
+              strokeWidth="1.4"
+            />
+            <path
+              d="M4.5 6.5V4.25a2.5 2.5 0 0 1 5 0V6.5"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+            />
+          </svg>
+          <span className={styles.chromeLabel}>
+            Private state · Account 0x…A3F9
+          </span>
           <span className={styles.chromeStatus}>
             <span className={styles.chromeDot} />
             proving
           </span>
         </div>
 
+        {/* body */}
         <svg
           className={styles.lattice}
-          viewBox={`0 0 ${size} ${size}`}
+          viewBox={`0 0 ${vbWidth} ${vbHeight}`}
           xmlns="http://www.w3.org/2000/svg"
           role="presentation"
         >
           <defs>
-            {/* diagonal ember sweep */}
-            <linearGradient id="heroSweep" x1="0" y1="0" x2="0" y2="1">
+            {/* subtle diagonal sweep (top→bottom left-weighted) */}
+            <linearGradient id="privSweep" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="transparent" />
               <stop
-                offset="48%"
+                offset="42%"
                 stopColor="var(--color-brand)"
-                stopOpacity="0.9"
+                stopOpacity="0.75"
               />
               <stop
-                offset="52%"
+                offset="58%"
                 stopColor="var(--color-brand)"
-                stopOpacity="0.9"
+                stopOpacity="0.75"
               />
               <stop offset="100%" stopColor="transparent" />
             </linearGradient>
 
-            {/* edge shadow / glow */}
-            <filter id="heroGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="1.2" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
+            {/* gradient for the redacted bars so they feel "alive" */}
+            <linearGradient id="privBar" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="var(--color-border-strong)" />
+              <stop offset="100%" stopColor="var(--color-border)" />
+            </linearGradient>
           </defs>
 
-          {/* background dots */}
-          {dots}
+          {/* panel label — PRIVATE on the left edge, vertically written */}
+          <g className={styles.labelRow}>
+            <text
+              x="14"
+              y="22"
+              className={styles.panelLabel}
+            >
+              private
+            </text>
+            <line
+              x1="52"
+              y1="18"
+              x2={vbWidth - 14}
+              y2="18"
+              className={styles.labelRule}
+            />
+          </g>
 
-          {/* Merkle-tree edges */}
-          {edges.map(([a, b], i) => {
-            const p = xy(treeNodes[a][0], treeNodes[a][1]);
-            const q = xy(treeNodes[b][0], treeNodes[b][1]);
+          {/* redacted bars */}
+          {bars.map((b, i) => {
+            const x = 14;
+            const maxWidth = vbWidth - 28;
+            const w = (maxWidth * b.w) / 100;
             return (
-              <line
-                key={`edge-${i}`}
-                x1={p.cx}
-                y1={p.cy}
-                x2={q.cx}
-                y2={q.cy}
-                className={styles.edge}
-                style={{ animationDelay: `${i * 80}ms` }}
+              <rect
+                key={`bar-${i}`}
+                x={x}
+                y={b.y}
+                width={w}
+                height={6}
+                rx={2}
+                ry={2}
+                fill="url(#privBar)"
+                className={styles.bar}
+                style={{ animationDelay: `${b.delay}ms` }}
               />
             );
           })}
 
-          {/* Merkle-tree nodes */}
-          {treeNodes.map(([r, c, kind], i) => {
-            const { cx, cy } = xy(r, c);
-            return (
-              <circle
-                key={`node-${i}`}
-                cx={cx}
-                cy={cy}
-                r={kind === "root" ? 4 : kind === "branch" ? 3 : 2.5}
-                className={`${styles.node} ${styles[`node-${kind}`]}`}
-                style={{ animationDelay: `${i * 90}ms` }}
-                filter={kind === "root" ? "url(#heroGlow)" : undefined}
-              />
-            );
-          })}
+          {/* center seal — a subtle key/lock circle that sits on top of bars */}
+          <g transform={`translate(${vbWidth - 60} ${110})`}>
+            <circle
+              cx="0"
+              cy="0"
+              r="22"
+              className={styles.sealRing}
+            />
+            <circle
+              cx="0"
+              cy="0"
+              r="14"
+              className={styles.sealInner}
+            />
+            <path
+              d="M-4 -1 a4 4 0 0 1 8 0"
+              className={styles.sealShackle}
+            />
+            <rect
+              x="-5"
+              y="-1"
+              width="10"
+              height="8"
+              rx="1.5"
+              className={styles.sealBody}
+            />
+          </g>
 
-          {/* ember scan sweep — vertical */}
+          {/* public divider — thin dashed line at the bottom of the panel */}
+          <line
+            x1="14"
+            y1={vbHeight - 14}
+            x2={vbWidth - 14}
+            y2={vbHeight - 14}
+            className={styles.divider}
+          />
+
+          {/* ember sweep overlay */}
           <rect
             x={0}
-            y={-size}
-            width={size}
-            height={size * 0.6}
-            fill="url(#heroSweep)"
+            y={-vbHeight}
+            width={vbWidth}
+            height={vbHeight * 0.45}
+            fill="url(#privSweep)"
             className={styles.sweep}
           />
         </svg>
 
-        {/* bottom strip — hash commitment */}
+        {/* bottom chrome — the public commitment (hash) + verified pill */}
         <div className={styles.chromeBottom}>
-          <span className={styles.chromeLabel}>Root</span>
+          <span className={styles.chromeLabel}>Public commitment</span>
           <code className={styles.hashValue}>
             0x
             <span data-anim-cycle>a3</span>
@@ -215,7 +219,7 @@ export default function HeroVisual(): JSX.Element {
                 strokeLinejoin="round"
               />
             </svg>
-            verified
+            sealed
           </span>
         </div>
       </div>

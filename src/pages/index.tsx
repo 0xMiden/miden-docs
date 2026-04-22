@@ -57,14 +57,13 @@ export default function Home(): JSX.Element {
                 Private by design · Verifiable by default
               </div>
               <h1 className={styles.heroTitle}>
-                Build applications that prove themselves.
+                Build scalable, private applications.
               </h1>
               <p className={styles.heroSub}>
                 Miden is a zero-knowledge rollup with client-side proving
                 and private-by-default accounts and notes. Write Rust
-                contracts, compile to MASM, and ship applications whose
-                correctness is verifiable on-chain while user data stays
-                with the user.
+                contracts, compile to MASM, and ship apps whose state
+                stays with the user while correctness stays on-chain.
               </p>
               <div className={styles.ctaRow}>
                 <Link
