@@ -128,6 +128,10 @@ These imports provide:
 - **`StorageMap`**: Key-value storage within account storage slots
 - **`StorageMapAccess`**: Needed for reading storage values (`get_count` function)
 
+:::note[`felt` vs `Felt`]
+`Felt` is the field element type representing values in the Goldilocks prime field (p = 2^64 - 2^32 + 1). `felt!(1)` is a compile-time macro that creates `Felt` values from integer literals with compile-time range validation. Currently `felt!` only accepts values up to 2^32 (compiler limitation); for larger values use `Felt::from_u64_unchecked()`.
+:::
+
 #### Contract Structure Definition
 
 ```rust
