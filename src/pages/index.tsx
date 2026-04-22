@@ -15,8 +15,8 @@ type Role = {
 const ROLES: Role[] = [
   {
     eyebrow: "Smart contract dev",
-    title: "Build private contracts in Rust",
-    desc: "Write accounts, notes, and transactions with the Miden SDK. Compile to MASM, test locally, deploy to testnet.",
+    title: "Build contracts in Rust",
+    desc: "Accounts, notes, and transactions with the Miden SDK — private by default, typed storage, client-side proving. Compile to MASM and deploy.",
     to: "/builder/smart-contracts",
   },
   {
@@ -60,10 +60,11 @@ export default function Home(): JSX.Element {
                 Build applications that prove themselves.
               </h1>
               <p className={styles.heroSub}>
-                Miden is a zk-first Layer 1 with client-side proving, hidden
-                state, and native privacy. Write Rust contracts, compile to
-                MASM, and ship applications whose integrity is verifiable
-                without surrendering user data.
+                Miden is a zero-knowledge rollup with client-side proving
+                and private-by-default accounts and notes. Write Rust
+                contracts, compile to MASM, and ship applications whose
+                correctness is verifiable on-chain while user data stays
+                with the user.
               </p>
               <div className={styles.ctaRow}>
                 <Link
@@ -77,7 +78,7 @@ export default function Home(): JSX.Element {
                   to="https://github.com/0xMiden/midenup"
                   className={styles.ctaSecondary}
                 >
-                  <code>curl midenup.sh | sh</code>
+                  Install midenup <span aria-hidden="true">↗</span>
                 </Link>
               </div>
             </div>
@@ -114,7 +115,7 @@ export default function Home(): JSX.Element {
               <p className={styles.heroSub}>
                 Smart contracts on Miden are plain Rust crates. Storage is
                 typed, functions are `#[component]`-annotated, and state
-                transitions are proved client-side before a single byte hits
+                transitions are proved client-side before submission to
                 the network.
               </p>
               <div className={styles.ctaRow}>
@@ -139,22 +140,27 @@ export default function Home(): JSX.Element {
               <pre className={styles.codeShellBody}>
                 <code>
                   <span className={styles.codeKw}>use</span> miden::
-                  {"{"}component, felt, Felt, StorageMap, Word{"}"};{"\n\n"}
+                  {"{"}component, felt, Felt, StorageMap, StorageMapAccess,
+                  Word{"}"};{"\n\n"}
                   #[<span className={styles.codeFn}>component</span>]{"\n"}
                   <span className={styles.codeKw}>struct</span>{" "}
-                  <span className={styles.codeFn}>Counter</span> {"{"}{"\n"}
-                  {"    "}#[<span className={styles.codeFn}>storage</span>]{"\n"}
+                  <span className={styles.codeFn}>CounterContract</span> {"{"}
+                  {"\n"}
+                  {"    "}#[<span className={styles.codeFn}>storage</span>
+                  (description = <span className={styles.codeStr}>
+                  &quot;counter contract storage map&quot;</span>)]{"\n"}
                   {"    "}count_map: StorageMap,{"\n"}
                   {"}"}{"\n\n"}
                   #[<span className={styles.codeFn}>component</span>]{"\n"}
-                  <span className={styles.codeKw}>impl</span> Counter {"{"}{"\n"}
+                  <span className={styles.codeKw}>impl</span>{" "}
+                  CounterContract {"{"}{"\n"}
                   {"    "}
                   <span className={styles.codeCom}>
                     /// Increments the counter by one.
                   </span>
                   {"\n"}
                   {"    "}<span className={styles.codeKw}>pub fn</span>{" "}
-                  <span className={styles.codeFn}>increment</span>(&
+                  <span className={styles.codeFn}>increment_count</span>(&
                   <span className={styles.codeKw}>mut self</span>) -&gt; Felt{" "}
                   {"{"}{"\n"}
                   {"        "}
@@ -215,7 +221,7 @@ export default function Home(): JSX.Element {
                   <Link to="/builder/migration">v0.14 migration</Link>
                 </li>
                 <li>
-                  <Link to="/builder/tutorials">Tutorials</Link>
+                  <Link to="/builder/tutorials/rust-compiler">Tutorials</Link>
                 </li>
               </ul>
             </div>
@@ -255,7 +261,7 @@ export default function Home(): JSX.Element {
             </div>
           </div>
           <p className={styles.releaseLine}>
-            Latest: v0.13 · Next: v0.14 (unstable)
+            Stable release: v0.13 · In development: v0.14
           </p>
         </section>
       </main>
