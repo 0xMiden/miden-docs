@@ -82,6 +82,8 @@
 
 /* ==========================================
    3.2) NAVBAR TABS — neutral label, animated underline
+   Scoped to NON-dropdown nav links so the underline ::after
+   does not collide with Docusaurus's dropdown caret ::after.
    ========================================== */
 
 .navbar__link {
@@ -90,7 +92,7 @@
   font-weight: 500;
 }
 
-.navbar__link::after {
+.navbar__item:not(.dropdown) > .navbar__link::after {
   content: "";
   position: absolute;
   left: 0.75rem;
@@ -109,11 +111,88 @@
   color: var(--color-text) !important;
 }
 
-.navbar__link:hover::after {
+.navbar__item:not(.dropdown) > .navbar__link:hover::after {
   transform: scaleX(0.6);
 }
 
 .navbar__link--active {
+  font-weight: 600;
+}
+
+/* Quiet dropdown trigger caret. Docusaurus renders its own ::after
+   arrow on .dropdown > .navbar__link; we only tone it down. */
+.navbar__item.dropdown > .navbar__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 3px 0.625rem 3px 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--color-muted) !important;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  line-height: 1.4;
+  transition:
+    color var(--t-base) var(--ease-out-expo),
+    border-color var(--t-base) var(--ease-out-expo),
+    background var(--t-base) var(--ease-out-expo);
+}
+
+.navbar__item.dropdown > .navbar__link:hover {
+  color: var(--color-text) !important;
+  border-color: var(--color-border-strong);
+  background: var(--color-surface);
+}
+
+/* Override Docusaurus's default caret character with a minimalist one */
+.navbar__item.dropdown > .navbar__link::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  margin-left: 0.25rem;
+  background: transparent;
+  border: none;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform var(--t-fast) var(--ease-out-expo);
+  top: auto;
+}
+
+.navbar__item.dropdown.dropdown--show > .navbar__link::after,
+.navbar__item.dropdown > .navbar__link:hover::after {
+  transform: rotate(-135deg) translateY(1px);
+}
+
+/* Dropdown menu panel — align with the rest of the redesign */
+.navbar__item.dropdown .dropdown__menu {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-md);
+  padding: 0.375rem;
+  margin-top: 0.375rem;
+}
+
+.dropdown__link {
+  font-size: 13px;
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  transition:
+    background var(--t-fast) var(--ease-out-expo),
+    color var(--t-fast) var(--ease-out-expo);
+}
+
+.dropdown__link:hover,
+.dropdown__link--active {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.dropdown__link--active {
   font-weight: 600;
 }
 
