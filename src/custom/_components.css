@@ -80,63 +80,70 @@
 }
 
 /* ==========================================
-   8) ALERTS (Admonitions)
+   8) ALERTS (Admonitions) — Callout aesthetic
+   Flush-left 3px accent bar, hairline border, subtle tinted surface
+   via color-mix. Matches src/components/mdx/Callout visually so
+   :::note / :::tip / :::warning and <Callout> look identical.
    ========================================== */
 
 .theme-admonition {
   display: flex;
-  align-items: flex-start; /* icon aligns with text top */
-  gap: 0.75rem; /* spacing between icon and text */
-  padding: 1rem 1.25rem;
-  font-size: var(--ifm-font-size-base);
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem 1rem 1rem;
+  font-size: 15px;
+  line-height: 1.6;
 }
 
-/* ThemeClassNames.common.admonition */
 .theme-admonition.alert {
-  --ifm-alert-background-color: var(--color-elevated);
-  --ifm-alert-border-color: var(--ifm-color-primary);
-  --ifm-alert-background-color-highlight: #fff;
+  --callout-accent: var(--color-muted);
+  --callout-surface: var(--color-surface);
 
+  position: relative;
   font-family: var(--font-sans);
-  border: 1px solid var(--color-elevated);
-  border-top: 5px solid var(--ifm-alert-border-color); /* top border accent */
-  border-left: none; /* disable default */
-  border-radius: var(--ifm-alert-border-radius);
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-md);
+  background: var(--callout-surface) !important;
+  color: var(--color-text);
   box-shadow: none;
-  background: var(--ifm-alert-background-color);
-  color: var(--ifm-color-content);
-  /* padding: 1rem 1.25rem; */
+  overflow: hidden;
+}
+
+.theme-admonition.alert::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--callout-accent);
 }
 
 [data-theme="dark"] .theme-admonition.alert {
-  --ifm-alert-background-color: #3f3f3f99;
-  --ifm-alert-background-color-highlight: #3f3f3f99;
-  background: #3f3f3f99;
+  background: var(--callout-surface) !important;
   color: var(--color-text);
-  border: 1px solid #3f3f3f99;
-  border-top: 5px solid var(--ifm-alert-border-color);
-  border-left: none;
+  border: 1px solid var(--color-border) !important;
 }
 
-/* NOTE */
+/* NOTE (default secondary) */
 .theme-admonition.alert--secondary {
-  --ifm-alert-border-color: var(--ifm-color-primary);
-  border-top-color: var(--ifm-color-primary);
+  --callout-accent: var(--color-muted);
 }
+
 /* TIP */
 .theme-admonition.alert--success {
-  --ifm-alert-background-color: var(--color-elevated);
-  border-top-color: var(--ifm-color-success) !important;
+  --callout-accent: var(--color-success);
+  --callout-surface: color-mix(in oklab, var(--color-success) 6%, var(--color-surface));
 }
+
 /* INFO / IMPORTANT */
 .theme-admonition.alert--info {
-  --ifm-alert-border-color: #1764a8;
-  border-top-color: #1764a8;
+  --callout-accent: var(--color-accent);
+  --callout-surface: color-mix(in oklab, var(--color-accent) 6%, var(--color-surface));
 }
 
 [data-theme="dark"] .theme-admonition.alert--info {
-  --ifm-alert-border-color: #7b9cff;
-  border-top-color: #7b9cff;
+  --callout-accent: #7b9cff;
 }
 
 [data-theme="dark"] .theme-admonition.alert--info .admonition-icon svg {
@@ -144,31 +151,30 @@
   fill: #7b9cff !important;
   stroke: #7b9cff !important;
 }
+
 /* WARNING */
 .theme-admonition.alert--warning {
-  --ifm-alert-border-color: var(--color-warning);
-  border-top-color: var(--color-warning);
+  --callout-accent: var(--color-warning);
+  --callout-surface: color-mix(in oklab, var(--color-warning) 8%, var(--color-surface));
 }
 
 /* DANGER */
 .theme-admonition.alert--danger {
-  --ifm-alert-border-color: var(--color-danger);
-  border-top-color: var(--color-danger);
+  --callout-accent: var(--color-danger);
+  --callout-surface: color-mix(in oklab, var(--color-danger) 7%, var(--color-surface));
 }
 
 .theme-admonition ul li::marker {
-  color: var(--ifm-color-primary);
+  color: var(--callout-accent);
 }
 
-/* Exclude list margins from alert blocks */
 .theme-admonition ul,
 .theme-admonition ol {
-  margin-top: 0 !important; /* Smaller margins for lists in alert blocks */
+  margin-top: 0 !important;
   margin-bottom: 0 !important;
-  padding-left: 1.5rem !important; /* Standard padding for lists in alerts */
+  padding-left: 1.5rem !important;
 }
 
-/* Nested lists in alert blocks should have no extra margin */
 .theme-admonition ul ul,
 .theme-admonition ol ol,
 .theme-admonition ul ol,
@@ -177,16 +183,46 @@
   margin-bottom: 0 !important;
 }
 
-/* VERSION BANNER */
-.theme-doc-version-banner {
-  --ifm-alert-background-color: var(--color-elevated);
-  --ifm-alert-border-color: var(--color-warning);
-
+/* Admonition title row */
+.theme-admonition .admonitionHeading_Gvgb,
+.theme-admonition [class*="admonitionHeading"] {
   font-family: var(--font-sans);
-  border: 1px solid var(--color-elevated);
-  border-top: 6px solid var(--ifm-alert-border-color);
-  border-left: none; /* disable default */
-  color: var(--ifm-color-content);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: -0.005em;
+  margin-bottom: 0.25rem;
+  text-transform: none;
+}
+
+/* VERSION BANNER — info-variant Callout look */
+.theme-doc-version-banner {
+  --callout-accent: var(--color-accent);
+  --callout-surface: color-mix(in oklab, var(--color-accent) 6%, var(--color-surface));
+
+  position: relative;
+  font-family: var(--font-sans);
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-md);
+  background: var(--callout-surface) !important;
+  color: var(--color-text) !important;
+  padding: 1rem 1.25rem 1rem 1rem;
+  margin: 1rem 0 1.5rem;
+  overflow: hidden;
+}
+
+.theme-doc-version-banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--callout-accent);
+}
+
+[data-theme="dark"] .theme-doc-version-banner {
+  --callout-accent: #7b9cff;
 }
 
 /* ==========================================
@@ -540,14 +576,82 @@
    11) TABLES
    ========================================== */
 
-/* Apply border radius to the entire table */
-table {
-  border-radius: 0.357rem; /* 5px converted to rem */
+/* Card-aesthetic tables: hairline border, monospace uppercase headers,
+   subtle row hover. Scoped to doc markdown so other tables (admin UI,
+   mermaid) are untouched. */
+.theme-doc-markdown table,
+article table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-card-bg);
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow-sm);
 }
 
-tbody tr {
-  border-top: none;
-  background: var(--ifm-background-surface-color);
+.theme-doc-markdown thead,
+article thead {
+  background: var(--color-surface);
+}
+
+.theme-doc-markdown th,
+article th {
+  font-family: var(--font-eyebrow);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  padding: 0.625rem 1rem;
+  text-align: left;
+  border: none !important;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.theme-doc-markdown td,
+article td {
+  padding: 0.75rem 1rem;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text);
+  border-top: 1px solid var(--color-border);
+  border-left: none !important;
+  border-right: none !important;
+  background: transparent;
+}
+
+.theme-doc-markdown tbody tr,
+article tbody tr {
+  background: transparent;
+  transition: background var(--t-fast) linear;
+  border: none !important;
+}
+
+.theme-doc-markdown tbody tr:hover,
+article tbody tr:hover {
+  background: var(--color-surface);
+}
+
+.theme-doc-markdown tbody tr:first-child td,
+article tbody tr:first-child td {
+  border-top: 1px solid var(--color-border);
+}
+
+.theme-doc-markdown thead + tbody tr:first-child td,
+article thead + tbody tr:first-child td {
+  border-top: 1px solid var(--color-border);
+}
+
+/* Inline code inside tables stays legible */
+.theme-doc-markdown td code,
+article td code {
+  font-size: 13px;
+  padding: 1px 4px;
 }
 
 /* ==========================================
