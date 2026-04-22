@@ -28,78 +28,28 @@ Guardian addresses these challenges by acting as an off-chain coordination layer
 
 Guardian is non-custodial. The provider cannot move funds unilaterally — it stores state and coordinates changes, but users retain cryptographic control over their accounts at all times.
 
-import DocCard from '@theme/DocCard';
-
 ## Learn more
 
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './core-concepts/architecture',
-        label: 'Architecture',
-        description: 'How Guardian fits between clients and the Miden network.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './core-concepts/data-structures',
-        label: 'Data Structures',
-        description: 'State, deltas, commitments, and delta proposals.',
-      }}
-    />
-  </div>
-</div>
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './core-concepts/components',
-        label: 'Components',
-        description: 'API, authentication, storage, and other server components.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './core-concepts/security',
-        label: 'Security',
-        description: 'Trust model, integrity guarantees, and edge cases.',
-      }}
-    />
-  </div>
-</div>
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './operator-guide/running',
-        label: 'Operator Guide',
-        description: 'How to run, deploy, and troubleshoot a Guardian server.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: '../private-multisig/',
-        label: 'Private Multisig',
-        description: 'Multi-party threshold signature workflows powered by Guardian.',
-      }}
-    />
-  </div>
-</div>
+<CardGrid cols={2}>
+  <Card title="Architecture" href="./core-concepts/architecture" eyebrow="Core concepts">
+    How Guardian fits between clients and the Miden network.
+  </Card>
+  <Card title="Data structures" href="./core-concepts/data-structures" eyebrow="Core concepts">
+    State, deltas, commitments, and delta proposals.
+  </Card>
+  <Card title="Components" href="./core-concepts/components" eyebrow="Core concepts">
+    API, authentication, storage, and other server components.
+  </Card>
+  <Card title="Security" href="./core-concepts/security" eyebrow="Core concepts">
+    Trust model, integrity guarantees, and edge cases.
+  </Card>
+  <Card title="Operator guide" href="./operator-guide/running" eyebrow="Run it">
+    How to run, deploy, and troubleshoot a Guardian server.
+  </Card>
+  <Card title="Private multisig" href="../private-multisig/" eyebrow="Solutions">
+    Multi-party threshold signature workflows powered by Guardian.
+  </Card>
+</CardGrid>
 
 ## Repository
 

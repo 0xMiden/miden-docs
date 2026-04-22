@@ -219,7 +219,7 @@ const config: Config = {
       mermaid: {
         theme: { light: "neutral", dark: "dark" },
         options: {
-          fontFamily: '"Manrope", ui-sans-serif, system-ui, sans-serif',
+          fontFamily: '"Geist", ui-sans-serif, system-ui, sans-serif',
           fontSize: 14,
         },
       },
@@ -231,7 +231,19 @@ const config: Config = {
       prism: {
         theme: prismThemes.oneLight,
         darkTheme: prismThemes.oneDark,
-        additionalLanguages: ["rust", "solidity", "toml", "yaml", "diff"],
+        additionalLanguages: [
+          "rust",
+          "solidity",
+          "toml",
+          "yaml",
+          "diff",
+          "bash",
+          "shell-session",
+          "docker",
+          "ignore",
+          "json",
+          "json5",
+        ],
       },
       navbar: {
         logo: {
@@ -284,7 +296,66 @@ const config: Config = {
 
           // Search bar
           { type: "search", position: "right" },
+
+          // Primary CTA
+          {
+            type: "html",
+            position: "right",
+            value:
+              '<a class="navbar-cta" href="/builder/get-started"><span class="navbar-cta__label">Start building</span><span class="navbar-cta__arrow" aria-hidden="true">→</span></a>',
+          },
         ],
+      },
+      footer: {
+        style: "light",
+        logo: {
+          src: "img/logo.svg",
+          alt: "Miden",
+          height: 28,
+        },
+        links: [
+          {
+            title: "Build",
+            items: [
+              { label: "Get started", to: "/builder/get-started" },
+              { label: "Smart contracts", to: "/builder/smart-contracts" },
+              { label: "Tutorials", to: "/builder/tutorials/rust-compiler" },
+              { label: "Tools", to: "/builder/tools" },
+              { label: "Migration", to: "/builder/migration" },
+            ],
+          },
+          {
+            title: "Concepts",
+            items: [
+              { label: "Overview", to: "/core-concepts" },
+              { label: "Protocol", to: "/core-concepts/protocol" },
+              { label: "Miden VM", to: "/core-concepts/miden-vm" },
+              { label: "Compiler", to: "/core-concepts/compiler" },
+              { label: "Node", to: "/core-concepts/node" },
+            ],
+          },
+          {
+            title: "Community",
+            items: [
+              { label: "GitHub", href: "https://github.com/0xMiden" },
+              { label: "X", href: "https://x.com/0xMiden" },
+              { label: "Telegram", href: "https://t.me/BuildOnMiden" },
+              { label: "Forum", href: "https://github.com/0xMiden/miden-node/discussions" },
+              { label: "Brand kit", href: "https://miden.xyz/brand" },
+            ],
+          },
+          {
+            title: "Resources",
+            items: [
+              { label: "Glossary", to: "/builder/glossary" },
+              { label: "FAQ", to: "/builder/faq" },
+              { label: "Playground", href: "https://playground.miden.xyz" },
+              { label: "Explorer", href: "https://testnet.midenscan.com" },
+              { label: "miden.xyz", href: "https://miden.xyz" },
+            ],
+          },
+        ],
+        copyright: `<span class="footer__tagline">Private by design · Verifiable by default</span><span class="footer__sep">·</span>© ${new Date().getFullYear()} Miden`,
       },
     },
 };

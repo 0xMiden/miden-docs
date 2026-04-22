@@ -15,78 +15,51 @@ DO NOT add protocol documentation files here.
 
 # Miden Core Concepts
 
-This section provides a comprehensive technical reference for the Miden architecture, covering the protocol design, virtual machine, compiler toolchain, and node infrastructure.
+A technical reference for Miden's architecture: the protocol, the zkVM, the compiler toolchain, and the node.
 
-## Explore by Topic
+## Explore by topic
 
-import DocCard from '@theme/DocCard';
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: '#protocol',
-        label: 'Protocol',
-        description: 'Accounts, notes, state model, and transaction semantics.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: '#virtual-machine-miden-vm',
-        label: 'Virtual Machine',
-        description: 'STARK-based VM architecture, chiplets, and Miden Assembly.',
-      }}
-    />
-  </div>
-</div>
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: '#compiler',
-        label: 'Compiler',
-        description: 'Rust-to-MASM compilation pipeline and toolchain.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: '#node',
-        label: 'Node',
-        description: 'Network infrastructure, gRPC API, and block production.',
-      }}
-    />
-  </div>
-</div>
+<CardGrid cols={2}>
+  <Card title="Protocol" href="#protocol" eyebrow="Data model">
+    Accounts, notes, state model, and transaction semantics.
+  </Card>
+  <Card title="Miden VM" href="#virtual-machine-miden-vm" eyebrow="Execution">
+    STARK-based zkVM, chiplets, and Miden Assembly.
+  </Card>
+  <Card title="Compiler" href="#compiler" eyebrow="Toolchain">
+    Rust → WebAssembly → Miden IR → MASM compilation pipeline.
+  </Card>
+  <Card title="Node" href="#node" eyebrow="Network">
+    gRPC API, batch aggregation, and block production.
+  </Card>
+</CardGrid>
 
 ---
 
-## Architecture Overview
+## Architecture overview
 
-Miden is a zero-knowledge rollup that fundamentally rethinks blockchain architecture. Instead of a single global state updated sequentially, Miden uses an **actor model** where each account is an independent state machine that executes transactions locally and generates validity proofs.
+Miden is a zero-knowledge rollup that rethinks blockchain architecture. Instead of a single global state updated sequentially, Miden uses an **actor model** where each account is an independent state machine that executes transactions locally and generates validity proofs.
 
-### Core Design Principles
+### Core design principles
 
-| Principle | How Miden Achieves It |
+| Principle | How Miden achieves it |
 |-----------|----------------------|
 | **Privacy** | Accounts and notes store only cryptographic commitments on-chain; full data remains with users |
 | **Parallelism** | Single-account transactions enable concurrent execution without contention |
 | **Scalability** | Client-side proving offloads computation; proof aggregation reduces on-chain verification |
-| **Programmability** | Turing-complete VM supports arbitrary smart contract logic in accounts and notes |
+| **Programmability** | A Turing-complete VM supports arbitrary smart contract logic in accounts and notes |
 
+<Steps>
 
-1. **Local Execution** – Users execute transactions on their devices, consuming input notes and updating account state
-2. **Proof Generation** – The client generates a STARK proof attesting to valid state transitions
-3. **Note Creation** – Transactions produce output notes carrying assets and data to recipients
-4. **Verification** – The node verifies proofs, updates state commitments, and makes notes available
+**Local execution** — Users execute transactions on their devices, consuming input notes and updating account state.
+
+**Proof generation** — The client generates a STARK proof attesting to valid state transitions.
+
+**Note creation** — Transactions produce output notes carrying assets and data to recipients.
+
+**Verification** — The node verifies proofs, updates state commitments, and makes notes available.
+
+</Steps>
 
 ---
 
@@ -98,26 +71,26 @@ The protocol layer defines Miden's data structures, state model, and transaction
 
 Accounts are programmable entities that hold assets and execute code:
 
-- **ID** – Unique 64-bit identifier derived from initial code and storage
-- **Code** – Immutable smart contract logic defining the account's interface
-- **Storage** – Key-value store with up to 256 slots for persistent data
-- **Vault** – Container holding fungible and non-fungible assets
-- **Nonce** – Monotonically increasing counter preventing replay attacks
+- **ID** — unique identifier derived from initial code and storage
+- **Code** — smart contract logic defining the account's interface
+- **Storage** — key-value store with up to 256 slots for persistent data
+- **Vault** — container holding fungible and non-fungible assets
+- **Nonce** — monotonically increasing counter preventing replay attacks
 
-Account code is composed from **components** – modular building blocks that add capabilities like wallet functionality, token standards, or custom logic.
+Account code is composed from **components** — modular building blocks that add capabilities like wallet functionality, token standards, or custom logic.
 
 ### Notes
 
 Notes are programmable messages that transfer assets between accounts:
 
-- **Script** – Code executed when the note is consumed
-- **Inputs** – Public data available to the consuming transaction
-- **Assets** – Tokens transferred to the recipient
-- **Metadata** – Sender, tag (for discovery), and auxiliary data
+- **Script** — code executed when the note is consumed
+- **Inputs** — public data available to the consuming transaction
+- **Assets** — tokens transferred to the recipient
+- **Metadata** — sender, tag (for discovery), and auxiliary data
 
 Notes can be **public** (all data on-chain) or **private** (only a commitment stored). Private notes require off-chain communication between sender and recipient.
 
-### State Model
+### State model
 
 Miden maintains three core databases:
 
@@ -148,11 +121,11 @@ The Miden VM is a STARK-based virtual machine optimized for zero-knowledge proof
 
 ### Architecture
 
-- **Stack-based** – Operates on a push-down stack of 64-bit prime field elements
-- **Turing-complete** – Supports loops, conditionals, and recursive procedures
-- **Deterministic** – Same inputs always produce same outputs (with controlled nondeterminism for advice)
+- **Stack-based** — operates on a push-down stack of 64-bit prime field elements
+- **Turing-complete** — supports loops, conditionals, and recursive procedures
+- **Deterministic** — same inputs always produce same outputs (with controlled nondeterminism for advice)
 
-### Core Components
+### Core components
 
 | Component | Function |
 |-----------|----------|
@@ -165,20 +138,20 @@ The Miden VM is a STARK-based virtual machine optimized for zero-knowledge proof
 
 Chiplets are co-processors that accelerate common operations:
 
-- **Hash Chiplet** – Rescue Prime Optimized hashing, Merkle tree operations
-- **Bitwise Chiplet** – AND, XOR, and other bitwise operations on 32-bit integers
-- **Memory Chiplet** – Efficient random-access memory with read/write tracking
-- **Kernel ROM** – Secure execution of privileged kernel procedures
+- **Hash chiplet** — Rescue Prime Optimized hashing, Merkle tree operations
+- **Bitwise chiplet** — AND, XOR, and other bitwise operations on 32-bit integers
+- **Memory chiplet** — efficient random-access memory with read/write tracking
+- **Kernel ROM** — secure execution of privileged kernel procedures
 
 ### Miden Assembly (MASM)
 
 MASM is the native instruction set with:
 
-- **Field operations** – Arithmetic on prime field elements
-- **U32 operations** – 32-bit integer arithmetic, bitwise, and comparison
-- **Cryptographic operations** – Hashing, Merkle proofs, signature verification
-- **Control flow** – Conditionals, loops, and procedure calls
-- **Memory operations** – Load/store to local and global memory
+- **Field operations** — arithmetic on prime field elements
+- **U32 operations** — 32-bit integer arithmetic, bitwise, and comparison
+- **Cryptographic operations** — hashing, Merkle proofs, signature verification
+- **Control flow** — conditionals, loops, and procedure calls
+- **Memory operations** — load/store to local and global memory
 
 ---
 
@@ -188,22 +161,22 @@ The compiler toolchain enables writing Miden programs in high-level languages.
 
 ### Components
 
-- **cargo-miden** – Cargo extension for building Miden projects
-- **midenc** – Core compiler from WebAssembly to Miden Assembly
-- **Debugger** – Interactive debugging with breakpoints and state inspection
+- **cargo-miden** — Cargo extension for building Miden projects
+- **midenc** — core compiler from WebAssembly to Miden Assembly
+- **Debugger** — interactive debugging with breakpoints and state inspection
 
-### Compilation Pipeline
+### Compilation pipeline
 
-```
+```text
    Rust       →    WebAssembly    →    Miden IR    →    MASM
  (source)         (Wasm binary)      (compiler IR)    (assembly)
 ```
 
 The compiler supports:
 
-- **Account components** – Reusable smart contract modules
-- **Note scripts** – Logic executed when notes are consumed
-- **Transaction scripts** – Custom transaction execution logic
+- **Account components** — reusable smart contract modules
+- **Note scripts** — logic executed when notes are consumed
+- **Transaction scripts** — custom transaction execution logic
 
 ---
 
@@ -222,11 +195,11 @@ The node is the network infrastructure that receives transactions and produces b
 
 The node exposes endpoints for:
 
-- **Account queries** – Get account details, proofs, and storage
-- **Note queries** – Retrieve notes by ID or script
-- **Block queries** – Fetch block headers and contents
-- **Sync operations** – Synchronize client state with the network
-- **Transaction submission** – Submit proven transactions
+- **Account queries** — get account details, proofs, and storage
+- **Note queries** — retrieve notes by ID or script
+- **Block queries** — fetch block headers and contents
+- **Sync operations** — synchronize client state with the network
+- **Transaction submission** — submit proven transactions
 
 ---
 
@@ -235,8 +208,8 @@ import SectionLinks from '@site/src/components/SectionLinks';
 <SectionLinks
   title="Build on Miden"
   links={[
-    { href: '../builder/get-started', label: 'Get Started', description: 'Install tools, create a wallet, and run your first transaction' },
-    { href: '../builder/smart-contracts', label: 'Smart Contracts', description: 'Reference for building contracts in Rust with the Miden SDK' },
-    { href: '../builder/', label: 'Builder Documentation', description: 'Tutorials, tools, and guides for developers' },
+    { href: '../builder/get-started', label: 'Get started', description: 'Install tools, create a wallet, and run your first transaction' },
+    { href: '../builder/smart-contracts', label: 'Smart contracts', description: 'Reference for building contracts in Rust with the Miden SDK' },
+    { href: '../builder/', label: 'Builder documentation', description: 'Tutorials, tools, and guides for developers' },
   ]}
 />

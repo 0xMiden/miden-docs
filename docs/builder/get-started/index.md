@@ -7,7 +7,7 @@ pagination_prev: null
 
 # Quick Start
 
-Welcome to Miden! This guide will get you up and running with the Miden blockchain by walking you through the essential setup and core operations.
+Welcome to Miden! This guide gets you up and running with the Miden blockchain by walking through the essential setup and core operations.
 
 ## What is Miden?
 
@@ -15,82 +15,32 @@ Miden is a privacy-focused, ZK-based blockchain that uses an actor model where e
 
 Key concepts you'll encounter:
 
-- **Accounts**: Smart contracts that hold assets and execute code
-- **Notes**: Messages that exchange data and assets between accounts - also programmable
-- **Assets**: Tokens that can be fungible or non-fungible
-- **Privacy**: Every transaction, note and account in Miden is private by default — only the involved parties can view asset amounts or transfer details, offering strong confidentiality guarantees.
+- **Accounts**: smart contracts that hold assets and execute code
+- **Notes**: messages that exchange data and assets between accounts — also programmable
+- **Assets**: tokens that can be fungible or non-fungible
+- **Privacy**: every transaction, note, and account in Miden is private by default — only the involved parties can view asset amounts or transfer details
 
-## Getting Started
+## Getting started
 
-Follow these guides in order to get started with Miden:
+Follow these guides in order:
 
-import DocCard from '@theme/DocCard';
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './setup/installation',
-        label: 'Installation',
-        description: 'Get started with Miden development by installing Miden tools using the midenup toolchain.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './setup/cli-basics',
-        label: 'CLI Basics',
-        description: 'Learn essential Miden CLI commands to create your wallet and mint your first tokens.',
-      }}
-    />
-  </div>
-</div>
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './accounts',
-        label: 'Accounts',
-        description: 'Learn how to create and manage Miden accounts programmatically using Rust and TypeScript.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './notes',
-        label: 'Notes & Transactions',
-        description: 'Learn Miden\'s unique note-based transaction model for private asset transfers.',
-      }}
-    />
-  </div>
-</div>
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './read-storage',
-        label: 'Read Storage Values',
-        description: 'Learn how to query account storage data and interact with deployed smart contracts.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './your-first-smart-contract',
-        label: 'Your First Smart Contract',
-        description: 'Learn to build, test, and deploy smart contracts on Miden using Rust.',
-      }}
-    />
-  </div>
-</div>
+<CardGrid cols={2}>
+  <Card title="Installation" href="./setup/installation" eyebrow="1. Set up">
+    Install the Miden toolchain with `midenup`.
+  </Card>
+  <Card title="CLI basics" href="./setup/cli-basics" eyebrow="2. CLI">
+    Essential Miden CLI commands — create a wallet and mint your first tokens.
+  </Card>
+  <Card title="Accounts" href="./accounts" eyebrow="3. Programmatic">
+    Create and manage Miden accounts programmatically in Rust and TypeScript.
+  </Card>
+  <Card title="Notes & transactions" href="./notes" eyebrow="4. Transfers">
+    Miden's note-based transaction model for private asset transfers.
+  </Card>
+  <Card title="Read storage" href="./read-storage" eyebrow="5. Query">
+    Query account storage data and interact with deployed smart contracts.
+  </Card>
+  <Card title="Your first smart contract" href="./your-first-smart-contract" eyebrow="6. Build">
+    Build, test, and deploy a smart contract on Miden using Rust.
+  </Card>
+</CardGrid>

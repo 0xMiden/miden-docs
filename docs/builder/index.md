@@ -4,179 +4,81 @@ sidebar_position: 0
 pagination_next: null
 ---
 
-# Miden Documentation
+# Build on Miden
 
-![Miden Docs Background](/img/docs-background.png)
+Accounts, notes, and transactions — authored in Rust, compiled to MASM, proved client-side.
 
-Miden is a zero-knowledge rollup for high-throughput, private applications. Build payments, DeFi, and asset management apps secured by Ethereum and Agglayer.
+<Callout variant="info" title="v0.13 · v0.14 in development">
+  v0.13 is the current stable release and the target of these docs. v0.14 ships with the next docs snapshot. See the [migration guide](./migration/) for what changed.
+</Callout>
 
-:::note
-Miden is on **v0.13** — approaching mainnet readiness for the 2026 launch.
-:::
+## Start here
 
-### Why Miden?
+<CardGrid cols={2}>
+  <Card title="Get started" href="./get-started" eyebrow="Install & run">
+    Install midenup, create a wallet, and send your first transaction — in under ten minutes.
+  </Card>
+  <Card title="Your first smart contract" href="./get-started/your-first-smart-contract" eyebrow="Tutorial">
+    Walk through writing, proving, and deploying a counter contract in Rust.
+  </Card>
+</CardGrid>
 
-- **Privacy by default** – Accounts and notes are private, with the network only storing cryptographic commitments
-- **Client-side execution** – Transactions are executed and proven locally, enabling parallel processing and lower fees
-- **Programmable everything** – Accounts are smart contracts, and notes can contain arbitrary logic
-- **Ethereum security** – Settled on Ethereum with validity proofs via the Agglayer
+## Build
 
-### Key Concepts
+<CardGrid cols={2}>
+  <Card title="Smart contracts" href="./smart-contracts" eyebrow="Reference">
+    Accounts, notes, storage, components, transactions — the full Rust SDK surface.
+  </Card>
+  <Card title="Tutorials" href="./tutorials/rust-compiler" eyebrow="Walkthroughs">
+    Real-world examples: the Miden Bank, private multisig, custom note scripts.
+  </Card>
+  <Card title="Guides" href="./guides" eyebrow="How-to">
+    Testing, debugging, and common pitfalls when writing Miden programs.
+  </Card>
+  <Card title="Tools" href="./tools" eyebrow="Clients & CLI">
+    Rust, Web, and React SDKs · playground · block explorer · CLI.
+  </Card>
+</CardGrid>
 
-- **Accounts** – Smart contracts that hold assets and execute custom logic
-- **Notes** – Programmable messages that transfer assets between accounts
-- **Transactions** – State changes proven locally using zero-knowledge proofs
+## Ship
 
-import DocCard from '@theme/DocCard';
+<CardGrid cols={2}>
+  <Card title="Migration" href="./migration" eyebrow="v0.13 → v0.14">
+    Breaking changes, renames, and new features across accounts, notes, transactions, MASM, and the client.
+  </Card>
+  <Card title="Miden Guardian" href="./miden-guardian" eyebrow="Account state">
+    Backup, sync, and coordinate private account state across devices.
+  </Card>
+  <Card title="Private multisig" href="./private-multisig" eyebrow="Solutions">
+    Multi-party threshold signature workflows built on Miden.
+  </Card>
+</CardGrid>
 
-## Getting Started
+## Reference
 
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './get-started',
-        label: 'Get Started',
-        description: 'Install Miden tools, create your first wallet, and build your first transaction.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './get-started/setup/installation',
-        label: 'Installation',
-        description: 'Set up your development environment with the midenup toolchain.',
-      }}
-    />
-  </div>
-</div>
+<CardGrid cols={2}>
+  <Card title="FAQ" href="./faq" eyebrow="Questions">
+    Frequently asked questions about Miden.
+  </Card>
+  <Card title="Glossary" href="./glossary" eyebrow="Terminology">
+    Key terms and definitions used throughout the docs.
+  </Card>
+</CardGrid>
 
-## Build on Miden
+## Community
 
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './smart-contracts',
-        label: 'Miden Smart Contracts',
-        description: 'Reference documentation for building Miden smart contracts in Rust.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './tutorials/rust-compiler',
-        label: 'Tutorials',
-        description: 'Step-by-step guides for building applications on Miden.',
-      }}
-    />
-  </div>
-</div>
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './guides',
-        label: 'Guides',
-        description: 'Testing, debugging, and common pitfalls for Miden development.',
-      }}
-    />
-  </div>
-</div>
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './miden-guardian',
-        label: 'Miden Guardian',
-        description: 'Backup, sync, and coordinate private account state with Guardian.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './private-multisig',
-        label: 'Private Multisig',
-        description: 'Multi-party threshold signature workflows on Miden.',
-      }}
-    />
-  </div>
-</div>
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './tools',
-        label: 'Tools',
-        description: 'Client SDKs, CLI, playground, and block explorer.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './migration',
-        label: 'Migration',
-        description: 'Upgrade guides for migrating between Miden versions.',
-      }}
-    />
-  </div>
-</div>
-
-## Resources
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './faq',
-        label: 'FAQ',
-        description: 'Frequently asked questions about Miden.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './glossary',
-        label: 'Glossary',
-        description: 'Key terms and definitions used in Miden.',
-      }}
-    />
-  </div>
-</div>
-
-### Community
-
-- [Telegram](https://t.me/BuildOnMiden) – Join the technical discussion
-- [GitHub](https://github.com/0xMiden) – Explore the source code
-- [Roadmap](https://miden.xyz/roadmap) – See what's coming next
+- [Telegram](https://t.me/BuildOnMiden) — technical discussion
+- [GitHub](https://github.com/0xMiden) — source code
+- [Roadmap](https://miden.xyz/roadmap) — what's coming next
 
 import SectionLinks from '@site/src/components/SectionLinks';
 
 <SectionLinks
-  title="Explore Core Concepts"
+  title="Explore core concepts"
   links={[
-    { href: '../core-concepts', label: 'Architecture Overview', description: 'Actor model, state design, and protocol fundamentals' },
-    { href: '../core-concepts#protocol-miden-base', label: 'Protocol Reference', description: 'Accounts, notes, state model, and transaction semantics' },
-    { href: '../core-concepts#virtual-machine-miden-vm', label: 'Virtual Machine', description: 'STARK-based VM, chiplets, and Miden Assembly' },
+    { href: '../core-concepts', label: 'Architecture overview', description: 'Actor model, state design, and protocol fundamentals' },
+    { href: '../core-concepts#protocol', label: 'Protocol reference', description: 'Accounts, notes, state model, and transaction semantics' },
+    { href: '../core-concepts#virtual-machine-miden-vm', label: 'Virtual machine', description: 'STARK-based VM, chiplets, and Miden Assembly' },
   ]}
 />
 

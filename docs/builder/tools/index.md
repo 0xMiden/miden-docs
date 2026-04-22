@@ -14,10 +14,6 @@ SDKs for integrating Miden into your applications:
 - **[Web SDK](./clients/)** — Browser-based client for managing accounts and transactions
 - **[React SDK](./clients/)** — React hooks and components for Miden dApps
 
-## CLI
-
-The **[Miden CLI](./cli/)** provides command-line tools for interacting with the Miden network — creating accounts, submitting transactions, syncing state, and more.
-
 ## Playground
 
 The **[Miden Playground](./playground)** is an interactive browser environment for writing and testing Miden assembly programs.

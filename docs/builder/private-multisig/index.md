@@ -54,45 +54,19 @@ sequenceDiagram
     Guardian->>Guardian: Mark canonical
 ```
 
-import DocCard from '@theme/DocCard';
-
 ## Learn more
 
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './core-concepts',
-        label: 'Core Concepts',
-        description: 'Transaction lifecycle, key architecture, and offline fallback.',
-      }}
-    />
-  </div>
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './rust-sdk',
-        label: 'Rust SDK',
-        description: 'miden-multisig-client — Rust SDK for multisig workflows.',
-      }}
-    />
-  </div>
-</div>
-
-<div className="row">
-  <div className="col col--6">
-    <DocCard
-      item={{
-        type: 'link',
-        href: './typescript-sdk',
-        label: 'TypeScript SDK',
-        description: '@openzeppelin/miden-multisig-client — TypeScript SDK.',
-      }}
-    />
-  </div>
-</div>
+<CardGrid cols={3}>
+  <Card title="Core concepts" href="./core-concepts" eyebrow="Under the hood">
+    Transaction lifecycle, key architecture, and offline fallback.
+  </Card>
+  <Card title="Rust SDK" href="./rust-sdk" eyebrow="miden-multisig-client">
+    Rust SDK for building multisig workflows.
+  </Card>
+  <Card title="TypeScript SDK" href="./typescript-sdk" eyebrow="@openzeppelin/miden-multisig-client">
+    TypeScript SDK for building multisig workflows.
+  </Card>
+</CardGrid>
 
 ## Repositories
 
