@@ -375,7 +375,7 @@
 
 .docusaurus-mermaid-container .nodeLabel {
   color: var(--color-text) !important;
-  font-family: "Manrope", var(--font-sans) !important;
+  font-family: var(--font-sans) !important;
   font-weight: 300 !important;
   letter-spacing: -0.01em !important;
 }
@@ -394,7 +394,7 @@
 }
 
 .docusaurus-mermaid-container .cluster-label .nodeLabel {
-  font-family: "Manrope", var(--font-sans) !important;
+  font-family: var(--font-sans) !important;
   font-weight: 400 !important;
   font-style: normal !important;
   color: color-mix(in oklab, var(--_mermaid-glow) 75%, var(--color-text)) !important;
@@ -424,7 +424,7 @@
 .docusaurus-mermaid-container .edgeLabel {
   background-color: transparent !important;
   color: color-mix(in oklab, var(--_mermaid-glow) 60%, var(--color-muted)) !important;
-  font-family: "Manrope", var(--font-sans) !important;
+  font-family: var(--font-sans) !important;
   font-weight: 300 !important;
   font-style: normal !important;
   letter-spacing: -0.01em !important;
@@ -451,7 +451,7 @@
 }
 
 .docusaurus-mermaid-container text.actor {
-  font-family: "Manrope", var(--font-sans) !important;
+  font-family: var(--font-sans) !important;
   fill: var(--color-text) !important;
   font-weight: 300 !important;
   letter-spacing: -0.02em !important;
@@ -464,7 +464,7 @@
 }
 
 .docusaurus-mermaid-container .messageText {
-  font-family: "Manrope", var(--font-sans) !important;
+  font-family: var(--font-sans) !important;
   fill: var(--color-text) !important;
   font-weight: 300 !important;
   letter-spacing: -0.01em !important;

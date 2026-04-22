@@ -219,7 +219,7 @@ const config: Config = {
       mermaid: {
         theme: { light: "neutral", dark: "dark" },
         options: {
-          fontFamily: '"Manrope", ui-sans-serif, system-ui, sans-serif',
+          fontFamily: '"Geist", ui-sans-serif, system-ui, sans-serif',
           fontSize: 14,
         },
       },
