@@ -231,7 +231,19 @@ const config: Config = {
       prism: {
         theme: prismThemes.oneLight,
         darkTheme: prismThemes.oneDark,
-        additionalLanguages: ["rust", "solidity", "toml", "yaml", "diff"],
+        additionalLanguages: [
+          "rust",
+          "solidity",
+          "toml",
+          "yaml",
+          "diff",
+          "bash",
+          "shell-session",
+          "docker",
+          "ignore",
+          "json",
+          "json5",
+        ],
       },
       navbar: {
         logo: {
