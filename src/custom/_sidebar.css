@@ -170,36 +170,13 @@ aside[class*="docSidebarContainer"] .menu__caret {
   box-sizing: border-box;
 }
 
-/* Unified site chevron — 7px border chevron that rotates on expand,
-   matching navbar dropdowns and <details>/<summary>. Overrides the
-   default Infima SVG caret so we get the same visual language
-   everywhere a disclosure control appears. */
+/* Smooth chevron rotation for categories */
+/* Also make arrow smaller and thinner (Infima default is 2rem - too large) */
 .menu__link--sublist-caret::after,
 .menu__caret::before {
-  content: "" !important;
-  display: inline-block;
-  width: 7px !important;
-  height: 7px !important;
-  background-image: none !important;
-  background: transparent !important;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(-45deg);
-  transform-origin: center;
-  transition: transform var(--t-base) var(--ease-out-expo);
-  opacity: 0.65;
-}
-
-/* Expanded (default) — chevron points down into the open content */
-.menu__list-item:not(.menu__list-item--collapsed) > .menu__list-item-collapsible > .menu__caret::before,
-.menu__list-item:not(.menu__list-item--collapsed) > .menu__link--sublist-caret::after {
-  transform: rotate(45deg);
-}
-
-/* Collapsed — chevron points right */
-.menu__list-item--collapsed > .menu__list-item-collapsible > .menu__caret::before,
-.menu__list-item--collapsed > .menu__link--sublist-caret::after {
-  transform: rotate(-45deg);
+  transition: transform 0.2s ease;
+  background-size: 1.25rem 1.25rem;
+  opacity: 0.6;
 }
 
 /* ==============================================
