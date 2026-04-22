@@ -185,6 +185,35 @@ ol ol ol {
   list-style-type: lower-roman;
 }
 
+/* ==========================================
+   Unified keyboard focus — one ring across all interactive elements.
+   Uses :focus-visible so mouse clicks don't paint focus.
+   ========================================== */
+
+:focus {
+  outline: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.menu__link:focus-visible,
+.pagination-nav__link:focus-visible,
+.table-of-contents__link:focus-visible,
+.breadcrumbs__link:focus-visible,
+.navbar__link:focus-visible,
+.navbar-cta:focus-visible,
+.card:focus-visible,
+.dropdown__link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
 /* Blockquote — match the Callout/Card aesthetic: hairline border,
    flush-left muted accent bar, subtle surface tint. */
 blockquote {
