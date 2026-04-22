@@ -324,16 +324,27 @@ code {
   content: "";
 }
 
-/* Custom caret — small chevron */
+/* Custom caret — mask-based SVG chevron.
+   A rotated-border chevron was visually off-center and felt too small
+   once the summary font dropped to 11px. Use a proper SVG mask instead:
+   pixel-aligned, centered, and rotates cleanly. */
 .theme-doc-markdown details > summary::before {
   content: "";
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
   flex-shrink: 0;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(-45deg);
+  background: currentColor;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'><path d='m4.5 2.5 4 3.5-4 3.5' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'><path d='m4.5 2.5 4 3.5-4 3.5' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  transform-origin: center;
   transition: transform var(--t-base) var(--ease-out-expo);
+  opacity: 0.75;
 }
 
 .theme-doc-markdown details[open] > summary {
@@ -342,7 +353,8 @@ code {
 }
 
 .theme-doc-markdown details[open] > summary::before {
-  transform: rotate(45deg);
+  transform: rotate(90deg);
+  opacity: 1;
 }
 
 .theme-doc-markdown details > :not(summary) {
