@@ -45,27 +45,81 @@
 }
 
 /* ==========================================
-   14) TOC (right sidebar)
+   14) TOC (right sidebar) — scrollspy with animated active bar
    ========================================== */
 
-/* TOC links styling */
+.theme-doc-toc-desktop {
+  position: sticky;
+  top: calc(var(--navbar-height) + 1rem);
+  max-height: calc(100vh - var(--navbar-height) - 2rem);
+  overflow-y: auto;
+}
+
+/* Mono eyebrow above the TOC list */
+.theme-doc-toc-desktop::before {
+  content: "On this page";
+  display: block;
+  margin: 0 0 0.75rem 0.75rem;
+  font-family: var(--font-eyebrow);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
 .table-of-contents {
   font-family: var(--font-sans);
-  letter-spacing: 0.01rem;
-  border-left: 1px solid var(--ifm-border-color);
-  padding-left: var(--space-4);
-  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  border-left: none;
+  padding-left: 0;
+  font-size: 13px;
 }
 
 .table-of-contents__link {
-  color: var(--color-text);
+  position: relative;
   display: block;
-  padding: 0.286rem 0;
+  padding: 0.25rem 0 0.25rem 0.75rem;
+  color: var(--color-muted);
+  transition: color var(--t-fast) linear;
+  line-height: 1.5;
 }
 
+.table-of-contents__link:hover {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+/* Default subtle 1px rail for every item */
+.table-of-contents__link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 0;
+  background: var(--color-border);
+  transition:
+    height var(--t-base) var(--ease-out-expo),
+    background-color var(--t-fast) linear,
+    width var(--t-fast) linear;
+}
+
+.table-of-contents__link:hover::before {
+  height: 70%;
+}
+
+/* Active — ember 2px bar that grows to full item height */
 .table-of-contents__link--active {
-  color: var(--ifm-color-primary);
-  font-weight: 500;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.table-of-contents__link--active::before {
+  width: 2px;
+  height: 100%;
+  background-color: var(--color-brand);
 }
 
 /* ==========================================
