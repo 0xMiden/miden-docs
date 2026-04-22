@@ -2,40 +2,34 @@ import React from "react";
 import styles from "./styles.module.css";
 
 /**
- * A stylized "private state → public commitment" visualization for the
- * landing hero. Inside a terminal-like frame we render:
+ * A 6-stage, ~8s looping animation of the Miden transaction lifecycle:
  *
- *   1. A stack of redacted bars of varying widths — the private account
- *      state nobody but the user sees. Muted base color, subtle shimmer.
- *   2. A padlock/seal mark centered on the stack — the privacy boundary.
- *   3. An ember scan-line sweeps across, briefly highlighting bars in
- *      ember as it passes (suggesting proof generation in progress).
- *   4. A "commitment" strip below with a cycling hex hash — the single
- *      piece of data actually published on-chain.
+ *   1. COMPOSE  — redacted transaction rows draw in on the client side
+ *   2. PROVE    — ember sweep scans; a proof glyph materializes below
+ *   3. SUBMIT   — the proof slides right along a dashed arrow to the sequencer
+ *   4. BATCH    — three sibling proofs join ours; they compress into a single batch block
+ *   5. COMMIT   — the bottom chrome row populates a public hex commitment
+ *   6. SEALED   — a green "sealed" pill fades in, brief hold, loop
  *
- * Pure SVG + CSS. Respects prefers-reduced-motion via the global guard.
+ * Pure SVG + CSS. No canvas, no JS. Respects prefers-reduced-motion via
+ * the global guard in _motion.css.
  */
 export default function HeroVisual(): JSX.Element {
-  const vbWidth = 300;
+  const vbWidth = 380;
   const vbHeight = 220;
 
-  // Redacted bars — the "private state" of the account, shown as
-  // ragged-right paragraph blocks. Each entry is [y-position, width%].
-  const bars: Array<{ y: number; w: number; delay: number }> = [
-    { y: 28, w: 78, delay: 0 },
-    { y: 46, w: 58, delay: 120 },
-    { y: 64, w: 84, delay: 240 },
-    { y: 82, w: 42, delay: 360 },
-    { y: 108, w: 68, delay: 520 },
-    { y: 126, w: 90, delay: 640 },
-    { y: 144, w: 52, delay: 760 },
-    { y: 162, w: 72, delay: 880 },
+  // Client-side redacted rows — the tx being built.
+  const clientBars: Array<{ y: number; w: number }> = [
+    { y: 46, w: 80 },
+    { y: 66, w: 62 },
+    { y: 86, w: 90 },
+    { y: 106, w: 48 },
   ];
 
   return (
     <div className={styles.root} aria-hidden="true">
       <div className={styles.frame}>
-        {/* top chrome row */}
+        {/* top chrome */}
         <div className={styles.chromeTop}>
           <svg
             className={styles.lockIcon}
@@ -62,7 +56,7 @@ export default function HeroVisual(): JSX.Element {
             />
           </svg>
           <span className={styles.chromeLabel}>
-            Private state · Account 0x…A3F9
+            Client-side proving · private batch
           </span>
           <span className={styles.chromeStatus}>
             <span className={styles.chromeDot} />
@@ -70,7 +64,7 @@ export default function HeroVisual(): JSX.Element {
           </span>
         </div>
 
-        {/* body */}
+        {/* body SVG */}
         <svg
           className={styles.lattice}
           viewBox={`0 0 ${vbWidth} ${vbHeight}`}
@@ -78,97 +72,192 @@ export default function HeroVisual(): JSX.Element {
           role="presentation"
         >
           <defs>
-            {/* subtle diagonal sweep (top→bottom left-weighted) */}
-            <linearGradient id="privSweep" x1="0" y1="0" x2="0" y2="1">
+            {/* ember sweep gradient */}
+            <linearGradient id="txSweep" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="transparent" />
               <stop
-                offset="42%"
+                offset="45%"
                 stopColor="var(--color-brand)"
-                stopOpacity="0.75"
+                stopOpacity="0.9"
               />
               <stop
-                offset="58%"
+                offset="55%"
                 stopColor="var(--color-brand)"
-                stopOpacity="0.75"
+                stopOpacity="0.9"
               />
               <stop offset="100%" stopColor="transparent" />
             </linearGradient>
 
-            {/* gradient for the redacted bars so they feel "alive" */}
-            <linearGradient id="privBar" x1="0" y1="0" x2="1" y2="0">
+            {/* redacted bar gradient */}
+            <linearGradient id="txBar" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="var(--color-border-strong)" />
               <stop offset="100%" stopColor="var(--color-border)" />
             </linearGradient>
           </defs>
 
-          {/* panel label — PRIVATE on the left edge, vertically written */}
-          <g className={styles.labelRow}>
-            <text
-              x="14"
-              y="22"
-              className={styles.panelLabel}
-            >
-              private
+          {/* ================== CLIENT ZONE (x: 14..150) ================== */}
+          <g className={styles.clientZone}>
+            <text x="14" y="28" className={styles.zoneLabel}>
+              Client
             </text>
             <line
-              x1="52"
-              y1="18"
-              x2={vbWidth - 14}
-              y2="18"
+              x1="54"
+              y1="24"
+              x2="150"
+              y2="24"
               className={styles.labelRule}
             />
+
+            {/* redacted tx rows */}
+            {clientBars.map((b, i) => (
+              <rect
+                key={`cbar-${i}`}
+                x="14"
+                y={b.y}
+                width={(136 * b.w) / 100}
+                height="6"
+                rx="2"
+                ry="2"
+                fill="url(#txBar)"
+                className={styles.clientBar}
+                style={{ animationDelay: `${i * 120}ms` }}
+              />
+            ))}
+
+            {/* proof glyph (client-side) */}
+            <g className={styles.proofGlyph}>
+              <rect
+                x="18"
+                y="140"
+                width="32"
+                height="22"
+                rx="4"
+                ry="4"
+                className={styles.proofBox}
+              />
+              <text x="34" y="156" className={styles.proofGlyphText}>
+                π
+              </text>
+            </g>
           </g>
 
-          {/* redacted bars */}
-          {bars.map((b, i) => {
-            const x = 14;
-            const maxWidth = vbWidth - 28;
-            const w = (maxWidth * b.w) / 100;
-            return (
-              <rect
-                key={`bar-${i}`}
-                x={x}
-                y={b.y}
-                width={w}
-                height={6}
-                rx={2}
-                ry={2}
-                fill="url(#privBar)"
-                className={styles.bar}
-                style={{ animationDelay: `${b.delay}ms` }}
-              />
-            );
-          })}
-
-          {/* center seal — a subtle key/lock circle that sits on top of bars */}
-          <g transform={`translate(${vbWidth - 60} ${110})`}>
-            <circle
-              cx="0"
-              cy="0"
-              r="22"
-              className={styles.sealRing}
-            />
-            <circle
-              cx="0"
-              cy="0"
-              r="14"
-              className={styles.sealInner}
+          {/* ================== FLOW ZONE (x: 150..236) ================== */}
+          <g className={styles.flowZone}>
+            {/* dashed arrow */}
+            <line
+              x1="150"
+              y1="151"
+              x2="232"
+              y2="151"
+              className={styles.flowLine}
             />
             <path
-              d="M-4 -1 a4 4 0 0 1 8 0"
-              className={styles.sealShackle}
+              d="M229 147 L236 151 L229 155"
+              className={styles.flowArrow}
             />
+
+            {/* travelling proof mote */}
             <rect
-              x="-5"
-              y="-1"
-              width="10"
-              height="8"
-              rx="1.5"
-              className={styles.sealBody}
+              x="150"
+              y="141"
+              width="18"
+              height="20"
+              rx="3"
+              ry="3"
+              className={styles.flowMote}
             />
           </g>
 
-          {/* public divider — thin dashed line at the bottom of the panel */}
+          {/* ================== SEQUENCER ZONE (x: 236..366) ================== */}
+          <g className={styles.seqZone}>
+            <text x="236" y="28" className={styles.zoneLabel}>
+              Sequencer
+            </text>
+            <line
+              x1="300"
+              y1="24"
+              x2="366"
+              y2="24"
+              className={styles.labelRule}
+            />
+
+            {/* sibling proofs (stagger in, then collapse into batch) */}
+            <rect
+              x="248"
+              y="46"
+              width="24"
+              height="16"
+              rx="3"
+              ry="3"
+              className={`${styles.siblingProof} ${styles.sib1}`}
+            />
+            <rect
+              x="280"
+              y="46"
+              width="24"
+              height="16"
+              rx="3"
+              ry="3"
+              className={`${styles.siblingProof} ${styles.sib2}`}
+            />
+            <rect
+              x="248"
+              y="68"
+              width="24"
+              height="16"
+              rx="3"
+              ry="3"
+              className={`${styles.siblingProof} ${styles.sib3}`}
+            />
+            <rect
+              x="312"
+              y="46"
+              width="24"
+              height="16"
+              rx="3"
+              ry="3"
+              className={`${styles.siblingProof} ${styles.sib4}`}
+            />
+
+            {/* arriving proof slot — this is where our proof lands */}
+            <rect
+              x="280"
+              y="68"
+              width="24"
+              height="16"
+              rx="3"
+              ry="3"
+              className={styles.arrivingProof}
+            />
+
+            {/* batch block — all proofs fuse into this single commitment */}
+            <g className={styles.batchGroup}>
+              <rect
+                x="262"
+                y="102"
+                width="76"
+                height="42"
+                rx="6"
+                ry="6"
+                className={styles.batchBlock}
+              />
+              <text x="300" y="128" className={styles.batchLabel}>
+                BATCH
+              </text>
+            </g>
+          </g>
+
+          {/* ember sweep (runs during the PROVE stage only) */}
+          <rect
+            x={0}
+            y={-vbHeight}
+            width="160"
+            height={vbHeight * 0.55}
+            fill="url(#txSweep)"
+            className={styles.sweep}
+          />
+
+          {/* public commitment divider at bottom */}
           <line
             x1="14"
             y1={vbHeight - 14}
@@ -176,31 +265,21 @@ export default function HeroVisual(): JSX.Element {
             y2={vbHeight - 14}
             className={styles.divider}
           />
-
-          {/* ember sweep overlay */}
-          <rect
-            x={0}
-            y={-vbHeight}
-            width={vbWidth}
-            height={vbHeight * 0.45}
-            fill="url(#privSweep)"
-            className={styles.sweep}
-          />
         </svg>
 
-        {/* bottom chrome — the public commitment (hash) + verified pill */}
+        {/* bottom chrome — public commitment + verified */}
         <div className={styles.chromeBottom}>
           <span className={styles.chromeLabel}>Public commitment</span>
           <code className={styles.hashValue}>
             0x
-            <span data-anim-cycle>a3</span>
-            <span data-anim-cycle>f9</span>
-            <span data-anim-cycle>12</span>
-            <span data-anim-cycle>7b</span>
-            <span data-anim-cycle>e0</span>
-            <span data-anim-cycle>4c</span>
-            <span data-anim-cycle>55</span>
-            <span data-anim-cycle>d8</span>
+            <span className={styles.hashPiece} data-delay="0">a3</span>
+            <span className={styles.hashPiece} data-delay="1">f9</span>
+            <span className={styles.hashPiece} data-delay="2">12</span>
+            <span className={styles.hashPiece} data-delay="3">7b</span>
+            <span className={styles.hashPiece} data-delay="4">e0</span>
+            <span className={styles.hashPiece} data-delay="5">4c</span>
+            <span className={styles.hashPiece} data-delay="6">55</span>
+            <span className={styles.hashPiece} data-delay="7">d8</span>
             …
           </code>
           <span className={styles.verifyBadge}>
@@ -224,7 +303,7 @@ export default function HeroVisual(): JSX.Element {
         </div>
       </div>
 
-      {/* decorative soft ember glow behind the whole thing */}
+      {/* decorative ember halo */}
       <div className={styles.glow} aria-hidden="true" />
     </div>
   );

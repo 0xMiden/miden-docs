@@ -60,10 +60,9 @@ export default function Home(): JSX.Element {
                 Build scalable, private applications.
               </h1>
               <p className={styles.heroSub}>
-                Miden is a zero-knowledge rollup with client-side proving
-                and private-by-default accounts and notes. Write Rust
-                contracts, compile to MASM, and ship apps whose state
-                stays with the user while correctness stays on-chain.
+                A zero-knowledge rollup with client-side proving.
+                Accounts and notes are private by default — only
+                commitments go on-chain.
               </p>
               <div className={styles.ctaRow}>
                 <Link
