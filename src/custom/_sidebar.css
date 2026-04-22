@@ -338,9 +338,98 @@ aside[class*="docSidebarContainer"] .menu__caret {
   }
 }
 
-/* Navbar mobile sidebar inherits these styles */
+/* ==========================================
+   4.5) MOBILE SIDEBAR (navbar hamburger)
+   ========================================== */
+
 .navbar-sidebar .menu__list-item-collapsible {
   border-radius: var(--radius-md);
+}
+
+.navbar-sidebar {
+  background: var(--color-bg);
+  border-right: 1px solid var(--color-border);
+}
+
+.navbar-sidebar__brand {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.navbar-sidebar__close {
+  color: var(--color-muted);
+  transition: color var(--t-base) var(--ease-out-expo);
+}
+
+.navbar-sidebar__close:hover {
+  color: var(--color-text);
+}
+
+.navbar-sidebar__items {
+  padding: 0.5rem 0.25rem;
+}
+
+.navbar-sidebar__item {
+  padding: 0.5rem;
+}
+
+.navbar-sidebar__back {
+  font-family: var(--font-eyebrow);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  margin: 0.5rem;
+  transition:
+    color var(--t-base) var(--ease-out-expo),
+    border-color var(--t-base) var(--ease-out-expo),
+    background var(--t-base) var(--ease-out-expo);
+}
+
+.navbar-sidebar__back:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-hover);
+}
+
+/* Menu rows inside the mobile sheet */
+.navbar-sidebar .menu__link {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text);
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--radius-md);
+  transition: background var(--t-fast) var(--ease-out-expo);
+}
+
+.navbar-sidebar .menu__link:hover,
+.navbar-sidebar .menu__link--active {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.navbar-sidebar .menu__link--active {
+  font-weight: 600;
+}
+
+/* Mobile section HTML labels (our `sidebar-section` eyebrow reused) */
+.navbar-sidebar .sidebar-section {
+  margin: 0.75rem 0.25rem 0.25rem;
+  padding: 0 0.5rem 0.375rem;
+}
+
+/* Backdrop overlay */
+.navbar-sidebar__backdrop,
+[class*="navbar-sidebar__backdrop"] {
+  background: color-mix(in oklab, var(--color-bg) 55%, rgba(0, 0, 0, 0.55));
+  backdrop-filter: saturate(1.2) blur(8px);
+  -webkit-backdrop-filter: saturate(1.2) blur(8px);
 }
 
 /* ==========================================
