@@ -324,15 +324,16 @@ code {
   content: "";
 }
 
-/* Custom caret — small chevron */
+/* Unified site chevron — 45deg closed (points down), -135deg open (up) */
 .theme-doc-markdown details > summary::before {
   content: "";
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   flex-shrink: 0;
   border-right: 1.5px solid currentColor;
   border-bottom: 1.5px solid currentColor;
-  transform: rotate(-45deg);
+  transform: rotate(45deg);
+  transform-origin: center;
   transition: transform var(--t-base) var(--ease-out-expo);
 }
 
@@ -342,7 +343,7 @@ code {
 }
 
 .theme-doc-markdown details[open] > summary::before {
-  transform: rotate(45deg);
+  transform: rotate(-135deg);
 }
 
 .theme-doc-markdown details > :not(summary) {
