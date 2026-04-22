@@ -74,7 +74,7 @@ export default function Home(): JSX.Element {
                   <span aria-hidden="true">→</span>
                 </Link>
                 <Link
-                  to="https://github.com/0xMiden/miden-client#installation"
+                  to="https://github.com/0xMiden/midenup"
                   className={styles.ctaSecondary}
                 >
                   <code>curl midenup.sh | sh</code>
@@ -185,7 +185,7 @@ export default function Home(): JSX.Element {
               <h3>Install</h3>
               <ul>
                 <li>
-                  <Link to="/builder/get-started">midenup</Link>
+                  <Link to="https://github.com/0xMiden/midenup">midenup</Link>
                 </li>
                 <li>
                   <Link to="/builder/tools/clients/web-client">
