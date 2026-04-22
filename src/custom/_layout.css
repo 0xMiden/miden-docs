@@ -18,13 +18,13 @@
   }
 }
 
-/* Title wordmark (MIDEN) — mono-spaced, tracked-out, next to the logo */
+/* Title wordmark (MIDEN) — same sans family as the nav labels,
+   lightly tracked so it still reads as a brand mark. */
 .navbar__title {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   color: var(--color-text);
 }
 
