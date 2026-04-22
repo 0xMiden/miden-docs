@@ -578,9 +578,7 @@
    mermaid) are untouched. */
 .theme-doc-markdown table,
 article table {
-  display: block;
-  max-width: 100%;
-  overflow-x: auto;
+  width: 100%;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-card-bg);
@@ -588,6 +586,7 @@ article table {
   border-spacing: 0;
   margin: 1.5rem 0;
   box-shadow: var(--shadow-sm);
+  overflow: hidden; /* clip content at the rounded corners */
 }
 
 .theme-doc-markdown thead,
@@ -607,7 +606,6 @@ article th {
   text-align: left;
   border: none !important;
   background: transparent;
-  white-space: nowrap;
 }
 
 .theme-doc-markdown td,
@@ -619,6 +617,7 @@ article td {
   border-top: 1px solid var(--color-border);
   border-left: none !important;
   border-right: none !important;
+  border-bottom: none !important;
   background: transparent;
 }
 
@@ -632,16 +631,6 @@ article tbody tr {
 .theme-doc-markdown tbody tr:hover,
 article tbody tr:hover {
   background: var(--color-surface);
-}
-
-.theme-doc-markdown tbody tr:first-child td,
-article tbody tr:first-child td {
-  border-top: 1px solid var(--color-border);
-}
-
-.theme-doc-markdown thead + tbody tr:first-child td,
-article thead + tbody tr:first-child td {
-  border-top: 1px solid var(--color-border);
 }
 
 /* Inline code inside tables stays legible */
