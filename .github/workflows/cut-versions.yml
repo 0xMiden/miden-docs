@@ -151,7 +151,13 @@ jobs:
 
           # Clean directories that will be re-synced (v0.4 nested paths)
           rm -rf docs/core-concepts/protocol docs/core-concepts/miden-vm docs/core-concepts/node docs/core-concepts/compiler
-          rm -rf docs/builder/tools/clients docs/builder/tools/cli
+          # tools/clients: only clean ingested subdirs; preserve locally-authored web-client/, react-sdk/, index.md
+          rm -rf docs/builder/tools/clients/rust-client
+          rm -rf docs/builder/tools/clients/img
+          rm -rf docs/builder/tools/clients/theme
+          rm -f  docs/builder/tools/clients/common-errors.md
+          rm -f  docs/builder/tools/clients/_category_.yml
+          rm -rf docs/builder/tools/cli
           rm -rf docs/builder/tutorials/miden-bank docs/builder/tutorials/index.md
           # Note: docs/builder/tutorials/rust-compiler/ is NOT cleaned to preserve local guides (testing, debugging, pitfalls)
 
@@ -190,14 +196,18 @@ jobs:
 
           if [ -d "vendor/miden-client/docs/external/src" ]; then
             mkdir -p docs/builder/tools/clients
-            cp -r vendor/miden-client/docs/external/src/* docs/builder/tools/clients/
-            echo "Synced miden-client → docs/builder/tools/clients"
-
-            # Move CLI to its own section under tools
-            if [ -d "docs/builder/tools/clients/cli" ]; then
-              mv docs/builder/tools/clients/cli docs/builder/tools/cli
-              echo "Moved CLI → docs/builder/tools/cli"
-            fi
+            # Selective ingestion: only subdirs/files we still auto-sync from miden-client.
+            # web-client/, react-sdk/, and top-level index.md are locally authored in the docs repo
+            # — they are preserved through this clean/ingest cycle.
+            for name in rust-client img theme; do
+              src="vendor/miden-client/docs/external/src/$name"
+              [ -d "$src" ] && cp -r "$src" docs/builder/tools/clients/
+            done
+            for name in common-errors.md _category_.yml; do
+              src="vendor/miden-client/docs/external/src/$name"
+              [ -f "$src" ] && cp "$src" docs/builder/tools/clients/
+            done
+            echo "Synced miden-client (rust-client, img, theme, common-errors, _category_) → docs/builder/tools/clients"
           fi
 
           echo "Content aggregation complete. Final docs structure:"
@@ -226,7 +236,13 @@ jobs:
           rm -rf docs/core-concepts/miden-vm
           rm -rf docs/core-concepts/node
           rm -rf docs/core-concepts/compiler
-          rm -rf docs/builder/tools/clients docs/builder/tools/cli
+          # tools/clients: only clean ingested subdirs; preserve locally-authored web-client/, react-sdk/, index.md
+          rm -rf docs/builder/tools/clients/rust-client
+          rm -rf docs/builder/tools/clients/img
+          rm -rf docs/builder/tools/clients/theme
+          rm -f  docs/builder/tools/clients/common-errors.md
+          rm -f  docs/builder/tools/clients/_category_.yml
+          rm -rf docs/builder/tools/cli
           rm -rf docs/builder/tutorials/miden-bank docs/builder/tutorials/index.md
           # Note: docs/builder/tutorials/rust-compiler/ is authored content (testing, debugging, pitfalls), not cleaned
 
