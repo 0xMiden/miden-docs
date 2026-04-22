@@ -140,8 +140,8 @@ export default function Home(): JSX.Element {
               <pre className={styles.codeShellBody}>
                 <code>
                   <span className={styles.codeKw}>use</span> miden::
-                  {"{"}component, felt, Felt, StorageMap, StorageMapAccess,
-                  Word{"}"};{"\n\n"}
+                  {"{"}component, Felt, StorageMap, StorageMapAccess, Word
+                  {"}"};{"\n\n"}
                   #[<span className={styles.codeFn}>component</span>]{"\n"}
                   <span className={styles.codeKw}>struct</span>{" "}
                   <span className={styles.codeFn}>CounterContract</span> {"{"}
@@ -168,7 +168,8 @@ export default function Home(): JSX.Element {
                   Word::from_u64_unchecked(0, 0, 0, 1);{"\n"}
                   {"        "}
                   <span className={styles.codeKw}>let</span> next:
-                  Felt = self.count_map.get(&amp;key) + felt!(1);{"\n"}
+                  Felt = self.count_map.get(&amp;key) + Felt::
+                  <span className={styles.codeFn}>from_u32</span>(1);{"\n"}
                   {"        "}self.count_map.set(key, next);{"\n"}
                   {"        "}next{"\n"}
                   {"    "}{"}"}{"\n"}
