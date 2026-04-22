@@ -6,52 +6,38 @@ description: "Learn to build Miden smart contracts using Rust with the Miden Rus
 
 # Rust Compiler
 
-The Miden Rust compiler allows you to write smart contracts in Rust and compile them to Miden Assembly (MASM). This section provides tutorials and reference documentation for developing with the Rust compiler.
+The Miden Rust compiler lets you write smart contracts in Rust and compile them to Miden Assembly (MASM). This section covers tutorials and reference documentation for building with the Rust compiler.
 
-## Getting Started
+## Getting started
 
-If you're new to the Miden Rust compiler, start with the **Miden Bank Tutorial** - a comprehensive, step-by-step guide that teaches all the core concepts through building a complete banking application.
+If you're new to the Miden Rust compiler, start with the **Miden Bank tutorial** — a comprehensive, step-by-step guide that teaches all the core concepts through building a complete banking application.
 
-<div className="row margin-bottom--lg">
-  <div className="col col--6">
-    <div className="card">
-      <div className="card__header">
-        <h3>Miden Bank Tutorial</h3>
-      </div>
-      <div className="card__body">
-        <p>Build a complete banking application while learning:</p>
-        <ul>
-          <li>Account components and storage</li>
-          <li>Note scripts and transaction scripts</li>
-          <li>Asset management</li>
-          <li>Cross-component calls</li>
-          <li>Output note creation</li>
-        </ul>
-      </div>
-      <div className="card__footer">
-        <a className="button button--primary button--block" href="../miden-bank/">Start Tutorial</a>
-      </div>
-    </div>
-  </div>
-</div>
+<CardGrid cols={2}>
+  <Card title="Miden Bank tutorial" href="../miden-bank/" eyebrow="Walkthrough">
+    Build a complete banking application while learning account components, note and transaction scripts, asset management, cross-component calls, and output note creation.
+  </Card>
+  <Card title="Rust SDK reference" href="../../smart-contracts/" eyebrow="Reference">
+    Types, macros, storage, APIs, and more — detailed reference documentation for the Miden Rust SDK.
+  </Card>
+</CardGrid>
 
-## Rust Smart Contract Reference
+## Supplementary guides
 
-For detailed reference documentation on the Miden Rust SDK — types, macros, storage, APIs, and more — see the **[Rust Smart Contract Reference](../../smart-contracts/)**.
+<CardGrid cols={3}>
+  <Card title="Testing with MockChain" href="../../guides/testing" eyebrow="Guide">
+    Test your contracts using MockChain for local blockchain simulation.
+  </Card>
+  <Card title="Debugging" href="../../guides/debugging" eyebrow="Guide">
+    Interpret errors and debug common issues.
+  </Card>
+  <Card title="Common pitfalls" href="../../guides/pitfalls" eyebrow="Guide">
+    Avoid known issues and limitations.
+  </Card>
+</CardGrid>
 
-## Supplementary Guides
+## Source code
 
-| Guide | Description |
-|-------|-------------|
-| [Testing with MockChain](../../guides/testing) | Learn to test your contracts using MockChain for local blockchain simulation |
-| [Debugging Guide](../../guides/debugging) | Interpret errors and debug common issues |
-| [Common Pitfalls](../../guides/pitfalls) | Avoid known issues and limitations |
-
-## Source Code
-
-The complete source code for the Miden Bank example is available at:
-
-**[github.com/keinberger/miden-bank](https://github.com/keinberger/miden-bank)**
+The complete source code for the Miden Bank example is available at **[github.com/keinberger/miden-bank](https://github.com/keinberger/miden-bank)**.
 
 ## Prerequisites
 
