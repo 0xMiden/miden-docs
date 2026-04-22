@@ -1,4 +1,43 @@
 /* ==========================================
+   4.9) HEADING ANCHOR LINKS
+   A subtle mono "#" glyph that fades in when you hover the heading.
+   ========================================== */
+
+.theme-doc-markdown .hash-link {
+  margin-left: 0.375rem;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--color-muted);
+  text-decoration: none !important;
+  opacity: 0;
+  transform: translateX(-2px);
+  transition:
+    opacity var(--t-base) var(--ease-out-expo),
+    transform var(--t-base) var(--ease-out-expo),
+    color var(--t-fast) linear;
+}
+
+.theme-doc-markdown .hash-link::before {
+  content: "#";
+}
+
+.theme-doc-markdown h1:hover .hash-link,
+.theme-doc-markdown h2:hover .hash-link,
+.theme-doc-markdown h3:hover .hash-link,
+.theme-doc-markdown h4:hover .hash-link,
+.theme-doc-markdown h5:hover .hash-link,
+.theme-doc-markdown h6:hover .hash-link,
+.theme-doc-markdown .hash-link:focus-visible {
+  opacity: 0.7;
+  transform: translateX(0);
+}
+
+.theme-doc-markdown .hash-link:hover {
+  color: var(--color-brand);
+  opacity: 1 !important;
+}
+
+/* ==========================================
    5) BREADCRUMBS — de-pilled, mono separators
    ========================================== */
 
