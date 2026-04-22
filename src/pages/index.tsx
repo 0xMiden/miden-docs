@@ -1,5 +1,264 @@
-import { Redirect } from "@docusaurus/router";
+import React from "react";
+import Link from "@docusaurus/Link";
+import Layout from "@theme/Layout";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import HeroVisual from "@site/src/components/HeroVisual";
+import styles from "./index.module.css";
 
-export default function Home() {
-  return <Redirect to="/builder" />;
+type Role = {
+  eyebrow: string;
+  title: string;
+  desc: string;
+  to: string;
+};
+
+const ROLES: Role[] = [
+  {
+    eyebrow: "Smart contract dev",
+    title: "Build private contracts in Rust",
+    desc: "Write accounts, notes, and transactions with the Miden SDK. Compile to MASM, test locally, deploy to testnet.",
+    to: "/builder/smart-contracts",
+  },
+  {
+    eyebrow: "Integrating Miden",
+    title: "Wire Miden into your app",
+    desc: "Web and React SDKs for wallet flows, private notes, and client-side proving. Signer integrations out of the box.",
+    to: "/builder/tools",
+  },
+  {
+    eyebrow: "Protocol curious",
+    title: "Understand the zkVM",
+    desc: "Protocol specs, VM internals, constraints, and the path from Rust → MASM → proof.",
+    to: "/core-concepts",
+  },
+  {
+    eyebrow: "zk researcher",
+    title: "Dig into Miden VM",
+    desc: "Execution trace, chiplets, advice provider, and the recursive proof pipeline.",
+    to: "/core-concepts/miden-vm",
+  },
+];
+
+export default function Home(): JSX.Element {
+  const { siteConfig } = useDocusaurusContext();
+
+  return (
+    <Layout
+      title={siteConfig.title}
+      description="Build verifiable, private applications on Miden — a zk-first Layer 1 with client-side proving and native privacy."
+    >
+      <main className={styles.page}>
+        {/* ---- HERO ---- */}
+        <section className={styles.hero}>
+          <div className={styles.heroInner}>
+            <div>
+              <div className={styles.eyebrow}>
+                <span className={styles.eyebrowDot} aria-hidden="true" />
+                Private by design · Verifiable by default
+              </div>
+              <h1 className={styles.heroTitle}>
+                Build applications that prove themselves.
+              </h1>
+              <p className={styles.heroSub}>
+                Miden is a zk-first Layer 1 with client-side proving, hidden
+                state, and native privacy. Write Rust contracts, compile to
+                MASM, and ship applications whose integrity is verifiable
+                without surrendering user data.
+              </p>
+              <div className={styles.ctaRow}>
+                <Link
+                  to="/builder/get-started"
+                  className={styles.ctaPrimary}
+                >
+                  Start building
+                  <span aria-hidden="true">→</span>
+                </Link>
+                <Link
+                  to="https://github.com/0xMiden/miden-client#installation"
+                  className={styles.ctaSecondary}
+                >
+                  <code>curl midenup.sh | sh</code>
+                </Link>
+              </div>
+            </div>
+            <div className={styles.heroVisual}>
+              <HeroVisual />
+            </div>
+          </div>
+        </section>
+
+        {/* ---- ROLE CARDS ---- */}
+        <section className={styles.section}>
+          <p className={styles.sectionEyebrow}>Start a path</p>
+          <h2 className={styles.sectionTitle}>Pick where you land.</h2>
+          <div className={styles.roleGrid}>
+            {ROLES.map((r) => (
+              <Link key={r.to} to={r.to} className={styles.roleCard}>
+                <span className={styles.roleEyebrow}>{r.eyebrow}</span>
+                <h3 className={styles.roleTitle}>{r.title}</h3>
+                <p className={styles.roleDesc}>{r.desc}</p>
+                <span className={styles.roleArrow} aria-hidden="true">→</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* ---- TRY IT NOW ---- */}
+        <section className={styles.tryItNow}>
+          <div className={styles.tryItNowInner}>
+            <div className={styles.tryItNowCopy}>
+              <p className={styles.sectionEyebrow}>Peek under the hood</p>
+              <h2 className={styles.sectionTitle}>
+                A counter account, in Rust.
+              </h2>
+              <p className={styles.heroSub}>
+                Smart contracts on Miden are plain Rust crates. Storage is
+                typed, functions are `#[component]`-annotated, and state
+                transitions are proved client-side before a single byte hits
+                the network.
+              </p>
+              <div className={styles.ctaRow}>
+                <Link
+                  to="/builder/get-started/your-first-smart-contract/create"
+                  className={styles.ctaPrimary}
+                >
+                  Follow the tutorial
+                  <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+            </div>
+            <div className={styles.codeShell}>
+              <div className={styles.codeShellHeader}>
+                <span className={styles.codeShellDot} />
+                <span className={styles.codeShellDot} />
+                <span className={styles.codeShellDot} />
+                <span className={styles.codeShellName}>
+                  contracts/counter/src/lib.rs
+                </span>
+              </div>
+              <pre className={styles.codeShellBody}>
+                <code>
+                  <span className={styles.codeKw}>use</span> miden::
+                  {"{"}component, felt, Felt, StorageMap, Word{"}"};{"\n\n"}
+                  #[<span className={styles.codeFn}>component</span>]{"\n"}
+                  <span className={styles.codeKw}>struct</span>{" "}
+                  <span className={styles.codeFn}>Counter</span> {"{"}{"\n"}
+                  {"    "}#[<span className={styles.codeFn}>storage</span>]{"\n"}
+                  {"    "}count_map: StorageMap,{"\n"}
+                  {"}"}{"\n\n"}
+                  #[<span className={styles.codeFn}>component</span>]{"\n"}
+                  <span className={styles.codeKw}>impl</span> Counter {"{"}{"\n"}
+                  {"    "}
+                  <span className={styles.codeCom}>
+                    /// Increments the counter by one.
+                  </span>
+                  {"\n"}
+                  {"    "}<span className={styles.codeKw}>pub fn</span>{" "}
+                  <span className={styles.codeFn}>increment</span>(&
+                  <span className={styles.codeKw}>mut self</span>) -&gt; Felt{" "}
+                  {"{"}{"\n"}
+                  {"        "}
+                  <span className={styles.codeKw}>let</span> key ={" "}
+                  Word::from_u64_unchecked(0, 0, 0, 1);{"\n"}
+                  {"        "}
+                  <span className={styles.codeKw}>let</span> next:
+                  Felt = self.count_map.get(&amp;key) + felt!(1);{"\n"}
+                  {"        "}self.count_map.set(key, next);{"\n"}
+                  {"        "}next{"\n"}
+                  {"    "}{"}"}{"\n"}
+                  {"}"}
+                </code>
+              </pre>
+              <div className={styles.codeAction}>
+                <Link to="https://playground.miden.xyz">
+                  Run in playground ↗
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ---- BOTTOM LINK STRIP ---- */}
+        <section className={styles.linkStrip}>
+          <div className={styles.linkGrid}>
+            <div className={styles.linkCol}>
+              <h3>Install</h3>
+              <ul>
+                <li>
+                  <Link to="/builder/get-started">midenup</Link>
+                </li>
+                <li>
+                  <Link to="/builder/tools/clients/web-client">
+                    Web SDK
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/builder/tools/clients/react-sdk">React SDK</Link>
+                </li>
+                <li>
+                  <Link to="/builder/tools/clients/rust-client">
+                    Rust client
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className={styles.linkCol}>
+              <h3>Explore</h3>
+              <ul>
+                <li>
+                  <Link to="https://playground.miden.xyz">Playground</Link>
+                </li>
+                <li>
+                  <Link to="https://testnet.midenscan.com">Explorer</Link>
+                </li>
+                <li>
+                  <Link to="/builder/migration">v0.14 migration</Link>
+                </li>
+                <li>
+                  <Link to="/builder/tutorials">Tutorials</Link>
+                </li>
+              </ul>
+            </div>
+            <div className={styles.linkCol}>
+              <h3>Concepts</h3>
+              <ul>
+                <li>
+                  <Link to="/core-concepts">Overview</Link>
+                </li>
+                <li>
+                  <Link to="/core-concepts/miden-vm">Miden VM</Link>
+                </li>
+                <li>
+                  <Link to="/builder/glossary">Glossary</Link>
+                </li>
+                <li>
+                  <Link to="/builder/faq">FAQ</Link>
+                </li>
+              </ul>
+            </div>
+            <div className={styles.linkCol}>
+              <h3>Community</h3>
+              <ul>
+                <li>
+                  <Link to="https://github.com/0xMiden">GitHub</Link>
+                </li>
+                <li>
+                  <Link to="https://x.com/0xMiden">X</Link>
+                </li>
+                <li>
+                  <Link to="https://t.me/BuildOnMiden">Telegram</Link>
+                </li>
+                <li>
+                  <Link to="https://miden.xyz">miden.xyz</Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <p className={styles.releaseLine}>
+            Latest: v0.13 · Next: v0.14 (unstable)
+          </p>
+        </section>
+      </main>
+    </Layout>
+  );
 }
