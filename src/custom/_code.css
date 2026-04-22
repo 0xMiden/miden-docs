@@ -324,16 +324,15 @@ code {
   content: "";
 }
 
-/* Custom caret — tiny mask-based SVG chevron. Scaled from an 8×8
-   viewBox with a beefier stroke so it stays visible at ~3px. */
+/* Custom caret — 0.1rem whisper-thin chevron. */
 .theme-doc-markdown details > summary::before {
   content: "";
-  width: 0.2rem;
-  height: 0.2rem;
+  width: 0.1rem;
+  height: 0.1rem;
   flex-shrink: 0;
   background: currentColor;
-  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' fill='none'><path d='m3 1.5 3 2.5-3 2.5' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' fill='none'><path d='m3 1.5 3 2.5-3 2.5' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' fill='none'><path d='m3 1.5 3 2.5-3 2.5' stroke='black' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' fill='none'><path d='m3 1.5 3 2.5-3 2.5' stroke='black' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/></svg>");
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
