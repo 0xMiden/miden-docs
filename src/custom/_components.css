@@ -644,32 +644,41 @@ article td code {
    15) VERSION INDICATOR STYLING
    ========================================== */
 
-/* Style the version indicator that appears above page content */
+/* Style the version indicator (v0.13 pill) above page content.
+   Uses the same soft-badge look as <Badge tone="brand" variant="soft">. */
 .theme-doc-version-badge {
-  font-size: 0.75rem !important;
-  font-weight: 600 !important;
-  color: var(--ifm-color-primary) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--color-brand) !important;
   background: color-mix(
     in oklab,
-    var(--ifm-color-primary) 12%,
+    var(--color-brand) 10%,
     transparent
   ) !important;
   border: 1px solid
-    color-mix(in oklab, var(--ifm-color-primary) 30%, transparent) !important;
-  border-radius: var(--radius-md) !important;
-  /* line-height: 0 !important; */
-  padding-top: 0.37rem !important;
-  display: inline-block !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  margin-top: 0.571rem !important;
-  margin-bottom: 0.571rem !important;
+    color-mix(in oklab, var(--color-brand) 22%, transparent) !important;
+  border-radius: var(--radius-pill) !important;
+  padding: 2px 8px !important;
+  margin: 0.5rem 0 0.75rem !important;
 }
 
 [data-theme="dark"] .theme-doc-version-badge {
-  background: #3f3f3f99 !important;
-  border-color: var(--ifm-color-primary) !important;
-  color: var(--ifm-color-primary) !important;
+  color: var(--color-brand) !important;
+  background: color-mix(
+    in oklab,
+    var(--color-brand) 14%,
+    transparent
+  ) !important;
+  border-color: color-mix(
+    in oklab,
+    var(--color-brand) 32%,
+    transparent
+  ) !important;
 }
 
 /* ==========================================
