@@ -1,62 +1,165 @@
 .root {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
   width: 100%;
-  max-width: 420px;
+  max-width: 460px;
   margin: 0 auto;
 }
 
-.lattice {
-  width: 100%;
-  height: auto;
-  filter: drop-shadow(0 0 24px color-mix(in oklab, var(--color-brand) 20%, transparent));
+/* decorative ember halo that sits behind the frame */
+.glow {
+  position: absolute;
+  inset: -24px -18px -30px -18px;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse at 60% 40%,
+    color-mix(in oklab, var(--color-brand) 18%, transparent) 0%,
+    transparent 60%
+  );
+  filter: blur(24px);
+  pointer-events: none;
 }
 
-.dot {
-  fill: var(--color-border-strong);
-  animation: hero-dot-pulse 2.4s var(--ease-in-out) infinite;
+/* terminal-like card frame around the lattice */
+.frame {
+  position: relative;
+  z-index: 1;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-card-bg);
+  box-shadow: var(--shadow-sm), 0 24px 60px -20px color-mix(in oklab, var(--color-brand) 20%, transparent);
+  overflow: hidden;
+  backdrop-filter: saturate(1.05);
 }
 
-.sweep {
-  transform-origin: center center;
-  animation: scan-line 3.4s linear infinite;
-}
-
-@keyframes hero-dot-pulse {
-  0%, 100% { fill-opacity: 0.35; }
-  50% { fill-opacity: 1; }
-}
-
-.hashTicker {
+/* top chrome row — eyebrow label + status dot */
+.chromeTop,
+.chromeBottom {
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  padding: 0.375rem 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
+  padding: 0.5rem 0.75rem;
   background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.chromeBottom {
+  border-top: 1px solid var(--color-border);
+  border-bottom: none;
+}
+
+.chromeLabel {
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--color-muted);
 }
 
-.hashLabel {
-  text-transform: uppercase;
+.chromeStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-left: auto;
+  font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.12em;
-  color: var(--color-signal);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand);
 }
 
+.chromeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-brand);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--color-brand) 70%, transparent);
+  animation: pulse-dot 1.8s var(--ease-in-out) infinite;
+}
+
+/* lattice SVG */
+.lattice {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* background dots */
+.dot {
+  fill: var(--color-border-strong);
+  opacity: 0.5;
+}
+
+/* merkle-tree edges */
+.edge {
+  stroke: var(--color-signal);
+  stroke-width: 1;
+  stroke-opacity: 0.55;
+  animation: hero-edge-pulse 3.6s var(--ease-in-out) infinite;
+}
+
+/* merkle-tree nodes */
+.node {
+  fill: var(--color-signal);
+}
+
+.node-root {
+  fill: var(--color-brand);
+  animation: hero-root-pulse 2.4s var(--ease-in-out) infinite;
+}
+
+.node-branch {
+  animation: hero-branch-pulse 3s var(--ease-in-out) infinite;
+}
+
+.node-leaf {
+  animation: hero-leaf-pulse 2.8s var(--ease-in-out) infinite;
+}
+
+/* ember scan sweep */
+.sweep {
+  transform-origin: 0 0;
+  animation: hero-sweep 3.6s linear infinite;
+}
+
+@keyframes hero-sweep {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(200%); }
+}
+
+@keyframes hero-root-pulse {
+  0%, 100% { fill-opacity: 1; transform: scale(1); }
+  50% { fill-opacity: 0.6; transform: scale(1.15); }
+}
+
+@keyframes hero-branch-pulse {
+  0%, 100% { fill-opacity: 0.85; }
+  50% { fill-opacity: 0.45; }
+}
+
+@keyframes hero-leaf-pulse {
+  0%, 100% { fill-opacity: 0.55; }
+  50% { fill-opacity: 1; }
+}
+
+@keyframes hero-edge-pulse {
+  0%, 100% { stroke-opacity: 0.55; }
+  50% { stroke-opacity: 0.25; }
+}
+
+/* bottom chrome row — hash commitment */
 .hashValue {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
   color: var(--color-text);
   background: transparent;
   padding: 0;
   border: none;
-  font-size: 12px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .hashValue span[data-anim-cycle] {
@@ -77,4 +180,22 @@
   0% { opacity: 0.4; }
   50% { opacity: 1; }
   100% { opacity: 0.4; }
+}
+
+/* verified badge */
+.verifyBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 2px 6px;
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-success);
+  background: color-mix(in oklab, var(--color-success) 10%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-success) 30%, transparent);
+  border-radius: var(--radius-xs);
 }
