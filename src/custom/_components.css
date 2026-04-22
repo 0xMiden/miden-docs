@@ -222,6 +222,25 @@
   margin-bottom: 0 !important;
 }
 
+/* Nested <details> inside an admonition or callout — smaller radius,
+   subtle border so it reads as a child element, not another card. */
+.theme-admonition details {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  margin: 0.5rem 0 0 !important;
+  background: var(--color-bg);
+}
+
+.theme-admonition details > summary {
+  padding: 0.5rem 0.75rem;
+  font-size: 10px;
+  background: transparent;
+}
+
+.theme-admonition details > :not(summary) {
+  padding: 0.75rem;
+}
+
 /* Admonition title row */
 .theme-admonition .admonitionHeading_Gvgb,
 .theme-admonition [class*="admonitionHeading"] {

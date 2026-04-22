@@ -241,7 +241,27 @@ blockquote::before {
 blockquote > :first-child { margin-top: 0; }
 blockquote > :last-child  { margin-bottom: 0; }
 
-/* Images */
+/* Images inside doc content — hairline border, rounded corners,
+   subtle shadow. Scoped so logos in the navbar aren't affected. */
+.theme-doc-markdown img,
+article img {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  max-width: 100%;
+  height: auto;
+}
+
+/* Inline / icon-style images — no border, no shadow */
+.theme-doc-markdown img[width],
+.theme-doc-markdown a > img,
+.theme-doc-markdown p > img:only-child[alt=""],
+article img[width] {
+  border: none;
+  box-shadow: none;
+}
+
+/* General img default (icons, navbar, etc.) */
 img {
   border-radius: var(--radius-md);
 }
