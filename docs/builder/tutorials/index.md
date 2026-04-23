@@ -11,14 +11,28 @@ Hands-on walkthroughs for building on Miden. Every tutorial pairs with runnable 
 ## Pick a path
 
 <CardGrid cols={3}>
-  <Card title="Rust compiler" href="./rust-compiler/" eyebrow="Beginner · Walkthroughs">
-    Install the Rust compiler toolchain and walk through your first Miden smart contract, step by step.
+  <Card title="Miden Bank" href="./miden-bank/" eyebrow="Walkthrough · Rust">
+    A 9-part curriculum — build a complete banking application covering components, storage, note scripts, cross-component calls, and output notes.
   </Card>
-  <Card title="Miden Bank" href="./miden-bank/" eyebrow="Intermediate · Real app">
-    Build a complete banking application — components, storage, note scripts, cross-component calls, output notes.
+  <Card title="Recipes" href="./recipes/rust/" eyebrow="Cookbook · Rust & Web">
+    Standalone how-to's for specific tasks: counter contract, create/deploy, foreign procedure invocation, React wallet, and more.
   </Card>
   <Card title="Miden node setup" href="./miden_node_setup" eyebrow="Operator">
     Run a Miden node locally or on testnet with `midenup` and the node binary.
+  </Card>
+</CardGrid>
+
+## Supplementary guides
+
+<CardGrid cols={3}>
+  <Card title="Testing with MockChain" href="../guides/testing" eyebrow="Guide">
+    Test your contracts against MockChain for local simulation.
+  </Card>
+  <Card title="Debugging" href="../guides/debugging" eyebrow="Guide">
+    Interpret errors and debug common issues.
+  </Card>
+  <Card title="Common pitfalls" href="../guides/pitfalls" eyebrow="Guide">
+    Avoid known issues and limitations.
   </Card>
 </CardGrid>
 
@@ -26,4 +40,4 @@ Hands-on walkthroughs for building on Miden. Every tutorial pairs with runnable 
 
 - [Install the Miden toolchain](../get-started/setup/installation) with `midenup`.
 - Basic familiarity with Rust (or TypeScript for the client examples).
-- Understanding of the core concepts — [accounts, notes, transactions](../smart-contracts/).
+- Understanding of the [core concepts](../smart-contracts/) — accounts, notes, transactions.

@@ -124,6 +124,19 @@ const config: Config = {
           if (existingPath.startsWith("/builder/tools/clients")) {
             redirects.push(existingPath.replace("/builder/tools/clients", "/builder/tools/client"));
           }
+          // Tutorials IA: rust-client → recipes/rust, web-client → recipes/web
+          if (existingPath.startsWith("/builder/tutorials/recipes/rust")) {
+            redirects.push(existingPath.replace("/builder/tutorials/recipes/rust", "/builder/tutorials/rust-client"));
+          }
+          if (existingPath.startsWith("/builder/tutorials/recipes/web")) {
+            redirects.push(existingPath.replace("/builder/tutorials/recipes/web", "/builder/tutorials/web-client"));
+          }
+          // rust-compiler/ was removed — its hub content folded into tutorials/index.
+          // Redirect old paths to the Tutorials landing.
+          if (existingPath === "/builder/tutorials" || existingPath === "/builder/tutorials/") {
+            redirects.push("/builder/tutorials/rust-compiler");
+            redirects.push("/builder/tutorials/rust-compiler/");
+          }
 
           // Core Concepts section: redirect old root-level paths to new /core-concepts/ paths
           if (existingPath.startsWith("/core-concepts/protocol")) {
