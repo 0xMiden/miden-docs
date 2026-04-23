@@ -241,6 +241,7 @@ const sidebars: SidebarsConfig = {
             },
           ],
         },
+        "builder/tools/midenup",
         "builder/tools/playground",
         "builder/tools/network",
       ],
