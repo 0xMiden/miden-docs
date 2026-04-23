@@ -633,10 +633,20 @@
 
 /* Card-aesthetic tables: hairline border, monospace uppercase headers,
    subtle row hover. Scoped to doc markdown so other tables (admin UI,
-   mermaid) are untouched. */
+   mermaid) are untouched.
+
+   width + min-width at 100% forces the table to always fill its
+   container instead of shrinking to content — kills the "whitespace on
+   the right" effect on tables whose columns are all content-sized
+   (e.g. concept/part-number tables where col-3 is a single digit).
+   table-layout: auto still lets wide columns expand into the extra
+   width proportionally. */
 .theme-doc-markdown table,
 article table {
+  display: table;
   width: 100%;
+  min-width: 100%;
+  table-layout: auto;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-card-bg);
@@ -645,6 +655,24 @@ article table {
   margin: 1.5rem 0;
   box-shadow: var(--shadow-sm);
   overflow: hidden; /* clip content at the rounded corners */
+}
+
+/* Narrow trailing columns (common pattern — "Part" numbers, short
+   badges) must not be allowed to absorb the leftover distribution.
+   Letting the middle (usually description) column take it keeps the
+   visual weight balanced. */
+.theme-doc-markdown table th:not(:first-child):not(:last-child),
+.theme-doc-markdown table td:not(:first-child):not(:last-child),
+article table th:not(:first-child):not(:last-child),
+article table td:not(:first-child):not(:last-child) {
+  width: auto;
+}
+
+.theme-doc-markdown table th:last-child,
+.theme-doc-markdown table td:last-child,
+article table th:last-child,
+article table td:last-child {
+  white-space: nowrap;
 }
 
 .theme-doc-markdown thead,
