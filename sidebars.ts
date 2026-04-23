@@ -204,7 +204,12 @@ const sidebars: SidebarsConfig = {
                 "builder/tools/clients/rust-client/examples",
                 "builder/tools/clients/rust-client/library",
                 "builder/tools/clients/rust-client/api-docs",
-                "builder/tools/clients/rust-client/debugging",
+                // NOTE: debugging.md exists in v0.14.4 (and the v0.14
+                // snapshot) but was removed on miden-client's `next`
+                // branch. The live /next/ build ingests from `next`,
+                // so listing it here would fail sidebar validation.
+                // Re-add if a future miden-vNN release brings the page
+                // back.
               ],
             },
             {
