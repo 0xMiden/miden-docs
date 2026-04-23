@@ -197,6 +197,13 @@
    ========================================== */
 
 :root[data-theme="dark"] {
+  /* Re-map Infima's hardcoded dark bg (#1b1b1d) to our token, so the
+     html background matches body and there's no two-tone scroll seam.
+     Infima defines these under html[data-theme='dark'] — our :root
+     selector here carries higher specificity, so this wins. */
+  --ifm-background-color: #0b0d10;
+  --ifm-background-surface-color: #13161b;
+
   --color-bg: #0b0d10;
   --color-surface: #13161b;
   --color-surface-hover: #181c22;
