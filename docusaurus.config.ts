@@ -124,6 +124,30 @@ const config: Config = {
           if (existingPath.startsWith("/builder/tools/clients")) {
             redirects.push(existingPath.replace("/builder/tools/clients", "/builder/tools/client"));
           }
+          // Tutorials IA: rust-client → recipes/rust, web-client → recipes/web
+          if (existingPath.startsWith("/builder/tutorials/recipes/rust")) {
+            redirects.push(existingPath.replace("/builder/tutorials/recipes/rust", "/builder/tutorials/rust-client"));
+          }
+          if (existingPath.startsWith("/builder/tutorials/recipes/web")) {
+            redirects.push(existingPath.replace("/builder/tutorials/recipes/web", "/builder/tutorials/web-client"));
+          }
+          // rust-compiler/ was removed — its hub content folded into tutorials/index.
+          // Only fire on the no-trailing-slash variant; Docusaurus calls
+          // createRedirects for both `/foo` and `/foo/`, and pushing the
+          // same source twice causes a redirect-file collision.
+          if (existingPath === "/builder/tutorials") {
+            redirects.push("/builder/tutorials/rust-compiler");
+          }
+          // Guides folded into Tutorials → Development helpers. Redirect
+          // old /builder/guides/* paths to the new location.
+          if (existingPath.startsWith("/builder/tutorials/helpers")) {
+            redirects.push(existingPath.replace("/builder/tutorials/helpers", "/builder/guides"));
+          }
+          // tools/explorer renamed to tools/network (now covers status,
+          // RPC, faucet, remote prover — not just the block explorer).
+          if (existingPath === "/builder/tools/network") {
+            redirects.push("/builder/tools/explorer");
+          }
 
           // Core Concepts section: redirect old root-level paths to new /core-concepts/ paths
           if (existingPath.startsWith("/core-concepts/protocol")) {
@@ -247,11 +271,11 @@ const config: Config = {
       },
       navbar: {
         logo: {
-          src: "img/logo.svg",
-          alt: "Miden Logo",
-          height: 32,
+          src: "img/miden-logo-horizontal.svg",
+          alt: "Miden",
+          height: 22,
+          width: 73,
         },
-        title: "MIDEN",
         items: [
           // LEFT - Section tabs using docSidebar
           {

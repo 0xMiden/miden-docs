@@ -158,8 +158,19 @@ jobs:
           rm -f  docs/builder/tools/clients/common-errors.md
           rm -f  docs/builder/tools/clients/_category_.yml
           rm -rf docs/builder/tools/cli
-          rm -rf docs/builder/tutorials/miden-bank docs/builder/tutorials/index.md
-          # Note: docs/builder/tutorials/rust-compiler/ is NOT cleaned to preserve local guides (testing, debugging, pitfalls)
+          # tutorials: only clean ingested subdirs/files; preserve locally-authored rust-compiler/, index.md, _category_.json, recipes/_category_.json, recipes/{rust,web}/_category_.json
+          rm -rf docs/builder/tutorials/miden-bank
+          rm -rf docs/builder/tutorials/components
+          rm -rf docs/builder/tutorials/img
+          rm -rf docs/builder/tutorials/theme
+          rm -f  docs/builder/tutorials/miden_node_setup.md
+          # Recipes: remove everything under recipes/rust|web except _category_.json (restored via git checkout after re-ingest)
+          for d in docs/builder/tutorials/recipes/rust docs/builder/tutorials/recipes/web; do
+            if [ -d "$d" ]; then
+              find "$d" -mindepth 1 ! -name _category_.json -exec rm -rf {} + 2>/dev/null || true
+            fi
+          done
+          rm -rf docs/builder/tutorials/recipes/img
 
           # Core Concepts docs → docs/core-concepts/*
           if [ -d "vendor/protocol/docs/src" ]; then
@@ -187,11 +198,55 @@ jobs:
           fi
 
           # Builder docs → docs/builder/*
-          # Sync tutorials into tutorials (local tutorials are preserved)
+          # Sync tutorials into tutorials — selective ingest.
+          # rust-compiler/, index.md, miden-bank/index.md, recipes/_category_.json,
+          # recipes/rust/_category_.json, recipes/web/_category_.json, and the
+          # parent _category_.json are locally authored in the docs repo and
+          # preserved through this clean/ingest cycle.
+          # Vendor's rust-client/ and web-client/ are renamed at ingest to
+          # recipes/rust/ and recipes/web/ respectively — see critique:
+          # "rust-client"/"web-client" also names the SDK-reference folders under
+          # /builder/tools/clients/, so the tutorial paths need a different name
+          # to avoid URL ambiguity. plugin-client-redirects is configured in
+          # docusaurus.config.ts to keep the old URLs pointing at the new ones.
+          # lib.rs and vendor's _category_.yml are deliberately NOT ingested.
           if [ -d "vendor/tutorials/docs/src" ]; then
             mkdir -p docs/builder/tutorials
-            cp -r vendor/tutorials/docs/src/* docs/builder/tutorials/
-            echo "Synced tutorials → docs/builder/tutorials"
+            for name in miden-bank components img theme; do
+              src="vendor/tutorials/docs/src/$name"
+              [ -d "$src" ] && cp -r "$src" docs/builder/tutorials/
+            done
+            for name in miden_node_setup.md; do
+              src="vendor/tutorials/docs/src/$name"
+              [ -f "$src" ] && cp    "$src" docs/builder/tutorials/
+            done
+
+            # Rename rust-client → recipes/rust, web-client → recipes/web.
+            # Copy CONTENTS (using /. and ensuring the target dir exists) so
+            # the locally-authored _category_.json already in recipes/{rust,web}/
+            # isn't shadowed by a nested rust-client/ or web-client/ subdir.
+            mkdir -p docs/builder/tutorials/recipes/rust
+            mkdir -p docs/builder/tutorials/recipes/web
+            if [ -d "vendor/tutorials/docs/src/rust-client" ]; then
+              cp -r vendor/tutorials/docs/src/rust-client/. docs/builder/tutorials/recipes/rust/
+              rm -f docs/builder/tutorials/recipes/rust/_category_.yml
+            fi
+            if [ -d "vendor/tutorials/docs/src/web-client" ]; then
+              cp -r vendor/tutorials/docs/src/web-client/. docs/builder/tutorials/recipes/web/
+              rm -f docs/builder/tutorials/recipes/web/_category_.yml
+            fi
+            # Ingested recipe pages use relative image paths like ../img/...
+            # which now resolves under recipes/img/. Mirror the tutorials/img
+            # dir into recipes/img/ so those refs keep working after the rename.
+            if [ -d "vendor/tutorials/docs/src/img" ]; then
+              cp -r vendor/tutorials/docs/src/img docs/builder/tutorials/recipes/
+            fi
+            # Restore locally-authored files over vendor versions.
+            git checkout HEAD -- docs/builder/tutorials/miden-bank/index.md 2>/dev/null || true
+            git checkout HEAD -- docs/builder/tutorials/recipes/_category_.json 2>/dev/null || true
+            git checkout HEAD -- docs/builder/tutorials/recipes/rust/_category_.json 2>/dev/null || true
+            git checkout HEAD -- docs/builder/tutorials/recipes/web/_category_.json 2>/dev/null || true
+            echo "Synced tutorials (miden-bank, components, img, theme, miden_node_setup.md, recipes/rust, recipes/web) → docs/builder/tutorials"
           fi
 
           if [ -d "vendor/miden-client/docs/external/src" ]; then
@@ -243,8 +298,19 @@ jobs:
           rm -f  docs/builder/tools/clients/common-errors.md
           rm -f  docs/builder/tools/clients/_category_.yml
           rm -rf docs/builder/tools/cli
-          rm -rf docs/builder/tutorials/miden-bank docs/builder/tutorials/index.md
-          # Note: docs/builder/tutorials/rust-compiler/ is authored content (testing, debugging, pitfalls), not cleaned
+          # tutorials: only clean ingested subdirs/files; preserve locally-authored rust-compiler/, index.md, _category_.json, recipes/_category_.json, recipes/{rust,web}/_category_.json
+          rm -rf docs/builder/tutorials/miden-bank
+          rm -rf docs/builder/tutorials/components
+          rm -rf docs/builder/tutorials/img
+          rm -rf docs/builder/tutorials/theme
+          rm -f  docs/builder/tutorials/miden_node_setup.md
+          # Recipes: remove everything under recipes/rust|web except _category_.json (restored via git checkout after re-ingest)
+          for d in docs/builder/tutorials/recipes/rust docs/builder/tutorials/recipes/web; do
+            if [ -d "$d" ]; then
+              find "$d" -mindepth 1 ! -name _category_.json -exec rm -rf {} + 2>/dev/null || true
+            fi
+          done
+          rm -rf docs/builder/tutorials/recipes/img
 
       - name: Commit snapshots
         run: |

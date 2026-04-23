@@ -53,4 +53,4 @@ Guardian is non-custodial. The provider cannot move funds unilaterally — it st
 
 ## Repository
 
-- [private-state-manager](https://github.com/OpenZeppelin/private-state-manager) — Guardian server, client SDKs, multisig client libraries, and specification
+- [Miden Guardian](https://github.com/OpenZeppelin/guardian) — Guardian server, client SDKs, multisig client libraries, and specification

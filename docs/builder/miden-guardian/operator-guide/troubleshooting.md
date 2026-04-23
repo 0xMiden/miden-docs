@@ -70,5 +70,5 @@ Common issues when operating a Guardian server and how to resolve them.
 
 ## Links
 
-- [Server README](https://github.com/OpenZeppelin/private-state-manager/tree/main/crates/server) — full server documentation
-- [Guardian Specification](https://github.com/OpenZeppelin/private-state-manager/tree/main/spec) — protocol specification
+- [Server README](https://github.com/OpenZeppelin/guardian/tree/main/crates/server) — full server documentation
+- [Guardian Specification](https://github.com/OpenZeppelin/guardian/tree/main/spec) — protocol specification

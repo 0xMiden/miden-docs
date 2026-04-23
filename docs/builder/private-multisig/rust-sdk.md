@@ -7,13 +7,13 @@ sidebar_position: 2
 
 The `miden-multisig-client` crate provides a high-level Rust SDK for private multisig workflows on Miden. It wraps the on-chain multisig contracts and Guardian coordination into a single API.
 
-**Source**: [`crates/miden-multisig-client`](https://github.com/OpenZeppelin/private-state-manager/tree/main/crates/miden-multisig-client)
+**Source**: [`crates/miden-multisig-client`](https://github.com/OpenZeppelin/guardian/tree/main/crates/miden-multisig-client)
 
 ## Installation
 
 ```toml
 [dependencies]
-miden-multisig-client = { git = "https://github.com/OpenZeppelin/private-state-manager", package = "miden-multisig-client" }
+miden-multisig-client = { git = "https://github.com/OpenZeppelin/guardian", package = "miden-multisig-client" }
 ```
 
 ## Setup
@@ -110,4 +110,4 @@ let spendable = client.list_consumable_notes_filtered(filter).await?;
 
 ## Full reference
 
-See the [`crates/miden-multisig-client/README.md`](https://github.com/OpenZeppelin/private-state-manager/tree/main/crates/miden-multisig-client) for the complete API reference.
+See the [`crates/miden-multisig-client/README.md`](https://github.com/OpenZeppelin/guardian/tree/main/crates/miden-multisig-client) for the complete API reference.

@@ -8,7 +8,7 @@ sidebar_position: 3
 The `@openzeppelin/miden-multisig-client` package provides a high-level TypeScript SDK for private multisig workflows on Miden. It supports multiple signer types including external wallets.
 
 **Package**: [`@openzeppelin/miden-multisig-client`](https://www.npmjs.com/package/@openzeppelin/miden-multisig-client)
-**Source**: [`packages/miden-multisig-client`](https://github.com/OpenZeppelin/private-state-manager/tree/main/packages/miden-multisig-client)
+**Source**: [`packages/miden-multisig-client`](https://github.com/OpenZeppelin/guardian/tree/main/packages/miden-multisig-client)
 
 ## Installation
 
@@ -143,4 +143,4 @@ const { proposal: imported } = multisig.importTransactionProposal(json);
 
 ## Full reference
 
-See the [`packages/miden-multisig-client/README.md`](https://github.com/OpenZeppelin/private-state-manager/tree/main/packages/miden-multisig-client) for the complete API reference.
+See the [`packages/miden-multisig-client/README.md`](https://github.com/OpenZeppelin/guardian/tree/main/packages/miden-multisig-client) for the complete API reference.

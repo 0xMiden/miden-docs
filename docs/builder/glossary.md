@@ -1,109 +1,140 @@
+---
+title: Glossary
+description: "Key terms and definitions used throughout the Miden docs — grouped by area (accounts, notes, protocol, Guardian, cryptography)."
+pagination_next: null
+---
+
 # Glossary
 
-## Account
+Key terms and definitions used throughout the Miden docs. Grouped thematically — if you're not sure where something lives, use your browser's find (⌘F / Ctrl+F).
 
-An account is a data structure that represents an entity (user account, smart contract) of the Miden blockchain, they are analogous to smart contracts.
+<CardGrid cols={3}>
+  <Card title="Accounts" href="#accounts" eyebrow="Jump to">
+    Account, AccountCode, AccountComponent, AccountId, AccountStorage, MultiSig, AccountBuilder.
+  </Card>
+  <Card title="Notes & assets" href="#notes--assets" eyebrow="Jump to">
+    Note, Note script, Note tag, Note ID, Nullifier, Asset, AssetVault.
+  </Card>
+  <Card title="Protocol & VM" href="#protocol--vm" eyebrow="Jump to">
+    Block, Batch, Kernel, Prover, Miden Assembly, Felt, Word.
+  </Card>
+  <Card title="Guardian & multisig" href="#guardian--multisig" eyebrow="Jump to">
+    Miden Guardian, Canonicalization, Delta, Delta Proposal, Threshold Signature.
+  </Card>
+</CardGrid>
 
-## Account builder
+## Accounts
+
+### Account
+
+An account is a data structure that represents an entity (user account, smart contract) on the Miden blockchain — analogous to smart contracts.
+
+### Account builder
 
 Account builder provides a structured way to create and initialize new accounts on the Miden network with specific properties, permissions, and initial state.
 
-## AccountCode
+### AccountCode
 
-Represents the executable code associated with an account.
+The executable code associated with an account.
 
-## AccountComponent
+### AccountComponent
 
-An AccountComponent can be described as a modular unit of code to represent the functionality of a Miden Account. Each AccountCode is composed of multiple AccountComponent's.
+A modular unit of code representing a piece of an account's functionality. Each `AccountCode` is composed of multiple `AccountComponent`s.
 
-## AccountId
+### AccountId
 
-The AccountId is a value that uniquely identifies each account in Miden.
+A value that uniquely identifies each account on Miden.
 
-## AccountIdVersion
+### AccountIdVersion
 
-The AccountIdVersion represents the different versions of account identifier formats supported by Miden.
+Represents the different versions of account identifier formats supported by Miden.
 
-## AccountStorage
+### AccountStorage
 
-The AccountStorage is a key-value store associated with an account. It is made up of storage slots.
+A key-value store associated with an account. Made up of storage slots.
 
-## Asset
-
-An Asset represents a digital resource with value that can be owned, transferred, and managed within the Miden blockchain.
-
-## AssetVault
-
-The AssetVault is used for managing assets within accounts. It provides a way for storing and transfering assets associated with each account.
-
-## Batch
-
-A Batch allows multiple transactions to be grouped together, these batches will then be aggregated into blocks, improving network throughput.
-
-## Block
-
-A Block is a fundamental data structure which groups multiple batches together and forms the blockchain's state.
-
-## Canonicalization
-
-The background process by which [Miden Guardian](./miden-guardian/) promotes candidate deltas to canonical status by verifying them against the Miden network.
-
-## Delta
-
-A Delta represents the changes between two states `s` and `s'`. Applying a Delta `d` to `s` would result in `s'`.
-
-## Delta Proposal
-
-A coordination mechanism in [Miden Guardian](./miden-guardian/) that allows multiple signers to propose, review, and co-sign state changes before they are promoted to a canonical delta.
-
-## Felt
-
-A Felt or Field Element is a data type used for cryptographic operations. It represents an element in the finite field used in Miden.
-
-## Kernel
-
-A fundamental module of the MidenVM that acts as a base layer by providing core functionality and security guarantees for the protocol.
-
-## Miden Assembly
-
-An assembly language specifically designed for the Miden VM. It's a low-level programming language with specialized instructions optimized for zero-knowledge proof generation.
-
-## Miden Guardian
-
-Infrastructure built by OpenZeppelin for managing private account state on Miden. Guardian provides a server and client SDKs for backing up, syncing, and coordinating state across devices and parties without trust assumptions. See the [Miden Guardian documentation](./miden-guardian/).
-
-## MultiSig
+### MultiSig
 
 A multi-signature account on Miden that requires a configurable threshold (N-of-M) of authorized signers to approve transactions before execution. MultiSig workflows are coordinated through [Miden Guardian](./miden-guardian/).
 
-## Note
+## Notes & assets
 
-A Note is a fundamental data structure that represents an offchain asset or a piece of information that can be transferred between accounts. Miden's UTXO-like (Unspent Transaction Output) model is designed around the concept of notes. There are output notes which are new notes created by the transaction and input notes which are consumed (spent) by the transaction.
+### Note
 
-## Note script
+A fundamental data structure that represents an off-chain asset or a piece of information that can be transferred between accounts. Miden's UTXO-like model is designed around notes. **Output notes** are new notes created by a transaction; **input notes** are those consumed (spent) by a transaction.
 
-A Note script is a program that defines the rules and conditions under which a note can be consumed.
+### Note script
 
-## Note tag
+A program that defines the rules and conditions under which a note can be consumed.
 
-A Note tag is an identifier or metadata associated with notes that provide additional filtering capabilities.
+### Note tag
 
-## Note ID
+An identifier or metadata associated with notes that provides additional filtering capabilities.
 
-Note ID is a unique identifier assigned to each note to distinguish it from other notes.
+### Note ID
 
-## Nullifier
+A unique identifier assigned to each note to distinguish it from other notes.
 
-A nullifier is a cryptographic commitment that marks a note as spent, preventing it from being consumed again.
+### Nullifier
 
-## Prover
+A cryptographic commitment that marks a note as spent, preventing it from being consumed again.
 
-A Prover is responsible for generating zero-knowledge proofs that attest to the correctness of the execution of a program without revealing the underlying data.
+### Asset
 
-## Threshold Signature
+A digital resource with value that can be owned, transferred, and managed within the Miden blockchain.
+
+### AssetVault
+
+The container used for managing assets within accounts. Provides a way to store and transfer assets associated with each account.
+
+## Protocol & VM
+
+### Block
+
+A fundamental data structure that groups multiple batches together and forms the blockchain's state.
+
+### Batch
+
+A collection of transactions grouped together, to be aggregated into blocks — improves network throughput.
+
+### Kernel
+
+A fundamental module of the Miden VM that acts as a base layer, providing core functionality and security guarantees for the protocol.
+
+### Prover
+
+Responsible for generating zero-knowledge proofs that attest to the correctness of program execution without revealing the underlying data.
+
+### Miden Assembly
+
+An assembly language specifically designed for the Miden VM — a low-level language with specialized instructions optimized for zero-knowledge proof generation.
+
+### Felt
+
+A Felt (Field Element) is the primitive cryptographic data type used by the Miden VM. It represents an element in the finite (Goldilocks) field: `p = 2^64 − 2^32 + 1`.
+
+### Word
+
+A data structure that represents the basic unit of computation and storage in Miden. Composed of four `Felt`s.
+
+## Guardian & multisig
+
+### Miden Guardian
+
+Infrastructure built by OpenZeppelin for managing private account state on Miden. Guardian provides a server and client SDKs for backing up, syncing, and coordinating state across devices and parties without trust assumptions. See the [Miden Guardian documentation](./miden-guardian/).
+
+### Canonicalization
+
+The background process by which [Miden Guardian](./miden-guardian/) promotes candidate deltas to canonical status by verifying them against the Miden network.
+
+### Delta
+
+A Delta represents the changes between two states `s` and `s'`. Applying a Delta `d` to `s` produces `s'`.
+
+### Delta Proposal
+
+A coordination mechanism in [Miden Guardian](./miden-guardian/) that allows multiple signers to propose, review, and co-sign state changes before they are promoted to a canonical delta.
+
+### Threshold Signature
 
 A cryptographic scheme where a minimum number of signers (the threshold) out of a total group must sign for a transaction to be valid. Used in Miden's MultiSig accounts.
-
-## Word
-
-A Word is a data structure that represents the basic unit of computation and storage in Miden, it is composed or four Felt's.
