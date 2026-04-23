@@ -90,7 +90,26 @@ const sidebars: SidebarsConfig = {
       label: "Tutorials",
       link: { type: "doc", id: "builder/tutorials/index" },
       items: [
-        "builder/tutorials/miden-bank/index",
+        {
+          type: "category",
+          label: "Miden Bank",
+          link: { type: "doc", id: "builder/tutorials/miden-bank/index" },
+          collapsed: true,
+          items: [
+            // Docusaurus's default numberPrefixParser strips the "00-" style
+            // prefix from the doc ID, so files like 00-project-setup.md get
+            // the doc ID "project-setup" (and URL slug to match).
+            "builder/tutorials/miden-bank/project-setup",
+            "builder/tutorials/miden-bank/account-components",
+            "builder/tutorials/miden-bank/constants-constraints",
+            "builder/tutorials/miden-bank/asset-management",
+            "builder/tutorials/miden-bank/note-scripts",
+            "builder/tutorials/miden-bank/cross-component-calls",
+            "builder/tutorials/miden-bank/transaction-scripts",
+            "builder/tutorials/miden-bank/output-notes",
+            "builder/tutorials/miden-bank/complete-flows",
+          ],
+        },
         {
           type: "category",
           label: "Recipes",
@@ -122,10 +141,7 @@ const sidebars: SidebarsConfig = {
               link: { type: "doc", id: "builder/tutorials/recipes/web/index" },
               collapsed: true,
               items: [
-                // NOTE: "builder/tutorials/recipes/web/setup_guide" lives
-                // only on 0xMiden/tutorials#186 (kbg/chore/v14-migration).
-                // Re-add once that PR merges into tutorials' main —
-                // it'll be part of the v0.14 release branch meanwhile.
+                "builder/tutorials/recipes/web/setup_guide",
                 "builder/tutorials/recipes/web/counter_contract_tutorial",
                 "builder/tutorials/recipes/web/create_deploy_tutorial",
                 "builder/tutorials/recipes/web/mint_consume_create_tutorial",
@@ -158,6 +174,44 @@ const sidebars: SidebarsConfig = {
           label: "Clients",
           link: { type: "doc", id: "builder/tools/clients/index" },
           items: [
+            {
+              type: "category",
+              label: "Rust",
+              link: { type: "doc", id: "builder/tools/clients/rust-client/index" },
+              items: [
+                "builder/tools/clients/rust-client/install-and-run",
+                "builder/tools/clients/rust-client/features",
+                "builder/tools/clients/rust-client/design",
+                {
+                  type: "category",
+                  label: "Get started",
+                  link: { type: "doc", id: "builder/tools/clients/rust-client/get-started/index" },
+                  items: [
+                    "builder/tools/clients/rust-client/get-started/create-account-use-faucet",
+                    "builder/tools/clients/rust-client/get-started/p2p-public",
+                    "builder/tools/clients/rust-client/get-started/p2p-private",
+                  ],
+                },
+                {
+                  type: "category",
+                  label: "CLI",
+                  link: { type: "doc", id: "builder/tools/clients/rust-client/cli/index" },
+                  items: [
+                    "builder/tools/clients/rust-client/cli/cli-config",
+                    "builder/tools/clients/rust-client/cli/cli-troubleshooting",
+                  ],
+                },
+                "builder/tools/clients/rust-client/examples",
+                "builder/tools/clients/rust-client/library",
+                "builder/tools/clients/rust-client/api-docs",
+                // NOTE: debugging.md exists in v0.14.4 (and the v0.14
+                // snapshot) but was removed on miden-client's `next`
+                // branch. The live /next/ build ingests from `next`,
+                // so listing it here would fail sidebar validation.
+                // Re-add if a future miden-vNN release brings the page
+                // back.
+              ],
+            },
             {
               type: "category",
               label: "TypeScript",

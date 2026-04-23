@@ -1,9 +1,9 @@
-version: "0.13" # the label to snapshot (used if no manual override)
+version: "0.14" # the label to snapshot (used if no manual override)
 refs: # exact, immutable refs per source repo (tags or release branches)
-  protocol: "refs/tags/v0.13.3"
-  node: "refs/tags/v0.13.4"
-  miden-client: "refs/tags/v0.13.0"
-  tutorials: "refs/heads/main"
-  miden-vm: "refs/tags/v0.20.6"
-  compiler: "refs/tags/0.7.0"
-next_version: "0.14"
+  protocol: "refs/tags/v0.14.4"
+  node: "refs/tags/v0.14.9"
+  miden-client: "refs/tags/v0.14.4"
+  tutorials: "refs/pull/186/head"
+  miden-vm: "refs/tags/v0.22.1"
+  compiler: "refs/tags/v0.8.1"
+next_version: "0.15"
