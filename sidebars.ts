@@ -185,7 +185,7 @@ const sidebars: SidebarsConfig = {
           ],
         },
         "builder/tools/playground",
-        "builder/tools/explorer",
+        "builder/tools/network",
       ],
     },
 

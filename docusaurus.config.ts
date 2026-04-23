@@ -142,6 +142,11 @@ const config: Config = {
           if (existingPath.startsWith("/builder/tutorials/helpers")) {
             redirects.push(existingPath.replace("/builder/tutorials/helpers", "/builder/guides"));
           }
+          // tools/explorer renamed to tools/network (now covers status,
+          // RPC, faucet, remote prover — not just the block explorer).
+          if (existingPath === "/builder/tools/network") {
+            redirects.push("/builder/tools/explorer");
+          }
 
           // Core Concepts section: redirect old root-level paths to new /core-concepts/ paths
           if (existingPath.startsWith("/core-concepts/protocol")) {

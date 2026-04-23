@@ -1,12 +1,12 @@
 ---
 title: Tools
-description: "Developer tools for building and interacting with the Miden network — clients, playground, and block explorer."
+description: "Developer tools for building on and interacting with the Miden network — clients, playground, and the live network surface."
 pagination_prev: null
 ---
 
 # Tools
 
-Developer tools for building on and interacting with the Miden network. Use the client SDKs inside your app, the Playground to prototype contracts in-browser, and the Explorer to inspect testnet state.
+Developer tools for building on and interacting with the Miden network. Use the client SDKs inside your app, the Playground to prototype contracts in-browser, and the Network page to find the live testnet endpoints (status, explorer, RPC, faucet, remote prover).
 
 ## Clients
 
@@ -28,7 +28,7 @@ Developer tools for building on and interacting with the Miden network. Use the 
   <Card title="Playground" href="./playground" eyebrow="Browser">
     Interactive environment for writing and testing Miden Assembly programs.
   </Card>
-  <Card title="Explorer" href="./explorer" eyebrow="Testnet">
-    Block explorer for inspecting accounts, notes, transactions, and blocks on the Miden testnet.
+  <Card title="Network" href="./network" eyebrow="Testnet · Services">
+    Live Miden testnet endpoints — status, block explorer (MidenScan), RPC, faucet, remote prover.
   </Card>
 </CardGrid>
