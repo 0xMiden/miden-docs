@@ -17,8 +17,8 @@ This guide covers running a Guardian server locally for development or testing.
 The repository includes a Docker Compose configuration with PostgreSQL:
 
 ```bash
-git clone https://github.com/OpenZeppelin/private-state-manager.git
-cd private-state-manager
+git clone https://github.com/OpenZeppelin/guardian.git
+cd guardian
 docker-compose up -d
 ```
 
@@ -45,8 +45,8 @@ docker-compose down
 ## Building from source
 
 ```bash
-git clone https://github.com/OpenZeppelin/private-state-manager.git
-cd private-state-manager
+git clone https://github.com/OpenZeppelin/guardian.git
+cd guardian
 
 # With filesystem storage (default)
 cargo build --release --bin server
@@ -54,7 +54,7 @@ cargo run --release --bin server
 
 # With PostgreSQL storage
 DATABASE_URL=postgres://psm:password@localhost:5432/psm \
-  cargo run --features postgres --package private-state-manager-server
+  cargo run --features postgres --package guardian-server
 ```
 
 ## Ports

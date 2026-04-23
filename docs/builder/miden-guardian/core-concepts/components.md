@@ -27,7 +27,7 @@ The API exposes a consistent interface for operating on states and deltas over H
 
 **gRPC** (default port 50051) mirrors all HTTP endpoints with the same semantics. Credentials are provided via metadata headers.
 
-For the full API specification, see the [spec/api.md](https://github.com/OpenZeppelin/private-state-manager/blob/main/spec/api.md) in the repository.
+For the full API specification, see the [spec/api.md](https://github.com/OpenZeppelin/guardian/blob/main/spec/api.md) in the repository.
 
 ## Auth
 

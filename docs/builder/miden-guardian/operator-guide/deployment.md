@@ -51,7 +51,7 @@ Requires the `postgres` feature flag at build time. Migrations run automatically
 
 ```bash
 DATABASE_URL=postgres://psm:password@localhost:5432/psm \
-  cargo run --features postgres --package private-state-manager-server
+  cargo run --features postgres --package guardian-server
 ```
 
 ## Metadata store
@@ -66,7 +66,7 @@ The server uses structured logging via the `tracing` crate.
 
 ```bash
 # Debug level for entire server
-RUST_LOG=debug cargo run --package private-state-manager-server
+RUST_LOG=debug cargo run --package guardian-server
 
 # Trace only canonicalization jobs
 RUST_LOG=server::jobs::canonicalization=trace cargo run
