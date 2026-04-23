@@ -8,7 +8,7 @@ interface VersionNoteProps {
 
 export default function VersionNote({
   subject = "Full documentation",
-  stableVersion = "v0.13",
+  stableVersion = "v0.14",
 }: VersionNoteProps): JSX.Element {
   return (
     <div className={styles.container}>

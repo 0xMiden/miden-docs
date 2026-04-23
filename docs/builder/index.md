@@ -8,10 +8,6 @@ pagination_next: null
 
 Accounts, notes, and transactions — authored in Rust, compiled to MASM, proved client-side.
 
-<Callout variant="info" title="v0.13 · v0.14 in development">
-  v0.13 is the current stable release and the target of these docs. v0.14 ships with the next docs snapshot. See the [migration guide](./migration/) for what changed.
-</Callout>
-
 ## Start here
 
 <CardGrid cols={2}>

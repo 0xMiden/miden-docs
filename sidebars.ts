@@ -176,6 +176,39 @@ const sidebars: SidebarsConfig = {
           items: [
             {
               type: "category",
+              label: "Rust",
+              link: { type: "doc", id: "builder/tools/clients/rust-client/index" },
+              items: [
+                "builder/tools/clients/rust-client/install-and-run",
+                "builder/tools/clients/rust-client/features",
+                "builder/tools/clients/rust-client/design",
+                {
+                  type: "category",
+                  label: "Get started",
+                  link: { type: "doc", id: "builder/tools/clients/rust-client/get-started/index" },
+                  items: [
+                    "builder/tools/clients/rust-client/get-started/create-account-use-faucet",
+                    "builder/tools/clients/rust-client/get-started/p2p-public",
+                    "builder/tools/clients/rust-client/get-started/p2p-private",
+                  ],
+                },
+                {
+                  type: "category",
+                  label: "CLI",
+                  link: { type: "doc", id: "builder/tools/clients/rust-client/cli/index" },
+                  items: [
+                    "builder/tools/clients/rust-client/cli/cli-config",
+                    "builder/tools/clients/rust-client/cli/cli-troubleshooting",
+                  ],
+                },
+                "builder/tools/clients/rust-client/examples",
+                "builder/tools/clients/rust-client/library",
+                "builder/tools/clients/rust-client/api-docs",
+                "builder/tools/clients/rust-client/debugging",
+              ],
+            },
+            {
+              type: "category",
               label: "TypeScript",
               link: { type: "doc", id: "builder/tools/clients/web-client/index" },
               items: [
