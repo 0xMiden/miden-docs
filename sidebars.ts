@@ -122,7 +122,10 @@ const sidebars: SidebarsConfig = {
               link: { type: "doc", id: "builder/tutorials/recipes/web/index" },
               collapsed: true,
               items: [
-                "builder/tutorials/recipes/web/setup_guide",
+                // NOTE: "builder/tutorials/recipes/web/setup_guide" lives
+                // only on 0xMiden/tutorials#186 (kbg/chore/v14-migration).
+                // Re-add once that PR merges into tutorials' main —
+                // it'll be part of the v0.14 release branch meanwhile.
                 "builder/tutorials/recipes/web/counter_contract_tutorial",
                 "builder/tutorials/recipes/web/create_deploy_tutorial",
                 "builder/tutorials/recipes/web/mint_consume_create_tutorial",
