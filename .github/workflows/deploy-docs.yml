@@ -41,7 +41,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEFAULT_REF: next
-      DEFAULT_TUTORIALS_REF: main
+      # Temporary: sidebars.ts now enumerates recipes/{rust,web} content that
+      # only lives on 0xMiden/tutorials#186 (kbg/chore/v14-migration). Until
+      # that PR merges into tutorials' main, pin the live /next/ ingest to
+      # the PR branch so the sidebar doc-ids resolve and the build doesn't
+      # abort with "Invalid sidebar file" on doc-id mismatches.
+      # TODO: revert to `main` once 0xMiden/tutorials#186 is merged.
+      DEFAULT_TUTORIALS_REF: kbg/chore/v14-migration
     steps:
       - name: Checkout docs site
         uses: actions/checkout@v4
