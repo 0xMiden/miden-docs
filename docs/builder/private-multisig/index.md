@@ -72,5 +72,5 @@ sequenceDiagram
 
 | Repository | Description |
 |---|---|
-| [guardian](https://github.com/OpenZeppelin/guardian) | Guardian server, client SDKs, and multisig client libraries |
+| [Miden Guardian](https://github.com/OpenZeppelin/guardian) | Guardian server, client SDKs, and multisig client libraries |
 | [MultiSig](https://github.com/OpenZeppelin/MultiSig) | MultiSig reference application (Next.js frontend + coordinator) |

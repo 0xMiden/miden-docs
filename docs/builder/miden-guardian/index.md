@@ -53,4 +53,4 @@ Guardian is non-custodial. The provider cannot move funds unilaterally — it st
 
 ## Repository
 
-- [guardian](https://github.com/OpenZeppelin/guardian) — Guardian server, client SDKs, multisig client libraries, and specification
+- [Miden Guardian](https://github.com/OpenZeppelin/guardian) — Guardian server, client SDKs, multisig client libraries, and specification
