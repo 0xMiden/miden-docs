@@ -502,4 +502,4 @@ See these patterns in context in the [miden-bank repository](https://github.com/
 
 - **[Debugging Guide](./debugging)** - Troubleshoot errors
 - **[Testing Guide](./testing)** - MockChain patterns
-- **[Miden Bank Tutorial](../tutorials/miden-bank/)** - See these patterns in context
+- **[Miden Bank Tutorial](../miden-bank/)** - See these patterns in context

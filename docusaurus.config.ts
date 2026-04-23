@@ -343,7 +343,7 @@ const config: Config = {
             items: [
               { label: "Get started", to: "/builder/get-started" },
               { label: "Smart contracts", to: "/builder/smart-contracts" },
-              { label: "Tutorials", to: "/builder/tutorials/rust-compiler" },
+              { label: "Tutorials", to: "/builder/tutorials" },
               { label: "Tools", to: "/builder/tools" },
               { label: "Migration", to: "/builder/migration" },
             ],

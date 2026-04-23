@@ -29,7 +29,7 @@ Accounts, notes, and transactions — authored in Rust, compiled to MASM, proved
   <Card title="Smart contracts" href="./smart-contracts" eyebrow="Reference">
     Accounts, notes, storage, components, transactions — the full Rust SDK surface.
   </Card>
-  <Card title="Tutorials" href="./tutorials/rust-compiler" eyebrow="Walkthroughs">
+  <Card title="Tutorials" href="./tutorials" eyebrow="Walkthroughs">
     Real-world examples: the Miden Bank, private multisig, custom note scripts.
   </Card>
   <Card title="Development helpers" href="./tutorials#development-helpers" eyebrow="How-to">

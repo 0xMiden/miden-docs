@@ -165,7 +165,7 @@ npm run dev
 Open the dev-server URL in the browser and watch the devtools console for output.
 
 :::tip
-For detailed frontend setup guidance (React, wallets, UI), see the [Tutorials section](../tutorials/rust-compiler/).
+For detailed frontend setup guidance (React, wallets, UI), see the [Tutorials section](../tutorials/).
 :::
 
 ## Creating Accounts Programmatically
