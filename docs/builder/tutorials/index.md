@@ -22,16 +22,16 @@ Hands-on walkthroughs for building on Miden. Every tutorial pairs with runnable 
   </Card>
 </CardGrid>
 
-## Supplementary guides
+## Development helpers
 
 <CardGrid cols={3}>
-  <Card title="Testing with MockChain" href="../guides/testing" eyebrow="Guide">
+  <Card title="Testing with MockChain" href="./helpers/testing" eyebrow="Helper">
     Test your contracts against MockChain for local simulation.
   </Card>
-  <Card title="Debugging" href="../guides/debugging" eyebrow="Guide">
+  <Card title="Debugging" href="./helpers/debugging" eyebrow="Helper">
     Interpret errors and debug common issues.
   </Card>
-  <Card title="Common pitfalls" href="../guides/pitfalls" eyebrow="Guide">
+  <Card title="Common pitfalls" href="./helpers/pitfalls" eyebrow="Helper">
     Avoid known issues and limitations.
   </Card>
 </CardGrid>

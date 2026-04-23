@@ -1,23 +1,34 @@
 ---
 title: Tools
+description: "Developer tools for building and interacting with the Miden network — clients, playground, and block explorer."
+pagination_prev: null
 ---
 
 # Tools
 
-Developer tools for building and interacting with the Miden network.
+Developer tools for building on and interacting with the Miden network. Use the client SDKs inside your app, the Playground to prototype contracts in-browser, and the Explorer to inspect testnet state.
 
 ## Clients
 
-SDKs for integrating Miden into your applications:
+<CardGrid cols={3}>
+  <Card title="Rust client" href="./clients/rust-client/" eyebrow="Rust · SDK">
+    Full-featured Rust library for Miden rollup integration — accounts, transactions, notes, proving.
+  </Card>
+  <Card title="Web SDK" href="./clients/web-client/" eyebrow="TypeScript · SDK">
+    Browser-based client for managing accounts and transactions from a web app.
+  </Card>
+  <Card title="React SDK" href="./clients/react-sdk/" eyebrow="React · SDK">
+    Hooks and components for Miden dApps.
+  </Card>
+</CardGrid>
 
-- **[Rust SDK](./clients/)** — Full-featured Rust library for Miden rollup integration
-- **[Web SDK](./clients/)** — Browser-based client for managing accounts and transactions
-- **[React SDK](./clients/)** — React hooks and components for Miden dApps
+## Environments
 
-## Playground
-
-The **[Miden Playground](./playground)** is an interactive browser environment for writing and testing Miden assembly programs.
-
-## Explorer
-
-The **[Miden Explorer](./explorer)** is a block explorer for inspecting accounts, notes, transactions, and blocks on the Miden testnet.
+<CardGrid cols={2}>
+  <Card title="Playground" href="./playground" eyebrow="Browser">
+    Interactive environment for writing and testing Miden Assembly programs.
+  </Card>
+  <Card title="Explorer" href="./explorer" eyebrow="Testnet">
+    Block explorer for inspecting accounts, notes, transactions, and blocks on the Miden testnet.
+  </Card>
+</CardGrid>

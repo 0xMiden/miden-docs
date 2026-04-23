@@ -137,6 +137,11 @@ const config: Config = {
             redirects.push("/builder/tutorials/rust-compiler");
             redirects.push("/builder/tutorials/rust-compiler/");
           }
+          // Guides folded into Tutorials → Development helpers. Redirect
+          // old /builder/guides/* paths to the new location.
+          if (existingPath.startsWith("/builder/tutorials/helpers")) {
+            redirects.push(existingPath.replace("/builder/tutorials/helpers", "/builder/guides"));
+          }
 
           // Core Concepts section: redirect old root-level paths to new /core-concepts/ paths
           if (existingPath.startsWith("/core-concepts/protocol")) {
