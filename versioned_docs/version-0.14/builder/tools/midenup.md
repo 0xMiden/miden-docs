@@ -1,5 +1,6 @@
 ---
 title: midenup
+sidebar_label: Midenup
 sidebar_position: 2
 description: "The Miden toolchain installer — bootstrap, pin, and switch between Miden VM / compiler / client / stdlib toolchains from a single `miden` entry point."
 ---
