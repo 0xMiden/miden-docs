@@ -1030,16 +1030,26 @@ article td code {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  padding: 1px 5px;
-  font-size: 11px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  font-size: 12px;
+  font-weight: 500;
   font-family: var(--font-mono);
   letter-spacing: 0.04em;
-  color: var(--color-muted);
+  color: var(--color-text);
   background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-xs);
-  box-shadow: inset 0 -1px 0 var(--color-border);
+  box-shadow: inset 0 -1px 0 var(--color-border-strong);
+  transition:
+    color var(--t-fast) var(--ease-out-expo),
+    border-color var(--t-fast) var(--ease-out-expo);
+}
+
+.aa-DetachedSearchButton:hover .aa-DetachedSearchButtonKey {
+  color: var(--color-brand);
+  border-color: color-mix(in oklab, var(--color-brand) 35%, var(--color-border));
 }
 
 /* Hide shortcut keys on mobile */

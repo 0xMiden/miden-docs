@@ -22,62 +22,107 @@
    lightly tracked so it still reads as a brand mark. */
 .navbar__title {
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   color: var(--color-text);
 }
 
-/* Logo block — compact, hairline-bordered container around the mark */
+/* Logo — plain mark, no frame. Sits flush with the wordmark with a
+   slightly generous gap so the brand block reads as one unit. */
 .navbar__brand {
-  gap: 0.625rem;
-}
-
-.navbar__logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 28px;
-  width: 28px;
-  padding: 4px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-  overflow: hidden;
+  gap: 0.5rem;
+  margin-right: 1.5rem;
 }
 
 .navbar__logo img {
-  height: 18px !important;
-  width: 18px !important;
+  height: 22px !important;
+  width: 22px !important;
   object-fit: contain;
 }
 
 /* ==========================================
-   3.1) NAVBAR ICON LINKS
+   3.1) NAVBAR SPACING RHYTHM + GROUPING
+   Consistent gap between items within each group (left tabs, right
+   cluster) and a subtle hairline divider separating the social
+   cluster from the section tabs on its left and from the version /
+   search / CTA group on its right. */
+.navbar__items {
+  gap: 0.25rem;
+}
+
+.navbar__items--right {
+  gap: 0.5rem;
+}
+
+/* ==========================================
+   3.2) NAVBAR ICON LINKS (social cluster)
    ========================================== */
 
 .navbar-icon-link {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--radius-md);
   color: var(--color-muted);
   opacity: 1;
-  transition: color var(--t-base) var(--ease-out-expo);
+  transition:
+    color var(--t-base) var(--ease-out-expo),
+    background var(--t-base) var(--ease-out-expo),
+    transform var(--t-fast) var(--ease-out-expo);
 }
 
 .navbar-icon-link:hover {
   color: var(--color-text);
+  background: var(--color-surface);
+  transform: translateY(-0.5px);
+}
+
+.navbar-icon-link:active {
+  transform: translateY(0);
 }
 
 .navbar-icon-link svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
-/* Spacing between icon links */
+/* Tighten the social icons — they're a cluster, not individual items */
 .navbar__item.navbar__item--html {
-  margin: 0 2px;
+  margin: 0;
+}
+
+.navbar__item.navbar__item--html + .navbar__item.navbar__item--html {
+  margin-left: -2px; /* tighter within cluster */
+}
+
+/* Hairline divider before the social cluster (first html item among
+   right-side items). A single 1px vertical hairline between groups. */
+.navbar__items--right > .navbar__item.navbar__item--html:first-of-type {
+  position: relative;
+  margin-left: 0.5rem;
+}
+
+.navbar__items--right > .navbar__item.navbar__item--html:first-of-type::before {
+  content: "";
+  position: absolute;
+  left: -0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 20px;
+  width: 1px;
+  background: var(--color-border);
+}
+
+/* Hide social icons on mobile — they already live in the footer and
+   the hamburger drawer's brand row has limited horizontal space. */
+@media (max-width: 996px) {
+  .navbar-icon-link {
+    display: none;
+  }
 }
 
 /* ==========================================
@@ -225,9 +270,10 @@
 .navbar-cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.375rem;
   height: 32px;
   padding: 0 0.875rem;
+  margin-left: 0.25rem;
   border-radius: var(--radius-md);
   background: var(--color-brand);
   color: #ffffff !important;
@@ -236,31 +282,22 @@
   font-weight: 600;
   line-height: 1;
   text-decoration: none !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 1px 2px rgba(0, 0, 0, 0.12);
-  transition: background var(--t-base) var(--ease-out-expo),
-              transform var(--t-fast) var(--ease-out-expo),
-              box-shadow var(--t-base) var(--ease-out-expo);
+  transition:
+    background var(--t-base) var(--ease-out-expo),
+    box-shadow var(--t-base) var(--ease-out-expo);
 }
 
 .navbar-cta:hover,
 .navbar-cta:focus-visible {
   background: var(--color-brand-600);
   color: #ffffff !important;
-  transform: translateY(-1px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
-    0 4px 10px color-mix(in oklab, var(--color-brand) 35%, transparent);
-}
-
-.navbar-cta:active {
-  transform: translateY(0);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-brand) 22%, transparent);
 }
 
 .navbar-cta__arrow {
   display: inline-block;
-  transition: transform var(--t-fast) var(--ease-out-expo);
+  font-family: var(--font-mono);
+  transition: transform var(--t-base) var(--ease-out-expo);
 }
 
 .navbar-cta:hover .navbar-cta__arrow {
