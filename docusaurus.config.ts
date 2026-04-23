@@ -132,10 +132,11 @@ const config: Config = {
             redirects.push(existingPath.replace("/builder/tutorials/recipes/web", "/builder/tutorials/web-client"));
           }
           // rust-compiler/ was removed — its hub content folded into tutorials/index.
-          // Redirect old paths to the Tutorials landing.
-          if (existingPath === "/builder/tutorials" || existingPath === "/builder/tutorials/") {
+          // Only fire on the no-trailing-slash variant; Docusaurus calls
+          // createRedirects for both `/foo` and `/foo/`, and pushing the
+          // same source twice causes a redirect-file collision.
+          if (existingPath === "/builder/tutorials") {
             redirects.push("/builder/tutorials/rust-compiler");
-            redirects.push("/builder/tutorials/rust-compiler/");
           }
           // Guides folded into Tutorials → Development helpers. Redirect
           // old /builder/guides/* paths to the new location.
@@ -270,11 +271,11 @@ const config: Config = {
       },
       navbar: {
         logo: {
-          src: "img/logo.svg",
-          alt: "Miden Logo",
-          height: 32,
+          src: "img/miden-logo-horizontal.svg",
+          alt: "Miden",
+          height: 22,
+          width: 73,
         },
-        title: "MIDEN",
         items: [
           // LEFT - Section tabs using docSidebar
           {
