@@ -22,9 +22,12 @@ Developer tools for building on and interacting with the Miden network. Use the 
   </Card>
 </CardGrid>
 
-## Environments
+## Toolchain + environments
 
-<CardGrid cols={2}>
+<CardGrid cols={3}>
+  <Card title="midenup" href="./midenup" eyebrow="Toolchain installer">
+    Install and switch between Miden toolchain channels — VM, compiler, client, stdlib, kernel — from a unified `miden` command.
+  </Card>
   <Card title="Playground" href="./playground" eyebrow="Browser">
     Interactive environment for writing and testing Miden Assembly programs.
   </Card>

@@ -41,10 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEFAULT_REF: next
-      # v0.14 pins tutorials to the PR #186 branch (kbg/chore/v14-migration)
-      # so the live /next/ ingest matches what v0.14 snapshot was cut from.
-      # TODO: flip back to `main` once 0xMiden/tutorials#186 merges upstream.
-      DEFAULT_TUTORIALS_REF: kbg/chore/v14-migration
+      DEFAULT_TUTORIALS_REF: main
     steps:
       - name: Checkout docs site
         uses: actions/checkout@v4
