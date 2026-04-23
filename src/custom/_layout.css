@@ -18,27 +18,41 @@
   }
 }
 
-/* Title wordmark (MIDEN) — same sans family as the nav labels,
-   lightly tracked so it still reads as a brand mark. */
-.navbar__title {
-  font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--color-text);
+/* Horizontal brand mark — ember glyph + "MIDEN" wordmark in one SVG.
+   No separate .navbar__title; the wordmark is part of the asset.
+   `display: block` on the img kills the inline-baseline gap that
+   would otherwise misalign the brand vs. the nav tabs. */
+.navbar__brand {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 1.5rem;
+  padding: 0;
 }
 
-/* Logo — plain mark, no frame. Sits flush with the wordmark with a
-   slightly generous gap so the brand block reads as one unit. */
-.navbar__brand {
-  gap: 0.5rem;
-  margin-right: 1.5rem;
+.navbar__logo {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  margin: 0;
 }
 
 .navbar__logo img {
+  display: block;
   height: 22px !important;
-  width: 22px !important;
+  width: auto !important;
   object-fit: contain;
+}
+
+/* Dark mode: invert + hue-rotate flips the dark wordmark to white
+   while leaving the saturated orange mark essentially untouched. */
+[data-theme="dark"] .navbar__logo img {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* The asset bakes in the wordmark — hide the default .navbar__title
+   span in case a `title` config sneaks back in. */
+.navbar__title {
+  display: none !important;
 }
 
 /* ==========================================
