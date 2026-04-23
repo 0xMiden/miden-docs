@@ -192,8 +192,9 @@ jobs:
 
           # Builder docs → docs/builder/*
           # Sync tutorials into tutorials — selective ingest.
-          # rust-compiler/, index.md, and _category_.json are locally authored
-          # in the docs repo and preserved through this clean/ingest cycle.
+          # rust-compiler/, index.md, miden-bank/index.md, and _category_.json
+          # are locally authored in the docs repo and preserved through this
+          # clean/ingest cycle.
           # rust-client/, web-client/, lib.rs, and _category_.yml are deliberately
           # NOT ingested — rust-client and web-client already live at
           # /builder/tools/clients/ (canonical SDK location) and the other two
@@ -208,6 +209,9 @@ jobs:
               src="vendor/tutorials/docs/src/$name"
               [ -f "$src" ] && cp    "$src" docs/builder/tutorials/
             done
+            # Restore locally-authored miden-bank/index.md over the vendor one
+            # so our CardGrid-based landing survives the cp above.
+            git checkout HEAD -- docs/builder/tutorials/miden-bank/index.md 2>/dev/null || true
             echo "Synced tutorials (miden-bank, components, img, theme, miden_node_setup.md) → docs/builder/tutorials"
           fi
 
