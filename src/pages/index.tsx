@@ -73,10 +73,10 @@ export default function Home(): JSX.Element {
                   <span aria-hidden="true">→</span>
                 </Link>
                 <Link
-                  to="https://github.com/0xMiden/midenup"
+                  to="/builder/tools/midenup"
                   className={styles.ctaSecondary}
                 >
-                  Install midenup <span aria-hidden="true">↗</span>
+                  Install midenup <span aria-hidden="true">→</span>
                 </Link>
               </div>
             </div>
