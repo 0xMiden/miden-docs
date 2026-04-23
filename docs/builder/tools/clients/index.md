@@ -1,30 +1,52 @@
 ---
-title: Client
+title: Clients
+description: "Miden client SDKs — Rust, TypeScript, and React surfaces for accounts, transactions, notes, and client-side proving."
 sidebar_position: 1
+pagination_prev: null
 ---
 
-# Miden client
+# Clients
 
-The Miden client is the user-facing entry point to the Miden network. It manages accounts, builds and executes transactions, produces zero-knowledge proofs, and synchronises local state with the node. The same client logic ships across four consumer surfaces so you can pick the runtime that fits your application:
+The Miden client manages accounts, builds and executes transactions, produces zero-knowledge proofs, and synchronises local state with the node. The same core ships across three consumer surfaces — pick the runtime that matches your application. All three share the same on-chain semantics.
 
-| Surface | Package | Best for |
-| --- | --- | --- |
-| **Rust library** | `miden-client` crate | Native services, proving infrastructure, tests |
-| **Rust CLI** | `miden-client` binary | Scripting, local exploration, ops workflows |
-| **Web SDK** | `@miden-sdk/miden-sdk` (npm) | Browser and Node apps, Electron, service workers |
-| **React SDK** | `@miden-sdk/react` (npm) | React / Next.js / React Native dApps |
+## SDKs
 
-Navigate to each surface via the sidebar on the left.
+<CardGrid cols={3}>
+  <Card title="Rust" href="./rust-client/" eyebrow="Rust · SDK + CLI">
+    Native Rust library and CLI. Best for services, proving infrastructure, tests, scripting, and local exploration.
+  </Card>
+  <Card title="TypeScript" href="./web-client/" eyebrow="TypeScript · Browser">
+    `@miden-sdk/miden-sdk` — Rust compiled to WebAssembly with a typed TypeScript API. Browser, Node, Electron, service workers.
+  </Card>
+  <Card title="React" href="./react-sdk/" eyebrow="React · Hooks">
+    `@miden-sdk/react` — `MidenProvider` + hooks (`useMiden`, `useAccount`, `useSend`, …) wrapping the Web SDK.
+  </Card>
+</CardGrid>
 
-## How the surfaces relate
+## Pick a surface
 
-- The **Rust library** contains the core state machine, transaction executor, prover, keystore abstraction, and note transport.
-- The **Rust CLI** wraps the library and exposes its functionality as commands.
-- The **Web SDK** compiles the Rust library to WebAssembly and exposes a typed JavaScript API (the `MidenClient` class). It is the canonical TypeScript/JavaScript entry point.
-- The **React SDK** wraps the Web SDK with a `MidenProvider` and a family of hooks (`useMiden`, `useAccount`, `useSend`, …). It shares the exact same on-chain semantics.
+<CardGrid cols={2}>
+  <Card title="Rust library" eyebrow="Core · Native">
+    Core state machine, transaction executor, prover, keystore abstraction, and note transport. Use it in native services, backend proving infrastructure, and integration tests.
+  </Card>
+  <Card title="Rust CLI" eyebrow="Scripting · Ops">
+    Wraps the library as commands. Shipped in the same `miden-client` crate — good for local exploration and ops workflows.
+  </Card>
+  <Card title="Web SDK" eyebrow="WASM · Browser">
+    Rust library compiled to WebAssembly with a typed `MidenClient` JavaScript class. Canonical TS/JS entry point for browser and Node apps.
+  </Card>
+  <Card title="React SDK" eyebrow="Hooks · dApps">
+    `MidenProvider` + hooks wrapping the Web SDK. Drop it into a React / Next.js / React Native app for instant Miden integration.
+  </Card>
+</CardGrid>
 
-Pick whichever surface matches your application — each section documents the full API for that runtime.
+## Shared topics
 
-## Common topics
-
-Errors, diagnostics, and other behaviour that is shared across all surfaces is documented once under **Common errors** in the sidebar.
+<CardGrid cols={2}>
+  <Card title="Common errors" href="./common-errors" eyebrow="Diagnostics">
+    Errors, diagnostic output, and recovery patterns shared across all surfaces.
+  </Card>
+  <Card title="Tutorials" href="../../tutorials/" eyebrow="Walkthroughs">
+    End-to-end walkthroughs using each client surface — Miden Bank, recipes, helpers.
+  </Card>
+</CardGrid>
