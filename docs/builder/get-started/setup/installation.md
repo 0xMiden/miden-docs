@@ -85,12 +85,8 @@ v22.x.x  # or higher
 The Miden toolchain installer makes it easy to manage Miden components:
 
 ```bash title=">_ Terminal"
-cargo install midenup
+cargo install --git https://github.com/0xMiden/midenup.git
 ```
-
-:::info
-Until published to crates.io, install using: `cargo install --git https://github.com/0xMiden/midenup.git`
-:::
 
 **Initialize midenup**
 

@@ -19,7 +19,7 @@ The repository includes a Docker Compose configuration with PostgreSQL:
 ```bash
 git clone https://github.com/OpenZeppelin/guardian.git
 cd guardian
-docker-compose up -d
+docker compose up -d
 ```
 
 This starts:
@@ -33,13 +33,13 @@ This starts:
 View logs:
 
 ```bash
-docker-compose logs -f
+docker compose logs -f
 ```
 
 Stop services:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## Building from source

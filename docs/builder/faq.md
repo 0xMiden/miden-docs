@@ -92,7 +92,7 @@ A Miden operator is an entity that maintains the infrastructure necessary for th
 4. Maintaining Data Availability
 5. Participating in the Consensus Mechanism
 
-## How does bridging works in Miden?
+## How does bridging work in Miden?
 
 Miden does not yet have a fully operational bridge, work in progress.
 
