@@ -9,7 +9,7 @@ description: "Browser-based environment to write, compile, and execute Miden Ass
 An interactive browser environment for writing, compiling, and executing Miden Assembly (MASM) programs. No installation required — prototype account code, test note scripts, and experiment with VM instructions straight from a URL.
 
 <CardGrid cols={2}>
-  <Card title="Open the Playground ↗" href="https://playground.miden.io/" eyebrow="External · playground.miden.io">
+  <Card title="Open the Playground ↗" href="https://playground.miden.xyz/" eyebrow="External · playground.miden.xyz">
     Launch the browser IDE and start writing MASM immediately.
   </Card>
   <Card title="Miden VM reference" href="/core-concepts" eyebrow="Reference · MASM">
