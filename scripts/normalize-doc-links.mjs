@@ -166,58 +166,100 @@ function normalizeMarkdownLink(root, sourceFile, rawUrl) {
   return relativeMarkdownPath(sourceFile, target, suffix);
 }
 
+// Link-text alternation: backtick-quoted code (which may contain `]`) or any
+// non-`]`, non-backtick character. Lets the regex traverse text like
+// `[\`#[export_type]\`]`. The two branches are mutually exclusive on the first
+// character — keeps the engine off exponential backtracking paths.
+const linkTextPattern = String.raw`(?:\`[^\`\n]*\`|[^\]\`])*?`;
+
+// Fenced code block (``` or ~~~) or HTML/MDX comment. Anything matched here is
+// passed through untouched so example markdown in docs isn't rewritten.
+// Indented fences (inside list items) are not supported — they trigger
+// catastrophic regex backtracking on large docs.
+const protectedRegionPattern =
+  /(?:^(`{3,}|~{3,})[^\n]*\n[\s\S]*?^\1[^\n]*$|<!--[\s\S]*?-->)/gm;
+
+function replaceOutsideProtectedRegions(content, transform) {
+  let result = "";
+  let lastIndex = 0;
+
+  for (const match of content.matchAll(protectedRegionPattern)) {
+    result += transform(content.slice(lastIndex, match.index));
+    result += match[0];
+    lastIndex = match.index + match[0].length;
+  }
+
+  result += transform(content.slice(lastIndex));
+  return result;
+}
+
 function normalizeMarkdownLinks(root, sourceFile, content) {
-  let normalized = content.replace(
-    /(!?\[[^\]]*?\]\()(<[^>\s]+>|[^\s)]+)([^)]*\))/g,
-    (match, prefix, rawUrl, suffix) => {
-      const wrapped = rawUrl.startsWith("<") && rawUrl.endsWith(">");
-      const url = wrapped ? rawUrl.slice(1, -1) : rawUrl;
-      const normalizedUrl = normalizeMarkdownLink(root, sourceFile, url);
+  let normalized = replaceOutsideProtectedRegions(content, (chunk) =>
+    chunk.replace(
+      new RegExp(
+        `(!?\\[${linkTextPattern}\\]\\()(<[^>\\s]+>|[^\\s)]+)([^)]*\\))`,
+        "g",
+      ),
+      (match, prefix, rawUrl, suffix) => {
+        const wrapped = rawUrl.startsWith("<") && rawUrl.endsWith(">");
+        const url = wrapped ? rawUrl.slice(1, -1) : rawUrl;
+        const normalizedUrl = normalizeMarkdownLink(root, sourceFile, url);
 
-      if (normalizedUrl === url) {
-        return match;
-      }
+        if (normalizedUrl === url) {
+          return match;
+        }
 
-      return `${prefix}${wrapped ? `<${normalizedUrl}>` : normalizedUrl}${suffix}`;
-    },
+        return `${prefix}${wrapped ? `<${normalizedUrl}>` : normalizedUrl}${suffix}`;
+      },
+    ),
   );
 
-  normalized = normalized.replace(
-    /^(\s*\[[^\]]+\]:\s+)(\S+)(.*)$/gm,
-    (match, prefix, rawUrl, suffix) => {
-      const normalizedUrl = normalizeMarkdownLink(root, sourceFile, rawUrl);
+  normalized = replaceOutsideProtectedRegions(normalized, (chunk) =>
+    chunk.replace(
+      /^(\s*\[[^\]]+\]:\s+)(\S+)(.*)$/gm,
+      (match, prefix, rawUrl, suffix) => {
+        const normalizedUrl = normalizeMarkdownLink(root, sourceFile, rawUrl);
 
-      if (normalizedUrl === rawUrl) {
-        return match;
-      }
+        if (normalizedUrl === rawUrl) {
+          return match;
+        }
 
-      return `${prefix}${normalizedUrl}${suffix}`;
-    },
+        return `${prefix}${normalizedUrl}${suffix}`;
+      },
+    ),
   );
 
   return normalized;
 }
 
 function normalizeCardLinks(root, sourceFile, content) {
-  return content.replace(/<Card\b[^>\n]*\bhref="([^"]+)"[^>\n]*>/g, (tag, rawUrl) => {
-    if (!isRelativeDocCandidate(rawUrl)) {
-      return tag;
-    }
+  return replaceOutsideProtectedRegions(content, (chunk) =>
+    chunk.replace(/<Card\b[^>\n]*\bhref="([^"]+)"[^>\n]*>/g, (tag, rawUrl) => {
+      if (!isRelativeDocCandidate(rawUrl)) {
+        return tag;
+      }
 
-    const target = resolveTarget(root, sourceFile, rawUrl);
+      const target = resolveTarget(root, sourceFile, rawUrl);
 
-    if (!target) {
-      return tag;
-    }
+      if (!target) {
+        return tag;
+      }
 
-    const { suffix } = splitUrl(rawUrl);
-    const docHash = suffix.startsWith("#") ? suffix : "";
-    const id = docId(root, target);
-    return tag.replace(
-      `href="${rawUrl}"`,
-      `docId="${id}"${docHash ? ` hash="${docHash}"` : ""}`,
-    );
-  });
+      const { suffix } = splitUrl(rawUrl);
+
+      // Bail out on query strings — Card has no prop for them and silently
+      // dropping a query suffix would change the link target.
+      if (suffix && !suffix.startsWith("#")) {
+        return tag;
+      }
+
+      const id = docId(root, target);
+      return tag.replace(
+        `href="${rawUrl}"`,
+        `docId="${id}"${suffix ? ` hash="${suffix}"` : ""}`,
+      );
+    }),
+  );
 }
 
 const changedFiles = [];

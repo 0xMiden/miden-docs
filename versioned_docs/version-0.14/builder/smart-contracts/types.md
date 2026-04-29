@@ -283,7 +283,7 @@ The SDK also provides `NoteIdx`, `Tag`, `NoteType`, `Recipient`, `Digest`, and `
 | `[u32; 4]` / `[u16; 4]` / `[u8; 4]` / `[bool; 4]` | `Word` | `Word::from(arr)` |
 | `Word` | `[Felt; 4]` | `w.into_elements()` or `let arr: [Felt; 4] = w.into()` |
 
-Use these types in [component definitions](./accounts/components.md), store and retrieve Words from [persistent storage](./accounts/storage.md), or define your own types for public APIs with [`#[export_type]`](./accounts/custom-types).
+Use these types in [component definitions](./accounts/components.md), store and retrieve Words from [persistent storage](./accounts/storage.md), or define your own types for public APIs with [`#[export_type]`](./accounts/custom-types.md).
 
 :::info API Reference
 Full API docs on docs.rs: [`Felt`](https://docs.rs/miden/latest/miden/struct.Felt.html), [`Word`](https://docs.rs/miden/latest/miden/struct.Word.html), [`Asset`](https://docs.rs/miden/latest/miden/struct.Asset.html)

@@ -118,7 +118,7 @@ pub fn do_something(&mut self) {
 
 ### Supported parameter and return types
 
-Public methods can use SDK types (`Felt`, `Word`, `Asset`, `AccountId`, `NoteIdx`) and custom types annotated with [`#[export_type]`](./custom-types).
+Public methods can use SDK types (`Felt`, `Word`, `Asset`, `AccountId`, `NoteIdx`) and custom types annotated with [`#[export_type]`](./custom-types.md).
 
 ## Auto-generated methods
 
