@@ -6,7 +6,7 @@ sidebar_position: 3
 
 ## Purpose
 
-An address is an extension to account IDs and other identifiers that facilitates sending and receiving of [notes](../note). It serves four main purposes explained in this section.
+An address is an extension to account IDs and other identifiers that facilitates sending and receiving of [notes](../note.md). It serves four main purposes explained in this section.
 
 ### Communicating receiver information
 
@@ -16,7 +16,7 @@ The receiver can choose to disclose various pieces of information that control h
 
 Consider a few examples that use different address mechanisms:
 
-- The [Pay-to-ID note](../note#p2id-pay-to-id): the note itself can only be consumed if the account ID encoded in the note details matches the ID of the account that tries to consume it. To receive a P2ID note, the receiver should communicate an `AddressId::AccountId` type to the sender.
+- The [Pay-to-ID note](../note.md#p2id-pay-to-id): the note itself can only be consumed if the account ID encoded in the note details matches the ID of the account that tries to consume it. To receive a P2ID note, the receiver should communicate an `AddressId::AccountId` type to the sender.
 - A "Pay-to-PoW" note that can only be consumed if the receiver can provide a valid seed such that the hash of the seed results in a value with n leading zero bits. The receiver communicates an `AddressId::PoW` type to the sender, which encodes the target number of leading zero bits (and a salt to avoid re-use of the same seed).
 - A "Pay-to-Public-Key" note that stores a public (signature) key and checks if the receiver can provide a valid cryptographic signature for that key. The `AddressId::PublicKey` type must encode the public key.
 
@@ -35,11 +35,11 @@ For notes which are sent privately, the sender needs to communicate the full not
 
 Instead, our Miden client connects to a _Note Transport Layer_, which stores encrypted note details together with the associated public metadata for each note. The receiver can query the Note Transport Layer for `NoteTag`s they are interested in. Typically, a `NoteTag` encodes a few leading bits (14 by default) of the receiver's `AccountId`. Querying the Note Transport Layer for 14-bit `NoteTag`s reduces the receiver's privacy, but at the same time allows them to perform less work downloading and trial-decrypting the notes than if fewer bits were encoded.
 
-With an `Address`, e.g. the [`AddressId::AccountId`](./address#address-types) variant, the receiver could specify how many bits of their `AccountId` they want to disclose to the sender and thus choose their level of privacy.
+With an `Address`, e.g. the [`AddressId::AccountId`](./address.md#address-types) variant, the receiver could specify how many bits of their `AccountId` they want to disclose to the sender and thus choose their level of privacy.
 
 ### Account interface discovery
 
-An address allows the sender of the note to easily discover the interface of the receiving account. As explained in the [account interface](./code#interface) section, every account can have a different set of procedures that note scripts can call, which is the _interface_ of the account. In order for the sender of a note to create a note that the receiver can consume, the sender needs to know the interface of the receiving account. This can be communicated via the address, which encodes a mapping of standard interfaces like the basic wallet.
+An address allows the sender of the note to easily discover the interface of the receiving account. As explained in the [account interface](./code.md#interface) section, every account can have a different set of procedures that note scripts can call, which is the _interface_ of the account. In order for the sender of a note to create a note that the receiver can consume, the sender needs to know the interface of the receiving account. This can be communicated via the address, which encodes a mapping of standard interfaces like the basic wallet.
 
 If a sender wants to create a note, it is up to them to check whether the receiver account has an interface that is compatible with that note. The notion of an address doesn't exist at protocol level and so it is up to wallets or clients to implement this interface compatibility check.
 
@@ -91,14 +91,14 @@ The supported routing parameters are detailed in this section.
 
 #### Address Interface
 
-The address interface informs the sender of the capabilities of the [receiver account's interface](./code#interface).
+The address interface informs the sender of the capabilities of the [receiver account's interface](./code.md#interface).
 
 The supported **address interfaces** are:
-- `BasicWallet` (type `0`): The standard basic wallet interface. See the [account code](./code#interface) docs for details.
+- `BasicWallet` (type `0`): The standard basic wallet interface. See the [account code](./code.md#interface) docs for details.
 
 #### Note Tag Length
 
-The note tag length routing parameter allows specifying the length of the [note tag](../note#note-discovery) that the sender should create. This parameter determines how many bits of the account ID are encoded into note tags of notes targeted to this address. This lets the owner of the account choose their level of privacy. A higher tag length makes the address ID more uniquely identifiable and reduces privacy, while a shorter length increases privacy at the cost of matching more notes published onchain.
+The note tag length routing parameter allows specifying the length of the [note tag](../note.md#note-discovery) that the sender should create. This parameter determines how many bits of the account ID are encoded into note tags of notes targeted to this address. This lets the owner of the account choose their level of privacy. A higher tag length makes the address ID more uniquely identifiable and reduces privacy, while a shorter length increases privacy at the cost of matching more notes published onchain.
 
 #### Encryption Key
 

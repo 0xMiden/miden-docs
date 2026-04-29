@@ -32,4 +32,4 @@ miden-client --help
 
 This will show you the available commands and options for the client.
 
-A more in-depth tutorial can be found in the [Getting started section](./get-started).
+A more in-depth tutorial can be found in the [Getting started section](./get-started/index.md).

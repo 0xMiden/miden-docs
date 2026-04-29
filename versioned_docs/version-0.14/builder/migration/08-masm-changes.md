@@ -24,7 +24,7 @@ Miden v0.14 adds two constant expressions that derive their values from a string
 Both run at assembly time, so the hashing cost is paid by the assembler — the emitted MAST sees only the final word/felt immediate.
 
 :::note Kernel events also renamespaced in v0.14
-Event names on the kernel moved from `miden::…` to `miden::protocol::…` — see [Kernel Events Prefixed with `miden::protocol`](./transaction-changes#kernel-events-prefixed-with-midenprotocol).
+Event names on the kernel moved from `miden::…` to `miden::protocol::…` — see [Kernel Events Prefixed with `miden::protocol`](./06-transaction-changes.md#kernel-events-prefixed-with-midenprotocol).
 :::
 
 ### `word("...")`

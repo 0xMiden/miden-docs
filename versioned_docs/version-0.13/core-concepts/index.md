@@ -182,6 +182,6 @@ The node exposes endpoints for:
 
 ## Further Reading
 
-- **[Build Documentation](../builder/)** – Practical guides for building on Miden
-- **[Get Started](../builder/get-started/)** – Get started with your first transaction
-- **[FAQ](../builder/faq)** – Common questions answered
+- **[Build Documentation](../builder/index.md)** – Practical guides for building on Miden
+- **[Get Started](../builder/get-started/index.md)** – Get started with your first transaction
+- **[FAQ](../builder/faq.md)** – Common questions answered

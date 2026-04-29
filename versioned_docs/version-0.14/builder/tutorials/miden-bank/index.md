@@ -31,39 +31,39 @@ Every part builds on the previous one and includes:
 ## Walkthrough
 
 <CardGrid cols={2}>
-  <Card title="Part 0: Project setup" href="./project-setup" eyebrow="Start here">
+  <Card title="Part 0: Project setup" docId="builder/tutorials/miden-bank/project-setup" eyebrow="Start here">
     Create your project with `miden new` and understand the workspace structure.
   </Card>
-  <Card title="Part 1: Account components" href="./account-components" eyebrow="Component model">
+  <Card title="Part 1: Account components" docId="builder/tutorials/miden-bank/account-components" eyebrow="Component model">
     Learn `#[component]`, `Value` storage, and `StorageMap` for managing state.
   </Card>
-  <Card title="Part 2: Constants & constraints" href="./constants-constraints" eyebrow="Business rules">
+  <Card title="Part 2: Constants & constraints" docId="builder/tutorials/miden-bank/constants-constraints" eyebrow="Business rules">
     Define constants and validate inputs with assertions.
   </Card>
-  <Card title="Part 3: Asset management" href="./asset-management" eyebrow="Vault ops">
+  <Card title="Part 3: Asset management" docId="builder/tutorials/miden-bank/asset-management" eyebrow="Vault ops">
     Handle fungible assets with vault operations and balance tracking.
   </Card>
-  <Card title="Part 4: Note scripts" href="./note-scripts" eyebrow="Consuming notes">
+  <Card title="Part 4: Note scripts" docId="builder/tutorials/miden-bank/note-scripts" eyebrow="Consuming notes">
     Write scripts that execute when notes are consumed.
   </Card>
-  <Card title="Part 5: Cross-component calls" href="./cross-component-calls" eyebrow="Composition">
+  <Card title="Part 5: Cross-component calls" docId="builder/tutorials/miden-bank/cross-component-calls" eyebrow="Composition">
     Call account methods from note scripts via bindings.
   </Card>
-  <Card title="Part 6: Transaction scripts" href="./transaction-scripts" eyebrow="Account ops">
+  <Card title="Part 6: Transaction scripts" docId="builder/tutorials/miden-bank/transaction-scripts" eyebrow="Account ops">
     Write scripts for account initialization and owner operations.
   </Card>
-  <Card title="Part 7: Output notes" href="./output-notes" eyebrow="Emitting notes">
+  <Card title="Part 7: Output notes" docId="builder/tutorials/miden-bank/output-notes" eyebrow="Emitting notes">
     Create P2ID notes programmatically for withdrawals.
   </Card>
-  <Card title="Part 8: Complete flows" href="./complete-flows" eyebrow="End-to-end">
+  <Card title="Part 8: Complete flows" docId="builder/tutorials/miden-bank/complete-flows" eyebrow="End-to-end">
     Walk through end-to-end deposit and withdraw operations.
   </Card>
 </CardGrid>
 
 ## Prerequisites
 
-- Completed the [Get started guide](../../get-started) — `midenup`, `miden new`, basic tooling.
-- Understanding of Miden concepts: [accounts, notes, transactions](../../smart-contracts).
+- Completed the [Get started guide](../../get-started/index.md) — `midenup`, `miden new`, basic tooling.
+- Understanding of Miden concepts: [accounts, notes, transactions](../../smart-contracts/index.md).
 - Rust programming experience.
 
 <Callout variant="tip" title="No Miden-Rust experience required">
@@ -96,13 +96,13 @@ cd miden-tutorials/examples/miden-bank
 ## Supplementary guides
 
 <CardGrid cols={3}>
-  <Card title="Testing with MockChain" href="../helpers/testing" eyebrow="Guide">
+  <Card title="Testing with MockChain" docId="builder/tutorials/helpers/testing" eyebrow="Guide">
     Learn to test your contracts with MockChain for local simulation.
   </Card>
-  <Card title="Debugging" href="../helpers/debugging" eyebrow="Guide">
+  <Card title="Debugging" docId="builder/tutorials/helpers/debugging" eyebrow="Guide">
     Interpret errors and debug common issues.
   </Card>
-  <Card title="Common pitfalls" href="../helpers/pitfalls" eyebrow="Guide">
+  <Card title="Common pitfalls" docId="builder/tutorials/helpers/pitfalls" eyebrow="Guide">
     Avoid known issues and limitations.
   </Card>
 </CardGrid>
@@ -113,4 +113,4 @@ cd miden-tutorials/examples/miden-bank
 - Join the [Build on Miden](https://t.me/BuildOnMiden) Telegram for support.
 - Review the complete code in the [examples/miden-bank](https://github.com/0xMiden/miden-tutorials/tree/main/examples/miden-bank) directory.
 
-Ready? Start with [Part 0: Project setup](./project-setup).
+Ready? Start with [Part 0: Project setup](./00-project-setup.md).

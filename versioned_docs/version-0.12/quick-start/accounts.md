@@ -158,7 +158,7 @@ npm run dev
 ```
 
 :::tip
-For detailed frontend setup guidance, see the [Web Client tutorial](../miden-tutorials/web-client/create_deploy_tutorial#step-2-set-up-the-webclient).
+For detailed frontend setup guidance, see the [Web Client tutorial](../miden-tutorials/web-client/create_deploy_tutorial.md#step-2-set-up-the-webclient).
 :::
 
 ## Creating Accounts Programmatically
@@ -420,6 +420,6 @@ Faucet account ID: 0xde0ba31282f7522046d3d4af40722b
 - **BasicFungibleFaucet**: Enables token minting capabilities
 - **AuthRpoFalcon512**: Handles cryptographic authentication
 
-Now that you understand how to create accounts and faucets, you're ready to learn about Miden's unique transaction model. Continue to [Notes & Transactions](./notes) to explore how assets move between accounts using notes.
+Now that you understand how to create accounts and faucets, you're ready to learn about Miden's unique transaction model. Continue to [Notes & Transactions](./notes.md) to explore how assets move between accounts using notes.
 
 ---

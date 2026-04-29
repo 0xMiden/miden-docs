@@ -216,7 +216,7 @@ Control-flow opcodes (`Join`, `Split`, `Loop`, `Call`, `Dyn`, `Dyncall`, `SysCal
 
 ## `ExecutionOptions`, `ProvingOptions`, `ExecutionProof` Relocated
 
-These types have moved crates. See [Imports & Dependencies](./imports-dependencies) for the updated import paths.
+These types have moved crates. See [Imports & Dependencies](./01-imports-dependencies.md) for the updated import paths.
 
 ---
 
