@@ -3,84 +3,93 @@ title: Running
 sidebar_position: 1
 ---
 
-# How to Run
+# Running Miden Guardian
 
-This guide covers running a Guardian server locally for development or testing.
+Miden Guardian exposes:
 
-## Prerequisites
+- HTTP API on port `3000`
+- gRPC API on port `50051`
 
-- [Docker](https://docs.docker.com/get-docker/) and Docker Compose (recommended), or
-- Rust toolchain 1.90+ (to build from source)
+Both ports are hard-coded in the server binary and are not currently overridable via environment variable. Embedders calling the builder API directly can configure them in code.
 
-## Docker Compose (recommended)
-
-The repository includes a Docker Compose configuration with PostgreSQL:
+## Run with Docker Compose
 
 ```bash
-git clone https://github.com/OpenZeppelin/guardian.git
-cd guardian
-docker-compose up -d
+docker compose up --build -d
 ```
 
-This starts:
-
-| Service | Port | Description |
-|---|---|---|
-| Guardian HTTP API | `localhost:3000` | REST endpoints |
-| Guardian gRPC API | `localhost:50051` | gRPC service |
-| PostgreSQL | `localhost:5432` | Metadata and state storage |
-
-View logs:
-
-```bash
-docker-compose logs -f
-```
-
-Stop services:
-
-```bash
-docker-compose down
-```
-
-## Building from source
-
-```bash
-git clone https://github.com/OpenZeppelin/guardian.git
-cd guardian
-
-# With filesystem storage (default)
-cargo build --release --bin server
-cargo run --release --bin server
-
-# With PostgreSQL storage
-DATABASE_URL=postgres://psm:password@localhost:5432/psm \
-  cargo run --features postgres --package guardian-server
-```
-
-## Ports
-
-| Protocol | Default Port | Description |
-|---|---|---|
-| HTTP | `3000` | REST API |
-| gRPC | `50051` | gRPC service |
-
-Both can be configured programmatically via the `ServerBuilder`:
-
-```rust
-use server::builder::ServerBuilder;
-
-let builder = ServerBuilder::new()
-    .http(true, 3000)
-    .grpc(true, 50051);
-```
-
-## Verifying the server
-
-Once running, check the server's acknowledgment public key:
+Confirm the server is up by fetching its public key:
 
 ```bash
 curl http://localhost:3000/pubkey
-# Returns: { "pubkey": "0x..." }
 ```
 
-This endpoint is unauthenticated and confirms the server is operational.
+Expected shape:
+
+```json
+{ "commitment": "0x..." }
+```
+
+`/pubkey` is unauthenticated and is the canonical "is the server up + which key am I trusting" probe. Pass `?scheme=ecdsa` to also receive the ECDSA public key:
+
+```bash
+curl 'http://localhost:3000/pubkey?scheme=ecdsa'
+```
+
+```json
+{ "commitment": "0x...", "pubkey": "0x..." }
+```
+
+Stop the server:
+
+```bash
+docker compose down
+```
+
+## Run from source
+
+Requirements:
+
+- Rust `1.93+`
+- Docker, if using local Postgres
+
+Filesystem storage is the default local mode. The three paths are independent — there is no single root-path override:
+
+```bash
+mkdir -p /tmp/guardian/storage /tmp/guardian/metadata /tmp/guardian/keystore
+
+GUARDIAN_STORAGE_PATH=/tmp/guardian/storage \
+GUARDIAN_METADATA_PATH=/tmp/guardian/metadata \
+GUARDIAN_KEYSTORE_PATH=/tmp/guardian/keystore \
+cargo run -p guardian-server --bin server
+```
+
+If those env vars are omitted, the server falls back to `/var/guardian/storage`, `/var/guardian/metadata`, and `/var/guardian/keystore` respectively.
+
+Run with local Postgres (requires the `postgres` feature):
+
+```bash
+docker compose -f docker-compose.postgres.yml up -d
+
+DATABASE_URL=postgres://guardian:guardian_dev_password@localhost:5432/guardian \
+cargo run -p guardian-server --features postgres --bin server
+```
+
+## HTTP API surface
+
+| Endpoint                      | Auth              |
+| ----------------------------- | ----------------- |
+| `GET /`                       | Unauthenticated   |
+| `GET /pubkey`                 | Unauthenticated   |
+| `POST /configure`             | Signed headers    |
+| `POST /delta`                 | Signed headers    |
+| `GET /delta`                  | Signed headers    |
+| `GET /delta/since`            | Signed headers    |
+| `GET /state`                  | Signed headers    |
+| `POST /delta/proposal`        | Signed headers    |
+| `GET /delta/proposal`         | Signed headers    |
+| `GET /delta/proposal/single`  | Signed headers    |
+| `PUT /delta/proposal`         | Signed headers    |
+| `/dashboard/accounts*`        | Dashboard session |
+
+Signed requests carry three headers: `x-pubkey`, `x-signature`, and `x-timestamp`. Timestamps must be within ±5 minutes of server time and strictly greater than the last value the server saw for that public key — see [Authentication failures](./troubleshooting#authentication-failures) if requests are being rejected.
