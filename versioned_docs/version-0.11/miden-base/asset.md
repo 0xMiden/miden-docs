@@ -4,11 +4,11 @@ sidebar_position: 4
 
 # Assets
 
-An `Asset` is a unit of value that can be transferred from one [account](./account) to another using [notes](note).
+An `Asset` is a unit of value that can be transferred from one [account](./account/index.md) to another using [notes](note).
 
 ## What is the purpose of an asset?
 
-In Miden, assets serve as the primary means of expressing and transferring value between [accounts](./account) through [notes](note). They are designed with four key principles in mind:
+In Miden, assets serve as the primary means of expressing and transferring value between [accounts](./account/index.md) through [notes](note). They are designed with four key principles in mind:
 
 1. **Parallelizable exchange:**  
    By managing ownership and transfers directly at the account level instead of relying on global structures like ERC20 contracts, accounts can exchange assets concurrently, boosting scalability and efficiency.
@@ -54,7 +54,7 @@ Non-fungible assets are encoded by hashing the `Asset` data into 32 bytes and pl
 
 ### Storage
 
-[Accounts](./account) and [notes](note) have vaults used to store assets. Accounts use a sparse Merkle tree as a vault while notes use a simple list. This enables an account to store a practically unlimited number of assets while a note can only store 255 assets.
+[Accounts](./account/index.md) and [notes](note) have vaults used to store assets. Accounts use a sparse Merkle tree as a vault while notes use a simple list. This enables an account to store a practically unlimited number of assets while a note can only store 255 assets.
 
 <p style={{textAlign: 'center'}}>
     <img src={require('./img/asset/asset-storage.png').default} style={{width: '70%'}} alt="Asset storage"/>

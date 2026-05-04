@@ -491,6 +491,6 @@ See these patterns in context in the [miden-bank repository](https://github.com/
 
 ## Next Steps
 
-- **[Debugging Guide](./debugging)** - Troubleshoot errors
-- **[Testing Guide](./testing)** - MockChain patterns
-- **[Miden Bank Tutorial](./miden-bank/)** - See these patterns in context
+- **[Debugging Guide](./debugging.md)** - Troubleshoot errors
+- **[Testing Guide](./testing.md)** - MockChain patterns
+- **[Miden Bank Tutorial](./miden-bank/index.md)** - See these patterns in context

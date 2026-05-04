@@ -27,8 +27,8 @@ There are two main categories of accounts in Miden: **basic accounts** and **fau
 
 - **Faucets:**
   Faucets are always immutable and can be specialized by the type of assets they issue:
-  - _Fungible Faucet:_ Can issue fungible [assets](../asset).
-  - _Non-fungible Faucet:_ Can issue non-fungible [assets](../asset).
+  - _Fungible Faucet:_ Can issue fungible [assets](../asset.md).
+  - _Non-fungible Faucet:_ Can issue non-fungible [assets](../asset.md).
 
 ### Account storage mode
 

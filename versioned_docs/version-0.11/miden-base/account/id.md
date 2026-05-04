@@ -27,8 +27,8 @@ There are two main categories of accounts in Miden: **basic accounts** and **fau
 
 - **Faucets:**
   Faucets are always immutable and can be specialized by the type of assets they issue:
-  - _Fungible Faucet:_ Can issue fungible [assets](../asset).
-  - _Non-fungible Faucet:_ Can issue non-fungible [assets](../asset).
+  - _Fungible Faucet:_ Can issue fungible [assets](../asset.md).
+  - _Non-fungible Faucet:_ Can issue non-fungible [assets](../asset.md).
 
 ### Account storage mode
 
@@ -47,10 +47,10 @@ Users can choose whether their accounts are stored publicly or privately. The pr
 
 An `Account` ID can be encoded in different formats:
 
-1. [**Address**](./address#types--interfaces):
+1. [**Address**](./address.md#types--interfaces):
 
    - Used when sending or receiving notes or assets.
-   - Used to communicate the [account interface](./code#interface) between sender and receiver.
+   - Used to communicate the [account interface](./code.md#interface) between sender and receiver.
 
 2. **Hexadecimal**:
    - Example: `0xd345c9766a2d5e606477a5676b049a`

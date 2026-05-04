@@ -50,7 +50,7 @@ Each slot has one of the following types:
 - **Value slot:** Contains a single `Word` of arbitrary data.
 - **Map slot:** Contains a [StorageMap](#map-slots), a key-value store where both keys and values are `Word`s. The slot's value is set to the root of the map.
 
-An account's storage is typically the result of merging multiple [account components](./components).
+An account's storage is typically the result of merging multiple [account components](./components.md).
 
 ### Value Slots
 

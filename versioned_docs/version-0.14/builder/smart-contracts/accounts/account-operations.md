@@ -122,7 +122,7 @@ impl ManagedWallet {
 }
 ```
 
-To move assets out of an account, create [output notes](../notes/output-notes) with `output_note::add_asset`. For signature verification and nonce management, see [Authentication](./authentication).
+To move assets out of an account, create [output notes](../notes/output-notes.md) with `output_note::add_asset`. For signature verification and nonce management, see [Authentication](./authentication.md).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/)

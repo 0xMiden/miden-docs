@@ -6,7 +6,7 @@ description: "Miden's execution model, account structure, note system, and trans
 
 # What is a Miden Smart Contract
 
-Miden is a ZK rollup where transactions execute on the client and only a cryptographic proof is submitted to the network. Every entity — wallets, contracts, faucets — is an account with code, storage, a vault, and a nonce. Assets move between accounts through notes, which act as programmable UTXOs. This page describes the execution model, account structure, note system, and transaction lifecycle. For a hands-on walkthrough, see the [Miden Bank Tutorial](../tutorials/miden-bank/).
+Miden is a ZK rollup where transactions execute on the client and only a cryptographic proof is submitted to the network. Every entity — wallets, contracts, faucets — is an account with code, storage, a vault, and a nonce. Assets move between accounts through notes, which act as programmable UTXOs. This page describes the execution model, account structure, note system, and transaction lifecycle. For a hands-on walkthrough, see the [Miden Bank Tutorial](../tutorials/miden-bank/index.md).
 
 ## What makes Miden different
 
@@ -64,7 +64,7 @@ impl MyWallet {
 
 Each component defines its own storage layout and public methods. The `#[component]` macro generates the necessary WIT (WebAssembly Interface Type) definitions for cross-component interoperability.
 
-See [Components](./accounts/components) for full details.
+See [Components](./accounts/components.md) for full details.
 
 ## Notes as UTXOs
 
@@ -138,14 +138,14 @@ Miden supports several account types, configured in `Cargo.toml`:
 
 | Building Block | Description | Details |
 |----------------|-------------|---------|
-| [Components](./accounts/components) | Reusable code modules with storage and WIT interfaces | `#[component]` macro |
-| [Storage](./accounts/storage) | Up to 255 slots of Value or StorageMap | Persistent state |
-| [Custom Types](./accounts/custom-types) | Exported structs/enums for public APIs | `#[export_type]` |
-| [Account Operations](./accounts/account-operations) | Read/write account state and vault | `active_account`, `native_account` |
+| [Components](./accounts/components.md) | Reusable code modules with storage and WIT interfaces | `#[component]` macro |
+| [Storage](./accounts/storage.md) | Up to 255 slots of Value or StorageMap | Persistent state |
+| [Custom Types](./accounts/custom-types.md) | Exported structs/enums for public APIs | `#[export_type]` |
+| [Account Operations](./accounts/account-operations.md) | Read/write account state and vault | `active_account`, `native_account` |
 | [Notes](./notes/) | Programmable UTXOs for asset transfers | Note scripts |
-| [The tx Module](./transactions/transaction-context) | Block queries and expiration management | `tx` module, `#[tx_script]` |
-| [Authentication](./accounts/authentication) | Falcon512 signatures and replay protection | Nonce management |
-| [Cross-Component Calls](./cross-component-calls) | Inter-component communication | WIT bindings, `generate!()` |
-| [Types](./types) | Felt, Word, Asset — the VM's native types | Field arithmetic |
+| [The tx Module](./transactions/transaction-context.md) | Block queries and expiration management | `tx` module, `#[tx_script]` |
+| [Authentication](./accounts/authentication.md) | Falcon512 signatures and replay protection | Nonce management |
+| [Cross-Component Calls](./cross-component-calls.md) | Inter-component communication | WIT bindings, `generate!()` |
+| [Types](./types.md) | Felt, Word, Asset — the VM's native types | Field arithmetic |
 
-Ready to start building? Follow the [Miden Bank Tutorial](../tutorials/miden-bank/) for a hands-on walkthrough.
+Ready to start building? Follow the [Miden Bank Tutorial](../tutorials/miden-bank/index.md) for a hands-on walkthrough.

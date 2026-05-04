@@ -32,15 +32,15 @@ This tutorial is designed for hands-on learning. Each part builds on the previou
 
 | Part | Topic | What You'll Build |
 |------|-------|-------------------|
-| **Part 0** | [Project Setup](./project-setup) | Create project with `miden new` |
-| **Part 1** | [Account Components](./account-components) | Bank struct with storage |
-| **Part 2** | [Constants & Constraints](./constants-constraints) | Business rules and validation |
-| **Part 3** | [Asset Management](./asset-management) | Deposit logic with balance tracking |
-| **Part 4** | [Note Scripts](./note-scripts) | Deposit note for receiving assets |
-| **Part 5** | [Cross-Component Calls](./cross-component-calls) | How bindings enable calls |
-| **Part 6** | [Transaction Scripts](./transaction-scripts) | Initialization script |
-| **Part 7** | [Output Notes](./output-notes) | Withdraw with P2ID output |
-| **Part 8** | [Complete Flows](./complete-flows) | End-to-end verification |
+| **Part 0** | [Project Setup](./00-project-setup.md) | Create project with `miden new` |
+| **Part 1** | [Account Components](./01-account-components.md) | Bank struct with storage |
+| **Part 2** | [Constants & Constraints](./02-constants-constraints.md) | Business rules and validation |
+| **Part 3** | [Asset Management](./03-asset-management.md) | Deposit logic with balance tracking |
+| **Part 4** | [Note Scripts](./04-note-scripts.md) | Deposit note for receiving assets |
+| **Part 5** | [Cross-Component Calls](./05-cross-component-calls.md) | How bindings enable calls |
+| **Part 6** | [Transaction Scripts](./06-transaction-scripts.md) | Initialization script |
+| **Part 7** | [Output Notes](./07-output-notes.md) | Withdraw with P2ID output |
+| **Part 8** | [Complete Flows](./08-complete-flows.md) | End-to-end verification |
 
 ## Tutorial Cards
 
@@ -155,7 +155,7 @@ import DocCard from '@theme/DocCard';
 
 Before starting this tutorial, ensure you have:
 
-- Completed the [Get Started guide](../../../get-started/) (familiarity with `midenup`, `miden new`, basic tooling)
+- Completed the [Get Started guide](../../../get-started/index.md) (familiarity with `midenup`, `miden new`, basic tooling)
 - Basic understanding of Miden concepts (accounts, notes, transactions)
 - Rust programming experience
 
@@ -192,9 +192,9 @@ cd miden-bank
 
 These standalone guides complement the tutorial:
 
-- **[Testing with MockChain](../testing)** - Learn to test your contracts
-- **[Debugging](../debugging)** - Troubleshoot common issues
-- **[Common Pitfalls](../pitfalls)** - Avoid known gotchas
+- **[Testing with MockChain](../testing.md)** - Learn to test your contracts
+- **[Debugging](../debugging.md)** - Troubleshoot common issues
+- **[Common Pitfalls](../pitfalls.md)** - Avoid known gotchas
 
 ## Getting Help
 
@@ -204,4 +204,4 @@ If you get stuck during this tutorial:
 - Join the [Build On Miden](https://t.me/BuildOnMiden) Telegram community for support
 - Review the complete code in the [miden-bank repository](https://github.com/keinberger/miden-bank)
 
-Ready to build your first Miden banking application? Let's get started with [Part 0: Project Setup](./project-setup)!
+Ready to build your first Miden banking application? Let's get started with [Part 0: Project Setup](./00-project-setup.md)!
