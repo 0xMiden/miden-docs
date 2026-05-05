@@ -6,7 +6,7 @@ description: "Reference documentation for building Miden smart contracts in Rust
 
 # Miden Smart Contracts
 
-This section is the complete reference for building smart contracts on Miden using Rust and the Miden SDK (v0.10). If you're new to Miden, follow the hands-on [Miden Bank Tutorial](../tutorials/rust-compiler/miden-bank/).
+This section is the complete reference for building smart contracts on Miden using Rust and the Miden SDK (v0.10). If you're new to Miden, follow the hands-on [Miden Bank Tutorial](../tutorials/rust-compiler/miden-bank/index.md).
 
 All Miden Rust contracts compile under these constraints: `#![no_std]`, Rust 2024 edition.
 

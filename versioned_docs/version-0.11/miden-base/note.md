@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Notes
 
-A `Note` is the medium through which [Accounts](./account) communicate. A `Note` holds assets and defines how they can be consumed.
+A `Note` is the medium through which [Accounts](./account/index.md) communicate. A `Note` holds assets and defines how they can be consumed.
 
 ## What is the purpose of a note?
 

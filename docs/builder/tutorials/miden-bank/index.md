@@ -62,8 +62,8 @@ Every part builds on the previous one and includes:
 
 ## Prerequisites
 
-- Completed the [Get started guide](../../get-started) — `midenup`, `miden new`, basic tooling.
-- Understanding of Miden concepts: [accounts, notes, transactions](../../smart-contracts).
+- Completed the [Get started guide](../../get-started/index.md) — `midenup`, `miden new`, basic tooling.
+- Understanding of Miden concepts: [accounts, notes, transactions](../../smart-contracts/index.md).
 - Rust programming experience.
 
 <Callout variant="tip" title="No Miden-Rust experience required">
@@ -96,13 +96,13 @@ cd miden-tutorials/examples/miden-bank
 ## Supplementary guides
 
 <CardGrid cols={3}>
-  <Card title="Testing with MockChain" href="../helpers/testing" eyebrow="Guide">
+  <Card title="Testing with MockChain" docId="builder/tutorials/helpers/testing" eyebrow="Guide">
     Learn to test your contracts with MockChain for local simulation.
   </Card>
-  <Card title="Debugging" href="../helpers/debugging" eyebrow="Guide">
+  <Card title="Debugging" docId="builder/tutorials/helpers/debugging" eyebrow="Guide">
     Interpret errors and debug common issues.
   </Card>
-  <Card title="Common pitfalls" href="../helpers/pitfalls" eyebrow="Guide">
+  <Card title="Common pitfalls" docId="builder/tutorials/helpers/pitfalls" eyebrow="Guide">
     Avoid known issues and limitations.
   </Card>
 </CardGrid>

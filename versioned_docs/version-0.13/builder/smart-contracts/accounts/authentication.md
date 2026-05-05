@@ -6,7 +6,7 @@ description: "Authentication component pattern and nonce management for Miden ac
 
 # Authentication
 
-Miden uses RPO-Falcon512 digital signatures for transaction authentication. Because transactions execute on the client rather than on-chain validators, the system needs a way to prove that a transaction was authorized by the account owner. Without authentication, anyone could construct a valid proof that transfers assets out of an account. The nonce prevents replay attacks — without it, a valid proof could be resubmitted to execute the same state change twice. For details on the cryptographic primitives, see [Cryptography](./cryptography).
+Miden uses RPO-Falcon512 digital signatures for transaction authentication. Because transactions execute on the client rather than on-chain validators, the system needs a way to prove that a transaction was authorized by the account owner. Without authentication, anyone could construct a valid proof that transfers assets out of an account. The nonce prevents replay attacks — without it, a valid proof could be resubmitted to execute the same state change twice. For details on the cryptographic primitives, see [Cryptography](./cryptography.md).
 
 ## How authentication works
 
@@ -16,7 +16,7 @@ The signature itself isn't passed as a function argument — it's provided throu
 
 ## The advice provider
 
-The advice provider supplies auxiliary data during proof generation — see [Advice Provider](../transactions/advice-provider) for the full API.
+The advice provider supplies auxiliary data during proof generation — see [Advice Provider](../transactions/advice-provider.md) for the full API.
 
 ## Auth component implementation
 
@@ -85,7 +85,7 @@ let new_nonce: Felt = self.incr_nonce();
 
 The nonce is automatically included in the transaction's proof. If someone tries to replay a transaction, the nonce won't match and verification will fail.
 
-Auth components are typically called via [cross-component calls](../cross-component-calls) from note scripts or [transaction scripts](../transactions/transaction-scripts). For access control and security patterns, see [Patterns](../patterns).
+Auth components are typically called via [cross-component calls](../cross-component-calls.md) from note scripts or [transaction scripts](../transactions/transaction-scripts.md). For access control and security patterns, see [Patterns](../patterns.md).
 
 :::info API Reference
 Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`rpo_falcon512_verify`)
@@ -93,6 +93,6 @@ Full API docs on docs.rs: [`miden`](https://docs.rs/miden/latest/miden/) (`rpo_f
 
 ## Related
 
-- [Cryptography](./cryptography) — RPO-Falcon512 verification and hashing primitives
-- [Advice Provider](../transactions/advice-provider) — supplying auxiliary data during proof generation
-- [Patterns](../patterns) — access control, rate limiting, and anti-patterns
+- [Cryptography](./cryptography.md) — RPO-Falcon512 verification and hashing primitives
+- [Advice Provider](../transactions/advice-provider.md) — supplying auxiliary data during proof generation
+- [Patterns](../patterns.md) — access control, rate limiting, and anti-patterns

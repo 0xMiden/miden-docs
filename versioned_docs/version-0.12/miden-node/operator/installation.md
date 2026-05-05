@@ -77,4 +77,4 @@ existing chain will not work with the new version. This will change as our proto
 settle.
 :::
 
-Updating the node to a new version is as simply as re-running the install process and repeating the [bootstrapping](./usage#bootstrapping) instructions.
+Updating the node to a new version is as simply as re-running the install process and repeating the [bootstrapping](./usage.md#bootstrapping) instructions.

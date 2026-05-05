@@ -346,7 +346,7 @@ fn require_sufficient_balance(&self, depositor: AccountId, amount: Felt) {
 ```
 
 :::danger Critical: Always Validate Before Subtraction
-This pattern is **mandatory** for any operation that subtracts from a balance. Miden uses field element (Felt) arithmetic, which is modular. Without this check, subtracting more than the balance would NOT cause an error - instead, the value would silently wrap around to a large positive number, effectively allowing unlimited withdrawals. See [Common Pitfalls](../pitfalls#felt-arithmetic-underflowoverflow) for more details.
+This pattern is **mandatory** for any operation that subtracts from a balance. Miden uses field element (Felt) arithmetic, which is modular. Without this check, subtracting more than the balance would NOT cause an error - instead, the value would silently wrap around to a large positive number, effectively allowing unlimited withdrawals. See [Common Pitfalls](../pitfalls.md#felt-arithmetic-underflowoverflow) for more details.
 :::
 
 ### State Checks
@@ -453,4 +453,4 @@ See the complete constraint implementation in the [miden-bank repository](https:
 
 ## Next Steps
 
-Now that you can define and enforce business rules, let's learn how to handle assets in [Part 3: Asset Management](./asset-management).
+Now that you can define and enforce business rules, let's learn how to handle assets in [Part 3: Asset Management](./03-asset-management.md).

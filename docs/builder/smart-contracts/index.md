@@ -6,7 +6,7 @@ pagination_prev: null
 
 # Miden Smart Contracts
 
-This section is the complete reference for building smart contracts on Miden using Rust and the Miden SDK. If you're new to Miden, follow the hands-on [Miden Bank Tutorial](../tutorials/miden-bank/).
+This section is the complete reference for building smart contracts on Miden using Rust and the Miden SDK. If you're new to Miden, follow the hands-on [Miden Bank Tutorial](../tutorials/miden-bank/index.md).
 
 All Miden Rust contracts compile under these constraints: `#![no_std]`, Rust 2024 edition.
 
@@ -22,7 +22,7 @@ All Miden Rust contracts compile under these constraints: `#![no_std]`, Rust 202
   <Card title="Transactions" href="./transactions/" eyebrow="Execution">
     Transaction context, scripts, and the advice provider.
   </Card>
-  <Card title="Cross-component calls" href="./cross-component-calls" eyebrow="Composition">
+  <Card title="Cross-component calls" docId="builder/smart-contracts/cross-component-calls" eyebrow="Composition">
     Calling methods across account components and from note scripts.
   </Card>
 </CardGrid>
@@ -30,10 +30,10 @@ All Miden Rust contracts compile under these constraints: `#![no_std]`, Rust 202
 ## Reference
 
 <CardGrid cols={3}>
-  <Card title="Types" href="./types" eyebrow="Primitives">
+  <Card title="Types" docId="builder/smart-contracts/types" eyebrow="Primitives">
     Core types: Felt, Word, AccountId, NoteId, and more.
   </Card>
-  <Card title="Patterns" href="./patterns" eyebrow="Recipes">
+  <Card title="Patterns" docId="builder/smart-contracts/patterns" eyebrow="Recipes">
     Access control, rate limiting, spending limits, and anti-patterns.
   </Card>
   <Card title="API reference" href="https://docs.rs/miden/latest/miden/" eyebrow="docs.rs">

@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Configuration and Usage
 
-As outlined in the [Architecture](./architecture) chapter, the node consists of several components which can be run
+As outlined in the [Architecture](./architecture.md) chapter, the node consists of several components which can be run
 separately or as a single bundled process. At present, the recommended way to operate a node is in bundled mode and is
 what this guide will focus on. Operating the components separately is very similar and should be relatively
 straight-forward to derive from these instructions.

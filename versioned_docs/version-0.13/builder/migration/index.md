@@ -35,7 +35,7 @@ This guide is for:
 - **App developers** using `miden-objects`, `miden-lib`, or legacy MASM syntax
 - **Smart contract authors** using storage slots or note APIs
 
-If you're starting fresh on v0.13, you can skip this guide and go directly to the [Get Started](../get-started).
+If you're starting fresh on v0.13, you can skip this guide and go directly to the [Get Started](../get-started/index.md).
 :::
 
 ---
@@ -90,13 +90,13 @@ Work through these sections in order for a complete migration:
 
 | Section | Topics |
 |---------|--------|
-| [1. Imports & Dependencies](./imports-dependencies) | Crate renames, `miden-protocol`, `miden-standards` |
-| [2. Account Changes](./account-changes) | Named storage, keystore, components, procedure roots |
-| [3. Note Changes](./note-changes) | Attachments, tags, `NetworkAccountTarget`, MINT notes |
-| [4. Transaction Changes](./transaction-changes) | `TransactionEvent` → `TransactionEventId` |
-| [5. Client Changes](./client-changes) | Rust RPC, WebClient store, CLI changes |
-| [6. MASM Changes](./masm-changes) | Syntax modernization, crypto renames |
-| [7. Assembler Changes](./assembler-changes) | `LibraryPath` removal, debug mode changes |
+| [1. Imports & Dependencies](./01-imports-dependencies.md) | Crate renames, `miden-protocol`, `miden-standards` |
+| [2. Account Changes](./02-account-changes.md) | Named storage, keystore, components, procedure roots |
+| [3. Note Changes](./03-note-changes.md) | Attachments, tags, `NetworkAccountTarget`, MINT notes |
+| [4. Transaction Changes](./04-transaction-changes.md) | `TransactionEvent` → `TransactionEventId` |
+| [5. Client Changes](./05-client-changes.md) | Rust RPC, WebClient store, CLI changes |
+| [6. MASM Changes](./06-masm-changes.md) | Syntax modernization, crypto renames |
+| [7. Assembler Changes](./07-assembler-changes.md) | `LibraryPath` removal, debug mode changes |
 
 ---
 

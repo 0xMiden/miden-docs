@@ -41,9 +41,9 @@ These guides provide detailed reference information for Rust compiler developmen
 
 | Guide | Description |
 |-------|-------------|
-| [Testing with MockChain](./testing) | Learn to test your contracts using MockChain for local blockchain simulation |
-| [Debugging Guide](./debugging) | Interpret errors and debug common issues |
-| [Common Pitfalls](./pitfalls) | Avoid known issues and limitations |
+| [Testing with MockChain](./testing.md) | Learn to test your contracts using MockChain for local blockchain simulation |
+| [Debugging Guide](./debugging.md) | Interpret errors and debug common issues |
+| [Common Pitfalls](./pitfalls.md) | Avoid known issues and limitations |
 
 ## Source Code
 
@@ -55,6 +55,6 @@ The complete source code for the Miden Bank example is available at:
 
 Before starting, ensure you have:
 
-- Completed the [Get Started guide](../../get-started/)
+- Completed the [Get Started guide](../../get-started/index.md)
 - Basic familiarity with Rust programming
 - Understanding of Miden concepts (accounts, notes, transactions)

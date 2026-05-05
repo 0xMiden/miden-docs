@@ -57,7 +57,7 @@ This guide is for:
 - **Smart contract authors** writing MASM or using protocol APIs
 - **App developers** using `miden-protocol`, `miden-standards`, or client crates
 
-If you're starting fresh on v0.14, you can skip this guide and go directly to the [Get Started guide](../get-started).
+If you're starting fresh on v0.14, you can skip this guide and go directly to the [Get Started guide](../get-started/index.md).
 :::
 
 ---
@@ -111,15 +111,15 @@ Work through these sections in order for a complete migration:
 
 | Section | Topics |
 |---------|--------|
-| [1. Imports & Dependencies](./imports-dependencies) | Cargo.toml bumps, import relocations, MSRV, `Felt` rename |
-| [2. Hashing & Stack Changes](./hashing-stack) | Poseidon2, little-endian stack, Falcon module rename |
-| [3. Account Changes](./account-changes) | Components, AuthSingleSig, `@auth_script`, Ownable2Step |
-| [4. Note Changes](./note-changes) | NoteStorage, `@note_script`, OutputNote variants, StandardNote |
-| [5. Assets, Vault & Faucet](./asset-vault-faucet) | Two-word assets, create_* rename, get_asset, vault changes |
-| [6. Transaction Changes](./transaction-changes) | TransactionId, ProvenTransaction, events, SignedBlock |
-| [7. Client Changes](./client-changes) | Web MidenClient, Rust Keystore, AccountReader, StateSync |
-| [8. MASM Changes](./masm-changes) | 128-bit math, event namespace |
-| [9. VM & Assembler Changes](./vm-assembler) | Host trait, FastProcessor, type relocations |
+| [1. Imports & Dependencies](./01-imports-dependencies.md) | Cargo.toml bumps, import relocations, MSRV, `Felt` rename |
+| [2. Hashing & Stack Changes](./02-hashing-stack.md) | Poseidon2, little-endian stack, Falcon module rename |
+| [3. Account Changes](./03-account-changes.md) | Components, AuthSingleSig, `@auth_script`, Ownable2Step |
+| [4. Note Changes](./04-note-changes.md) | NoteStorage, `@note_script`, OutputNote variants, StandardNote |
+| [5. Assets, Vault & Faucet](./05-asset-vault-faucet.md) | Two-word assets, create_* rename, get_asset, vault changes |
+| [6. Transaction Changes](./06-transaction-changes.md) | TransactionId, ProvenTransaction, events, SignedBlock |
+| [7. Client Changes](./07-client-changes.md) | Web MidenClient, Rust Keystore, AccountReader, StateSync |
+| [8. MASM Changes](./08-masm-changes.md) | 128-bit math, event namespace |
+| [9. VM & Assembler Changes](./09-vm-assembler.md) | Host trait, FastProcessor, type relocations |
 
 ---
 

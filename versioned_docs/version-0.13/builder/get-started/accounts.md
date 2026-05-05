@@ -115,7 +115,7 @@ To run the code examples in this guide, you'll need to set up a development envi
 
 ### Rust Environment
 
-If you already created `my-test-project` during [installation](./setup/installation), you can reuse it. Otherwise, create a new project:
+If you already created `my-test-project` during [installation](./setup/installation.md), you can reuse it. Otherwise, create a new project:
 
 ```bash title=">_ Terminal"
 miden new my-project
@@ -158,7 +158,7 @@ npm run dev
 ```
 
 :::tip
-For detailed frontend setup guidance, see the [Tutorials section](../tutorials/rust-compiler/).
+For detailed frontend setup guidance, see the [Tutorials section](../tutorials/rust-compiler/index.md).
 :::
 
 ## Creating Accounts Programmatically
@@ -420,6 +420,6 @@ Faucet account ID: 0xde0ba31282f7522046d3d4af40722b
 - **BasicFungibleFaucet**: Enables token minting capabilities
 - **AuthFalcon512Rpo**: Handles cryptographic authentication
 
-Now that you understand how to create accounts and faucets, you're ready to learn about Miden's unique transaction model. Continue to [Notes & Transactions](./notes) to explore how assets move between accounts using notes.
+Now that you understand how to create accounts and faucets, you're ready to learn about Miden's unique transaction model. Continue to [Notes & Transactions](./notes.md) to explore how assets move between accounts using notes.
 
 ---
