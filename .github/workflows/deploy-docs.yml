@@ -146,7 +146,7 @@ jobs:
           echo "Aggregating vendor docs into v0.4 IA structure..."
 
           # Clean directories that will be re-synced (v0.4 nested paths)
-          rm -rf docs/core-concepts/protocol docs/core-concepts/miden-vm docs/core-concepts/node docs/core-concepts/compiler
+          rm -rf docs/core-concepts/protocol docs/core-concepts/standards docs/core-concepts/miden-vm docs/core-concepts/node docs/core-concepts/compiler
           # tools/clients: only clean ingested subdirs; preserve locally-authored web-client/, react-sdk/, index.md
           rm -rf docs/builder/tools/clients/rust-client
           rm -rf docs/builder/tools/clients/img
@@ -169,10 +169,24 @@ jobs:
           rm -rf docs/builder/tutorials/recipes/img
 
           # Core Concepts docs → docs/core-concepts/*
-          if [ -d "vendor/protocol/docs/src" ]; then
+          # 0xMiden/protocol switched its docs/src layout to a split:
+          #   docs/src/protocol/   → docs/core-concepts/protocol/
+          #   docs/src/standards/  → docs/core-concepts/standards/
+          # Released versions (e.g. v0.14.x) still ship the flat layout, so
+          # fall back to the legacy ingest if no protocol/ subdir is present.
+          if [ -d "vendor/protocol/docs/src/protocol" ]; then
+            mkdir -p docs/core-concepts/protocol
+            cp -r vendor/protocol/docs/src/protocol/. docs/core-concepts/protocol/
+            echo "Synced protocol → docs/core-concepts/protocol"
+            if [ -d "vendor/protocol/docs/src/standards" ]; then
+              mkdir -p docs/core-concepts/standards
+              cp -r vendor/protocol/docs/src/standards/. docs/core-concepts/standards/
+              echo "Synced standards → docs/core-concepts/standards"
+            fi
+          elif [ -d "vendor/protocol/docs/src" ]; then
             mkdir -p docs/core-concepts/protocol
             cp -r vendor/protocol/docs/src/* docs/core-concepts/protocol/
-            echo "Synced protocol → docs/core-concepts/protocol"
+            echo "Synced protocol (legacy flat layout) → docs/core-concepts/protocol"
           fi
 
           if [ -d "vendor/miden-vm/docs/src" ]; then
