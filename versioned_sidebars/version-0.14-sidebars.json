@@ -231,8 +231,7 @@
                 },
                 "builder/tools/clients/rust-client/examples",
                 "builder/tools/clients/rust-client/library",
-                "builder/tools/clients/rust-client/api-docs",
-                "builder/tools/clients/rust-client/debugging"
+                "builder/tools/clients/rust-client/api-docs"
               ]
             },
             {
