@@ -14,7 +14,7 @@ import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
  * ARCHITECTURE NOTE:
  * External docs are ingested at build time via deploy-docs.yml into:
  *   - Core Concepts docs → docs/core-concepts/*
- *   - Builder docs → docs/builder/tutorials/, docs/builder/tools/client/
+ *   - Builder docs → docs/builder/tutorials/, docs/builder/tools/clients/, docs/builder/tools/note-transport/
  * These paths are cleaned and re-synced on each build from source repos.
  */
 const sidebars: SidebarsConfig = {
@@ -239,6 +239,16 @@ const sidebars: SidebarsConfig = {
                 "builder/tools/clients/react-sdk/recipes",
               ],
             },
+          ],
+        },
+        {
+          type: "category",
+          label: "Note Transport",
+          link: { type: "doc", id: "builder/tools/note-transport/index" },
+          items: [
+            "builder/tools/note-transport/design",
+            "builder/tools/note-transport/operators",
+            "builder/tools/note-transport/users",
           ],
         },
         "builder/tools/midenup",

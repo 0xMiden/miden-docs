@@ -270,6 +270,19 @@
             }
           ]
         },
+        {
+          "type": "category",
+          "label": "Note Transport",
+          "link": {
+            "type": "doc",
+            "id": "builder/tools/note-transport/index"
+          },
+          "items": [
+            "builder/tools/note-transport/design",
+            "builder/tools/note-transport/operators",
+            "builder/tools/note-transport/users"
+          ]
+        },
         "builder/tools/midenup",
         "builder/tools/playground",
         "builder/tools/network"
