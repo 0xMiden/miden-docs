@@ -1,55 +1,59 @@
 ---
 title: Security
 sidebar_position: 4
+hide_title: true
 ---
 
-# Edge Cases & Security Considerations
-
-Guardian is designed around a clear trust model with well-defined security boundaries.
+Guardian stores and relays account state for clients. It is not a custodian, and it is not a private execution environment.
 
 ## Trust model
 
-The right threat model for Guardian is **honest-but-curious**: the server is expected to follow the protocol and availability guarantees, but may try to learn as much as it can from any data it is given.
+Guardian is an availability and coordination service. Miden remains authoritative for account commitments, and users keep the keys required to recover or rotate providers.
 
-Guardian is non-custodial. The provider holds no keys that can unilaterally move funds.
+| Area | Guardian role | Client or user responsibility |
+|---|---|---|
+| State sync | Stores and relays submitted state, deltas, proposals, metadata, and timestamps. | Verify returned commitments before relying on state. |
+| Request auth | Authenticates account requests and rejects stale or conflicting deltas. | Keep user signing keys secure and resync before signing stale state. |
+| Acknowledgements | Signs accepted deltas with the Guardian acknowledgement key. | Verify `/pubkey`, `ack_sig`, and delta ordering. |
+| Account policy | May participate as one signer in a multi-key account policy. | Keep a user-controlled recovery path that can remove or replace Guardian. |
+| Privacy and availability | Can see submitted payloads and access patterns, and can deny or delay service. | Treat Guardian as an operator-visible availability service. |
 
-### What Guardian can do
+Guardian should not be trusted to move funds on its own, change the account commitment accepted by Miden, hide submitted data from the operator, or guarantee availability.
 
-- **Store and relay** state snapshots and deltas.
-- **Validate** deltas against the Miden network before acknowledging them.
-- **Co-sign** transactions as one party in a threshold scheme.
-- **Enforce policies** (rate limits, timelocks) at the co-signing layer.
+:::important
+**User-controlled rotation.** Users can rotate Guardian at any time through their own recovery path. The current Guardian does not sign the rotation and does not need to serve an API response for it.
+:::
 
-### What Guardian cannot do
+## User control and provider rotation
 
-- **Forge state**: Every delta references the previous commitment. Inserting, reordering, or dropping deltas breaks the commitment chain, detectable by any client.
-- **Move funds unilaterally**: Guardian holds at most one key in a multi-key setup. It always needs the user's key to complete a transaction.
-- **Tamper silently**: The server signs each accepted delta with its acknowledgment key. Clients can verify these signatures to detect any tampering.
+In the standard assisted-custody setup, the account policy includes a user-controlled recovery path, such as user hot key + user cold key. This lets the user remove or replace Guardian without the current Guardian participating.
 
-### What Guardian can do adversarially
+The current Guardian does not sign the rotation and does not need to serve an API response for it. The user updates the account policy to remove the old Guardian key commitment, adds the new Guardian if needed, and configures the new provider with a verified state snapshot.
 
-- **Deny service**: The server can refuse to serve data or accept deltas. This is a liveness issue, not a safety issue — users can recover using their own keys.
-- **Withhold updates**: The server could delay propagating deltas to other devices. Clients should verify state freshness against on-chain commitments.
+```mermaid
+sequenceDiagram
+    participant User as User keys
+    participant Old as Current Guardian
+    participant Network as Miden Network
+    participant New as New Guardian
 
-## Integrity guarantees
+    User->>Network: Update account policy<br/>remove old Guardian key
+    Network-->>User: Return accepted account commitment
+    User->>New: Configure provider<br/>with verified state snapshot
+    Note over Old: No signature or API response required
+```
 
-### Commitment chain
+## Client checks
 
-Every delta includes a `prev_commitment` referencing the base state. This creates an unbroken chain:
+Clients should verify:
 
-- If the server drops a delta, subsequent deltas won't validate because their `prev_commitment` won't match.
-- If the server inserts a fake delta, the commitment chain diverges from the on-chain state.
-- Clients can verify the chain independently by tracking commitments locally.
+1. The expected Guardian acknowledgement key from `/pubkey`.
+2. `ack_sig` on accepted deltas.
+3. Delta ordering through `prev_commitment` and `new_commitment`.
+4. The latest account commitment against Miden before recovery, provider rotation, or high-value signing.
+5. Fresh state before signing if another client or authorized signer may have advanced the account.
 
-### Server acknowledgment
-
-After accepting a delta, the server signs the `new_commitment` with its acknowledgment key. Clients should:
-
-1. Retrieve the server's public key via `/pubkey`.
-2. Verify `ack_sig` on every `push_delta` response.
-3. Alert on verification failure — it indicates the server may have been compromised or is not processing deltas correctly.
-
-## 2-of-3 key setup
+## Common 2-of-3 setup
 
 A common Guardian configuration uses a **2-of-3** threshold embedded in the account's authentication code:
 
@@ -61,41 +65,15 @@ A common Guardian configuration uses a **2-of-3** threshold embedded in the acco
 
 ```mermaid
 graph TD
-    subgraph "Normal operation (Hot + Guardian)"
-        Hot["User Hot Key"] --> TX["Transaction"]
-        GuardianKey["Guardian Service Key"] --> TX
+    subgraph "Normal operation"
+        Hot["User hot key"] --> TX["Transaction"]
+        GuardianKey["Guardian service key"] --> TX
     end
 
-    subgraph "Emergency override (Hot + Cold)"
-        Hot2["User Hot Key"] --> Override["Rotate Guardian / Adjust policies<br/>Switch providers"]
-        Cold["User Cold Key"] --> Override
+    subgraph "Emergency override"
+        Hot2["User hot key"] --> Override["Rotate Guardian<br/>or adjust policy"]
+        Cold["User cold key"] --> Override
     end
 ```
 
-- **Normal operations**: Hot key + Guardian's co-signature suffice. Guardian verifies the signer is working from the latest state.
-- **Emergency override**: Hot + cold keys alone can rotate out Guardian, adjust policies, or switch providers.
-- **Recovery**: If the Guardian provider disappears, the user's hot + cold keys provide full independent control.
-
-## Device recovery
-
-**Without Guardian**: A lost device means falling back to a cold backup. Any state changes since the last checkpoint are lost. If an attacker has the device PIN, funds may be at risk.
-
-**With Guardian**: The remaining device already has the latest state (synced through Guardian). The user initiates a hot key rotation using their cold key. The stolen device's keys become invalid. Recovery takes minutes.
-
-## Edge cases
-
-### State divergence
-
-If two devices submit deltas referencing different base states, Guardian rejects the conflicting one (commitment mismatch). The rejected device must resync from Guardian before retrying.
-
-### Stale candidates
-
-If a candidate delta's on-chain commitment doesn't match during canonicalization, it is marked `discarded`. Clients are signaled to resync. This is not a rollback of the chain — it prevents clients from drifting onto an invalid local branch.
-
-### Clock skew
-
-Authentication requires timestamps within a 300-second window. Devices with significantly drifting clocks will fail authentication. Ensure NTP synchronization on client devices.
-
-### Provider rotation
-
-Users can switch Guardian providers at any time using their hot + cold keys. The new provider is configured with the account's current state and a fresh cosigner allowlist. The old provider's key is rotated out of the account's authentication policy.
+Normal transactions can use the hot key plus Guardian. Emergency actions can use the hot key plus cold key, without Guardian involvement.
