@@ -1,16 +1,17 @@
 import React, { type ReactNode } from "react";
 import { PageMetadata } from "@docusaurus/theme-common";
 import { useDoc } from "@docusaurus/plugin-content-docs/client";
-import { getDocOgImage } from "../../../utils/ogImages";
+import { getDocOgDescription, getDocOgImage } from "../../../utils/ogImages";
 
 export default function DocItemMetadata(): ReactNode {
   const { metadata, frontMatter, assets } = useDoc();
   const image = assets.image ?? frontMatter.image ?? getDocOgImage(metadata.permalink);
+  const description = metadata.description || getDocOgDescription(metadata.permalink);
 
   return (
     <PageMetadata
       title={metadata.title}
-      description={metadata.description}
+      description={description}
       keywords={frontMatter.keywords}
       image={image}
     >

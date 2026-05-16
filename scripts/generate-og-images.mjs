@@ -14,7 +14,7 @@ const images = [
   {
     id: "miden-docs",
     eyebrow: "Miden Docs",
-    title: "Private by design. Verifiable by default.",
+    title: "Miden Docs",
     description: "Documentation for building, integrating, and understanding Miden.",
     accent: "#ff5500",
     panel: "DOCS",
@@ -32,7 +32,7 @@ const images = [
     eyebrow: "Build",
     title: "Get Started",
     description: "Install the tools, create accounts, move notes, and read account state.",
-    accent: "#e34f26",
+    accent: "#ff5500",
     panel: "START",
   },
   {
@@ -40,7 +40,7 @@ const images = [
     eyebrow: "Get Started",
     title: "Your First Smart Contract",
     description: "Create, test, and deploy a minimal Miden account component.",
-    accent: "#ea580c",
+    accent: "#ff5500",
     panel: "FIRST",
   },
   {
@@ -48,7 +48,7 @@ const images = [
     eyebrow: "Build",
     title: "Smart Contracts",
     description: "Write Miden account logic and notes in Rust or MASM.",
-    accent: "#c2410c",
+    accent: "#ff5500",
     panel: "CONTRACT",
   },
   {
@@ -56,7 +56,7 @@ const images = [
     eyebrow: "Smart Contracts",
     title: "Accounts",
     description: "Account components, storage, authentication, and account operations.",
-    accent: "#c2410c",
+    accent: "#ff5500",
     panel: "ACCOUNTS",
   },
   {
@@ -64,7 +64,7 @@ const images = [
     eyebrow: "Smart Contracts",
     title: "Notes",
     description: "Programmable messages that carry assets, scripts, and execution context.",
-    accent: "#f97316",
+    accent: "#ff5500",
     panel: "NOTES",
   },
   {
@@ -72,7 +72,7 @@ const images = [
     eyebrow: "Smart Contracts",
     title: "Transactions",
     description: "Scripts, context, advice data, and execution patterns on Miden.",
-    accent: "#b45309",
+    accent: "#ff5500",
     panel: "TX",
   },
   {
@@ -80,7 +80,7 @@ const images = [
     eyebrow: "Build",
     title: "Tutorials",
     description: "Runnable walkthroughs for client apps, contracts, and local development.",
-    accent: "#0f766e",
+    accent: "#ff5500",
     panel: "RUN",
   },
   {
@@ -88,7 +88,7 @@ const images = [
     eyebrow: "Tutorials",
     title: "Miden Bank",
     description: "A complete contract tutorial covering components, notes, and flows.",
-    accent: "#0f766e",
+    accent: "#ff5500",
     panel: "BANK",
   },
   {
@@ -96,7 +96,7 @@ const images = [
     eyebrow: "Recipes",
     title: "Rust Recipes",
     description: "Runnable Rust client examples for common Miden development flows.",
-    accent: "#b45309",
+    accent: "#ff5500",
     panel: "RUST",
   },
   {
@@ -104,7 +104,7 @@ const images = [
     eyebrow: "Recipes",
     title: "TypeScript Recipes",
     description: "Browser and React examples for Miden applications.",
-    accent: "#2563eb",
+    accent: "#ff5500",
     panel: "TS",
   },
   {
@@ -112,7 +112,7 @@ const images = [
     eyebrow: "Build",
     title: "Tools",
     description: "Clients, SDKs, CLIs, transport services, and development utilities.",
-    accent: "#2563eb",
+    accent: "#ff5500",
     panel: "TOOLS",
   },
   {
@@ -120,7 +120,7 @@ const images = [
     eyebrow: "Tools",
     title: "Clients",
     description: "Rust, TypeScript, and React interfaces for Miden applications.",
-    accent: "#0891b2",
+    accent: "#ff5500",
     panel: "CLIENT",
   },
   {
@@ -128,7 +128,7 @@ const images = [
     eyebrow: "Clients",
     title: "React SDK",
     description: "Hooks and provider patterns for browser-based Miden applications.",
-    accent: "#0ea5e9",
+    accent: "#ff5500",
     panel: "REACT",
   },
   {
@@ -136,7 +136,7 @@ const images = [
     eyebrow: "Clients",
     title: "Rust Client",
     description: "Programmatic accounts, notes, transactions, and local client state.",
-    accent: "#b45309",
+    accent: "#ff5500",
     panel: "RUST",
   },
   {
@@ -144,7 +144,7 @@ const images = [
     eyebrow: "Rust Client",
     title: "Get Started",
     description: "Create accounts, use faucets, and move assets with the Rust client.",
-    accent: "#b45309",
+    accent: "#ff5500",
     panel: "RUST",
   },
   {
@@ -152,7 +152,7 @@ const images = [
     eyebrow: "Rust Client",
     title: "CLI",
     description: "Configure and operate the Miden client command-line interface.",
-    accent: "#92400e",
+    accent: "#ff5500",
     panel: "CLI",
   },
   {
@@ -160,7 +160,7 @@ const images = [
     eyebrow: "Clients",
     title: "TypeScript Client",
     description: "Browser and React flows for Miden apps using the TypeScript SDK.",
-    accent: "#2563eb",
+    accent: "#ff5500",
     panel: "TS",
   },
   {
@@ -168,7 +168,7 @@ const images = [
     eyebrow: "Tools",
     title: "Note Transport",
     description: "Transport public notes across clients without taking custody of assets.",
-    accent: "#16a34a",
+    accent: "#ff5500",
     panel: "NOTES",
   },
   {
@@ -176,7 +176,7 @@ const images = [
     eyebrow: "Build",
     title: "Miden Guardian",
     description: "Assisted self-custody flows for safer account recovery and operation.",
-    accent: "#7c3aed",
+    accent: "#ff5500",
     panel: "GUARD",
   },
   {
@@ -184,7 +184,7 @@ const images = [
     eyebrow: "Build",
     title: "Private Multisig",
     description: "Account patterns for private approvals and coordinated execution.",
-    accent: "#be123c",
+    accent: "#ff5500",
     panel: "MULTI",
   },
   {
@@ -192,7 +192,7 @@ const images = [
     eyebrow: "Build",
     title: "Migration",
     description: "Version-to-version changes for Miden builders and client integrations.",
-    accent: "#64748b",
+    accent: "#ff5500",
     panel: "MIGRATE",
   },
   {
@@ -200,7 +200,7 @@ const images = [
     eyebrow: "Build",
     title: "Reference",
     description: "Glossary, FAQ, and supporting reference material for Miden builders.",
-    accent: "#475569",
+    accent: "#ff5500",
     panel: "REF",
   },
   {
@@ -208,7 +208,7 @@ const images = [
     eyebrow: "Core Concepts",
     title: "Core Concepts",
     description: "Technical foundations for the protocol, node, VM, and compiler.",
-    accent: "#334155",
+    accent: "#ff5500",
     panel: "SPEC",
   },
   {
@@ -216,7 +216,7 @@ const images = [
     eyebrow: "Core Concepts",
     title: "Protocol",
     description: "Accounts, notes, transactions, proving, and state transition rules.",
-    accent: "#4f46e5",
+    accent: "#ff5500",
     panel: "PROTO",
   },
   {
@@ -224,7 +224,7 @@ const images = [
     eyebrow: "Protocol",
     title: "Accounts",
     description: "Account identifiers, code, storage, vaults, and authentication rules.",
-    accent: "#4f46e5",
+    accent: "#ff5500",
     panel: "ACCOUNT",
   },
   {
@@ -232,7 +232,7 @@ const images = [
     eyebrow: "Core Concepts",
     title: "Node",
     description: "Network components, transaction flow, block production, and sync.",
-    accent: "#059669",
+    accent: "#ff5500",
     panel: "NODE",
   },
   {
@@ -240,7 +240,7 @@ const images = [
     eyebrow: "Node",
     title: "Operator Guide",
     description: "Run, configure, and observe Miden node infrastructure.",
-    accent: "#059669",
+    accent: "#ff5500",
     panel: "OPS",
   },
   {
@@ -248,7 +248,7 @@ const images = [
     eyebrow: "Core Concepts",
     title: "Miden VM",
     description: "The STARK-based virtual machine that executes Miden programs.",
-    accent: "#9333ea",
+    accent: "#ff5500",
     panel: "VM",
   },
   {
@@ -256,7 +256,7 @@ const images = [
     eyebrow: "Miden VM",
     title: "User Docs",
     description: "Assembly, standard libraries, debugging, and VM-facing developer flows.",
-    accent: "#9333ea",
+    accent: "#ff5500",
     panel: "VM",
   },
   {
@@ -264,7 +264,7 @@ const images = [
     eyebrow: "Miden VM",
     title: "Miden Assembly",
     description: "Instruction-level programming and MASM module structure.",
-    accent: "#7e22ce",
+    accent: "#ff5500",
     panel: "MASM",
   },
   {
@@ -272,7 +272,7 @@ const images = [
     eyebrow: "Miden VM",
     title: "Core Library",
     description: "Standard MASM modules and reusable VM procedures.",
-    accent: "#6d28d9",
+    accent: "#ff5500",
     panel: "LIB",
   },
   {
@@ -280,7 +280,7 @@ const images = [
     eyebrow: "Miden VM",
     title: "VM Design",
     description: "Execution traces, stack model, chiplets, lookups, and constraints.",
-    accent: "#9333ea",
+    accent: "#ff5500",
     panel: "TRACE",
   },
   {
@@ -288,7 +288,7 @@ const images = [
     eyebrow: "Miden VM",
     title: "Stack",
     description: "Operand stack semantics, execution state, and stack constraints.",
-    accent: "#7e22ce",
+    accent: "#ff5500",
     panel: "STACK",
   },
   {
@@ -296,7 +296,7 @@ const images = [
     eyebrow: "Core Concepts",
     title: "Compiler",
     description: "Compile Rust components into Miden Assembly and executable artifacts.",
-    accent: "#dc2626",
+    accent: "#ff5500",
     panel: "MIDENC",
   },
   {
@@ -304,7 +304,7 @@ const images = [
     eyebrow: "Compiler",
     title: "Usage",
     description: "Compile, inspect, and integrate Rust components with midenc.",
-    accent: "#dc2626",
+    accent: "#ff5500",
     panel: "USE",
   },
   {
@@ -312,7 +312,7 @@ const images = [
     eyebrow: "Compiler",
     title: "Guides",
     description: "Practical compiler workflows for Miden builders.",
-    accent: "#b91c1c",
+    accent: "#ff5500",
     panel: "GUIDE",
   },
   {
@@ -320,7 +320,7 @@ const images = [
     eyebrow: "Compiler",
     title: "Appendix",
     description: "Compiler reference material and lower-level implementation details.",
-    accent: "#991b1b",
+    accent: "#ff5500",
     panel: "APPENDIX",
   },
 ];
@@ -359,7 +359,7 @@ function titleLines(title) {
   return lines.slice(0, 2);
 }
 
-function wrapText(text, maxLength) {
+function wrapText(text, maxLength, maxLines = 3) {
   const words = text.split(" ");
   const lines = [];
   let current = "";
@@ -378,23 +378,35 @@ function wrapText(text, maxLength) {
     lines.push(current);
   }
 
-  return lines.slice(0, 2);
+  if (lines.length <= maxLines) {
+    return lines;
+  }
+
+  const visibleLines = lines.slice(0, maxLines);
+  const lastLine = visibleLines[maxLines - 1];
+  visibleLines[maxLines - 1] =
+    lastLine.length > maxLength - 1
+      ? `${lastLine.slice(0, maxLength - 1)}...`
+      : `${lastLine}...`;
+
+  return visibleLines;
 }
 
 function svgFor(image) {
   const [lineOne, lineTwo] = titleLines(image.title);
-  const descriptionLines = wrapText(image.description, 56);
+  const descriptionLines = wrapText(image.description, 38, 3);
   const hasSecondLine = Boolean(lineTwo);
-  const titleOneY = hasSecondLine ? 258 : 286;
-  const titleTwoY = 336;
-  const descriptionY = hasSecondLine ? 404 : 370;
+  const titleOneY = hasSecondLine ? 254 : 284;
+  const titleTwoY = 324;
+  const descriptionY = hasSecondLine ? 382 : 356;
+  const ctaY = hasSecondLine ? 492 : 472;
   const badgeWidth = Math.max(150, Math.min(270, image.eyebrow.length * 12 + 48));
   const escapedTitleOne = escapeHtml(lineOne);
   const escapedTitleTwo = lineTwo ? escapeHtml(lineTwo) : "";
   const descriptionSvg = descriptionLines
     .map(
       (line, index) =>
-        `<text x="524" y="${descriptionY + index * 34}" fill="#d5cbbf" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="500" letter-spacing="0">${escapeHtml(line)}</text>`,
+        `<text x="524" y="${descriptionY + index * 32}" fill="#d5cbbf" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="500" letter-spacing="0">${escapeHtml(line)}</text>`,
     )
     .join("\n  ");
 
@@ -426,21 +438,16 @@ function svgFor(image) {
   <text x="86" y="552" fill="#6d665d" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="3">${escapeHtml(image.panel)}</text>
   <rect x="520" y="138" width="${badgeWidth}" height="38" fill="${image.accent}"/>
   <text x="544" y="164" fill="#fffaf4" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" letter-spacing="1.5">${escapeHtml(image.eyebrow.toUpperCase())}</text>
-  <text x="520" y="${titleOneY}" fill="#fffaf4" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="800" letter-spacing="0">${escapedTitleOne}</text>
-  ${hasSecondLine ? `<text x="520" y="${titleTwoY}" fill="#fffaf4" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="800" letter-spacing="0">${escapedTitleTwo}</text>` : ""}
+  <text x="520" y="${titleOneY}" fill="#fffaf4" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="800" letter-spacing="0">${escapedTitleOne}</text>
+  ${hasSecondLine ? `<text x="520" y="${titleTwoY}" fill="#fffaf4" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="800" letter-spacing="0">${escapedTitleTwo}</text>` : ""}
   ${descriptionSvg}
-  <path d="M524 ${descriptionY + 92}H874" stroke="${image.accent}" stroke-width="8" stroke-linecap="square"/>
-  <path d="M900 ${descriptionY + 92}H1010" stroke="#fffaf4" stroke-opacity="0.42" stroke-width="8" stroke-linecap="square"/>
-  <path d="M1034 ${descriptionY + 92}H1092" stroke="#fffaf4" stroke-opacity="0.24" stroke-width="8" stroke-linecap="square"/>
+  <rect x="520" y="${ctaY}" width="214" height="46" fill="${image.accent}"/>
+  <text x="544" y="${ctaY + 30}" fill="#fffaf4" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="800" letter-spacing="1.4">READ THE DOCS</text>
+  <text x="760" y="${ctaY + 30}" fill="#d5cbbf" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" letter-spacing="0">docs.miden.xyz</text>
   <g opacity="0.16">
     <path d="M1030 118H1092V180H1030V118Z" stroke="#fffaf4" stroke-width="2"/>
     <path d="M999 149H1123" stroke="#fffaf4" stroke-width="2"/>
     <path d="M1061 87V211" stroke="#fffaf4" stroke-width="2"/>
-  </g>
-  <g opacity="0.22">
-    <path d="M462 478H1108" stroke="#fffaf4" stroke-width="1"/>
-    <path d="M462 506H1108" stroke="#fffaf4" stroke-width="1"/>
-    <path d="M462 534H1108" stroke="#fffaf4" stroke-width="1"/>
   </g>
 </svg>`;
 }
