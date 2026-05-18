@@ -163,7 +163,7 @@ The compiler toolchain enables writing Miden programs in high-level languages.
 
 - **cargo-miden** — Cargo extension for building Miden projects
 - **midenc** — core compiler from WebAssembly to Miden Assembly
-- **Debugger** — interactive debugging with breakpoints and state inspection
+- **[Debugger](https://github.com/0xMiden/miden-debug)** — interactive debugging with breakpoints and state inspection
 
 ### Compilation pipeline
 
