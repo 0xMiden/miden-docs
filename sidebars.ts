@@ -45,6 +45,16 @@ const sidebars: SidebarsConfig = {
         "builder/smart-contracts/overview",
         {
           type: "category",
+          label: "Miden Standards",
+          link: { type: "doc", id: "builder/smart-contracts/standards/index" },
+          items: [
+            "builder/smart-contracts/standards/account-components",
+            "builder/smart-contracts/standards/standard-notes",
+            "builder/smart-contracts/standards/faucets-and-policies",
+          ],
+        },
+        {
+          type: "category",
           label: "Accounts",
           link: { type: "generated-index", slug: "/builder/smart-contracts/accounts" },
           items: [

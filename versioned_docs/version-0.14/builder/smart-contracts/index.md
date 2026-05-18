@@ -1,16 +1,24 @@
 ---
 title: "Miden Smart Contracts"
-description: "Reference documentation for building Miden smart contracts in Rust using the Miden SDK."
+description: "Build Miden smart contracts with Rust, Miden Assembly, and reusable Miden Standards."
 pagination_prev: null
 ---
 
 # Miden Smart Contracts
 
-This section is the complete reference for building smart contracts on Miden using Rust and the Miden SDK. If you're new to Miden, follow the hands-on [Miden Bank Tutorial](../tutorials/miden-bank/).
+This section covers the developer-facing paths for building smart contracts on Miden. Use Rust when you want the higher-level SDK and compiler workflow, use Miden Assembly when you need direct control over VM execution, and use Miden Standards when you want reusable account components, note scripts, faucet policies, and protocol-compatible building blocks.
 
-All Miden Rust contracts compile under these constraints: `#![no_std]`, Rust 2024 edition.
+If you're new to Miden, follow the hands-on [Miden Bank Tutorial](../tutorials/miden-bank/).
 
-## Core concepts
+## Authoring paths
+
+| Path | Status | Start here |
+|------|--------|------------|
+| Rust | Existing Rust-first smart-contract docs. | [Overview](./overview) |
+| Miden Assembly | Dedicated authoring path planned; direct MASM appears today in note, transaction, and reference docs. | [Note scripts](./notes/note-scripts) |
+| Miden Standards | Shared reusable components, notes, faucet policies, and MASM modules. | [Miden Standards](./standards/) |
+
+## Building blocks
 
 <CardGrid cols={3}>
   <Card title="Accounts" href="./accounts/" eyebrow="State & code">
