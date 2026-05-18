@@ -31,6 +31,8 @@ A fungible asset is tied to its faucet account ID. The faucet's metadata describ
 | Max supply | Upper bound enforced by the faucet component. |
 | Faucet account ID | The issuer ID used when constructing fungible assets and checking balances. |
 
+The v0.14 faucet module exposes token metadata through the standard faucet component, including the symbol, decimals, and max supply fields clients need for display and balance handling.
+
 When an account checks its balance for a fungible token, it queries by the faucet account ID.
 
 ## Choose a minting authority model
@@ -54,7 +56,7 @@ For standard flows:
 - The recipient discovers and consumes the note.
 - The recipient's account must be able to receive the asset, usually by including `BasicWallet`.
 
-This is the same two-transaction note model described in [What are Notes?](../notes/).
+This is the same two-transaction note model described in [What are Notes?](../notes/introduction).
 
 ## Burn returned assets
 

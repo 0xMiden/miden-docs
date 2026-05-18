@@ -20,7 +20,7 @@ Use the Rust APIs to construct standard notes in client or transaction-building 
 | MINT | A faucet is minting fungible tokens into a note. | `MintNote` | `miden::standards::notes::mint` |
 | BURN | A faucet is burning fungible tokens returned through a note. | `BurnNote` | `miden::standards::notes::burn` |
 
-For the note model itself, start with [What are Notes?](../notes/). This page focuses on how the standards fit into builder workflows.
+For the note model itself, start with [What are Notes?](../notes/introduction). This page focuses on how the standards fit into builder workflows.
 
 :::info v0.14 differences
 PSWAP is part of the current unstable standards surface, but it is not available in the v0.14 standards snapshot. Use the v0.14 versioned docs if you are building against the v0.14 crates.

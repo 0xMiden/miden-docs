@@ -23,7 +23,7 @@ Use the Rust APIs to construct standard notes in client or transaction-building 
 PSWAP is not available in the v0.14 standards snapshot. It appears in the current unstable standards surface.
 :::
 
-For the note model itself, start with [What are Notes?](../notes/). This page focuses on how the standards fit into builder workflows.
+For the note model itself, start with [What are Notes?](../notes/introduction). This page focuses on how the standards fit into builder workflows.
 
 ## Account requirements
 

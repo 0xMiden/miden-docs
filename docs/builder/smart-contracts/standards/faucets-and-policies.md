@@ -63,7 +63,7 @@ For standard flows:
 - The recipient discovers and consumes the note.
 - The recipient's account must be able to receive the asset, usually by including `BasicWallet`.
 
-This is the same two-transaction note model described in [What are Notes?](../notes/).
+This is the same two-transaction note model described in [What are Notes?](../notes/introduction).
 
 ## Burn returned assets
 
