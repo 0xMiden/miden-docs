@@ -5,7 +5,11 @@ sidebar_position: 2
 
 # Deploying Miden Guardian
 
-The repository deploy script provisions and updates the AWS infrastructure used by the reference Guardian deployment. Operators on other platforms can run the same server binary with the same environment variables — adapt the surrounding services to taste.
+The repository deploy script provisions and updates the AWS infrastructure used by the reference Guardian deployment. Operators on other platforms can run the same server binary with the same environment variables - adapt the surrounding services to taste.
+
+:::warning
+Guardian stores private account state and delta payloads submitted by clients. Treat the deployment like sensitive wallet infrastructure even though Guardian is non-custodial.
+:::
 
 The reference AWS deployment uses:
 
@@ -15,6 +19,29 @@ The reference AWS deployment uses:
 - Secrets Manager (env vars + ack keys)
 - ECR for container images
 - CloudWatch for logs
+
+## Deployment architecture
+
+```mermaid
+graph LR
+    Client["Authorized clients"] --> ALB["TLS load balancer"]
+    ALB --> Server["Guardian server"]
+    Server --> DB["Postgres<br/>state, deltas, metadata"]
+    Server --> Secrets["Secrets Manager<br/>ack keys, operator allowlist"]
+    Server --> Node["Miden node RPC"]
+    Server --> Logs["Logs / metrics"]
+```
+
+Production deployments should make the trust boundary explicit:
+
+| Boundary | Production expectation |
+|---|---|
+| Client traffic | TLS termination, explicit CORS allowlist for browser clients, request-size limits, rate limits. |
+| Guardian server | Reproducible build hash recorded, minimal IAM permissions, no shell access for normal operation. |
+| Database | Managed Postgres, encrypted storage, backups, migration visibility, least-privilege credentials. |
+| Ack keys | Generated once per environment, stored in Secrets Manager, monitored for unexpected rotation. |
+| Node RPC | Explicit network target; do not accept client-provided RPC endpoints. |
+| Logs | Avoid logging full state or delta payloads. Retain enough metadata for debugging canonicalization failures. |
 
 ## AWS deploy script
 
@@ -58,15 +85,15 @@ Filesystem storage is the default local backend; the `postgres` feature with a v
 
 | Var                                          | Default     | AWS prod override |
 | -------------------------------------------- | ----------- | ----------------- |
-| `GUARDIAN_RATE_LIMIT_ENABLED`                | `true`      | —                 |
+| `GUARDIAN_RATE_LIMIT_ENABLED`                | `true`      | -                 |
 | `GUARDIAN_RATE_BURST_PER_SEC`                | `10`        | `200`             |
 | `GUARDIAN_RATE_PER_MIN`                      | `60`        | `5000`            |
-| `GUARDIAN_MAX_REQUEST_BYTES`                 | `1048576`   | —                 |
-| `GUARDIAN_MAX_PENDING_PROPOSALS_PER_ACCOUNT` | `20`        | —                 |
+| `GUARDIAN_MAX_REQUEST_BYTES`                 | `1048576`   | -                 |
+| `GUARDIAN_MAX_PENDING_PROPOSALS_PER_ACCOUNT` | `20`        | -                 |
 | `GUARDIAN_DB_POOL_MAX_SIZE`                  | `16`        | `32`              |
-| `GUARDIAN_METADATA_DB_POOL_MAX_SIZE`         | (matches storage pool) | —      |
+| `GUARDIAN_METADATA_DB_POOL_MAX_SIZE`         | (matches storage pool) | -      |
 
-Rate limiting is on by default; pass `0`, `false`, `no`, or `off` to `GUARDIAN_RATE_LIMIT_ENABLED` to disable. Invalid values for `GUARDIAN_MAX_REQUEST_BYTES` are silently ignored — the default is used.
+Rate limiting is on by default; pass `0`, `false`, `no`, or `off` to `GUARDIAN_RATE_LIMIT_ENABLED` to disable. Invalid values for `GUARDIAN_MAX_REQUEST_BYTES` are silently ignored - the default is used.
 
 ### Operator allowlist + CORS
 
@@ -78,7 +105,16 @@ Rate limiting is on by default; pass `0`, `false`, `no`, or `off` to `GUARDIAN_R
 
 ## Canonicalization
 
-The server runs a canonicalization pass every **10 seconds** with a **10-minute** submission grace period. Both values are hard-coded in `crates/server/src/main.rs` and are **not** configurable via environment variable — embedders that need different timing must call the builder API in code.
+The server runs a canonicalization pass every **10 seconds** with a **10-minute** submission grace period. Both values are hard-coded in `crates/server/src/main.rs` and are **not** configurable via environment variable - embedders that need different timing must call the builder API in code.
+
+Operators should monitor:
+
+- candidate deltas older than the grace period,
+- discarded deltas,
+- repeated canonicalization failures for the same account,
+- Miden node RPC failures,
+- acknowledgement key changes,
+- database write latency and migration failures.
 
 ## Reproducible builds
 
@@ -87,3 +123,5 @@ The server runs a canonicalization pass every **10 seconds** with a **10-minute*
 ```
 
 The script must run inside a git checkout of the repo with a `Dockerfile` at the root. It builds the server image, copies the resulting `/app/server` binary out, and prints its SHA256, size, and the source commit. Uncommitted local changes produce a warning but do not fail the script.
+
+Record the output with the deployment change. It gives operators and integrators a concrete artifact to compare when debugging or auditing a running Guardian instance.
