@@ -251,6 +251,16 @@ const sidebars: SidebarsConfig = {
             "builder/tools/note-transport/users",
           ],
         },
+        {
+          type: "category",
+          label: "Bridging",
+          link: { type: "doc", id: "builder/tools/bridging/index" },
+          items: [
+            "builder/tools/bridging/testnet-sandbox",
+            "builder/tools/bridging/flows",
+            "builder/tools/bridging/api-reference",
+          ],
+        },
         "builder/tools/midenup",
         "builder/tools/playground",
         "builder/tools/network",
