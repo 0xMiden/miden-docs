@@ -25,6 +25,46 @@ PSWAP is not available in the v0.14 standards snapshot. It appears in the curren
 
 For the note model itself, start with [What are Notes?](../notes/introduction). This page focuses on how the standards fit into builder workflows.
 
+```rust title="Create a public P2ID note"
+use miden_protocol::account::{AccountId, AccountIdVersion, AccountStorageMode, AccountType};
+use miden_protocol::asset::{Asset, FungibleAsset};
+use miden_protocol::crypto::rand::RandomCoin;
+use miden_protocol::note::{NoteAttachment, NoteType};
+use miden_protocol::Word;
+use miden_standards::note::P2idNote;
+
+fn dummy_account(byte: u8, account_type: AccountType) -> AccountId {
+    let mut bytes = [0; 15];
+    bytes[0] = byte;
+    AccountId::dummy(
+        bytes,
+        AccountIdVersion::Version0,
+        account_type,
+        AccountStorageMode::Public,
+    )
+}
+
+fn create_p2id_note() -> Result<(), Box<dyn std::error::Error>> {
+    let sender = dummy_account(1, AccountType::RegularAccountImmutableCode);
+    let target = dummy_account(2, AccountType::RegularAccountImmutableCode);
+    let faucet_id = dummy_account(3, AccountType::FungibleFaucet);
+    let asset: Asset = FungibleAsset::new(faucet_id, 100)?.into();
+    let mut rng = RandomCoin::new(Word::from([1, 2, 3, 4u32]));
+
+    let note = P2idNote::create(
+        sender,
+        target,
+        vec![asset],
+        NoteType::Public,
+        NoteAttachment::default(),
+        &mut rng,
+    )?;
+
+    assert_eq!(note.metadata().sender(), sender);
+    Ok(())
+}
+```
+
 ## Account requirements
 
 Standard notes assume the consuming account exposes the procedures the note script calls.

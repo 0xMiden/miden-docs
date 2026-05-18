@@ -22,6 +22,46 @@ Use the Rust APIs to construct standard notes in client or transaction-building 
 
 For the note model itself, start with [What are Notes?](../notes/introduction). This page focuses on how the standards fit into builder workflows.
 
+```rust title="Create a public P2ID note"
+use miden_protocol::Word;
+use miden_protocol::account::{AccountId, AccountIdVersion, AccountStorageMode, AccountType};
+use miden_protocol::asset::{Asset, FungibleAsset};
+use miden_protocol::crypto::rand::RandomCoin;
+use miden_protocol::note::{NoteAttachments, NoteType};
+use miden_standards::note::P2idNote;
+
+fn dummy_account(byte: u8, account_type: AccountType) -> AccountId {
+    let mut bytes = [0; 15];
+    bytes[0] = byte;
+    AccountId::dummy(
+        bytes,
+        AccountIdVersion::Version1,
+        account_type,
+        AccountStorageMode::Public,
+    )
+}
+
+fn create_p2id_note() -> Result<(), Box<dyn std::error::Error>> {
+    let sender = dummy_account(1, AccountType::RegularAccountImmutableCode);
+    let target = dummy_account(2, AccountType::RegularAccountImmutableCode);
+    let faucet_id = dummy_account(3, AccountType::FungibleFaucet);
+    let asset: Asset = FungibleAsset::new(faucet_id, 100)?.into();
+    let mut rng = RandomCoin::new(Word::from([1, 2, 3, 4u32]));
+
+    let note = P2idNote::create(
+        sender,
+        target,
+        vec![asset],
+        NoteType::Public,
+        NoteAttachments::default(),
+        &mut rng,
+    )?;
+
+    assert_eq!(note.metadata().sender(), sender);
+    Ok(())
+}
+```
+
 :::info v0.14 differences
 PSWAP is part of the current unstable standards surface, but it is not available in the v0.14 standards snapshot. Use the v0.14 versioned docs if you are building against the v0.14 crates.
 :::

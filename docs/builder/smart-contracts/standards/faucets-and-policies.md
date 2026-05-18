@@ -26,6 +26,60 @@ The current standard fungible faucet component is `FungibleFaucet`.
 
 Public storage is typical for shared token faucets because clients can discover faucet state and metadata. Private storage is possible, but it changes who can observe the faucet's state.
 
+```rust title="Create a fungible faucet with allow-all policies"
+use miden_protocol::Word;
+use miden_protocol::account::AccountStorageMode;
+use miden_protocol::account::auth::{AuthScheme, PublicKeyCommitment};
+use miden_protocol::asset::{AssetAmount, TokenSymbol};
+use miden_standards::AuthMethod;
+use miden_standards::account::access::AccessControl;
+use miden_standards::account::faucets::{
+    Description,
+    FungibleFaucet,
+    TokenName,
+    create_fungible_faucet,
+};
+use miden_standards::account::policies::{
+    BurnPolicyConfig,
+    MintPolicyConfig,
+    PolicyRegistration,
+    TokenPolicyManager,
+    TransferPolicy,
+};
+
+fn create_faucet_account() -> Result<(), Box<dyn std::error::Error>> {
+    let public_key = PublicKeyCommitment::from(Word::from([1, 2, 3, 4u32]));
+
+    let faucet = FungibleFaucet::builder()
+        .name(TokenName::new("Example Token")?)
+        .symbol(TokenSymbol::new("EXT")?)
+        .decimals(6)
+        .max_supply(AssetAmount::from(1_000_000u32))
+        .description(Description::new("Example token")?)
+        .build()?;
+
+    let policies = TokenPolicyManager::new()
+        .with_mint_policy(MintPolicyConfig::AllowAll, PolicyRegistration::Active)?
+        .with_burn_policy(BurnPolicyConfig::AllowAll, PolicyRegistration::Active)?
+        .with_send_policy(TransferPolicy::AllowAll, PolicyRegistration::Active)?
+        .with_receive_policy(TransferPolicy::AllowAll, PolicyRegistration::Active)?;
+
+    let account = create_fungible_faucet(
+        [9; 32],
+        faucet,
+        AccountStorageMode::Public,
+        AuthMethod::SingleSig {
+            approver: (public_key, AuthScheme::Falcon512Poseidon2),
+        },
+        AccessControl::AuthControlled,
+        policies,
+    )?;
+
+    assert!(account.is_faucet());
+    Ok(())
+}
+```
+
 ## Token identity
 
 A fungible asset is tied to its faucet account ID. The faucet's metadata describes the token, while the account ID identifies the asset issuer.

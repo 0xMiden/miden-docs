@@ -39,6 +39,28 @@ Most regular accounts need:
 
 `AuthSingleSig` controls transaction authorization. `BasicWallet` exposes the standard wallet procedures used by common notes, including the ability to receive assets and move assets into output notes.
 
+```rust title="Compose a regular account with standard auth and wallet components"
+use miden_protocol::Word;
+use miden_protocol::account::auth::{AuthScheme, PublicKeyCommitment};
+use miden_protocol::account::{AccountBuilder, AccountStorageMode, AccountType};
+use miden_standards::account::auth::AuthSingleSig;
+use miden_standards::account::wallets::BasicWallet;
+
+fn build_wallet_account() -> Result<(), Box<dyn std::error::Error>> {
+    let public_key = PublicKeyCommitment::from(Word::from([1, 2, 3, 4u32]));
+
+    let account = AccountBuilder::new([1; 32])
+        .account_type(AccountType::RegularAccountImmutableCode)
+        .storage_mode(AccountStorageMode::Public)
+        .with_auth_component(AuthSingleSig::new(public_key, AuthScheme::Falcon512Poseidon2))
+        .with_component(BasicWallet)
+        .build()?;
+
+    assert_eq!(account.account_type(), AccountType::RegularAccountImmutableCode);
+    Ok(())
+}
+```
+
 For authentication details, see [Authentication](../accounts/authentication). For how component methods are authored in Rust, see [Components](../accounts/components).
 
 ## Check note compatibility

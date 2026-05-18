@@ -14,7 +14,7 @@ If you're new to Miden, follow the hands-on [Miden Bank Tutorial](../tutorials/m
 
 | Path | Status | Start here |
 |------|--------|------------|
-| Rust | Existing Rust-first smart-contract docs. | [Overview](./overview) |
+| Rust | Account, note, transaction, type, and composition docs for Rust-first smart-contract development. | [Rust](./rust) |
 | Miden Assembly | Dedicated authoring path planned; direct MASM appears today in note, transaction, and reference docs. | [Note scripts](./notes/note-scripts) |
 | Miden Standards | Shared reusable components, notes, faucet policies, and MASM modules. | [Miden Standards](./standards/) |
 

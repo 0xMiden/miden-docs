@@ -20,6 +20,34 @@ The v0.14 standards snapshot has two fungible faucet components.
 
 Public storage is typical for shared token faucets because clients can discover faucet state and metadata. Private storage is possible, but it changes who can observe the faucet's state.
 
+```rust title="Create a basic fungible faucet account"
+use miden_protocol::Word;
+use miden_protocol::account::AccountStorageMode;
+use miden_protocol::account::auth::{AuthScheme, PublicKeyCommitment};
+use miden_protocol::asset::TokenSymbol;
+use miden_protocol::Felt;
+use miden_standards::AuthMethod;
+use miden_standards::account::faucets::create_basic_fungible_faucet;
+
+fn create_faucet_account() -> Result<(), Box<dyn std::error::Error>> {
+    let public_key = PublicKeyCommitment::from(Word::from([1, 2, 3, 4u32]));
+
+    let account = create_basic_fungible_faucet(
+        [9; 32],
+        TokenSymbol::new("EXT")?,
+        6,
+        Felt::new(1_000_000),
+        AccountStorageMode::Public,
+        AuthMethod::SingleSig {
+            approver: (public_key, AuthScheme::Falcon512Poseidon2),
+        },
+    )?;
+
+    assert!(account.is_faucet());
+    Ok(())
+}
+```
+
 ## Token identity
 
 A fungible asset is tied to its faucet account ID. The faucet's metadata describes the token, while the account ID identifies the asset issuer.
